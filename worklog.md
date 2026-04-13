@@ -134,3 +134,22 @@ Stage Summary:
 - Clean lint output
 - Complete feature parity with backend API
 - All 4 roles fully supported: SUPER_ADMIN (11 pages), ADMIN (9 pages), INSTRUCTOR (6 pages), STUDENT (5 pages)
+
+---
+Task ID: 10
+Agent: Main Agent
+Task: Diagnose Google OAuth redirect_uri_mismatch error
+
+Work Log:
+- Cloned backend repo to /tmp/skill-workshop-management-system-backend
+- Analyzed passport.ts Google Strategy config (env vars: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_CALLBACK_URL)
+- Analyzed auth.route.ts: failureRedirect hardcoded error message at line 347
+- Analyzed auth.controller.ts: googleCallback handler with state-based redirect
+- Decoded user's Google error URL to confirm: redirect_uri_mismatch
+
+Stage Summary:
+- ROOT CAUSE: Google Cloud Console missing authorized redirect URI for production Vercel URL
+- The callback URL https://skill-workshop-management-system-backend.vercel.app/api/v1/auth/google/callback is NOT registered in Google Cloud Console
+- .env.example shows localhost:5000 URL (dev only), Vercel deployment needs production URL
+- FIX: Add the Vercel callback URL to Google Cloud Console Authorized redirect URIs + verify Vercel env var GOOGLE_CALLBACK_URL
+- No code changes needed in frontend or backend
