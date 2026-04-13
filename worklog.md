@@ -153,3 +153,23 @@ Stage Summary:
 - .env.example shows localhost:5000 URL (dev only), Vercel deployment needs production URL
 - FIX: Add the Vercel callback URL to Google Cloud Console Authorized redirect URIs + verify Vercel env var GOOGLE_CALLBACK_URL
 - No code changes needed in frontend or backend
+
+---
+Task ID: 11
+Agent: Main Agent
+Task: Fix Google OAuth callback - specific errors, cross-domain tokens, redirect path
+
+Work Log:
+- Analyzed full passport Google strategy verify callback (passport.ts): 5 failure conditions found
+- Analyzed session config: express-session + connect-redis (v9) + passport.state with custom string
+- Analyzed cookie config: sameSite "strict" in production blocks cross-domain cookie access
+- Identified 3 root causes: (1) absolute URL as state param causes session issues on serverless, (2) google/callback not in ALLOWED_REDIRECT_PATHS, (3) cross-domain cookies with sameSite strict are inaccessible
+- Backend fix (branch fix/google-oauth-callback): Custom passport.authenticate callback with specific error logging, added google/callback to allowed paths, pass tokens via URL params for cross-domain support
+- Frontend fix (login + register pages): Changed redirect param from absolute URL to relative "google/callback"
+- Pushed backend to branch fix/google-oauth-callback, frontend to master
+
+Stage Summary:
+- Backend PR: https://github.com/tarekul42/skill-workshop-management-system-backend/pull/new/fix/google-oauth-callback
+- Frontend: login.tsx and register.tsx now use relative redirect path
+- If auth still fails, the error message will now be SPECIFIC (e.g., "User is not verified.", "User is BLOCKED.", actual DB error message) instead of generic
+- Tokens passed via URL params on success solve cross-domain cookie issue
