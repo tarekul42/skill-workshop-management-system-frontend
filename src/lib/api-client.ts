@@ -9,6 +9,7 @@ const CSRF_EXEMPT_PATHS = [
   "/otp/send",
   "/otp/verify",
   "/auth/google",
+  "/auth/exchange-code",
   "/auth/refresh-token",
 ];
 

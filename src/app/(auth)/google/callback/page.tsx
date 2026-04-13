@@ -10,15 +10,18 @@ import { BACKEND_API_URL } from "@/lib/constants";
 /**
  * Google OAuth callback page.
  *
- * Flow:
+ * Secure flow (code-exchange pattern):
  * 1. User clicks "Sign in with Google" → redirects to backend /auth/google
  * 2. Google authenticates → redirects to backend /auth/google/callback
- * 3. Backend sets cookies (refreshToken) and redirects here with tokens in URL
- * 4. This page extracts tokens, saves them, and redirects to dashboard
+ * 3. Backend generates a one-time auth code, stores tokens in Redis,
+ *    and redirects here with only the code in the URL
+ * 4. This page exchanges the code for tokens via POST (never exposes tokens in URL)
+ * 5. Tokens are saved and the user is redirected to the dashboard
  *
- * The backend typically redirects with tokens as URL search params:
- *   /google/callback?accessToken=xxx&user=encodedJson
- *   OR the backend may set tokens in cookies and just redirect to this page.
+ * Why code-exchange?
+ * - Access tokens must NEVER appear in URLs (browser history, server logs, Referer headers)
+ * - The code is a random hex string that is useless without the /auth/exchange-code endpoint
+ * - The code is consumed (deleted) after first use, preventing replay attacks
  */
 export default function GoogleCallbackPage() {
   const router = useRouter();
@@ -28,62 +31,61 @@ export default function GoogleCallbackPage() {
   useEffect(() => {
     async function handleCallback() {
       try {
-        const accessToken = searchParams.get("accessToken");
-        const userParam = searchParams.get("user");
+        const code = searchParams.get("code");
 
-        if (accessToken && userParam) {
-          // Backend passed tokens directly in URL params
-          const user = JSON.parse(decodeURIComponent(userParam));
-
-          saveUser({
-            _id: user._id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-            picture: user.picture,
-            isVerified: user.isVerified ?? true,
-          });
-          storeAccessToken(accessToken);
-          setAuthCookie(user.role);
-          router.push(redirectToDashboard(user.role));
+        if (!code) {
+          setError(
+            "Google sign-in could not be completed. No authorization code was received. Please try signing in again."
+          );
           return;
         }
 
-        // Alternative: tokens might be in cookies set by the backend
-        // Try to get user info from a /user/me call using cookies
-        const res = await fetch(`${BACKEND_API_URL}/user/me`, {
-          credentials: "include",
+        // Exchange the one-time code for tokens via a secure POST request.
+        // This keeps access tokens out of the URL entirely.
+        const res = await fetch(`${BACKEND_API_URL}/auth/exchange-code`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ code }),
         });
 
-        if (res.ok) {
-          const json = await res.json();
-
-          if (json.success && json.data) {
-            const user = json.data;
-            saveUser({
-              _id: user._id,
-              name: user.name,
-              email: user.email,
-              role: user.role,
-              picture: user.picture,
-              isVerified: user.isVerified ?? true,
-            });
-
-            // Try to extract access token from URL or use cookie-based auth
-            const token = searchParams.get("accessToken");
-            if (token) storeAccessToken(token);
-
-            setAuthCookie(user.role);
-            router.push(redirectToDashboard(user.role));
-            return;
-          }
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => null);
+          throw new Error(
+            errorData?.message || `Token exchange failed (HTTP ${res.status})`
+          );
         }
 
-        // No valid session found
-        setError("Google sign-in could not be completed. The authentication response was invalid or expired. Please try signing in again.");
+        const json = await res.json();
+
+        if (!json.success || !json.data) {
+          throw new Error("Invalid response from token exchange");
+        }
+
+        const { accessToken, user } = json.data;
+
+        if (!accessToken || !user) {
+          throw new Error("Missing tokens or user data in exchange response");
+        }
+
+        // Save tokens and user info client-side
+        saveUser({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+          picture: user.picture,
+          isVerified: user.isVerified ?? true,
+        });
+        storeAccessToken(accessToken);
+        setAuthCookie(user.role);
+        router.push(redirectToDashboard(user.role));
       } catch (err) {
         console.error("Google OAuth callback error:", err);
-        setError("Something went wrong during Google sign-in. Please try again.");
+        const message =
+          err instanceof Error
+            ? err.message
+            : "Something went wrong during Google sign-in. Please try again.";
+        setError(message);
       }
     }
 
