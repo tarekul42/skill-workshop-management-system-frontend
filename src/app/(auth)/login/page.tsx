@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   GraduationCap,
   Eye,
@@ -10,6 +10,7 @@ import {
   Loader2,
   Mail,
   Lock,
+  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -30,12 +31,21 @@ import { BACKEND_API_URL, FRONTEND_URL } from "@/lib/constants";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  // Show error from URL query param (e.g. OAuth redirect errors)
+  useEffect(() => {
+    const urlError = searchParams.get("error");
+    if (urlError) {
+      setError(decodeURIComponent(urlError));
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -138,9 +148,17 @@ export default function LoginPage() {
 
           {/* Error message */}
           {error && (
-            <p className="text-sm text-destructive" role="alert">
-              {error}
-            </p>
+            <div className="flex items-start gap-2 rounded-lg bg-destructive/10 px-3 py-2" role="alert">
+              <p className="flex-1 text-sm text-destructive">{error}</p>
+              <button
+                type="button"
+                onClick={() => setError("")}
+                className="shrink-0 text-muted-foreground hover:text-foreground"
+                aria-label="Dismiss error"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
           )}
 
           {/* Submit */}
