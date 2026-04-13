@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import {
   Code,
   Megaphone,
@@ -20,8 +20,10 @@ import {
   CardContent,
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { apiClient } from "@/lib/api-client";
+import { fetchCategories } from "@/lib/api/services";
 import type { ICategory } from "@/types/workshop.types";
+
+const PUBLIC_STALE_TIME = 5 * 60 * 1000;
 
 const categoryIconMap: Record<
   string,
@@ -57,24 +59,13 @@ function CategoryCardSkeleton() {
 }
 
 export default function CategoriesPage() {
-  const [categories, setCategories] = useState<ICategory[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { data: categoriesData, isLoading: loading } = useQuery({
+    queryKey: ["public-categories"],
+    queryFn: fetchCategories,
+    staleTime: PUBLIC_STALE_TIME,
+  });
 
-  useEffect(() => {
-    async function loadCategories() {
-      setLoading(true);
-      try {
-        const data = await apiClient<ICategory[]>("/category");
-        setCategories(Array.isArray(data) ? data : []);
-      } catch {
-        setError("Unable to load categories");
-      } finally {
-        setLoading(false);
-      }
-    }
-    loadCategories();
-  }, []);
+  const categories = Array.isArray(categoriesData) ? categoriesData : [];
 
   return (
     <section className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
@@ -97,17 +88,6 @@ export default function CategoriesPage() {
           <CategoryCardSkeleton />
           <CategoryCardSkeleton />
           <CategoryCardSkeleton />
-        </div>
-      ) : error ? (
-        <div className="mx-auto flex max-w-md flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
-          <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <Code className="size-6 text-muted-foreground" />
-          </div>
-          <h3 className="text-lg font-medium text-destructive">{error}</h3>
-          <p className="mt-1 text-sm text-muted-foreground">
-            There are no workshop categories available at the moment. Please
-            check back later.
-          </p>
         </div>
       ) : categories.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

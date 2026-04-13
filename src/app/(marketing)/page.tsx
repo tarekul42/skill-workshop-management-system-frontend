@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import Link from "next/link";
+import { useQuery } from "@tanstack/react-query";
 import {
   Users,
   BookOpen,
@@ -34,6 +35,8 @@ import {
   getLevelName,
 } from "@/lib/api/services";
 import type { IWorkshop, ICategory } from "@/types/workshop.types";
+
+const PUBLIC_STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
 // ─── Inline Testimonials (no backend endpoint) ─────────────────────────────
 
@@ -156,32 +159,31 @@ function WorkshopCardSkeleton() {
 // ─── Page ─────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
-  const [workshops, setWorkshops] = useState<IWorkshop[]>([]);
-  const [categories, setCategories] = useState<ICategory[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data: categoriesData } = useQuery({
+    queryKey: ["public-categories"],
+    queryFn: fetchCategories,
+    staleTime: PUBLIC_STALE_TIME,
+  });
 
-  useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      const [workshopsRes, categoriesRes, levelsRes] = await Promise.allSettled([
-        fetchWorkshops({ limit: 100 }),
-        fetchCategories(),
-        fetchWorkshopLevels(),
-      ]);
+  const { data: levelsData } = useQuery({
+    queryKey: ["public-levels"],
+    queryFn: fetchWorkshopLevels,
+    staleTime: PUBLIC_STALE_TIME,
+  });
 
-      const cats = categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
-      const lvls = levelsRes.status === "fulfilled" ? levelsRes.value : [];
+  const { data: workshopsRaw } = useQuery({
+    queryKey: ["public-featured-workshops"],
+    queryFn: () => fetchWorkshops({ limit: 100 }),
+    staleTime: PUBLIC_STALE_TIME,
+  });
 
-      if (workshopsRes.status === "fulfilled") {
-        setWorkshops(enrichWorkshops(workshopsRes.value.data ?? [], cats, lvls));
-      }
-
-      setCategories(cats);
-      setLoading(false);
-    }
-    loadData();
-  }, []);
-
+  const categories = useMemo(() => categoriesData ?? [], [categoriesData]);
+  const levels = useMemo(() => levelsData ?? [], [levelsData]);
+  const workshops = useMemo(
+    () => enrichWorkshops(workshopsRaw?.data ?? [], categories, levels),
+    [workshopsRaw?.data, categories, levels],
+  );
+  const loading = !categoriesData && !levelsData && !workshopsRaw;
   const featuredWorkshops = workshops.slice(0, 4);
 
   return (
