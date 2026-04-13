@@ -1,0 +1,27 @@
+import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { DashboardHeader } from "@/components/layout/DashboardHeader";
+import { TooltipProvider } from "@/components/ui/tooltip";
+
+export default async function DashboardLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: Promise<{ role: string }>;
+}) {
+  const { role } = await params;
+
+  return (
+    <TooltipProvider>
+      <div className="flex min-h-screen">
+        <DashboardSidebar
+          role={role as "SUPER_ADMIN" | "ADMIN" | "INSTRUCTOR" | "STUDENT"}
+        />
+        <div className="flex flex-1 flex-col lg:pl-64">
+          <DashboardHeader />
+          <main className="flex-1 p-6">{children}</main>
+        </div>
+      </div>
+    </TooltipProvider>
+  );
+}
