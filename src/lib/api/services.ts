@@ -267,7 +267,8 @@ export async function fetchWorkshopBySlug(slug: string): Promise<IWorkshop> {
     throw new Error(json?.message ?? `Failed to fetch workshop: ${slug}`);
   }
 
-  return json.data;
+  // Handle double-nested response: { success, data: { data: {...} } }
+  return json.data.data ?? json.data;
 }
 
 /**
@@ -323,7 +324,116 @@ export async function fetchWorkshopLevels(): Promise<ILevel[]> {
     throw new Error(json?.message ?? "Failed to fetch workshop levels");
   }
 
-  return json.data;
+  // Handle double-nested response: { success, data: { data: [...], meta } }
+  return json.data.data ?? json.data;
+}
+
+/**
+ * Fetch a single workshop by ID.
+ * Uses raw `fetch` (handles double-nested response from detail endpoint).
+ */
+export async function fetchWorkshopById(id: string): Promise<IWorkshop> {
+  const res = await fetch(`${BACKEND_API_URL}/workshop/${id}`);
+  const json = await res.json();
+
+  if (!res.ok || !json?.success) {
+    throw new Error(json?.message ?? `Failed to fetch workshop: ${id}`);
+  }
+
+  // Handle double-nested response: { success, data: { data: {...} } }
+  return json.data.data ?? json.data;
+}
+
+// ─── Workshop Enrichment Helpers ────────────────────────────────────
+
+/**
+ * Safely extract the category name from a workshop field that may be
+ * a plain ObjectId string or a populated ICategory object.
+ */
+export function getCategoryName(
+  category: string | ICategory | undefined
+): string {
+  if (!category || typeof category === "string") return "";
+  return category.name ?? "";
+}
+
+/**
+ * Safely extract the level name from a workshop field that may be
+ * a plain ObjectId string or a populated ILevel object.
+ */
+export function getLevelName(
+  level: string | ILevel | undefined
+): string {
+  if (!level || typeof level === "string") return "";
+  return level.name ?? "";
+}
+
+/**
+ * Safely extract the category _id from a workshop field that may be
+ * a plain ObjectId string or a populated ICategory object.
+ */
+export function getCategoryId(
+  category: string | ICategory | undefined
+): string {
+  if (!category) return "";
+  return typeof category === "string" ? category : category._id ?? "";
+}
+
+/**
+ * Safely extract the level _id from a workshop field that may be
+ * a plain ObjectId string or a populated ILevel object.
+ */
+export function getLevelId(
+  level: string | ILevel | undefined
+): string {
+  if (!level) return "";
+  return typeof level === "string" ? level : level._id ?? "";
+}
+
+/**
+ * Safely extract the creator name from a workshop's createdBy field that
+ * may be a plain ObjectId string or a populated user object.
+ */
+export function getCreatorName(
+  createdBy: string | { _id: string; name: string; email: string } | undefined
+): string {
+  if (!createdBy || typeof createdBy === "string") return "";
+  return createdBy.name ?? "";
+}
+
+/**
+ * Resolve category/level ObjectId strings to full objects.
+ * If the value is already a populated object, returns it as-is.
+ */
+export function enrichWorkshop(
+  workshop: IWorkshop,
+  categories: ICategory[],
+  levels: ILevel[]
+): IWorkshop {
+  return {
+    ...workshop,
+    category:
+      typeof workshop.category === "string"
+        ? (categories.find((c) => c._id === workshop.category) as ICategory) ??
+          workshop.category
+        : workshop.category,
+    level:
+      typeof workshop.level === "string"
+        ? (levels.find((l) => l._id === workshop.level) as ILevel) ??
+          workshop.level
+        : workshop.level,
+  };
+}
+
+/**
+ * Enrich an array of workshops with resolved category/level objects.
+ */
+export function enrichWorkshops(
+  workshops: IWorkshop[],
+  categories: ICategory[],
+  levels: ILevel[]
+): IWorkshop[] {
+  return workshops.map((w) => enrichWorkshop(w, categories, levels));
 }
 
 /**

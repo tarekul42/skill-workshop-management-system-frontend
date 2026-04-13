@@ -45,6 +45,8 @@ export default function MyStudentsPage({ params }: PageProps) {
   useEffect(() => {
     if (!role || !user?._id) return;
 
+    const userId = user._id;
+
     async function loadStudents() {
       setLoading(true);
       setError(null);
@@ -67,9 +69,13 @@ export default function MyStudentsPage({ params }: PageProps) {
             : [];
 
         // For instructor: find workshops created by this instructor
+        // createdBy can be a string (ObjectId) or an object { _id, name, email }
         const myWorkshopIds = new Set(
           workshops
-            .filter((w) => w.createdBy?._id === user._id)
+            .filter((w) => {
+              if (typeof w.createdBy === "string") return w.createdBy === userId;
+              return w.createdBy?._id === userId;
+            })
             .map((w) => w._id)
         );
 

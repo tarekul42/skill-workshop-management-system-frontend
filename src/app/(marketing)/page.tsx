@@ -26,7 +26,13 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatCurrency } from "@/lib/formatters";
-import { apiClient } from "@/lib/api-client";
+import {
+  fetchWorkshops,
+  fetchCategories,
+  fetchWorkshopLevels,
+  enrichWorkshops,
+  getLevelName,
+} from "@/lib/api/services";
 import type { IWorkshop, ICategory } from "@/types/workshop.types";
 
 // ─── Inline Testimonials (no backend endpoint) ─────────────────────────────
@@ -157,21 +163,20 @@ export default function HomePage() {
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const [workshopsRes, categoriesRes] = await Promise.allSettled([
-        apiClient<IWorkshop[] | { data: IWorkshop[] }>("/workshop"),
-        apiClient<ICategory[] | { data: ICategory[] }>("/category"),
+      const [workshopsRes, categoriesRes, levelsRes] = await Promise.allSettled([
+        fetchWorkshops({ limit: 100 }),
+        fetchCategories(),
+        fetchWorkshopLevels(),
       ]);
 
+      const cats = categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
+      const lvls = levelsRes.status === "fulfilled" ? levelsRes.value : [];
+
       if (workshopsRes.status === "fulfilled") {
-        const wData = workshopsRes.value;
-        setWorkshops(Array.isArray(wData) ? wData : (wData.data ?? []));
+        setWorkshops(enrichWorkshops(workshopsRes.value.data ?? [], cats, lvls));
       }
 
-      if (categoriesRes.status === "fulfilled") {
-        const cData = categoriesRes.value;
-        setCategories(Array.isArray(cData) ? cData : (cData.data ?? []));
-      }
-
+      setCategories(cats);
       setLoading(false);
     }
     loadData();
@@ -253,7 +258,7 @@ export default function HomePage() {
 
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{workshop.level.name}</Badge>
+                    <Badge variant="secondary">{getLevelName(workshop.level)}</Badge>
                   </div>
                   <CardTitle className="mt-1 font-semibold leading-tight">
                     {workshop.title}

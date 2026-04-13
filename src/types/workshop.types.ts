@@ -28,9 +28,9 @@ export interface IWorkshop {
     maxSeats?: number;
     minAge?: number;
     currentEnrollments: number;
-    category: ICategory;
-    level: ILevel;
-    createdBy: { _id: string; name: string; email: string };
+    category: string | ICategory;
+    level: string | ILevel;
+    createdBy?: string | { _id: string; name: string; email: string };
     createdAt: string;
     updatedAt: string;
 }

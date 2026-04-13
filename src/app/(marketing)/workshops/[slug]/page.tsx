@@ -27,8 +27,9 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BACKEND_API_URL } from "@/lib/constants";
+import { enrichWorkshop, enrichWorkshops, getLevelName, getCategoryName, getCreatorName } from "@/lib/api/services";
 import { formatCurrency, formatDate, getInitials } from "@/lib/formatters";
-import type { IWorkshop } from "@/types/workshop.types";
+import type { IWorkshop, ICategory, ILevel } from "@/types/workshop.types";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -71,15 +72,15 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
       <div className="relative flex aspect-[16/10] items-center justify-center bg-muted">
         <BookOpen className="size-10 text-muted-foreground/50" />
         <Badge
-          variant={getLevelBadgeVariant(workshop.level?.name ?? "")}
+          variant={getLevelBadgeVariant(getLevelName(workshop.level))}
           className="absolute top-2 right-2"
         >
-          {workshop.level?.name}
+          {getLevelName(workshop.level)}
         </Badge>
       </div>
       <CardContent className="flex flex-col gap-2 pt-4">
         <Badge variant="outline" className="w-fit text-xs">
-          {workshop.category?.name}
+          {getCategoryName(workshop.category)}
         </Badge>
         <Link href={`/workshops/${workshop.slug}`} className="group/title">
           <h4 className="line-clamp-1 text-sm font-semibold text-foreground group-hover/title:text-primary transition-colors">
@@ -111,38 +112,69 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
 export default async function WorkshopDetailPage({ params }: PageProps) {
   const { slug } = await params;
 
-  // Fetch the workshop by slug
+  // Fetch the workshop, categories, levels, and similar workshops in parallel
   let workshop: IWorkshop | null = null;
+  let categories: ICategory[] = [];
+  let levels: ILevel[] = [];
+  let allWorkshops: IWorkshop[] = [];
+
   try {
-    const res = await fetch(`${BACKEND_API_URL}/workshop/${slug}`, {
-      next: { revalidate: 60 },
-    });
-    const json = await res.json();
-    workshop = json.success ? json.data : null;
+    const [workshopRes, categoriesRes, levelsRes, similarRes] = await Promise.allSettled([
+      fetch(`${BACKEND_API_URL}/workshop/${slug}`, { next: { revalidate: 60 } }),
+      fetch(`${BACKEND_API_URL}/category`, { next: { revalidate: 60 } }),
+      fetch(`${BACKEND_API_URL}/workshop/levels`, { next: { revalidate: 60 } }),
+      fetch(`${BACKEND_API_URL}/workshop?limit=4`, { next: { revalidate: 60 } }),
+    ]);
+
+    if (workshopRes.status === "fulfilled") {
+      const json = await workshopRes.value.json();
+      if (json?.success) {
+        // Handle double-nested response: { success, data: { data: {...} } }
+        workshop = json.data.data ?? json.data;
+      }
+    }
+
+    if (categoriesRes.status === "fulfilled") {
+      const json = await categoriesRes.value.json();
+      if (json?.success) {
+        categories = json.data ?? [];
+      }
+    }
+
+    if (levelsRes.status === "fulfilled") {
+      const json = await levelsRes.value.json();
+      if (json?.success) {
+        // Handle double-nested response
+        levels = json.data.data ?? json.data ?? [];
+      }
+    }
+
+    if (similarRes.status === "fulfilled") {
+      const json = await similarRes.value.json();
+      if (json?.success && json.data) {
+        allWorkshops = Array.isArray(json.data) ? json.data : [];
+      }
+    }
   } catch {
-    workshop = null;
+    // Non-critical errors
   }
+
+  // Enrich workshop and similar workshops with resolved category/level objects
+  if (workshop) {
+    workshop = enrichWorkshop(workshop, categories, levels);
+  }
+  allWorkshops = enrichWorkshops(allWorkshops, categories, levels);
 
   if (!workshop) {
     notFound();
   }
 
-  // Fetch similar workshops
-  let allWorkshops: IWorkshop[] = [];
-  try {
-    const res = await fetch(`${BACKEND_API_URL}/workshop?limit=4`, {
-      next: { revalidate: 60 },
-    });
-    const json = await res.json();
-    if (json.success && json.data?.workshops) {
-      allWorkshops = json.data.workshops;
-    }
-  } catch {
-    // Non-critical — similar workshops section is optional
-  }
-
   const similarWorkshops = allWorkshops
-    .filter((w) => w._id !== workshop._id && w.category?._id === workshop.category?._id)
+    .filter((w) => {
+      const wCatId = typeof w.category === 'string' ? w.category : w.category?._id;
+      const wsCatId = typeof workshop.category === 'string' ? workshop.category : workshop.category?._id;
+      return w._id !== workshop._id && wCatId === wsCatId;
+    })
     .slice(0, 3);
 
   // If not enough from same category, fill with others
@@ -210,10 +242,10 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
             {/* Level + Category Badges */}
             <div className="mt-3 flex flex-wrap gap-2">
-              <Badge variant={getLevelBadgeVariant(workshop.level?.name ?? "")}>
-                {workshop.level?.name}
+              <Badge variant={getLevelBadgeVariant(getLevelName(workshop.level))}>
+                {getLevelName(workshop.level)}
               </Badge>
-              <Badge variant="outline">{workshop.category?.name}</Badge>
+              <Badge variant="outline">{getCategoryName(workshop.category)}</Badge>
             </div>
 
             {/* Info Pills */}
@@ -391,12 +423,12 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   <div className="flex items-center gap-3">
                     <Avatar size="lg">
                       <AvatarFallback>
-                        {getInitials(workshop.createdBy?.name ?? "IN")}
+                        {getInitials(getCreatorName(workshop.createdBy) || "IN")}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="text-sm font-medium text-foreground">
-                        {workshop.createdBy?.name}
+                        {getCreatorName(workshop.createdBy)}
                       </p>
                       <p className="text-xs text-muted-foreground">Instructor</p>
                     </div>

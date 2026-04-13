@@ -36,7 +36,16 @@ import {
 
 import { PageHeader, StatusBadge, ConfirmDialog, TableSkeleton } from "@/components/shared";
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { fetchWorkshops, deleteWorkshop } from "@/lib/api/services";
+import {
+  fetchWorkshops,
+  deleteWorkshop,
+  fetchCategories,
+  fetchWorkshopLevels,
+  enrichWorkshops,
+  getCategoryName,
+  getLevelName,
+  getCreatorName,
+} from "@/lib/api/services";
 import type { IWorkshop } from "@/types";
 
 // ─── Page Props ──────────────────────────────────────────────────────
@@ -74,10 +83,20 @@ export default function WorkshopsPage({ params }: PageProps) {
   const fetchWorkshopData = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await fetchWorkshops({ page, limit, searchTerm });
-      setWorkshops(res.data);
-      setTotalPages(res.meta.totalPage);
-      setTotal(res.meta.total);
+      const [workshopsRes, categoriesRes, levelsRes] = await Promise.allSettled([
+        fetchWorkshops({ page, limit, searchTerm }),
+        fetchCategories(),
+        fetchWorkshopLevels(),
+      ]);
+
+      const cats = categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
+      const lvls = levelsRes.status === "fulfilled" ? levelsRes.value : [];
+
+      if (workshopsRes.status === "fulfilled") {
+        setWorkshops(enrichWorkshops(workshopsRes.value.data, cats, lvls));
+        setTotalPages(workshopsRes.value.meta.totalPage);
+        setTotal(workshopsRes.value.meta.total);
+      }
     } catch {
       // Error handled silently
     } finally {
@@ -178,12 +197,12 @@ export default function WorkshopsPage({ params }: PageProps) {
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400">
-                        {ws.category?.name || "—"}
+                        {getCategoryName(ws.category) || "—"}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400">
-                        {ws.level?.name || "—"}
+                        {getLevelName(ws.level) || "—"}
                       </Badge>
                     </TableCell>
                     <TableCell>
@@ -284,11 +303,11 @@ export default function WorkshopsPage({ params }: PageProps) {
               <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
                 <div>
                   <p className="text-muted-foreground">Category</p>
-                  <p className="font-medium">{viewWorkshop.category?.name || "—"}</p>
+                  <p className="font-medium">{getCategoryName(viewWorkshop.category) || "—"}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Level</p>
-                  <p className="font-medium">{viewWorkshop.level?.name || "—"}</p>
+                  <p className="font-medium">{getLevelName(viewWorkshop.level) || "—"}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Price</p>
@@ -326,7 +345,7 @@ export default function WorkshopsPage({ params }: PageProps) {
                 )}
                 <div>
                   <p className="text-muted-foreground">Created By</p>
-                  <p className="font-medium">{viewWorkshop.createdBy?.name || "—"}</p>
+                  <p className="font-medium">{getCreatorName(viewWorkshop.createdBy) || "—"}</p>
                 </div>
               </div>
 

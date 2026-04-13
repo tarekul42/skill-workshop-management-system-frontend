@@ -21,8 +21,15 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { PageHeader, BackButton, FormSkeleton } from "@/components/shared";
-import { updateWorkshop, fetchCategories, fetchWorkshopLevels } from "@/lib/api/services";
-import { apiClient } from "@/lib/api-client";
+import {
+  updateWorkshop,
+  fetchCategories,
+  fetchWorkshopLevels,
+  fetchWorkshopById,
+  enrichWorkshop,
+  getLevelId,
+  getCategoryId,
+} from "@/lib/api/services";
 import type { IWorkshop, ICategory, ILevel } from "@/types";
 
 // ─── Page Props ──────────────────────────────────────────────────────
@@ -97,24 +104,28 @@ export default function EditWorkshopPage({ params }: PageProps) {
 
   // ── Fetch workshop and metadata ───────────────────────────────────
 
-  const fetchMetaData = useCallback(async () => {
-    try {
-      const [cats, lvls] = await Promise.all([
-        fetchCategories(),
-        fetchWorkshopLevels(),
-      ]);
-      setCategories(cats);
-      setLevels(lvls);
-    } catch {
-      // Error handled silently
-    }
-  }, []);
-
   const fetchWorkshop = useCallback(async (id: string) => {
     setLoading(true);
     try {
-      const ws = await apiClient<IWorkshop>(`/workshop/${id}`);
+      // Fetch workshop, categories, and levels in parallel
+      const [workshopRes, catsRes, lvlsRes] = await Promise.allSettled([
+        fetchWorkshopById(id),
+        fetchCategories(),
+        fetchWorkshopLevels(),
+      ]);
+
+      if (workshopRes.status !== "fulfilled") {
+        throw workshopRes.status === "rejected" ? workshopRes.reason : new Error("Failed to fetch workshop");
+      }
+
+      const cats = catsRes.status === "fulfilled" ? catsRes.value : [];
+      const lvls = lvlsRes.status === "fulfilled" ? lvlsRes.value : [];
+      setCategories(cats);
+      setLevels(lvls);
+
+      const ws = enrichWorkshop(workshopRes.value, cats, lvls);
       setExistingWorkshop(ws);
+
       setFormData({
         title: ws.title || "",
         description: ws.description || "",
@@ -122,8 +133,8 @@ export default function EditWorkshopPage({ params }: PageProps) {
         price: ws.price != null ? String(ws.price) : "",
         startDate: ws.startDate ? ws.startDate.split("T")[0] : "",
         endDate: ws.endDate ? ws.endDate.split("T")[0] : "",
-        levelId: ws.level?._id || "",
-        categoryId: ws.category?._id || "",
+        levelId: getLevelId(ws.level),
+        categoryId: getCategoryId(ws.category),
         whatYouLearn: ws.whatYouLearn?.length ? ws.whatYouLearn : [""],
         prerequisites: ws.prerequisites?.length ? ws.prerequisites : [""],
         benefits: ws.benefits?.length ? ws.benefits : [""],
@@ -139,10 +150,6 @@ export default function EditWorkshopPage({ params }: PageProps) {
       setLoading(false);
     }
   }, []);
-
-  useEffect(() => {
-    fetchMetaData();
-  }, [fetchMetaData]);
 
   useEffect(() => {
     if (workshopId) fetchWorkshop(workshopId);

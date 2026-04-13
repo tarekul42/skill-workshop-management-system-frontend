@@ -22,7 +22,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { apiClient } from "@/lib/api-client";
+import {
+  fetchWorkshops,
+  fetchCategories,
+  fetchWorkshopLevels,
+  enrichWorkshops,
+  getCategoryId,
+  getLevelName,
+  getCategoryName,
+} from "@/lib/api/services";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import type { IWorkshop, ICategory } from "@/types/workshop.types";
 
@@ -81,21 +89,20 @@ export default function WorkshopsPage() {
   useEffect(() => {
     async function loadData() {
       setLoading(true);
-      const [workshopsRes, categoriesRes] = await Promise.allSettled([
-        apiClient<IWorkshop[] | { data: IWorkshop[] }>("/workshop"),
-        apiClient<ICategory[] | { data: ICategory[] }>("/category"),
+      const [workshopsRes, categoriesRes, levelsRes] = await Promise.allSettled([
+        fetchWorkshops({ limit: 100 }),
+        fetchCategories(),
+        fetchWorkshopLevels(),
       ]);
 
+      const cats = categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
+      const lvls = levelsRes.status === "fulfilled" ? levelsRes.value : [];
+
       if (workshopsRes.status === "fulfilled") {
-        const wData = workshopsRes.value;
-        setWorkshops(Array.isArray(wData) ? wData : (wData.data ?? []));
+        setWorkshops(enrichWorkshops(workshopsRes.value.data ?? [], cats, lvls));
       }
 
-      if (categoriesRes.status === "fulfilled") {
-        const cData = categoriesRes.value;
-        setCategories(Array.isArray(cData) ? cData : (cData.data ?? []));
-      }
-
+      setCategories(cats);
       setLoading(false);
     }
     loadData();
@@ -114,12 +121,12 @@ export default function WorkshopsPage() {
 
     // Filter by category
     if (selectedCategory !== "all") {
-      results = results.filter((w) => w.category._id === selectedCategory);
+      results = results.filter((w) => getCategoryId(w.category) === selectedCategory);
     }
 
     // Filter by level
     if (selectedLevel !== "all") {
-      results = results.filter((w) => w.level.name === selectedLevel);
+      results = results.filter((w) => getLevelName(w.level) === selectedLevel);
     }
 
     // Sort
@@ -263,17 +270,17 @@ export default function WorkshopsPage() {
                     <div className="relative flex aspect-[16/10] items-center justify-center bg-muted">
                       <BookOpen className="size-12 text-muted-foreground/50" />
                       <Badge
-                        variant={getLevelBadgeVariant(workshop.level.name)}
+                        variant={getLevelBadgeVariant(getLevelName(workshop.level))}
                         className="absolute top-3 right-3"
                       >
-                        {workshop.level.name}
+                        {getLevelName(workshop.level)}
                       </Badge>
                     </div>
 
                     <CardContent className="flex flex-1 flex-col gap-2 pt-4">
                       {/* Category Badge */}
                       <Badge variant="outline" className="w-fit text-xs">
-                        {workshop.category.name}
+                        {getCategoryName(workshop.category)}
                       </Badge>
 
                       {/* Title */}
