@@ -173,3 +173,30 @@ Stage Summary:
 - Frontend: login.tsx and register.tsx now use relative redirect path
 - If auth still fails, the error message will now be SPECIFIC (e.g., "User is not verified.", "User is BLOCKED.", actual DB error message) instead of generic
 - Tokens passed via URL params on success solve cross-domain cookie issue
+
+---
+Task ID: 12
+Agent: Main Agent
+Task: Fix React Query caching for public pages + OAuth state verification bug
+
+Work Log:
+- Pulled latest frontend (master) and backend (main) — user had already merged previous fixes
+- Converted 3 public pages from useEffect+fetch to React Query useQuery with 5min staleTime
+- Shared query keys (public-categories, public-levels) enable deduplication across pages
+- Investigated persistent "Unable to verify authorization request state" error
+- Deep-dived into passport-oauth2@1.8.0 source code (strategy.js, state/store.js, state/session.js)
+- Found the TRUE root cause: passport-oauth2 has two code paths:
+  - String state → bypasses state store entirely, sends raw string as OAuth param (NO nonce stored)
+  - Object state → uses state store properly (generates nonce, stores in session)
+  - Our code passed state as string "google/callback" → nonce never stored → verification fails
+- Also found: strategy used 'state: true' (NonceStore) instead of 'store: true' (StateStore)
+  - NonceStore only stores/verifies nonce, doesn't preserve original state object
+  - StateStore stores {handle: nonce, state: originalState} and returns original state on verify
+
+Stage Summary:
+- Backend fix (branch fix/oauth-state-mismatch):
+  - passport.ts: Changed 'state: true' to 'store: true' to use StateStore
+  - auth.route.ts: Changed state from string to object { redirect }
+  - auth.controller.ts: Read redirect from req.authInfo.state.redirect (restored by StateStore)
+- Frontend: 3 pages now use React Query with 5min cache (no redundant API calls)
+- Backend PR: https://github.com/tarekul42/skill-workshop-management-system-backend/pull/new/fix/oauth-state-mismatch
