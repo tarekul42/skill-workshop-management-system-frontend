@@ -94,6 +94,7 @@ export function DataTable<TData, TValue>({
 
   const tableData = useMemo(() => (isLoading ? [] : data), [isLoading, data]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: tableData,
     columns,

@@ -27,7 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { saveUser, redirectToDashboard, setAuthCookie } from "@/lib/auth-helpers";
 import { apiClient, storeAccessToken } from "@/lib/api-client";
-import { BACKEND_API_URL, FRONTEND_URL } from "@/lib/constants";
+import { BACKEND_API_URL } from "@/lib/constants";
 
 export default function LoginPage() {
   const router = useRouter();
