@@ -38,7 +38,7 @@ interface EnrollmentItem {
   status?: string;
   payment?: { amount?: number; status?: string };
   amount?: number;
-  workshop?: string | { _id: string; title: string; images?: string[] };
+  workshop?: string | { _id: string; title: string; slug?: string; images?: string[] };
   createdAt?: string;
   studentCount?: number;
 }
@@ -476,9 +476,7 @@ export default function DashboardPage({ params }: PageProps) {
                     ? enrollment.workshop.title
                     : "Workshop";
                 const workshopSlug =
-                  typeof enrollment.workshop === "object" && (enrollment.workshop as { slug?: string }).slug
-                    ? (enrollment.workshop as { slug: string }).slug
-                    : null;
+                  typeof enrollment.workshop === "object" ? enrollment.workshop?.slug : null;
 
                 return (
                   <ActivityItem

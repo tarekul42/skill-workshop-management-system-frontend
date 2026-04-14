@@ -93,7 +93,7 @@ function extractPayments(enrollments: IEnrollment[]): PaymentRow[] {
       amount: e.payment!.amount,
       status: e.payment!.status,
       createdAt: e.createdAt,
-      hasInvoice: !!e.payment!.invoiceUrl,
+      hasInvoice: e.payment!.status === "PAID",
     }));
 }
 

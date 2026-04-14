@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 
-import { fetchCategories, fetchWorkshopLevels } from "@/lib/api/services";
+import { fetchCategories, fetchWorkshopLevels, getCategoryId, getLevelId } from "@/lib/api/services";
 import type { IWorkshop, ICategory, ILevel } from "@/types";
 
 // ─── Schema ───────────────────────────────────────────────────────
@@ -55,6 +55,8 @@ interface WorkshopFormProps {
 }
 
 // ─── List Field Editor ────────────────────────────────────────────
+
+
 
 function ListFieldEditor({
   label,
@@ -159,8 +161,8 @@ export function WorkshopForm({
         endDate: initialData.endDate
           ? new Date(initialData.endDate).toISOString().split("T")[0]
           : "",
-        level: initialData.level?._id ?? "",
-        category: initialData.category?._id ?? "",
+        level: getLevelId(initialData.level),
+        category: getCategoryId(initialData.category),
         whatYouLearn: initialData.whatYouLearn ?? [],
         prerequisites: initialData.prerequisites ?? [],
         benefits: initialData.benefits ?? [],

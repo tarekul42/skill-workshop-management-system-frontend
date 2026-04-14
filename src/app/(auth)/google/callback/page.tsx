@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GraduationCap, Loader2 } from "lucide-react";
 import { saveUser, setAuthCookie, redirectToDashboard } from "@/lib/auth-helpers";
@@ -23,7 +23,7 @@ import { BACKEND_API_URL } from "@/lib/constants";
  * - The code is a random hex string that is useless without the /auth/exchange-code endpoint
  * - The code is consumed (deleted) after first use, preventing replay attacks
  */
-export default function GoogleCallbackPage() {
+function GoogleCallbackContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
@@ -119,5 +119,21 @@ export default function GoogleCallbackPage() {
         Please wait while we set up your account.
       </p>
     </div>
+  );
+}
+
+export default function GoogleCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4">
+          <GraduationCap className="size-12 text-primary" />
+          <h2 className="text-xl font-semibold">Loading...</h2>
+          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
+      <GoogleCallbackContent />
+    </Suspense>
   );
 }
