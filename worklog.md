@@ -301,3 +301,59 @@ Stage Summary:
 - Backend PR: https://github.com/tarekul42/skill-workshop-management-system-backend/pull/72
 - Frontend pushed to main branch
 - 11 source files modified, 1 new utility file created
+
+---
+Task ID: 15
+Agent: Main Agent (with subagents)
+Task: Round-2 backend audit fixes + frontend enhancements
+
+Work Log:
+- Created feat/frontend-enhancements branch from master for frontend changes
+- Continued on fix/security-hardening-oauth branch for backend changes
+
+BACKEND FIXES (pushed to fix/security-hardening-oauth):
+1. Workshop date validation (workshop.validation.ts)
+   - Added dateSchema with zod .refine() for valid date format
+   - startDate must be before endDate (cross-field validation)
+   - startDate must be in the future
+2. Enrollment workshop status check (enrollment.repository.ts)
+   - Added workshop.isDeleted check — blocks enrollment in deleted workshops
+3. IPN amount verification (payment.service.ts)
+   - After validatePayment(), re-fetches payment and compares SSLCommerz amount
+   - Logs warning and throws on mismatch (>0.5 tolerance)
+4. IPN signature verification (sslCommerz.service.ts)
+   - New verifyIPNSignature() — checks required fields, warns on missing verify_sign
+5. Redis env vars required in production (env.ts)
+   - REDIS_USERNAME and REDIS_PASSWORD required when NODE_ENV=production
+6. Payment status endpoint (payment.service.ts, .controller.ts, .route.ts)
+   - New GET /payment/status with authLimiter + checkAuth for all roles
+   - Returns { status, transactionId, amount, enrollmentId } for frontend polling
+7. IPN amount field validation
+   - Warns when status=VALID but no amount/currency_amount in body
+8. Cancel enrollment allows COMPLETE status
+   - Changed atomic findOneAndUpdate to allow both PENDING and COMPLETE
+
+FRONTEND CHANGES (pushed to feat/frontend-enhancements):
+1. EnrollButton component (src/components/workshop/EnrollButton.tsx)
+   - Smart enrollment: logged-in users enroll directly, guests redirect to login
+   - Checks existing enrollment status on mount (shows "Already Enrolled")
+   - Handles payment gateway redirect automatically
+   - Error/retry states with user-friendly messages
+   - Listens for payment-complete events for cross-tab sync
+2. Workshop detail page (src/app/(marketing)/workshops/[slug]/page.tsx)
+   - Replaced static login redirect with EnrollButton
+   - Passes workshopId, slug, price, seatsAvailable to EnrollButton
+3. Dashboard landing page (src/app/(dashboard)/[role]/dashboard/page.tsx)
+   - Role-aware stats with colored icons (blue/emerald/amber/violet)
+   - Admin: shows recent workshops list with seat fill info
+   - Instructor: shows recent workshops + student enrollments with status badges
+   - Student: shows recent enrollments with status + browse workshops CTA
+   - Activity items link to workshop detail pages
+   - Empty states with contextual CTAs
+
+Stage Summary:
+- Backend: ESLint 0 errors, TypeScript 0 errors
+- Frontend: 0 new lint errors/warnings from these changes
+- Backend PR branch: fix/security-hardening-oauth (pushed)
+- Frontend PR branch: feat/frontend-enhancements (pushed)
+- 8 backend files modified, 3 frontend files modified, 1 new component created
