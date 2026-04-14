@@ -25,7 +25,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { saveUser, redirectToDashboard, setAuthCookie } from "@/lib/auth-helpers";
+import {
+  saveUser,
+  redirectToDashboard,
+  setAuthCookie,
+} from "@/lib/auth-helpers";
 import { apiClient, storeAccessToken } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
 
@@ -56,7 +60,14 @@ function LoginContent() {
       const data = await apiClient<{
         accessToken: string;
         refreshToken: string;
-        user: { _id: string; name: string; email: string; role: string; picture?: string; isVerified: boolean };
+        user: {
+          _id: string;
+          name: string;
+          email: string;
+          role: string;
+          picture?: string;
+          isVerified: boolean;
+        };
       }>("/auth/login", {
         method: "POST",
         body: { email, password },
@@ -148,7 +159,10 @@ function LoginContent() {
 
           {/* Error message */}
           {error && (
-            <div className="flex items-start gap-2 rounded-lg bg-destructive/10 px-3 py-2" role="alert">
+            <div
+              className="flex items-start gap-2 rounded-lg bg-destructive/10 px-3 py-2"
+              role="alert"
+            >
               <p className="flex-1 text-sm text-destructive">{error}</p>
               <button
                 type="button"
@@ -183,11 +197,7 @@ function LoginContent() {
         </div>
 
         {/* Google */}
-        <Button
-          variant="outline"
-          className="w-full"
-          asChild
-        >
+        <Button variant="outline" className="w-full" asChild>
           <a href={`${BACKEND_API_URL}/auth/google?redirect=google/callback`}>
             <svg className="size-4" viewBox="0 0 24 24" aria-hidden="true">
               <path

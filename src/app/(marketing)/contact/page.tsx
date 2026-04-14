@@ -52,7 +52,7 @@ export default function ContactPage() {
   });
 
   function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }

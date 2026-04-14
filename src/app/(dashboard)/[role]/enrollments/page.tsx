@@ -168,7 +168,9 @@ function StudentEnrollmentDetailDialog({
               <div className="rounded-lg border p-4 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Amount</span>
-                  <span className="font-semibold">{formatCurrency(p.amount)}</span>
+                  <span className="font-semibold">
+                    {formatCurrency(p.amount)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Status</span>
@@ -176,7 +178,9 @@ function StudentEnrollmentDetailDialog({
                 </div>
                 {p.transactionId && (
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Transaction ID</span>
+                    <span className="text-sm text-muted-foreground">
+                      Transaction ID
+                    </span>
                     <span className="text-xs font-mono">{p.transactionId}</span>
                   </div>
                 )}
@@ -212,7 +216,9 @@ export default function EnrollmentsPage({ params }: PageProps) {
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
-  const [viewEnrollment, setViewEnrollment] = useState<IEnrollment | null>(null);
+  const [viewEnrollment, setViewEnrollment] = useState<IEnrollment | null>(
+    null,
+  );
   const [statusTarget, setStatusTarget] = useState<IEnrollment | null>(null);
   const [newStatus, setNewStatus] = useState<EnrollmentStatus>("PENDING");
   const [deleteTarget, setDeleteTarget] = useState<IEnrollment | null>(null);
@@ -221,7 +227,8 @@ export default function EnrollmentsPage({ params }: PageProps) {
 
   // ── Student state ────────────────────────────────────────────────
   const queryClient = useQueryClient();
-  const [selectedEnrollment, setSelectedEnrollment] = useState<IEnrollment | null>(null);
+  const [selectedEnrollment, setSelectedEnrollment] =
+    useState<IEnrollment | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
@@ -292,7 +299,9 @@ export default function EnrollmentsPage({ params }: PageProps) {
       fetchEnrollments();
       toast.success("Enrollment status updated successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update status");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to update status",
+      );
     } finally {
       setUpdating(false);
     }
@@ -307,7 +316,9 @@ export default function EnrollmentsPage({ params }: PageProps) {
       fetchEnrollments();
       toast.success("Enrollment deleted successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to delete enrollment");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete enrollment",
+      );
     } finally {
       setDeleting(false);
     }
@@ -384,7 +395,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                   <TableHead>Seats</TableHead>
                   <TableHead>Enrolled Date</TableHead>
                   <TableHead>Payment</TableHead>
-                  <TableHead className="w-[90px]">Actions</TableHead>
+                  <TableHead className="w-22.5">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -400,7 +411,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                           {enrollment.workshop.title}
                         </Link>
                         {enrollment.workshop.location && (
-                          <p className="text-xs text-muted-foreground truncate max-w-[200px]">
+                          <p className="text-xs text-muted-foreground truncate max-w-50">
                             {enrollment.workshop.location}
                           </p>
                         )}
@@ -411,7 +422,9 @@ export default function EnrollmentsPage({ params }: PageProps) {
                       <TableCell>
                         <div className="flex items-center gap-1.5">
                           <Users className="size-3.5 text-muted-foreground" />
-                          <span className="text-sm">{enrollment.studentCount}</span>
+                          <span className="text-sm">
+                            {enrollment.studentCount}
+                          </span>
                         </div>
                       </TableCell>
                       <TableCell>
@@ -490,10 +503,15 @@ export default function EnrollmentsPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Enrollment Management" description="View and manage workshop enrollments" />
+      <PageHeader
+        title="Enrollment Management"
+        description="View and manage workshop enrollments"
+      />
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{total} enrollments total</p>
+        <p className="text-sm text-muted-foreground">
+          {total} enrollments total
+        </p>
       </div>
 
       <div className="rounded-lg border">
@@ -506,7 +524,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
               <TableHead>Students</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Payment</TableHead>
-              <TableHead className="w-[70px]">Actions</TableHead>
+              <TableHead className="w-17.5">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -519,18 +537,24 @@ export default function EnrollmentsPage({ params }: PageProps) {
             ) : enrollments.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="h-48 text-center">
-                  <p className="text-sm text-muted-foreground">No enrollments found.</p>
+                  <p className="text-sm text-muted-foreground">
+                    No enrollments found.
+                  </p>
                 </TableCell>
               </TableRow>
             ) : (
               enrollments.map((enrollment) => (
                 <TableRow key={enrollment._id}>
                   <TableCell>
-                    <p className="text-sm font-medium">{enrollment.user?.name || "—"}</p>
-                    <p className="text-xs text-muted-foreground">{enrollment.user?.email || ""}</p>
+                    <p className="text-sm font-medium">
+                      {enrollment.user?.name || "—"}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {enrollment.user?.email || ""}
+                    </p>
                   </TableCell>
                   <TableCell>
-                    <p className="truncate text-sm max-w-[200px]">
+                    <p className="truncate text-sm max-w-50">
                       {enrollment.workshop?.title || "—"}
                     </p>
                   </TableCell>
@@ -556,14 +580,18 @@ export default function EnrollmentsPage({ params }: PageProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => setViewEnrollment(enrollment)}>
+                        <DropdownMenuItem
+                          onClick={() => setViewEnrollment(enrollment)}
+                        >
                           <Eye className="size-4" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => {
-                          setStatusTarget(enrollment);
-                          setNewStatus(enrollment.status);
-                        }}>
+                        <DropdownMenuItem
+                          onClick={() => {
+                            setStatusTarget(enrollment);
+                            setNewStatus(enrollment.status);
+                          }}
+                        >
                           <Pencil className="size-4" />
                           Update Status
                         </DropdownMenuItem>
@@ -613,25 +641,38 @@ export default function EnrollmentsPage({ params }: PageProps) {
       )}
 
       {/* ── View Enrollment Dialog ─────────────────────────────────── */}
-      <Dialog open={!!viewEnrollment} onOpenChange={() => setViewEnrollment(null)}>
+      <Dialog
+        open={!!viewEnrollment}
+        onOpenChange={() => setViewEnrollment(null)}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Enrollment Details</DialogTitle>
-            <DialogDescription>Viewing enrollment information</DialogDescription>
+            <DialogDescription>
+              Viewing enrollment information
+            </DialogDescription>
           </DialogHeader>
           {viewEnrollment && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Student</p>
-                  <p className="font-medium">{viewEnrollment.user?.name || "—"}</p>
-                  <p className="text-xs text-muted-foreground">{viewEnrollment.user?.email}</p>
+                  <p className="font-medium">
+                    {viewEnrollment.user?.name || "—"}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {viewEnrollment.user?.email}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Workshop</p>
-                  <p className="font-medium">{viewEnrollment.workshop?.title || "—"}</p>
+                  <p className="font-medium">
+                    {viewEnrollment.workshop?.title || "—"}
+                  </p>
                   {viewEnrollment.workshop?.location && (
-                    <p className="text-xs text-muted-foreground">{viewEnrollment.workshop.location}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {viewEnrollment.workshop.location}
+                    </p>
                   )}
                 </div>
                 <div>
@@ -656,7 +697,9 @@ export default function EnrollmentsPage({ params }: PageProps) {
                 )}
                 <div>
                   <p className="text-muted-foreground">Enrolled On</p>
-                  <p className="font-medium">{formatDate(viewEnrollment.createdAt)}</p>
+                  <p className="font-medium">
+                    {formatDate(viewEnrollment.createdAt)}
+                  </p>
                 </div>
               </div>
             </div>
@@ -701,7 +744,11 @@ export default function EnrollmentsPage({ params }: PageProps) {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setStatusTarget(null)} disabled={updating}>
+            <Button
+              variant="outline"
+              onClick={() => setStatusTarget(null)}
+              disabled={updating}
+            >
               Cancel
             </Button>
             <Button onClick={handleStatusUpdate} disabled={updating}>

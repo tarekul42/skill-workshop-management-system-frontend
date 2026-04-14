@@ -71,7 +71,9 @@ export default function EditWorkshopPage({ params }: PageProps) {
   const [submitting, setSubmitting] = useState(false);
 
   // Data
-  const [existingWorkshop, setExistingWorkshop] = useState<IWorkshop | null>(null);
+  const [existingWorkshop, setExistingWorkshop] = useState<IWorkshop | null>(
+    null,
+  );
   const [categories, setCategories] = useState<ICategory[]>([]);
   const [levels, setLevels] = useState<ILevel[]>([]);
 
@@ -115,7 +117,9 @@ export default function EditWorkshopPage({ params }: PageProps) {
       ]);
 
       if (workshopRes.status !== "fulfilled") {
-        throw workshopRes.status === "rejected" ? workshopRes.reason : new Error("Failed to fetch workshop");
+        throw workshopRes.status === "rejected"
+          ? workshopRes.reason
+          : new Error("Failed to fetch workshop");
       }
 
       const cats = catsRes.status === "fulfilled" ? catsRes.value : [];
@@ -145,7 +149,9 @@ export default function EditWorkshopPage({ params }: PageProps) {
         deleteImages: [],
       });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to load workshop");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to load workshop",
+      );
     } finally {
       setLoading(false);
     }
@@ -164,7 +170,7 @@ export default function EditWorkshopPage({ params }: PageProps) {
   const updateListItem = (
     field: "whatYouLearn" | "prerequisites" | "benefits" | "syllabus",
     index: number,
-    value: string
+    value: string,
   ) => {
     setFormData((prev) => {
       const list = [...prev[field]];
@@ -174,7 +180,7 @@ export default function EditWorkshopPage({ params }: PageProps) {
   };
 
   const addListItem = (
-    field: "whatYouLearn" | "prerequisites" | "benefits" | "syllabus"
+    field: "whatYouLearn" | "prerequisites" | "benefits" | "syllabus",
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -184,7 +190,7 @@ export default function EditWorkshopPage({ params }: PageProps) {
 
   const removeListItem = (
     field: "whatYouLearn" | "prerequisites" | "benefits" | "syllabus",
-    index: number
+    index: number,
   ) => {
     setFormData((prev) => {
       if (prev[field].length <= 1) return prev;
@@ -232,8 +238,10 @@ export default function EditWorkshopPage({ params }: PageProps) {
     try {
       const fd = new FormData();
       fd.append("title", formData.title.trim());
-      if (formData.description.trim()) fd.append("description", formData.description.trim());
-      if (formData.location.trim()) fd.append("location", formData.location.trim());
+      if (formData.description.trim())
+        fd.append("description", formData.description.trim());
+      if (formData.location.trim())
+        fd.append("location", formData.location.trim());
       if (formData.price) fd.append("price", formData.price);
       if (formData.startDate) fd.append("startDate", formData.startDate);
       if (formData.endDate) fd.append("endDate", formData.endDate);
@@ -263,7 +271,9 @@ export default function EditWorkshopPage({ params }: PageProps) {
       toast.success("Workshop updated successfully!");
       router.push(`/${role}/workshops`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update workshop");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to update workshop",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -283,9 +293,10 @@ export default function EditWorkshopPage({ params }: PageProps) {
   }
 
   // Remaining images (not marked for deletion)
-  const remainingImages = existingWorkshop?.images.filter(
-    (img) => !formData.deleteImages.includes(img)
-  ) || [];
+  const remainingImages =
+    existingWorkshop?.images.filter(
+      (img) => !formData.deleteImages.includes(img),
+    ) || [];
 
   return (
     <div className="space-y-6">
@@ -483,12 +494,16 @@ export default function EditWorkshopPage({ params }: PageProps) {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No existing images.</p>
+              <p className="text-sm text-muted-foreground">
+                No existing images.
+              </p>
             )}
 
             {/* New file upload */}
             <div className="flex flex-wrap items-center gap-2">
-              <Label htmlFor="new-images" className="sr-only">Upload new images</Label>
+              <Label htmlFor="new-images" className="sr-only">
+                Upload new images
+              </Label>
               <Input
                 id="new-images"
                 type="file"
@@ -508,7 +523,7 @@ export default function EditWorkshopPage({ params }: PageProps) {
                     key={idx}
                     className="group relative flex items-center gap-2 rounded-md border px-3 py-2 text-sm"
                   >
-                    <span className="truncate max-w-[150px]">{file.name}</span>
+                    <span className="truncate max-w-37.5">{file.name}</span>
                     <Button
                       type="button"
                       variant="ghost"

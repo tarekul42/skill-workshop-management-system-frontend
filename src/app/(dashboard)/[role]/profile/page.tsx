@@ -68,7 +68,11 @@ const passwordSchema = z
 
 // ─── Password Strength Bar ─────────────────────────────────────────
 
-function checkPasswordStrength(password: string): { score: number; label: string; color: string } {
+function checkPasswordStrength(password: string): {
+  score: number;
+  label: string;
+  color: string;
+} {
   if (!password) return { score: 0, label: "", color: "" };
 
   let score = 0;
@@ -101,8 +105,7 @@ function PasswordStrengthBar({ password }: { password: string }) {
         ))}
       </div>
       <p className="text-xs text-muted-foreground">
-        Password strength:{" "}
-        <span className="font-medium">{strength.label}</span>
+        Password strength: <span className="font-medium">{strength.label}</span>
       </p>
     </div>
   );
@@ -127,7 +130,9 @@ export default function ProfilePage({ params }: PageProps) {
     age: "" as string,
     address: "",
   });
-  const [profileErrors, setProfileErrors] = useState<Record<string, string>>({});
+  const [profileErrors, setProfileErrors] = useState<Record<string, string>>(
+    {},
+  );
 
   // Password change state
   const [passwordData, setPasswordData] = useState({
@@ -135,7 +140,9 @@ export default function ProfilePage({ params }: PageProps) {
     newPassword: "",
     confirmPassword: "",
   });
-  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>(
+    {},
+  );
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -161,11 +168,7 @@ export default function ProfilePage({ params }: PageProps) {
           address: me.address ?? "",
         });
       } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to load profile"
-        );
+        setError(err instanceof Error ? err.message : "Failed to load profile");
       } finally {
         setLoading(false);
       }
@@ -220,7 +223,7 @@ export default function ProfilePage({ params }: PageProps) {
       setIsEditing(false);
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to update profile"
+        err instanceof Error ? err.message : "Failed to update profile",
       );
     } finally {
       setIsUpdating(false);
@@ -249,7 +252,7 @@ export default function ProfilePage({ params }: PageProps) {
     try {
       await changePassword(
         passwordData.currentPassword,
-        passwordData.newPassword
+        passwordData.newPassword,
       );
       toast.success("Password changed successfully");
       setPasswordData({
@@ -259,7 +262,7 @@ export default function ProfilePage({ params }: PageProps) {
       });
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to change password"
+        err instanceof Error ? err.message : "Failed to change password",
       );
     } finally {
       setIsChangingPassword(false);
@@ -270,7 +273,10 @@ export default function ProfilePage({ params }: PageProps) {
   if (loading) {
     return (
       <div className="space-y-6">
-        <PageHeader title="My Profile" description="Manage your account settings" />
+        <PageHeader
+          title="My Profile"
+          description="Manage your account settings"
+        />
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-1">
             <FormSkeleton fields={5} />
@@ -310,7 +316,9 @@ export default function ProfilePage({ params }: PageProps) {
         <Card className="lg:col-span-1">
           <CardContent className="flex flex-col items-center pt-6 pb-8">
             <Avatar className="size-24">
-              {user.picture && <AvatarImage src={user.picture} alt={user.name} />}
+              {user.picture && (
+                <AvatarImage src={user.picture} alt={user.name} />
+              )}
               <AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
                 {initials}
               </AvatarFallback>
@@ -321,10 +329,7 @@ export default function ProfilePage({ params }: PageProps) {
 
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
               <Badge variant="secondary">{user.role}</Badge>
-              <StatusBadge
-                status={user.isActive}
-                className="text-xs"
-              />
+              <StatusBadge status={user.isActive} className="text-xs" />
               {user.isVerified && (
                 <Badge
                   variant="outline"
@@ -396,10 +401,7 @@ export default function ProfilePage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               {isEditing ? (
-                <form
-                  onSubmit={handleUpdateProfile}
-                  className="space-y-4"
-                >
+                <form onSubmit={handleUpdateProfile} className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="space-y-2">
                       <Label htmlFor="name">
@@ -516,33 +518,25 @@ export default function ProfilePage({ params }: PageProps) {
                       <p className="text-xs font-medium text-muted-foreground">
                         Name
                       </p>
-                      <p className="mt-0.5 text-sm">
-                        {user.name ?? "—"}
-                      </p>
+                      <p className="mt-0.5 text-sm">{user.name ?? "—"}</p>
                     </div>
                     <div>
                       <p className="text-xs font-medium text-muted-foreground">
                         Phone
                       </p>
-                      <p className="mt-0.5 text-sm">
-                        {user.phone ?? "—"}
-                      </p>
+                      <p className="mt-0.5 text-sm">{user.phone ?? "—"}</p>
                     </div>
                     <div>
                       <p className="text-xs font-medium text-muted-foreground">
                         Age
                       </p>
-                      <p className="mt-0.5 text-sm">
-                        {user.age ?? "—"}
-                      </p>
+                      <p className="mt-0.5 text-sm">{user.age ?? "—"}</p>
                     </div>
                     <div>
                       <p className="text-xs font-medium text-muted-foreground">
                         Address
                       </p>
-                      <p className="mt-0.5 text-sm">
-                        {user.address ?? "—"}
-                      </p>
+                      <p className="mt-0.5 text-sm">{user.address ?? "—"}</p>
                     </div>
                   </div>
                 </div>
@@ -559,14 +553,10 @@ export default function ProfilePage({ params }: PageProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form
-                onSubmit={handleChangePassword}
-                className="space-y-4"
-              >
+              <form onSubmit={handleChangePassword} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="currentPassword">
-                    Current Password{" "}
-                    <span className="text-destructive">*</span>
+                    Current Password <span className="text-destructive">*</span>
                   </Label>
                   <div className="relative">
                     <Input
@@ -587,10 +577,18 @@ export default function ProfilePage({ params }: PageProps) {
                       variant="ghost"
                       size="icon-xs"
                       className="absolute top-1/2 right-2 -translate-y-1/2"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      aria-label={showCurrentPassword ? "Hide password" : "Show password"}
+                      onClick={() =>
+                        setShowCurrentPassword(!showCurrentPassword)
+                      }
+                      aria-label={
+                        showCurrentPassword ? "Hide password" : "Show password"
+                      }
                     >
-                      {showCurrentPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                      {showCurrentPassword ? (
+                        <EyeOff className="size-4" />
+                      ) : (
+                        <Eye className="size-4" />
+                      )}
                     </Button>
                   </div>
                   {passwordErrors.currentPassword && (
@@ -603,8 +601,7 @@ export default function ProfilePage({ params }: PageProps) {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="newPassword">
-                      New Password{" "}
-                      <span className="text-destructive">*</span>
+                      New Password <span className="text-destructive">*</span>
                     </Label>
                     <div className="relative">
                       <Input
@@ -626,9 +623,15 @@ export default function ProfilePage({ params }: PageProps) {
                         size="icon-xs"
                         className="absolute top-1/2 right-2 -translate-y-1/2"
                         onClick={() => setShowNewPassword(!showNewPassword)}
-                        aria-label={showNewPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showNewPassword ? "Hide password" : "Show password"
+                        }
                       >
-                        {showNewPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                        {showNewPassword ? (
+                          <EyeOff className="size-4" />
+                        ) : (
+                          <Eye className="size-4" />
+                        )}
                       </Button>
                     </div>
                     <PasswordStrengthBar password={passwordData.newPassword} />
@@ -662,24 +665,38 @@ export default function ProfilePage({ params }: PageProps) {
                         variant="ghost"
                         size="icon-xs"
                         className="absolute top-1/2 right-2 -translate-y-1/2"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        aria-label={
+                          showConfirmPassword
+                            ? "Hide password"
+                            : "Show password"
+                        }
                       >
-                        {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                        {showConfirmPassword ? (
+                          <EyeOff className="size-4" />
+                        ) : (
+                          <Eye className="size-4" />
+                        )}
                       </Button>
                     </div>
-                    {passwordData.confirmPassword && passwordData.newPassword === passwordData.confirmPassword && (
-                      <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
-                        <Check className="size-3" />
-                        <span>Passwords match</span>
-                      </div>
-                    )}
-                    {passwordData.confirmPassword && passwordData.newPassword !== passwordData.confirmPassword && (
-                      <div className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
-                        <X className="size-3" />
-                        <span>Passwords do not match</span>
-                      </div>
-                    )}
+                    {passwordData.confirmPassword &&
+                      passwordData.newPassword ===
+                        passwordData.confirmPassword && (
+                        <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                          <Check className="size-3" />
+                          <span>Passwords match</span>
+                        </div>
+                      )}
+                    {passwordData.confirmPassword &&
+                      passwordData.newPassword !==
+                        passwordData.confirmPassword && (
+                        <div className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                          <X className="size-3" />
+                          <span>Passwords do not match</span>
+                        </div>
+                      )}
                     {passwordErrors.confirmPassword && (
                       <p className="text-xs text-destructive">
                         {passwordErrors.confirmPassword}
@@ -694,9 +711,7 @@ export default function ProfilePage({ params }: PageProps) {
                     disabled={isChangingPassword}
                     variant="outline"
                   >
-                    {isChangingPassword && (
-                      <Loader2 className="animate-spin" />
-                    )}
+                    {isChangingPassword && <Loader2 className="animate-spin" />}
                     Change Password
                   </Button>
                 </div>

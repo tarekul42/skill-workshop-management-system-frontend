@@ -35,7 +35,6 @@ import {
   getLevelName,
 } from "@/lib/api/services";
 
-
 const PUBLIC_STALE_TIME = 5 * 60 * 1000; // 5 minutes
 
 // ─── Inline Testimonials (no backend endpoint) ─────────────────────────────
@@ -104,8 +103,7 @@ const features = [
   {
     icon: Calendar,
     title: "Flexible Schedule",
-    description:
-      "Choose from weekday, weekend, and online workshop options.",
+    description: "Choose from weekday, weekend, and online workshop options.",
   },
   {
     icon: Award,
@@ -189,9 +187,9 @@ export default function HomePage() {
   return (
     <>
       {/* ── Hero Section ────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-background">
+      <section className="relative overflow-hidden bg-linear-to-br from-primary/10 via-primary/5 to-background">
         {/* Decorative blobs */}
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-[500px] w-[700px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-125 w-175 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
 
         <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-24 sm:px-6 sm:pt-32 lg:px-8 lg:pt-40">
           <div className="mx-auto max-w-3xl text-center">
@@ -260,7 +258,9 @@ export default function HomePage() {
 
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <Badge variant="secondary">{getLevelName(workshop.level)}</Badge>
+                    <Badge variant="secondary">
+                      {getLevelName(workshop.level)}
+                    </Badge>
                   </div>
                   <CardTitle className="mt-1 font-semibold leading-tight">
                     {workshop.title}
@@ -424,9 +424,7 @@ export default function HomePage() {
                       <p className="text-sm font-semibold text-foreground">
                         {t.name}
                       </p>
-                      <p className="text-xs text-muted-foreground">
-                        {t.role}
-                      </p>
+                      <p className="text-xs text-muted-foreground">{t.role}</p>
                     </div>
                     <Badge variant="outline" className="ml-auto text-xs">
                       {t.workshop}

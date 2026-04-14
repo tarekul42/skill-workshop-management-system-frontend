@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import type { LucideIcon } from "lucide-react";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -77,7 +76,7 @@ export function StatsCard({
                 "inline-flex items-center gap-0.5 text-xs font-medium",
                 trend.isPositive
                   ? "text-emerald-600 dark:text-emerald-400"
-                  : "text-red-600 dark:text-red-400"
+                  : "text-red-600 dark:text-red-400",
               )}
             >
               {trend.isPositive ? (

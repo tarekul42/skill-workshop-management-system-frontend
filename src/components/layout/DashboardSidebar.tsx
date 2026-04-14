@@ -69,7 +69,11 @@ const sidebarConfig: Record<string, NavSection[]> = {
     {
       title: "Overview",
       items: [
-        { label: "Dashboard", href: "/super-admin/dashboard", icon: "LayoutDashboard" },
+        {
+          label: "Dashboard",
+          href: "/super-admin/dashboard",
+          icon: "LayoutDashboard",
+        },
       ],
     },
     {
@@ -77,9 +81,21 @@ const sidebarConfig: Record<string, NavSection[]> = {
       items: [
         { label: "Admins", href: "/super-admin/admins", icon: "Shield" },
         { label: "Users", href: "/super-admin/users", icon: "Users" },
-        { label: "Workshops", href: "/super-admin/workshops", icon: "BookOpen" },
-        { label: "Enrollments", href: "/super-admin/enrollments", icon: "ClipboardList" },
-        { label: "Payments", href: "/super-admin/payments", icon: "CreditCard" },
+        {
+          label: "Workshops",
+          href: "/super-admin/workshops",
+          icon: "BookOpen",
+        },
+        {
+          label: "Enrollments",
+          href: "/super-admin/enrollments",
+          icon: "ClipboardList",
+        },
+        {
+          label: "Payments",
+          href: "/super-admin/payments",
+          icon: "CreditCard",
+        },
         { label: "Categories", href: "/super-admin/categories", icon: "Tag" },
         { label: "Levels", href: "/super-admin/levels", icon: "Layers" },
       ],
@@ -87,7 +103,11 @@ const sidebarConfig: Record<string, NavSection[]> = {
     {
       title: "System",
       items: [
-        { label: "Audit Logs", href: "/super-admin/audit-logs", icon: "FileText" },
+        {
+          label: "Audit Logs",
+          href: "/super-admin/audit-logs",
+          icon: "FileText",
+        },
         { label: "Settings", href: "/super-admin/settings", icon: "Settings" },
       ],
     },
@@ -96,7 +116,11 @@ const sidebarConfig: Record<string, NavSection[]> = {
     {
       title: "Overview",
       items: [
-        { label: "Dashboard", href: "/admin/dashboard", icon: "LayoutDashboard" },
+        {
+          label: "Dashboard",
+          href: "/admin/dashboard",
+          icon: "LayoutDashboard",
+        },
       ],
     },
     {
@@ -104,7 +128,11 @@ const sidebarConfig: Record<string, NavSection[]> = {
       items: [
         { label: "Users", href: "/admin/users", icon: "Users" },
         { label: "Workshops", href: "/admin/workshops", icon: "BookOpen" },
-        { label: "Enrollments", href: "/admin/enrollments", icon: "ClipboardList" },
+        {
+          label: "Enrollments",
+          href: "/admin/enrollments",
+          icon: "ClipboardList",
+        },
         { label: "Payments", href: "/admin/payments", icon: "CreditCard" },
         { label: "Categories", href: "/admin/categories", icon: "Tag" },
         { label: "Levels", href: "/admin/levels", icon: "Layers" },
@@ -121,42 +149,68 @@ const sidebarConfig: Record<string, NavSection[]> = {
     {
       title: "Overview",
       items: [
-        { label: "Dashboard", href: "/instructor/dashboard", icon: "LayoutDashboard" },
+        {
+          label: "Dashboard",
+          href: "/instructor/dashboard",
+          icon: "LayoutDashboard",
+        },
       ],
     },
     {
       title: "Workshops",
       items: [
-        { label: "My Workshops", href: "/instructor/workshops", icon: "BookOpen" },
-        { label: "Create Workshop", href: "/instructor/workshops/create", icon: "PlusCircle" },
+        {
+          label: "My Workshops",
+          href: "/instructor/workshops",
+          icon: "BookOpen",
+        },
+        {
+          label: "Create Workshop",
+          href: "/instructor/workshops/create",
+          icon: "PlusCircle",
+        },
       ],
     },
     {
       title: "Students",
       items: [
-        { label: "My Students", href: "/instructor/students", icon: "GraduationCap" },
-        { label: "Enrollments", href: "/instructor/enrollments", icon: "ClipboardList" },
+        {
+          label: "My Students",
+          href: "/instructor/students",
+          icon: "GraduationCap",
+        },
+        {
+          label: "Enrollments",
+          href: "/instructor/enrollments",
+          icon: "ClipboardList",
+        },
       ],
     },
     {
       title: "Account",
-      items: [
-        { label: "Profile", href: "/instructor/profile", icon: "User" },
-      ],
+      items: [{ label: "Profile", href: "/instructor/profile", icon: "User" }],
     },
   ],
   STUDENT: [
     {
       title: "Overview",
       items: [
-        { label: "Dashboard", href: "/student/dashboard", icon: "LayoutDashboard" },
+        {
+          label: "Dashboard",
+          href: "/student/dashboard",
+          icon: "LayoutDashboard",
+        },
       ],
     },
     {
       title: "Learning",
       items: [
         { label: "Browse Workshops", href: "/workshops", icon: "Search" },
-        { label: "My Enrollments", href: "/student/enrollments", icon: "BookMarked" },
+        {
+          label: "My Enrollments",
+          href: "/student/enrollments",
+          icon: "BookMarked",
+        },
       ],
     },
     {
@@ -187,7 +241,10 @@ function SidebarNavContent({
   onNavigate?: () => void;
 }) {
   return (
-    <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="Sidebar navigation">
+    <nav
+      className="flex-1 overflow-y-auto px-3 py-4"
+      aria-label="Sidebar navigation"
+    >
       <ul className="flex flex-col gap-6">
         {sections.map((section) => (
           <li key={section.title} className="flex flex-col gap-1">
@@ -209,7 +266,7 @@ function SidebarNavContent({
                             "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                             isActive
                               ? "bg-accent text-accent-foreground"
-                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground",
                           )}
                           aria-current={isActive ? "page" : undefined}
                         >
@@ -261,13 +318,22 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
         {/* Bottom Actions */}
         <div className="flex flex-col gap-1 p-3">
-          <Button variant="ghost" size="sm" asChild className="justify-start gap-3 text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            size="sm"
+            asChild
+            className="justify-start gap-3 text-muted-foreground hover:text-foreground"
+          >
             <Link href="/">
               <ExternalLink className="size-4" />
               Back to Home
             </Link>
           </Button>
-          <Button variant="ghost" size="sm" className="justify-start gap-3 text-muted-foreground hover:text-destructive">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="justify-start gap-3 text-muted-foreground hover:text-destructive"
+          >
             <LogOut className="size-4" />
             Logout
           </Button>

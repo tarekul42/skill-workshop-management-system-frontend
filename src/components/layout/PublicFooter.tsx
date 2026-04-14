@@ -1,11 +1,5 @@
 import Link from "next/link";
-import {
-  GraduationCap,
-  Mail,
-  Phone,
-  MapPin,
-  Globe,
-} from "lucide-react";
+import { GraduationCap, Mail, Phone, MapPin, Globe } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 const quickLinks = [

@@ -34,14 +34,13 @@ import {
 } from "@/lib/api/services";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 
-
 const PUBLIC_STALE_TIME = 5 * 60 * 1000;
 
 type SortOption = "newest" | "price-asc" | "price-desc";
 type LevelOption = "all" | "Beginner" | "Intermediate" | "Advanced";
 
 function getLevelBadgeVariant(
-  level: string
+  level: string,
 ): "default" | "secondary" | "destructive" {
   switch (level) {
     case "Beginner":
@@ -58,7 +57,7 @@ function getLevelBadgeVariant(
 function WorkshopCardSkeleton() {
   return (
     <Card className="flex flex-col overflow-hidden">
-      <div className="relative flex aspect-[16/10] items-center justify-center bg-muted">
+      <div className="relative flex aspect-16/10 items-center justify-center bg-muted">
         <Skeleton className="size-12 rounded-full" />
       </div>
       <CardContent className="flex flex-1 flex-col gap-2 pt-4">
@@ -117,14 +116,14 @@ export default function WorkshopsPage() {
     // Filter by search query
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
-      results = results.filter((w) =>
-        w.title.toLowerCase().includes(query)
-      );
+      results = results.filter((w) => w.title.toLowerCase().includes(query));
     }
 
     // Filter by category
     if (selectedCategory !== "all") {
-      results = results.filter((w) => getCategoryId(w.category) === selectedCategory);
+      results = results.filter(
+        (w) => getCategoryId(w.category) === selectedCategory,
+      );
     }
 
     // Filter by level
@@ -137,7 +136,7 @@ export default function WorkshopsPage() {
       case "newest":
         results.sort(
           (a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
         );
         break;
       case "price-asc":
@@ -150,7 +149,11 @@ export default function WorkshopsPage() {
 
     return results;
   }, [workshops, searchQuery, selectedCategory, selectedLevel, sortBy]);
-  const isFiltered = searchQuery.trim() !== "" || selectedCategory !== "all" || selectedLevel !== "all" || sortBy !== "newest";
+  const isFiltered =
+    searchQuery.trim() !== "" ||
+    selectedCategory !== "all" ||
+    selectedLevel !== "all" ||
+    sortBy !== "newest";
 
   function resetFilters() {
     setSearchQuery("");
@@ -168,15 +171,15 @@ export default function WorkshopsPage() {
             Explore Our Workshops
           </h1>
           <p className="mt-3 text-lg text-muted-foreground">
-            Discover hands-on workshops taught by industry experts and take
-            your skills to the next level.
+            Discover hands-on workshops taught by industry experts and take your
+            skills to the next level.
           </p>
         </div>
 
         {/* Filter Bar */}
         <div className="mb-8 flex flex-wrap items-center gap-3">
           {/* Search Input */}
-          <div className="relative flex-1 min-w-[200px]">
+          <div className="relative flex-1 min-w-50">
             <Search className="absolute left-2.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               placeholder="Search workshops..."
@@ -188,7 +191,7 @@ export default function WorkshopsPage() {
 
           {/* Category Select */}
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full sm:w-[180px]">
+            <SelectTrigger className="w-full sm:w-45">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
@@ -202,8 +205,11 @@ export default function WorkshopsPage() {
           </Select>
 
           {/* Level Select */}
-          <Select value={selectedLevel} onValueChange={(v) => setSelectedLevel(v as LevelOption)}>
-            <SelectTrigger className="w-full sm:w-[170px]">
+          <Select
+            value={selectedLevel}
+            onValueChange={(v) => setSelectedLevel(v as LevelOption)}
+          >
+            <SelectTrigger className="w-full sm:w-42.5">
               <SelectValue placeholder="All Levels" />
             </SelectTrigger>
             <SelectContent>
@@ -215,8 +221,11 @@ export default function WorkshopsPage() {
           </Select>
 
           {/* Sort Select */}
-          <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-            <SelectTrigger className="w-full sm:w-[200px]">
+          <Select
+            value={sortBy}
+            onValueChange={(v) => setSortBy(v as SortOption)}
+          >
+            <SelectTrigger className="w-full sm:w-50">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -271,10 +280,14 @@ export default function WorkshopsPage() {
                   No workshops found
                 </h3>
                 <p className="mt-1 max-w-md text-sm text-muted-foreground">
-                  Try adjusting your filters or search terms to find what you&apos;re
-                  looking for.
+                  Try adjusting your filters or search terms to find what
+                  you&apos;re looking for.
                 </p>
-                <Button variant="outline" className="mt-4" onClick={resetFilters}>
+                <Button
+                  variant="outline"
+                  className="mt-4"
+                  onClick={resetFilters}
+                >
                   <RotateCcw />
                   Reset Filters
                 </Button>
@@ -282,12 +295,17 @@ export default function WorkshopsPage() {
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredWorkshops.map((workshop) => (
-                  <Card key={workshop._id} className="flex flex-col overflow-hidden">
+                  <Card
+                    key={workshop._id}
+                    className="flex flex-col overflow-hidden"
+                  >
                     {/* Placeholder Image */}
-                    <div className="relative flex aspect-[16/10] items-center justify-center bg-muted">
+                    <div className="relative flex aspect-16/10 items-center justify-center bg-muted">
                       <BookOpen className="size-12 text-muted-foreground/50" />
                       <Badge
-                        variant={getLevelBadgeVariant(getLevelName(workshop.level))}
+                        variant={getLevelBadgeVariant(
+                          getLevelName(workshop.level),
+                        )}
                         className="absolute top-3 right-3"
                       >
                         {getLevelName(workshop.level)}

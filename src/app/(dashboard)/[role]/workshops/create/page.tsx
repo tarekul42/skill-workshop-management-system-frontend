@@ -18,7 +18,6 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-
 import { PageHeader, BackButton, FormSkeleton } from "@/components/shared";
 import { createWorkshop } from "@/lib/api/services";
 import { fetchCategories } from "@/lib/api/services";
@@ -127,7 +126,7 @@ export default function CreateWorkshopPage({ params }: PageProps) {
   const updateListItem = (
     field: "whatYouLearn" | "prerequisites" | "benefits" | "syllabus",
     index: number,
-    value: string
+    value: string,
   ) => {
     setFormData((prev) => {
       const list = [...prev[field]];
@@ -137,7 +136,7 @@ export default function CreateWorkshopPage({ params }: PageProps) {
   };
 
   const addListItem = (
-    field: "whatYouLearn" | "prerequisites" | "benefits" | "syllabus"
+    field: "whatYouLearn" | "prerequisites" | "benefits" | "syllabus",
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -147,7 +146,7 @@ export default function CreateWorkshopPage({ params }: PageProps) {
 
   const removeListItem = (
     field: "whatYouLearn" | "prerequisites" | "benefits" | "syllabus",
-    index: number
+    index: number,
   ) => {
     setFormData((prev) => {
       if (prev[field].length <= 1) return prev;
@@ -190,8 +189,10 @@ export default function CreateWorkshopPage({ params }: PageProps) {
     try {
       const fd = new FormData();
       fd.append("title", formData.title.trim());
-      if (formData.description.trim()) fd.append("description", formData.description.trim());
-      if (formData.location.trim()) fd.append("location", formData.location.trim());
+      if (formData.description.trim())
+        fd.append("description", formData.description.trim());
+      if (formData.location.trim())
+        fd.append("location", formData.location.trim());
       if (formData.price) fd.append("price", formData.price);
       if (formData.startDate) fd.append("startDate", formData.startDate);
       if (formData.endDate) fd.append("endDate", formData.endDate);
@@ -218,7 +219,9 @@ export default function CreateWorkshopPage({ params }: PageProps) {
       toast.success("Workshop created successfully!");
       router.push(`/${role}/workshops`);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create workshop");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to create workshop",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -412,7 +415,9 @@ export default function CreateWorkshopPage({ params }: PageProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex flex-wrap items-center gap-2">
-              <Label htmlFor="images" className="sr-only">Upload images</Label>
+              <Label htmlFor="images" className="sr-only">
+                Upload images
+              </Label>
               <Input
                 id="images"
                 type="file"
@@ -432,7 +437,7 @@ export default function CreateWorkshopPage({ params }: PageProps) {
                     key={idx}
                     className="group relative flex items-center gap-2 rounded-md border px-3 py-2 text-sm"
                   >
-                    <span className="truncate max-w-[150px]">{file.name}</span>
+                    <span className="truncate max-w-37.5">{file.name}</span>
                     <Button
                       type="button"
                       variant="ghost"

@@ -20,7 +20,13 @@ interface EnrollButtonProps {
   className?: string;
 }
 
-type EnrollState = "idle" | "checking" | "enrolled" | "enrolling" | "payment" | "error";
+type EnrollState =
+  | "idle"
+  | "checking"
+  | "enrolled"
+  | "enrolling"
+  | "payment"
+  | "error";
 
 export function EnrollButton({
   workshopId,
@@ -48,11 +54,9 @@ export function EnrollButton({
       const existing = enrollments.find(
         (e: { workshop: string | { _id: string } }) => {
           const wId =
-            typeof e.workshop === "string"
-              ? e.workshop
-              : e.workshop?._id;
+            typeof e.workshop === "string" ? e.workshop : e.workshop?._id;
           return wId === workshopId;
-        }
+        },
       );
       if (existing) {
         const status = (existing as { status?: string }).status;
@@ -111,7 +115,9 @@ export function EnrollButton({
       }
     } catch (err: unknown) {
       const message =
-        err instanceof Error ? err.message : "Failed to enroll. Please try again.";
+        err instanceof Error
+          ? err.message
+          : "Failed to enroll. Please try again.";
       setErrorMessage(message);
       setState("error");
     }

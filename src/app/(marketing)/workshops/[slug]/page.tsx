@@ -28,7 +28,13 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { EnrollButton } from "@/components/workshop/EnrollButton";
 import { BACKEND_API_URL } from "@/lib/constants";
-import { enrichWorkshop, enrichWorkshops, getLevelName, getCategoryName, getCreatorName } from "@/lib/api/services";
+import {
+  enrichWorkshop,
+  enrichWorkshops,
+  getLevelName,
+  getCategoryName,
+  getCreatorName,
+} from "@/lib/api/services";
 import { formatCurrency, formatDate, getInitials } from "@/lib/formatters";
 import type { IWorkshop, ICategory, ILevel } from "@/types/workshop.types";
 
@@ -37,7 +43,7 @@ interface PageProps {
 }
 
 function getLevelBadgeVariant(
-  level: string
+  level: string,
 ): "default" | "secondary" | "destructive" {
   switch (level) {
     case "Beginner":
@@ -70,7 +76,7 @@ function computeDuration(start: string, end: string): string {
 function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
   return (
     <Card className="overflow-hidden">
-      <div className="relative flex aspect-[16/10] items-center justify-center bg-muted">
+      <div className="relative flex aspect-16/10 items-center justify-center bg-muted">
         <BookOpen className="size-10 text-muted-foreground/50" />
         <Badge
           variant={getLevelBadgeVariant(getLevelName(workshop.level))}
@@ -120,12 +126,19 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
   let allWorkshops: IWorkshop[] = [];
 
   try {
-    const [workshopRes, categoriesRes, levelsRes, similarRes] = await Promise.allSettled([
-      fetch(`${BACKEND_API_URL}/workshop/${slug}`, { next: { revalidate: 60 } }),
-      fetch(`${BACKEND_API_URL}/category`, { next: { revalidate: 60 } }),
-      fetch(`${BACKEND_API_URL}/workshop/levels`, { next: { revalidate: 60 } }),
-      fetch(`${BACKEND_API_URL}/workshop?limit=4`, { next: { revalidate: 60 } }),
-    ]);
+    const [workshopRes, categoriesRes, levelsRes, similarRes] =
+      await Promise.allSettled([
+        fetch(`${BACKEND_API_URL}/workshop/${slug}`, {
+          next: { revalidate: 60 },
+        }),
+        fetch(`${BACKEND_API_URL}/category`, { next: { revalidate: 60 } }),
+        fetch(`${BACKEND_API_URL}/workshop/levels`, {
+          next: { revalidate: 60 },
+        }),
+        fetch(`${BACKEND_API_URL}/workshop?limit=4`, {
+          next: { revalidate: 60 },
+        }),
+      ]);
 
     if (workshopRes.status === "fulfilled") {
       const json = await workshopRes.value.json();
@@ -172,8 +185,12 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
   const similarWorkshops = allWorkshops
     .filter((w) => {
-      const wCatId = typeof w.category === 'string' ? w.category : w.category?._id;
-      const wsCatId = typeof workshop.category === 'string' ? workshop.category : workshop.category?._id;
+      const wCatId =
+        typeof w.category === "string" ? w.category : w.category?._id;
+      const wsCatId =
+        typeof workshop.category === "string"
+          ? workshop.category
+          : workshop.category?._id;
       return w._id !== workshop._id && wCatId === wsCatId;
     })
     .slice(0, 3);
@@ -188,16 +205,15 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
             .filter(
               (w) =>
                 w._id !== workshop._id &&
-                !similarWorkshops.some((s) => s._id === w._id)
+                !similarWorkshops.some((s) => s._id === w._id),
             )
             .slice(0, 3 - similarWorkshops.length),
         ];
 
   const seatsAvailable = (workshop.maxSeats ?? 0) - workshop.currentEnrollments;
-  const enrollmentPercentage =
-    workshop.maxSeats
-      ? (workshop.currentEnrollments / workshop.maxSeats) * 100
-      : 0;
+  const enrollmentPercentage = workshop.maxSeats
+    ? (workshop.currentEnrollments / workshop.maxSeats) * 100
+    : 0;
 
   return (
     <div className="bg-background">
@@ -243,10 +259,14 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
             {/* Level + Category Badges */}
             <div className="mt-3 flex flex-wrap gap-2">
-              <Badge variant={getLevelBadgeVariant(getLevelName(workshop.level))}>
+              <Badge
+                variant={getLevelBadgeVariant(getLevelName(workshop.level))}
+              >
                 {getLevelName(workshop.level)}
               </Badge>
-              <Badge variant="outline">{getCategoryName(workshop.category)}</Badge>
+              <Badge variant="outline">
+                {getCategoryName(workshop.category)}
+              </Badge>
             </div>
 
             {/* Info Pills */}
@@ -428,14 +448,18 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   <div className="flex items-center gap-3">
                     <Avatar size="lg">
                       <AvatarFallback>
-                        {getInitials(getCreatorName(workshop.createdBy) || "IN")}
+                        {getInitials(
+                          getCreatorName(workshop.createdBy) || "IN",
+                        )}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <p className="text-sm font-medium text-foreground">
                         {getCreatorName(workshop.createdBy)}
                       </p>
-                      <p className="text-xs text-muted-foreground">Instructor</p>
+                      <p className="text-xs text-muted-foreground">
+                        Instructor
+                      </p>
                     </div>
                   </div>
                 </CardContent>

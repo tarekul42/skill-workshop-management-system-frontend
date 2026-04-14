@@ -3,7 +3,11 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GraduationCap, Loader2 } from "lucide-react";
-import { saveUser, setAuthCookie, redirectToDashboard } from "@/lib/auth-helpers";
+import {
+  saveUser,
+  setAuthCookie,
+  redirectToDashboard,
+} from "@/lib/auth-helpers";
 import { storeAccessToken } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
 
@@ -35,7 +39,7 @@ function GoogleCallbackContent() {
 
         if (!code) {
           setError(
-            "Google sign-in could not be completed. No authorization code was received. Please try signing in again."
+            "Google sign-in could not be completed. No authorization code was received. Please try signing in again.",
           );
           return;
         }
@@ -51,7 +55,7 @@ function GoogleCallbackContent() {
         if (!res.ok) {
           const errorData = await res.json().catch(() => null);
           throw new Error(
-            errorData?.message || `Token exchange failed (HTTP ${res.status})`
+            errorData?.message || `Token exchange failed (HTTP ${res.status})`,
           );
         }
 

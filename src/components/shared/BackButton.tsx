@@ -15,10 +15,7 @@ interface BackButtonProps {
 
 // ─── Component ──────────────────────────────────────────────────────
 
-export function BackButton({
-  label = "Go Back",
-  className,
-}: BackButtonProps) {
+export function BackButton({ label = "Go Back", className }: BackButtonProps) {
   const router = useRouter();
 
   return (

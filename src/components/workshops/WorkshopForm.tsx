@@ -21,7 +21,12 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 
-import { fetchCategories, fetchWorkshopLevels, getCategoryId, getLevelId } from "@/lib/api/services";
+import {
+  fetchCategories,
+  fetchWorkshopLevels,
+  getCategoryId,
+  getLevelId,
+} from "@/lib/api/services";
 import type { IWorkshop, ICategory, ILevel } from "@/types";
 
 // ─── Schema ───────────────────────────────────────────────────────
@@ -56,8 +61,6 @@ interface WorkshopFormProps {
 
 // ─── List Field Editor ────────────────────────────────────────────
 
-
-
 function ListFieldEditor({
   label,
   items,
@@ -83,7 +86,7 @@ function ListFieldEditor({
     (index: number) => {
       onChange(items.filter((_, i) => i !== index));
     },
-    [items, onChange]
+    [items, onChange],
   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -193,7 +196,7 @@ export function WorkshopForm({
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>(
-    initialData?.images ?? []
+    initialData?.images ?? [],
   );
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
 
@@ -215,8 +218,8 @@ export function WorkshopForm({
     const files = e.target.files;
     if (!files) return;
 
-    const newFiles = Array.from(files).filter(
-      (file) => file.type.startsWith("image/")
+    const newFiles = Array.from(files).filter((file) =>
+      file.type.startsWith("image/"),
     );
 
     if (newFiles.length === 0) {
@@ -301,11 +304,9 @@ export function WorkshopForm({
     fd.append("category", formData.category);
 
     // Array fields
-    formData.whatYouLearn?.forEach((item) =>
-      fd.append("whatYouLearn[]", item)
-    );
+    formData.whatYouLearn?.forEach((item) => fd.append("whatYouLearn[]", item));
     formData.prerequisites?.forEach((item) =>
-      fd.append("prerequisites[]", item)
+      fd.append("prerequisites[]", item),
     );
     formData.benefits?.forEach((item) => fd.append("benefits[]", item));
     formData.syllabus?.forEach((item) => fd.append("syllabus[]", item));
@@ -385,7 +386,10 @@ export function WorkshopForm({
                 placeholder="0"
                 value={formData.price ?? ""}
                 onChange={(e) =>
-                  updateField("price", e.target.value ? Number(e.target.value) : 0)
+                  updateField(
+                    "price",
+                    e.target.value ? Number(e.target.value) : 0,
+                  )
                 }
               />
               {errors.price && (
@@ -510,7 +514,7 @@ export function WorkshopForm({
                 onChange={(e) =>
                   updateField(
                     "maxSeats",
-                    e.target.value ? Number(e.target.value) : undefined
+                    e.target.value ? Number(e.target.value) : undefined,
                   )
                 }
               />
@@ -529,7 +533,7 @@ export function WorkshopForm({
                 onChange={(e) =>
                   updateField(
                     "minAge",
-                    e.target.value ? Number(e.target.value) : undefined
+                    e.target.value ? Number(e.target.value) : undefined,
                   )
                 }
               />
@@ -653,10 +657,7 @@ export function WorkshopForm({
 
           {/* Upload button */}
           <div className="flex items-center gap-3">
-            <Label
-              htmlFor="workshop-images"
-              className="cursor-pointer"
-            >
+            <Label htmlFor="workshop-images" className="cursor-pointer">
               <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-dashed transition-colors hover:border-primary/50 hover:bg-muted/50">
                 <Plus className="size-5 text-muted-foreground" />
               </div>
@@ -678,10 +679,7 @@ export function WorkshopForm({
 
       {/* ── Submit ──────────────────────────────────────────────────── */}
       <div className="flex justify-end gap-3">
-        <Button
-          type="submit"
-          disabled={isSubmitting}
-        >
+        <Button type="submit" disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="animate-spin" />}
           {submitLabel}
         </Button>

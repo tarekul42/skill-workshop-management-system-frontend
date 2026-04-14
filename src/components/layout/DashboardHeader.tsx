@@ -64,10 +64,10 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
   const initials = user?.name ? getInitials(user.name) : "?";
   const displayName = user?.name ?? "User";
-  const roleLabel = role ? roleLabels[role] ?? role : "";
+  const roleLabel = role ? (roleLabels[role] ?? role) : "";
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 lg:pl-72">
+    <header className="sticky top-0 z-20 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60 lg:pl-72">
       {/* ── Mobile menu button ─────────────────────────────────────── */}
       <Button
         variant="ghost"
@@ -118,7 +118,10 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                   {displayName}
                 </span>
                 {roleLabel && (
-                  <Badge variant="secondary" className="mt-1 text-[10px] px-1.5 py-0">
+                  <Badge
+                    variant="secondary"
+                    className="mt-1 text-[10px] px-1.5 py-0"
+                  >
                     {roleLabel}
                   </Badge>
                 )}
@@ -136,7 +139,10 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href={`/${role?.toLowerCase()}/profile`} className="cursor-pointer">
+              <Link
+                href={`/${role?.toLowerCase()}/profile`}
+                className="cursor-pointer"
+              >
                 <User className="size-4" />
                 Profile
               </Link>
