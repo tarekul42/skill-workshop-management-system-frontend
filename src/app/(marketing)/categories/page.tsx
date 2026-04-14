@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchCategories } from "@/lib/api/services";
-import type { ICategory } from "@/types/workshop.types";
+
 
 const PUBLIC_STALE_TIME = 5 * 60 * 1000;
 

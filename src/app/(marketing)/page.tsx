@@ -34,7 +34,7 @@ import {
   enrichWorkshops,
   getLevelName,
 } from "@/lib/api/services";
-import type { IWorkshop, ICategory } from "@/types/workshop.types";
+
 
 const PUBLIC_STALE_TIME = 5 * 60 * 1000; // 5 minutes
 

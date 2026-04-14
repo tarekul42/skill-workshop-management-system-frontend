@@ -43,3 +43,12 @@ skill-workshop-management-system-backend/
 
 # skills (internal tool configs, not part of the app)
 skills/
+
+# backend (separate repo, not part of frontend)
+backend/
+
+# download (generated output artifacts)
+download/
+
+# worklog (internal development log)
+worklog.md

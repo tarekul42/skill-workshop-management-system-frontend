@@ -33,7 +33,7 @@ import {
   getCategoryName,
 } from "@/lib/api/services";
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import type { IWorkshop } from "@/types/workshop.types";
+
 
 const PUBLIC_STALE_TIME = 5 * 60 * 1000;
 

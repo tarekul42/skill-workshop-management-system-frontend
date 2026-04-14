@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -27,9 +27,9 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { saveUser, redirectToDashboard, setAuthCookie } from "@/lib/auth-helpers";
 import { apiClient, storeAccessToken } from "@/lib/api-client";
-import { BACKEND_API_URL, FRONTEND_URL } from "@/lib/constants";
+import { BACKEND_API_URL } from "@/lib/constants";
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -228,5 +228,13 @@ export default function LoginPage() {
         </Link>
       </CardFooter>
     </Card>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginContent />
+    </Suspense>
   );
 }
