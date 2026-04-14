@@ -22,7 +22,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  WorkshopCardSkeleton,
+} from "@/components/shared/LoadingSkeleton";
 import {
   fetchWorkshops,
   fetchCategories,
@@ -54,29 +56,7 @@ function getLevelBadgeVariant(
   }
 }
 
-function WorkshopCardSkeleton() {
-  return (
-    <Card className="flex flex-col overflow-hidden">
-      <div className="relative flex aspect-16/10 items-center justify-center bg-muted">
-        <Skeleton className="size-12 rounded-full" />
-      </div>
-      <CardContent className="flex flex-1 flex-col gap-2 pt-4">
-        <Skeleton className="h-5 w-20" />
-        <Skeleton className="h-5 w-full" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
-        <div className="mt-auto flex gap-3">
-          <Skeleton className="h-3 w-16" />
-          <Skeleton className="h-3 w-24" />
-        </div>
-      </CardContent>
-      <CardFooter className="flex items-center justify-between gap-2">
-        <Skeleton className="h-6 w-20" />
-        <Skeleton className="h-9 w-24" />
-      </CardFooter>
-    </Card>
-  );
-}
+
 
 export default function WorkshopsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -251,14 +231,7 @@ export default function WorkshopsPage() {
 
         {/* Loading State */}
         {loading ? (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            <WorkshopCardSkeleton />
-            <WorkshopCardSkeleton />
-            <WorkshopCardSkeleton />
-            <WorkshopCardSkeleton />
-            <WorkshopCardSkeleton />
-            <WorkshopCardSkeleton />
-          </div>
+          <WorkshopCardSkeleton count={6} />
         ) : (
           <>
             {/* Results Count */}

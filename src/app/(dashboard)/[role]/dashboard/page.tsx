@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { StatCardSkeleton } from "@/components/shared/LoadingSkeleton";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -83,25 +83,6 @@ function StatCard({ icon, label, value, change, iconBg }: StatCardProps) {
       <CardContent>
         <p className="text-2xl font-bold">{value}</p>
         <p className="mt-1 text-xs text-muted-foreground">{change}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-// ─── Skeleton Cards ─────────────────────────────────────────────────
-
-function StatCardSkeleton() {
-  return (
-    <Card>
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-4 w-28" />
-          <Skeleton className="size-9 rounded-lg" />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Skeleton className="h-8 w-20" />
-        <Skeleton className="mt-2 h-3 w-36" />
       </CardContent>
     </Card>
   );
@@ -465,12 +446,7 @@ export default function DashboardPage({ params }: PageProps) {
 
       {/* ── Stats Grid ─────────────────────────────────────────────── */}
       {loading ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-          <StatCardSkeleton />
-        </div>
+        <StatCardSkeleton count={4} />
       ) : error ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
           <div className="flex size-12 items-center justify-center rounded-full bg-muted mb-3">

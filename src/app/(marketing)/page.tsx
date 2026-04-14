@@ -25,7 +25,10 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  WorkshopCardSkeleton,
+  CategoryCardSkeleton,
+} from "@/components/shared/LoadingSkeleton";
 import { formatCurrency } from "@/lib/formatters";
 import {
   fetchWorkshops,
@@ -132,27 +135,7 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-function WorkshopCardSkeleton() {
-  return (
-    <Card className="flex flex-col">
-      <div className="flex h-40 items-center justify-center rounded-t-xl bg-muted">
-        <Skeleton className="size-10 rounded-full" />
-      </div>
-      <CardHeader>
-        <Skeleton className="h-5 w-20" />
-        <Skeleton className="mt-2 h-5 w-full" />
-      </CardHeader>
-      <CardContent className="flex-1">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="mt-2 h-4 w-3/4" />
-      </CardContent>
-      <CardFooter className="flex items-center justify-between">
-        <Skeleton className="h-5 w-20" />
-        <Skeleton className="h-4 w-16" />
-      </CardFooter>
-    </Card>
-  );
-}
+
 
 // ─── Page ─────────────────────────────────────────────────────────────────
 
@@ -241,12 +224,7 @@ export default function HomePage() {
         </div>
 
         {loading ? (
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            <WorkshopCardSkeleton />
-            <WorkshopCardSkeleton />
-            <WorkshopCardSkeleton />
-            <WorkshopCardSkeleton />
-          </div>
+          <WorkshopCardSkeleton count={4} variant="compact" />
         ) : featuredWorkshops.length > 0 ? (
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {featuredWorkshops.map((workshop) => (
@@ -316,20 +294,7 @@ export default function HomePage() {
           </div>
 
           {loading ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
-              {[1, 2, 3].map((i) => (
-                <Card key={i}>
-                  <CardContent className="flex items-start gap-4">
-                    <Skeleton className="size-12 shrink-0 rounded-lg" />
-                    <div className="flex-1 space-y-2">
-                      <Skeleton className="h-5 w-32" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-20" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            <CategoryCardSkeleton count={3} />
           ) : categories.length > 0 ? (
             <div className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
               {categories.map((cat) => (
