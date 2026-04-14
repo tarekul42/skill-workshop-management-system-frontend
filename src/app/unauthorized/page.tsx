@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { ShieldX, Home, ArrowLeft, LogIn } from "lucide-react";
+import { ShieldX, Home, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/shared/BackButton";
 
 export default function Unauthorized() {
   return (
@@ -53,13 +54,7 @@ export default function Unauthorized() {
       </div>
 
       {/* Back navigation */}
-      <button
-        onClick={() => typeof window !== "undefined" && window.history.back()}
-        className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="size-3.5" />
-        Go back to previous page
-      </button>
+      <BackButton />
     </div>
   );
 }
