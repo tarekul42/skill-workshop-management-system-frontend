@@ -1,32 +1,15 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-
-// ─── Props ──────────────────────────────────────────────────────────
-
-interface BackButtonProps {
-  label?: string;
-  className?: string;
-}
-
-// ─── Component ──────────────────────────────────────────────────────
-
-export function BackButton({ label = "Go Back", className }: BackButtonProps) {
-  const router = useRouter();
-
+export function BackButton() {
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      onClick={() => router.back()}
-      className={className}
+    <button
+      onClick={() => typeof window !== "undefined" && window.history.back()}
+      className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
     >
-      <ArrowLeft />
-      {label}
-    </Button>
+      <ArrowLeft className="size-3.5" />
+      Go back to previous page
+    </button>
   );
 }

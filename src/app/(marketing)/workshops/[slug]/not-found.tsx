@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Search, Home, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackButton } from "@/components/shared/BackButton";
 
 export default function WorkshopNotFound() {
   return (
@@ -45,6 +46,9 @@ export default function WorkshopNotFound() {
           </Link>
         </Button>
       </div>
+
+      {/* Back navigation */}
+      <BackButton />
     </div>
   );
 }

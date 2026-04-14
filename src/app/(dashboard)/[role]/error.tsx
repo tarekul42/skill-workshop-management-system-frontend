@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { BackButton } from "@/components/shared/BackButton";
 import Link from "next/link";
 
-export default function Error({
+export default function DashboardError({
   error,
   reset,
 }: {
@@ -15,33 +15,34 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Application error:", error);
+    console.error("Dashboard error:", error);
   }, [error]);
 
   return (
-    <div className="flex min-h-[80vh] flex-col items-center justify-center px-4 py-16">
+    <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-16">
       {/* Illustration */}
       <div className="relative mb-8">
         <div className="relative flex items-center justify-center">
-          <div className="absolute size-56 rounded-full border-2 border-dashed border-destructive/10 animate-[spin_20s_linear_infinite]" />
-          <div className="absolute size-40 rounded-full border border-destructive/15 animate-[spin_15s_linear_infinite_reverse]" />
-          <div className="relative flex size-32 items-center justify-center rounded-full bg-destructive/10">
-            <AlertTriangle className="size-14 text-destructive/70" />
+          <div className="absolute size-48 rounded-full border-2 border-dashed border-destructive/10 animate-[spin_20s_linear_infinite]" />
+          <div className="absolute size-32 rounded-full border border-destructive/15 animate-[spin_15s_linear_infinite_reverse]" />
+          <div className="relative flex size-24 items-center justify-center rounded-full bg-destructive/10">
+            <AlertTriangle className="size-10 text-destructive/70" />
           </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold tracking-tight text-foreground">
-          5<span className="text-destructive">00</span>
+        <h1 className="text-5xl font-bold tracking-tight text-foreground">
+          Dashboard <span className="text-destructive">Error</span>
         </h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">
+        <h2 className="mt-3 text-lg font-semibold text-foreground">
           Something Went Wrong
         </h2>
         <p className="mt-3 text-muted-foreground leading-relaxed">
-          An unexpected error occurred. Our team has been notified and is
-          working on a fix. Please try again or return to the homepage.
+          An error occurred while loading the dashboard. This could be due to a
+          network issue or a problem with your session. Please try again or
+          navigate back to the homepage.
         </p>
 
         {/* Error detail card (development only) */}
