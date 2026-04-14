@@ -14,6 +14,8 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     // Non-project directories:
     "skills/**",
+    "backend/**",
+    "download/**",
   ]),
 ]);
 
