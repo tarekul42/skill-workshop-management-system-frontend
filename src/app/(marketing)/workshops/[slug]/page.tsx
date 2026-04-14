@@ -26,6 +26,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { EnrollButton } from "@/components/workshop/EnrollButton";
 import { BACKEND_API_URL } from "@/lib/constants";
 import { enrichWorkshop, enrichWorkshops, getLevelName, getCategoryName, getCreatorName } from "@/lib/api/services";
 import { formatCurrency, formatDate, getInitials } from "@/lib/formatters";
@@ -404,9 +405,13 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                 </CardHeader>
 
                 <CardContent className="space-y-3">
-                  <Button className="w-full" size="lg" disabled={seatsAvailable <= 0} asChild>
-                    <Link href={`/login?redirect=/workshops/${slug}`}>Enroll Now</Link>
-                  </Button>
+                  <EnrollButton
+                    workshopId={workshop._id}
+                    slug={slug}
+                    price={workshop.price ?? 0}
+                    seatsAvailable={seatsAvailable}
+                    disabled={seatsAvailable <= 0}
+                  />
                   <Button variant="outline" className="w-full" size="lg">
                     <Share2 />
                     Share Workshop
