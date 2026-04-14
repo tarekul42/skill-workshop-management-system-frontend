@@ -19,7 +19,9 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import {
+  CategoryCardSkeleton,
+} from "@/components/shared/LoadingSkeleton";
 import { fetchCategories } from "@/lib/api/services";
 
 const PUBLIC_STALE_TIME = 5 * 60 * 1000;
@@ -42,20 +44,7 @@ const categoryIconMap: Record<
   "Data Science": { icon: BarChart3, bgClass: "bg-cyan-100 text-cyan-600" },
 };
 
-function CategoryCardSkeleton() {
-  return (
-    <Card className="transition-shadow hover:shadow-md">
-      <CardHeader className="items-center text-center">
-        <Skeleton className="mb-2 h-16 w-16 rounded-full" />
-        <Skeleton className="h-6 w-32" />
-        <Skeleton className="mt-2 h-4 w-48" />
-      </CardHeader>
-      <CardContent className="flex justify-center">
-        <Skeleton className="h-5 w-28" />
-      </CardContent>
-    </Card>
-  );
-}
+
 
 export default function CategoriesPage() {
   const { data: categoriesData, isLoading: loading } = useQuery({
@@ -78,14 +67,7 @@ export default function CategoriesPage() {
 
       {/* Categories Grid */}
       {loading ? (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <CategoryCardSkeleton />
-          <CategoryCardSkeleton />
-          <CategoryCardSkeleton />
-          <CategoryCardSkeleton />
-          <CategoryCardSkeleton />
-          <CategoryCardSkeleton />
-        </div>
+        <CategoryCardSkeleton count={6} />
       ) : categories.length > 0 ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category) => {

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Users } from "lucide-react";
 
-import { PageHeader, DataTable, EmptyState } from "@/components/shared";
+import { PageHeader, DataTable, EmptyState, TableSkeleton } from "@/components/shared";
 
 import { getAllEnrollments, fetchWorkshops } from "@/lib/api/services";
 import { formatDateTime } from "@/lib/formatters";
@@ -200,6 +200,8 @@ export default function MyStudentsPage({ params }: PageProps) {
         title="My Students"
         description="Students enrolled in your workshops"
       />
+
+      {loading && <TableSkeleton rows={5} columns={6} />}
 
       {!loading && !error && students.length === 0 && (
         <EmptyState
