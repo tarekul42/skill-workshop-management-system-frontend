@@ -404,8 +404,8 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                 </CardHeader>
 
                 <CardContent className="space-y-3">
-                  <Button className="w-full" size="lg" disabled={seatsAvailable <= 0}>
-                    Enroll Now
+                  <Button className="w-full" size="lg" disabled={seatsAvailable <= 0} asChild>
+                    <Link href={`/login?redirect=/workshops/${slug}`}>Enroll Now</Link>
                   </Button>
                   <Button variant="outline" className="w-full" size="lg">
                     <Share2 />

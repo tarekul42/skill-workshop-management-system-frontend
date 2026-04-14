@@ -288,7 +288,7 @@ export default function WorkshopsPage() {
 
                       {/* Title */}
                       <Link
-                        href={`/workshops/${workshop._id}`}
+                        href={`/workshops/${workshop.slug}`}
                         className="group/title inline-block"
                       >
                         <h3 className="line-clamp-1 text-base font-semibold text-foreground group-hover/title:text-primary transition-colors">
@@ -323,7 +323,7 @@ export default function WorkshopsPage() {
                         {formatCurrency(workshop.price ?? 0)}
                       </span>
                       <Button asChild size="sm">
-                        <Link href={`/workshops/${workshop._id}`}>
+                        <Link href={`/workshops/${workshop.slug}`}>
                           Enroll Now
                           <ArrowRight />
                         </Link>
