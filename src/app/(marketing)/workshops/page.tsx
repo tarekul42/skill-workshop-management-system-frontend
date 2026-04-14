@@ -150,6 +150,7 @@ export default function WorkshopsPage() {
 
     return results;
   }, [workshops, searchQuery, selectedCategory, selectedLevel, sortBy]);
+  const isFiltered = searchQuery.trim() !== "" || selectedCategory !== "all" || selectedLevel !== "all" || sortBy !== "newest";
 
   function resetFilters() {
     setSearchQuery("");
@@ -224,6 +225,19 @@ export default function WorkshopsPage() {
               <SelectItem value="price-desc">Price: High to Low</SelectItem>
             </SelectContent>
           </Select>
+
+          {/* Clear Filters Button */}
+          {isFiltered && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={resetFilters}
+              className="h-9 px-3 text-muted-foreground hover:text-foreground"
+            >
+              <RotateCcw className="mr-2 size-4" />
+              Clear all
+            </Button>
+          )}
         </div>
 
         {/* Loading State */}
