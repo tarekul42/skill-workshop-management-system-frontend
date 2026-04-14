@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 skill-workshop-management-system-backend/
+
+# skills (internal tool configs, not part of the app)
+skills/
