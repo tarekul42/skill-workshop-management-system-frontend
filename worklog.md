@@ -261,3 +261,43 @@ Stage Summary:
 - Access tokens no longer appear in URLs — code-exchange pattern eliminates this attack vector
 - OAuth state is now properly CSRF-protected with 256-bit random state via Redis
 - All security fixes maintain backward compatibility with existing auth flow
+
+---
+Task ID: 14
+Agent: Main Agent (with subagents)
+Task: Comprehensive security audit + frontend navbar profile + workshop pages
+
+Work Log:
+- Ran full audit across entire backend codebase (13+ files read in depth)
+- Identified 22 issues across 12 categories (1 critical, 7 high, 9 medium, 5 low/info)
+
+FRONTEND CHANGES (pushed to main):
+1. PublicNavbar: Conditional auth-aware rendering
+   - When logged in: shows Avatar + DropdownMenu with Dashboard link and Logout
+   - When logged out: shows Login + Get Started buttons
+   - Listens for storage + custom auth-change events for cross-tab sync
+   - Mobile sheet also adapts to auth state
+2. Workshop listing: Fixed card links to use workshop.slug (was using _id)
+3. Workshop detail: Wired Enroll Now button to /login?redirect=/workshops/[slug]
+
+BACKEND CHANGES (pushed to fix/security-hardening-oauth):
+1. CRITICAL: Created sendEmailDirect utility for Vercel serverless compatibility
+   - BullMQ worker only runs in long-running server, not on Vercel
+   - sendEmailDirect checks USE_BULLMQ env var, falls back to direct nodemailer
+   - Updated auth.service.ts, otp.service.ts, payment.service.ts
+2. HIGH: Added /payment/ipn to CSRF exempt paths
+3. HIGH: Made payment browser callbacks idempotent (check status before update)
+4. HIGH: Added payment amount verification (SSLCommerz amount vs stored amount)
+5. HIGH: Fixed token blacklist to fail-closed on Redis outage
+6. HIGH: Removed password from updateUserZodSchema
+7. HIGH: Added password max(72) to prevent bcrypt truncation
+8. HIGH: Fixed enrollment cancellation race condition (atomic findOneAndUpdate)
+9. HIGH: Added currentEnrollments decrement on payment fail/cancel/IPN-FAILED
+10. MEDIUM: Added rate limiting to CSRF token endpoints
+11. MEDIUM: Added studentCount max(100) validation
+
+Stage Summary:
+- All fixes verified with bun run lint (0 errors) and bun run build (clean)
+- Backend PR: https://github.com/tarekul42/skill-workshop-management-system-backend/pull/72
+- Frontend pushed to main branch
+- 11 source files modified, 1 new utility file created
