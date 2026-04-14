@@ -50,7 +50,13 @@ interface DataTableProps<TData, TValue> {
 
 // ─── Table Skeleton ─────────────────────────────────────────────────
 
-function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: number }) {
+function TableSkeleton({
+  rows = 5,
+  columns = 4,
+}: {
+  rows?: number;
+  columns?: number;
+}) {
   return (
     <div className="w-full space-y-3">
       {/* Header skeleton */}
@@ -63,10 +69,7 @@ function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: num
       {Array.from({ length: rows }).map((_, rowIdx) => (
         <div key={rowIdx} className="flex gap-4 px-2">
           {Array.from({ length: columns }).map((_, colIdx) => (
-            <Skeleton
-              key={colIdx}
-              className="h-8 flex-1"
-            />
+            <Skeleton key={colIdx} className="h-8 flex-1" />
           ))}
         </div>
       ))}
@@ -99,13 +102,19 @@ export function DataTable<TData, TValue>({
     data: tableData,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
+    getPaginationRowModel: enablePagination
+      ? getPaginationRowModel()
+      : undefined,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
     onGlobalFilterChange: setGlobalFilter,
     onPaginationChange: (updater) => {
-      table.setPageIndex(updater instanceof Function ? updater(table.getState().pagination).pageIndex : 0);
+      table.setPageIndex(
+        updater instanceof Function
+          ? updater(table.getState().pagination).pageIndex
+          : 0,
+      );
     },
     state: {
       sorting,
@@ -138,7 +147,9 @@ export function DataTable<TData, TValue>({
             />
           </div>
         )}
-        {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
+        {actions && (
+          <div className="flex shrink-0 items-center gap-2">{actions}</div>
+        )}
       </div>
 
       {/* ── Table ───────────────────────────────────────────────────── */}
@@ -153,7 +164,7 @@ export function DataTable<TData, TValue>({
                       ? null
                       : flexRender(
                           header.column.columnDef.header,
-                          header.getContext()
+                          header.getContext(),
                         )}
                   </TableHead>
                 ))}
@@ -178,7 +189,7 @@ export function DataTable<TData, TValue>({
                     <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </TableCell>
                   ))}
@@ -214,7 +225,7 @@ export function DataTable<TData, TValue>({
                 table.setPageSize(Number(value));
               }}
             >
-              <SelectTrigger className="h-7 w-[70px] text-xs">
+              <SelectTrigger className="h-7 w-17.5 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

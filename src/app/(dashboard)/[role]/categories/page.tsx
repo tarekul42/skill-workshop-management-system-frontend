@@ -19,7 +19,12 @@ import {
 } from "@/components/ui/dialog";
 
 /* eslint-disable @next/next/no-img-element */
-import { PageHeader, ConfirmDialog, CardSkeleton, EmptyState } from "@/components/shared";
+import {
+  PageHeader,
+  ConfirmDialog,
+  CardSkeleton,
+  EmptyState,
+} from "@/components/shared";
 import {
   fetchCategories,
   createCategory,
@@ -118,7 +123,8 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     try {
       const fd = new FormData();
       fd.append("name", formName.trim());
-      if (formDescription.trim()) fd.append("description", formDescription.trim());
+      if (formDescription.trim())
+        fd.append("description", formDescription.trim());
       if (formFile) fd.append("file", formFile);
 
       await createCategory(fd);
@@ -127,7 +133,9 @@ export default function CategoriesPage({ params: _params }: PageProps) {
       fetchCategoriesData();
       toast.success("Category created successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create category");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to create category",
+      );
     } finally {
       setSaving(false);
     }
@@ -142,7 +150,8 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     try {
       const fd = new FormData();
       fd.append("name", formName.trim());
-      if (formDescription.trim()) fd.append("description", formDescription.trim());
+      if (formDescription.trim())
+        fd.append("description", formDescription.trim());
       if (formFile) fd.append("file", formFile);
 
       await updateCategory(editTarget._id, fd);
@@ -151,7 +160,9 @@ export default function CategoriesPage({ params: _params }: PageProps) {
       fetchCategoriesData();
       toast.success("Category updated successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update category");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to update category",
+      );
     } finally {
       setSaving(false);
     }
@@ -166,7 +177,9 @@ export default function CategoriesPage({ params: _params }: PageProps) {
       fetchCategoriesData();
       toast.success("Category deleted successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to delete category");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete category",
+      );
     } finally {
       setDeleting(false);
     }
@@ -176,7 +189,10 @@ export default function CategoriesPage({ params: _params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Category Management" description="Manage workshop categories">
+      <PageHeader
+        title="Category Management"
+        description="Manage workshop categories"
+      >
         <Button onClick={openCreateDialog}>
           <Plus className="size-4" />
           Create Category
@@ -249,7 +265,15 @@ export default function CategoriesPage({ params: _params }: PageProps) {
       )}
 
       {/* ── Create Category Dialog ─────────────────────────────────── */}
-      <Dialog open={createOpen} onOpenChange={(open) => { if (!open) { setCreateOpen(false); resetForm(); } }}>
+      <Dialog
+        open={createOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setCreateOpen(false);
+            resetForm();
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Category</DialogTitle>
@@ -264,7 +288,14 @@ export default function CategoriesPage({ params: _params }: PageProps) {
             onFileChange={handleFileChange}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setCreateOpen(false); resetForm(); }} disabled={saving}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setCreateOpen(false);
+                resetForm();
+              }}
+              disabled={saving}
+            >
               Cancel
             </Button>
             <Button onClick={handleCreate} disabled={saving}>
@@ -276,7 +307,15 @@ export default function CategoriesPage({ params: _params }: PageProps) {
       </Dialog>
 
       {/* ── Edit Category Dialog ───────────────────────────────────── */}
-      <Dialog open={!!editTarget} onOpenChange={(open) => { if (!open) { setEditTarget(null); resetForm(); } }}>
+      <Dialog
+        open={!!editTarget}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditTarget(null);
+            resetForm();
+          }
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Category</DialogTitle>
@@ -291,7 +330,14 @@ export default function CategoriesPage({ params: _params }: PageProps) {
             onFileChange={handleFileChange}
           />
           <DialogFooter>
-            <Button variant="outline" onClick={() => { setEditTarget(null); resetForm(); }} disabled={saving}>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setEditTarget(null);
+                resetForm();
+              }}
+              disabled={saving}
+            >
               Cancel
             </Button>
             <Button onClick={handleUpdate} disabled={saving}>

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import type { LucideIcon } from "lucide-react";
 import { FileQuestion } from "lucide-react";
 
@@ -35,7 +34,7 @@ export function EmptyState({
     <div
       className={cn(
         "flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center",
-        className
+        className,
       )}
     >
       <div className="flex size-12 items-center justify-center rounded-full bg-muted mb-3">

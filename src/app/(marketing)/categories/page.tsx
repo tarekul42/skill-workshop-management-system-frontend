@@ -22,7 +22,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { fetchCategories } from "@/lib/api/services";
 
-
 const PUBLIC_STALE_TIME = 5 * 60 * 1000;
 
 const categoryIconMap: Record<
@@ -74,9 +73,7 @@ export default function CategoriesPage() {
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Browse Categories
         </h1>
-        <p className="mt-3 text-muted-foreground">
-          Find workshops by topic
-        </p>
+        <p className="mt-3 text-muted-foreground">Find workshops by topic</p>
       </div>
 
       {/* Categories Grid */}

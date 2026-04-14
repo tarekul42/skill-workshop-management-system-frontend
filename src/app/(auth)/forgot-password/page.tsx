@@ -29,7 +29,10 @@ export default function ForgotPasswordPage() {
 
     setLoading(true);
     try {
-      await apiClient("/auth/forgot-password", { method: "POST", body: { email } });
+      await apiClient("/auth/forgot-password", {
+        method: "POST",
+        body: { email },
+      });
     } catch {
       // Always show success regardless of API response (anti-enumeration)
     } finally {
@@ -51,8 +54,8 @@ export default function ForgotPasswordPage() {
             </CardTitle>
             <CardDescription className="mt-1">
               We&apos;ve sent a password reset link to{" "}
-              <span className="font-medium text-foreground">{email}</span>.
-              The link expires in 10 minutes.
+              <span className="font-medium text-foreground">{email}</span>. The
+              link expires in 10 minutes.
             </CardDescription>
           </CardHeader>
 

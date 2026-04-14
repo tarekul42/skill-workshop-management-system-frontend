@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
@@ -23,10 +21,7 @@ export function TableSkeleton({ rows = 5, columns = 4 }: TableSkeletonProps) {
       {Array.from({ length: rows }).map((_, rowIdx) => (
         <div key={`row-${rowIdx}`} className="flex gap-4 px-2 py-1">
           {Array.from({ length: columns }).map((_, colIdx) => (
-            <Skeleton
-              key={`cell-${rowIdx}-${colIdx}`}
-              className="h-8 flex-1"
-            />
+            <Skeleton key={`cell-${rowIdx}-${colIdx}`} className="h-8 flex-1" />
           ))}
         </div>
       ))}

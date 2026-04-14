@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 // ─── Configuration ──────────────────────────────────────────────────────
 
@@ -15,7 +15,13 @@ const ROLE_ROUTES: Record<string, string> = {
 };
 
 /** Auth page prefixes — users who already have a role cookie are redirected away */
-const AUTH_PREFIXES = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-otp"];
+const AUTH_PREFIXES = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/reset-password",
+  "/verify-otp",
+];
 
 // ─── Helpers ────────────────────────────────────────────────────────────
 
@@ -42,7 +48,9 @@ function getExpectedRole(pathname: string): string | null {
  * Checks if a path starts with any of the auth page prefixes.
  */
 function isAuthPage(pathname: string): boolean {
-  return AUTH_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + "/"));
+  return AUTH_PREFIXES.some(
+    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/"),
+  );
 }
 
 // ─── Middleware ─────────────────────────────────────────────────────────

@@ -42,9 +42,19 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
-import { PageHeader, StatusBadge, ConfirmDialog, TableSkeleton } from "@/components/shared";
+import {
+  PageHeader,
+  StatusBadge,
+  ConfirmDialog,
+  TableSkeleton,
+} from "@/components/shared";
 import { formatDate, getInitials } from "@/lib/formatters";
-import { getAllUsers, getUserById, updateUser, deleteUser } from "@/lib/api/services";
+import {
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+} from "@/lib/api/services";
 import type { IUser, UserRole, IsActive } from "@/types";
 
 // ─── Page Props ──────────────────────────────────────────────────────
@@ -56,10 +66,14 @@ interface PageProps {
 // ─── Role badge colors ───────────────────────────────────────────────
 
 const roleColors: Record<UserRole, string> = {
-  SUPER_ADMIN: "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-700 dark:bg-rose-950/50 dark:text-rose-400",
-  ADMIN: "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-700 dark:bg-violet-950/50 dark:text-violet-400",
-  INSTRUCTOR: "border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400",
-  STUDENT: "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400",
+  SUPER_ADMIN:
+    "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-700 dark:bg-rose-950/50 dark:text-rose-400",
+  ADMIN:
+    "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-700 dark:bg-violet-950/50 dark:text-violet-400",
+  INSTRUCTOR:
+    "border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400",
+  STUDENT:
+    "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400",
 };
 
 // ─── Component ───────────────────────────────────────────────────────
@@ -152,7 +166,8 @@ export default function UsersPage({ params }: PageProps) {
     if (!toggleTarget) return;
     setUpdating(true);
     try {
-      const newStatus: IsActive = toggleTarget.isActive === "ACTIVE" ? "BLOCKED" : "ACTIVE";
+      const newStatus: IsActive =
+        toggleTarget.isActive === "ACTIVE" ? "BLOCKED" : "ACTIVE";
       await updateUser(toggleTarget._id, { isActive: newStatus });
       setToggleTarget(null);
       fetchUsers();
@@ -181,7 +196,10 @@ export default function UsersPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="User Management" description="Manage all registered users" />
+      <PageHeader
+        title="User Management"
+        description="Manage all registered users"
+      />
 
       {/* ── Search & Info ──────────────────────────────────────────── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -207,7 +225,7 @@ export default function UsersPage({ params }: PageProps) {
               <TableHead>Role</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Joined</TableHead>
-              <TableHead className="w-[70px]">Actions</TableHead>
+              <TableHead className="w-17.5">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -221,7 +239,9 @@ export default function UsersPage({ params }: PageProps) {
               <TableRow>
                 <TableCell colSpan={6} className="h-48 text-center">
                   <p className="text-sm text-muted-foreground">
-                    {searchTerm ? "No users match your search." : "No users found."}
+                    {searchTerm
+                      ? "No users match your search."
+                      : "No users found."}
                   </p>
                 </TableCell>
               </TableRow>
@@ -236,13 +256,19 @@ export default function UsersPage({ params }: PageProps) {
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">{user.name}</p>
-                        <p className="truncate text-xs text-muted-foreground">{user.email}</p>
+                        <p className="truncate text-sm font-medium">
+                          {user.name}
+                        </p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {user.email}
+                        </p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground">{user.phone || "—"}</span>
+                    <span className="text-sm text-muted-foreground">
+                      {user.phone || "—"}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline" className={roleColors[user.role]}>
@@ -307,7 +333,9 @@ export default function UsersPage({ params }: PageProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
-            <DialogDescription>Viewing user profile information</DialogDescription>
+            <DialogDescription>
+              Viewing user profile information
+            </DialogDescription>
           </DialogHeader>
           {viewUser && (
             <div className="space-y-4">
@@ -319,7 +347,9 @@ export default function UsersPage({ params }: PageProps) {
                 </Avatar>
                 <div>
                   <p className="font-semibold">{viewUser.name}</p>
-                  <p className="text-sm text-muted-foreground">{viewUser.email}</p>
+                  <p className="text-sm text-muted-foreground">
+                    {viewUser.email}
+                  </p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -333,7 +363,10 @@ export default function UsersPage({ params }: PageProps) {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Role</p>
-                  <Badge variant="outline" className={roleColors[viewUser.role]}>
+                  <Badge
+                    variant="outline"
+                    className={roleColors[viewUser.role]}
+                  >
                     {viewUser.role.replace("_", " ")}
                   </Badge>
                 </div>
@@ -343,11 +376,15 @@ export default function UsersPage({ params }: PageProps) {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Verified</p>
-                  <p className="font-medium">{viewUser.isVerified ? "Yes" : "No"}</p>
+                  <p className="font-medium">
+                    {viewUser.isVerified ? "Yes" : "No"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Joined</p>
-                  <p className="font-medium">{formatDate(viewUser.createdAt)}</p>
+                  <p className="font-medium">
+                    {formatDate(viewUser.createdAt)}
+                  </p>
                 </div>
               </div>
               {viewUser.address && (
@@ -373,11 +410,16 @@ export default function UsersPage({ params }: PageProps) {
           <div className="space-y-4">
             <div className="space-y-2">
               <Label>User</Label>
-              <p className="text-sm">{editUser?.name} ({editUser?.email})</p>
+              <p className="text-sm">
+                {editUser?.name} ({editUser?.email})
+              </p>
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-role">Role</Label>
-              <Select value={editRole} onValueChange={(v) => setEditRole(v as UserRole)}>
+              <Select
+                value={editRole}
+                onValueChange={(v) => setEditRole(v as UserRole)}
+              >
                 <SelectTrigger id="edit-role">
                   <SelectValue />
                 </SelectTrigger>
@@ -391,7 +433,11 @@ export default function UsersPage({ params }: PageProps) {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditUser(null)} disabled={updating}>
+            <Button
+              variant="outline"
+              onClick={() => setEditUser(null)}
+              disabled={updating}
+            >
               Cancel
             </Button>
             <Button onClick={handleEditRoleSave} disabled={updating}>
@@ -405,7 +451,9 @@ export default function UsersPage({ params }: PageProps) {
       <ConfirmDialog
         open={!!toggleTarget}
         onOpenChange={() => setToggleTarget(null)}
-        title={toggleTarget?.isActive === "ACTIVE" ? "Block User" : "Activate User"}
+        title={
+          toggleTarget?.isActive === "ACTIVE" ? "Block User" : "Activate User"
+        }
         description={
           toggleTarget?.isActive === "ACTIVE"
             ? `Are you sure you want to block "${toggleTarget?.name}"? They will lose access to the platform.`
@@ -413,8 +461,12 @@ export default function UsersPage({ params }: PageProps) {
         }
         onConfirm={handleToggleActive}
         isLoading={updating}
-        variant={toggleTarget?.isActive === "ACTIVE" ? "destructive" : "default"}
-        confirmLabel={toggleTarget?.isActive === "ACTIVE" ? "Block User" : "Activate User"}
+        variant={
+          toggleTarget?.isActive === "ACTIVE" ? "destructive" : "default"
+        }
+        confirmLabel={
+          toggleTarget?.isActive === "ACTIVE" ? "Block User" : "Activate User"
+        }
       />
 
       {/* ── Delete Confirm ─────────────────────────────────────────── */}
@@ -449,7 +501,11 @@ function DropdownActions({
 }) {
   return (
     <DropdownMenuWithActions
-      trigger={<Button variant="ghost" size="icon-xs"><MoreHorizontal className="size-4" /></Button>}
+      trigger={
+        <Button variant="ghost" size="icon-xs">
+          <MoreHorizontal className="size-4" />
+        </Button>
+      }
       items={[
         { label: "View Details", icon: Eye, onClick: onView },
         { label: "Edit Role", icon: Pencil, onClick: onEdit },
@@ -496,7 +552,9 @@ function DropdownMenuWithActions({
             {idx > 0 && item.destructive && <DropdownMenuSeparator />}
             <DropdownMenuItem
               onClick={item.onClick}
-              className={item.destructive ? "text-red-600 focus:text-red-600" : ""}
+              className={
+                item.destructive ? "text-red-600 focus:text-red-600" : ""
+              }
             >
               <item.icon className="size-4" />
               {item.label}

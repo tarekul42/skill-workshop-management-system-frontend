@@ -5,19 +5,19 @@ import {
 } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
 import type {
-  IWorkshop,
-  ICategory,
-  ILevel,
-  IUser,
-  IEnrollment,
-  IPayment,
-  IAuditLog,
+  EnrollmentStats,
   EnrollmentStatus,
+  IAuditLog,
+  ICategory,
+  IEnrollment,
+  ILevel,
+  IPayment,
+  IUser,
+  IWorkshop,
   PaginationMeta,
+  PaymentStats,
   UserStats,
   WorkshopStats,
-  EnrollmentStats,
-  PaymentStats,
 } from "@/types";
 
 // ─── Shared parameter types ─────────────────────────────────────────
@@ -77,7 +77,7 @@ export interface PaymentInitResponse {
  */
 export async function login(
   email: string,
-  password: string
+  password: string,
 ): Promise<LoginResponse> {
   return apiClient<LoginResponse>("/auth/login", {
     method: "POST",
@@ -106,7 +106,7 @@ export async function logout(): Promise<void> {
  */
 export async function changePassword(
   currentPassword: string,
-  newPassword: string
+  newPassword: string,
 ): Promise<void> {
   return apiClient<void>("/auth/change-password", {
     method: "POST",
@@ -129,7 +129,7 @@ export async function forgotPassword(email: string): Promise<void> {
  */
 export async function resetPassword(
   token: string,
-  newPassword: string
+  newPassword: string,
 ): Promise<void> {
   return apiClient<void>("/auth/reset-password", {
     method: "POST",
@@ -155,7 +155,7 @@ export async function registerUser(
         phone?: string;
         age?: number;
         address?: string;
-      }
+      },
 ): Promise<IUser> {
   if (data instanceof FormData) {
     return apiClientFormData<IUser>("/user/register", {
@@ -180,7 +180,7 @@ export async function getMe(): Promise<IUser> {
  * Get all users (admin). Returns paginated results.
  */
 export async function getAllUsers(
-  params?: FetchUsersParams
+  params?: FetchUsersParams,
 ): Promise<PaginatedData<IUser[]>> {
   const searchParams = new URLSearchParams();
   if (params?.page) searchParams.set("page", String(params.page));
@@ -207,8 +207,11 @@ export async function getUserById(id: string): Promise<IUser> {
 export async function updateUser(
   id: string,
   data: Partial<
-    Pick<IUser, "name" | "email" | "phone" | "age" | "address" | "isActive" | "role">
-  >
+    Pick<
+      IUser,
+      "name" | "email" | "phone" | "age" | "address" | "isActive" | "role"
+    >
+  >,
 ): Promise<IUser> {
   return apiClient<IUser>(`/user/${id}`, {
     method: "PATCH",
@@ -232,7 +235,7 @@ export async function deleteUser(id: string): Promise<void> {
  * Uses raw `fetch` because the response includes `meta` alongside `data`.
  */
 export async function fetchWorkshops(
-  params?: FetchWorkshopsParams
+  params?: FetchWorkshopsParams,
 ): Promise<PaginatedData<IWorkshop[]>> {
   const searchParams = new URLSearchParams();
 
@@ -295,7 +298,7 @@ export async function createWorkshop(formData: FormData): Promise<IWorkshop> {
  */
 export async function updateWorkshop(
   id: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<IWorkshop> {
   return apiClientFormData<IWorkshop>(`/workshop/${id}`, {
     method: "PATCH",
@@ -351,7 +354,7 @@ export async function fetchWorkshopById(id: string): Promise<IWorkshop> {
  * a plain ObjectId string or a populated ICategory object.
  */
 export function getCategoryName(
-  category: string | ICategory | undefined
+  category: string | ICategory | undefined,
 ): string {
   if (!category || typeof category === "string") return "";
   return category.name ?? "";
@@ -361,9 +364,7 @@ export function getCategoryName(
  * Safely extract the level name from a workshop field that may be
  * a plain ObjectId string or a populated ILevel object.
  */
-export function getLevelName(
-  level: string | ILevel | undefined
-): string {
+export function getLevelName(level: string | ILevel | undefined): string {
   if (!level || typeof level === "string") return "";
   return level.name ?? "";
 }
@@ -373,21 +374,19 @@ export function getLevelName(
  * a plain ObjectId string or a populated ICategory object.
  */
 export function getCategoryId(
-  category: string | ICategory | undefined
+  category: string | ICategory | undefined,
 ): string {
   if (!category) return "";
-  return typeof category === "string" ? category : category._id ?? "";
+  return typeof category === "string" ? category : (category._id ?? "");
 }
 
 /**
  * Safely extract the level _id from a workshop field that may be
  * a plain ObjectId string or a populated ILevel object.
  */
-export function getLevelId(
-  level: string | ILevel | undefined
-): string {
+export function getLevelId(level: string | ILevel | undefined): string {
   if (!level) return "";
-  return typeof level === "string" ? level : level._id ?? "";
+  return typeof level === "string" ? level : (level._id ?? "");
 }
 
 /**
@@ -395,7 +394,7 @@ export function getLevelId(
  * may be a plain ObjectId string or a populated user object.
  */
 export function getCreatorName(
-  createdBy: string | { _id: string; name: string; email: string } | undefined
+  createdBy: string | { _id: string; name: string; email: string } | undefined,
 ): string {
   if (!createdBy || typeof createdBy === "string") return "";
   return createdBy.name ?? "";
@@ -408,19 +407,19 @@ export function getCreatorName(
 export function enrichWorkshop(
   workshop: IWorkshop,
   categories: ICategory[],
-  levels: ILevel[]
+  levels: ILevel[],
 ): IWorkshop {
   return {
     ...workshop,
     category:
       typeof workshop.category === "string"
-        ? (categories.find((c) => c._id === workshop.category) as ICategory) ??
-          workshop.category
+        ? ((categories.find((c) => c._id === workshop.category) as ICategory) ??
+          workshop.category)
         : workshop.category,
     level:
       typeof workshop.level === "string"
-        ? (levels.find((l) => l._id === workshop.level) as ILevel) ??
-          workshop.level
+        ? ((levels.find((l) => l._id === workshop.level) as ILevel) ??
+          workshop.level)
         : workshop.level,
   };
 }
@@ -431,7 +430,7 @@ export function enrichWorkshop(
 export function enrichWorkshops(
   workshops: IWorkshop[],
   categories: ICategory[],
-  levels: ILevel[]
+  levels: ILevel[],
 ): IWorkshop[] {
   return workshops.map((w) => enrichWorkshop(w, categories, levels));
 }
@@ -521,7 +520,7 @@ export async function createCategory(formData: FormData): Promise<ICategory> {
  */
 export async function updateCategory(
   id: string,
-  formData: FormData
+  formData: FormData,
 ): Promise<ICategory> {
   return apiClientFormData<ICategory>(`/category/${id}`, {
     method: "PATCH",
@@ -545,7 +544,7 @@ export async function deleteCategory(id: string): Promise<void> {
  */
 export async function createEnrollment(
   workshop: string,
-  studentCount: number
+  studentCount: number,
 ): Promise<IEnrollment> {
   return apiClient<IEnrollment>("/enrollment", {
     method: "POST",
@@ -557,7 +556,7 @@ export async function createEnrollment(
  * Fetch all enrollments (admin). Returns paginated results.
  */
 export async function getAllEnrollments(
-  params?: PaginationParams
+  params?: PaginationParams,
 ): Promise<PaginatedData<IEnrollment[]>> {
   const searchParams = new URLSearchParams();
   if (params?.page) searchParams.set("page", String(params.page));
@@ -588,7 +587,7 @@ export async function getEnrollmentById(id: string): Promise<IEnrollment> {
  */
 export async function updateEnrollmentStatus(
   enrollmentId: string,
-  status: EnrollmentStatus
+  status: EnrollmentStatus,
 ): Promise<IEnrollment> {
   return apiClient<IEnrollment>(`/enrollment/${enrollmentId}/status`, {
     method: "PATCH",
@@ -612,20 +611,18 @@ export async function deleteEnrollment(enrollmentId: string): Promise<void> {
  * Returns the payment gateway URL and transaction ID.
  */
 export async function initPayment(
-  enrollmentId: string
+  enrollmentId: string,
 ): Promise<PaymentInitResponse> {
   return apiClient<PaymentInitResponse>(
     `/payment/init-payment/${enrollmentId}`,
-    { method: "POST" }
+    { method: "POST" },
   );
 }
 
 /**
  * Validate a completed payment using the gateway validation ID.
  */
-export async function validatePayment(
-  val_id: string
-): Promise<IPayment> {
+export async function validatePayment(val_id: string): Promise<IPayment> {
   return apiClient<IPayment>("/payment/validate-payment", {
     method: "POST",
     body: { val_id },
@@ -637,7 +634,7 @@ export async function validatePayment(
  */
 export async function refundPayment(
   paymentId: string,
-  reason: string
+  reason: string,
 ): Promise<IPayment> {
   return apiClient<IPayment>("/payment/refund", {
     method: "POST",
@@ -648,7 +645,9 @@ export async function refundPayment(
 /**
  * Get the invoice URL / data for a payment.
  */
-export async function getInvoice(paymentId: string): Promise<{ invoiceUrl: string }> {
+export async function getInvoice(
+  paymentId: string,
+): Promise<{ invoiceUrl: string }> {
   return apiClient<{ invoiceUrl: string }>(`/payment/invoice/${paymentId}`);
 }
 
@@ -716,13 +715,14 @@ export async function getWorkshopStats(): Promise<WorkshopStats> {
  * Fetch audit logs with optional filters (admin). Returns paginated results.
  */
 export async function getAuditLogs(
-  params?: FetchAuditLogsParams
+  params?: FetchAuditLogsParams,
 ): Promise<PaginatedData<IAuditLog[]>> {
   const searchParams = new URLSearchParams();
 
   if (params?.page) searchParams.set("page", String(params.page));
   if (params?.limit) searchParams.set("limit", String(params.limit));
-  if (params?.collectionName) searchParams.set("collectionName", params.collectionName);
+  if (params?.collectionName)
+    searchParams.set("collectionName", params.collectionName);
   if (params?.action) searchParams.set("action", params.action);
   if (params?.performedBy) searchParams.set("performedBy", params.performedBy);
   if (params?.documentId) searchParams.set("documentId", params.documentId);

@@ -34,7 +34,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { PageHeader, StatusBadge, ConfirmDialog, TableSkeleton } from "@/components/shared";
+import {
+  PageHeader,
+  StatusBadge,
+  ConfirmDialog,
+  TableSkeleton,
+} from "@/components/shared";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import {
   fetchWorkshops,
@@ -83,13 +88,16 @@ export default function WorkshopsPage({ params }: PageProps) {
   const fetchWorkshopData = useCallback(async () => {
     setLoading(true);
     try {
-      const [workshopsRes, categoriesRes, levelsRes] = await Promise.allSettled([
-        fetchWorkshops({ page, limit, searchTerm }),
-        fetchCategories(),
-        fetchWorkshopLevels(),
-      ]);
+      const [workshopsRes, categoriesRes, levelsRes] = await Promise.allSettled(
+        [
+          fetchWorkshops({ page, limit, searchTerm }),
+          fetchCategories(),
+          fetchWorkshopLevels(),
+        ],
+      );
 
-      const cats = categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
+      const cats =
+        categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
       const lvls = levelsRes.status === "fulfilled" ? levelsRes.value : [];
 
       if (workshopsRes.status === "fulfilled") {
@@ -134,10 +142,11 @@ export default function WorkshopsPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Workshop Management" description="Manage all workshops">
-        <Button
-          onClick={() => router.push(`/${role}/workshops/create`)}
-        >
+      <PageHeader
+        title="Workshop Management"
+        description="Manage all workshops"
+      >
+        <Button onClick={() => router.push(`/${role}/workshops/create`)}>
           <Plus className="size-4" />
           Create Workshop
         </Button>
@@ -169,7 +178,7 @@ export default function WorkshopsPage({ params }: PageProps) {
               <TableHead>Seats</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead className="w-[70px]">Actions</TableHead>
+              <TableHead className="w-17.5">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -183,25 +192,36 @@ export default function WorkshopsPage({ params }: PageProps) {
               <TableRow>
                 <TableCell colSpan={8} className="h-48 text-center">
                   <p className="text-sm text-muted-foreground">
-                    {searchTerm ? "No workshops match your search." : "No workshops found."}
+                    {searchTerm
+                      ? "No workshops match your search."
+                      : "No workshops found."}
                   </p>
                 </TableCell>
               </TableRow>
             ) : (
               workshops.map((ws) => {
-                const availableSeats = (ws.maxSeats ?? 0) - ws.currentEnrollments;
+                const availableSeats =
+                  (ws.maxSeats ?? 0) - ws.currentEnrollments;
                 return (
                   <TableRow key={ws._id}>
                     <TableCell>
-                      <p className="truncate text-sm font-medium max-w-[200px]">{ws.title}</p>
+                      <p className="truncate text-sm font-medium max-w-50">
+                        {ws.title}
+                      </p>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400">
+                      <Badge
+                        variant="outline"
+                        className="border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400"
+                      >
                         {getCategoryName(ws.category) || "—"}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400">
+                      <Badge
+                        variant="outline"
+                        className="border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400"
+                      >
                         {getLevelName(ws.level) || "—"}
                       </Badge>
                     </TableCell>
@@ -211,13 +231,21 @@ export default function WorkshopsPage({ params }: PageProps) {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <span className={`text-sm ${availableSeats <= 0 ? "text-red-600 font-medium" : "text-muted-foreground"}`}>
-                        {ws.maxSeats ? `${availableSeats} / ${ws.maxSeats}` : "—"}
+                      <span
+                        className={`text-sm ${availableSeats <= 0 ? "text-red-600 font-medium" : "text-muted-foreground"}`}
+                      >
+                        {ws.maxSeats
+                          ? `${availableSeats} / ${ws.maxSeats}`
+                          : "—"}
                       </span>
                     </TableCell>
                     <TableCell>
                       <StatusBadge
-                        status={ws.currentEnrollments > 0 || ws.price === 0 ? "Published" : "Draft"}
+                        status={
+                          ws.currentEnrollments > 0 || ws.price === 0
+                            ? "Published"
+                            : "Draft"
+                        }
                       />
                     </TableCell>
                     <TableCell>
@@ -230,7 +258,9 @@ export default function WorkshopsPage({ params }: PageProps) {
                         workshop={ws}
                         role={role}
                         onView={() => setViewWorkshop(ws)}
-                        onEdit={() => router.push(`/${role}/workshops/${ws._id}/edit`)}
+                        onEdit={() =>
+                          router.push(`/${role}/workshops/${ws._id}/edit`)
+                        }
                         onDelete={() => setDeleteTarget(ws)}
                       />
                     </TableCell>
@@ -303,16 +333,22 @@ export default function WorkshopsPage({ params }: PageProps) {
               <div className="grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
                 <div>
                   <p className="text-muted-foreground">Category</p>
-                  <p className="font-medium">{getCategoryName(viewWorkshop.category) || "—"}</p>
+                  <p className="font-medium">
+                    {getCategoryName(viewWorkshop.category) || "—"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Level</p>
-                  <p className="font-medium">{getLevelName(viewWorkshop.level) || "—"}</p>
+                  <p className="font-medium">
+                    {getLevelName(viewWorkshop.level) || "—"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Price</p>
                   <p className="font-medium">
-                    {viewWorkshop.price != null ? formatCurrency(viewWorkshop.price) : "Free"}
+                    {viewWorkshop.price != null
+                      ? formatCurrency(viewWorkshop.price)
+                      : "Free"}
                   </p>
                 </div>
                 <div>
@@ -334,25 +370,33 @@ export default function WorkshopsPage({ params }: PageProps) {
                 {viewWorkshop.startDate && (
                   <div>
                     <p className="text-muted-foreground">Start Date</p>
-                    <p className="font-medium">{formatDate(viewWorkshop.startDate)}</p>
+                    <p className="font-medium">
+                      {formatDate(viewWorkshop.startDate)}
+                    </p>
                   </div>
                 )}
                 {viewWorkshop.endDate && (
                   <div>
                     <p className="text-muted-foreground">End Date</p>
-                    <p className="font-medium">{formatDate(viewWorkshop.endDate)}</p>
+                    <p className="font-medium">
+                      {formatDate(viewWorkshop.endDate)}
+                    </p>
                   </div>
                 )}
                 <div>
                   <p className="text-muted-foreground">Created By</p>
-                  <p className="font-medium">{getCreatorName(viewWorkshop.createdBy) || "—"}</p>
+                  <p className="font-medium">
+                    {getCreatorName(viewWorkshop.createdBy) || "—"}
+                  </p>
                 </div>
               </div>
 
               {/* Lists */}
               {viewWorkshop.whatYouLearn.length > 0 && (
                 <div>
-                  <p className="text-sm font-medium mb-1">What You&apos;ll Learn</p>
+                  <p className="text-sm font-medium mb-1">
+                    What You&apos;ll Learn
+                  </p>
                   <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1">
                     {viewWorkshop.whatYouLearn.map((item, i) => (
                       <li key={i}>{item}</li>
@@ -448,7 +492,10 @@ function WorkshopActions({
           <Pencil className="size-4" />
           Edit
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={onDelete} className="text-red-600 focus:text-red-600">
+        <DropdownMenuItem
+          onClick={onDelete}
+          className="text-red-600 focus:text-red-600"
+        >
           <Trash2 className="size-4" />
           Delete
         </DropdownMenuItem>

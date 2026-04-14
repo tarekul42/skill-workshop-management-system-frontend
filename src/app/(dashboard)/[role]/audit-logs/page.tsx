@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -40,9 +37,12 @@ interface PageProps {
 // ─── Action badge styles ─────────────────────────────────────────────
 
 const actionStyles: Record<AuditAction, string> = {
-  CREATE: "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400",
-  UPDATE: "border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400",
-  DELETE: "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-400",
+  CREATE:
+    "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400",
+  UPDATE:
+    "border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400",
+  DELETE:
+    "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-400",
 };
 
 // ─── Known collections ───────────────────────────────────────────────
@@ -99,7 +99,14 @@ export default function AuditLogsPage({ params }: PageProps) {
     } finally {
       setLoading(false);
     }
-  }, [page, limit, filterCollection, filterAction, filterStartDate, filterEndDate]);
+  }, [
+    page,
+    limit,
+    filterCollection,
+    filterAction,
+    filterStartDate,
+    filterEndDate,
+  ]);
 
   useEffect(() => {
     fetchLogs();
@@ -115,7 +122,8 @@ export default function AuditLogsPage({ params }: PageProps) {
     setPage(1);
   };
 
-  const hasActiveFilters = filterCollection || filterAction || filterStartDate || filterEndDate;
+  const hasActiveFilters =
+    filterCollection || filterAction || filterStartDate || filterEndDate;
 
   // ── Render ─────────────────────────────────────────────────────────
 
@@ -128,7 +136,13 @@ export default function AuditLogsPage({ params }: PageProps) {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Collection</Label>
-            <Select value={filterCollection} onValueChange={(v) => { setFilterCollection(v === "all" ? "" : v); setPage(1); }}>
+            <Select
+              value={filterCollection}
+              onValueChange={(v) => {
+                setFilterCollection(v === "all" ? "" : v);
+                setPage(1);
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="All collections" />
               </SelectTrigger>
@@ -144,7 +158,13 @@ export default function AuditLogsPage({ params }: PageProps) {
           </div>
           <div className="space-y-1.5">
             <Label className="text-xs text-muted-foreground">Action</Label>
-            <Select value={filterAction} onValueChange={(v) => { setFilterAction(v === "all" ? "" : v); setPage(1); }}>
+            <Select
+              value={filterAction}
+              onValueChange={(v) => {
+                setFilterAction(v === "all" ? "" : v);
+                setPage(1);
+              }}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="All actions" />
               </SelectTrigger>
@@ -161,7 +181,10 @@ export default function AuditLogsPage({ params }: PageProps) {
             <Input
               type="date"
               value={filterStartDate}
-              onChange={(e) => { setFilterStartDate(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setFilterStartDate(e.target.value);
+                setPage(1);
+              }}
             />
           </div>
           <div className="space-y-1.5">
@@ -169,11 +192,19 @@ export default function AuditLogsPage({ params }: PageProps) {
             <Input
               type="date"
               value={filterEndDate}
-              onChange={(e) => { setFilterEndDate(e.target.value); setPage(1); }}
+              onChange={(e) => {
+                setFilterEndDate(e.target.value);
+                setPage(1);
+              }}
             />
           </div>
           <div className="flex items-end">
-            <Button variant="outline" size="sm" onClick={resetFilters} disabled={!hasActiveFilters}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={resetFilters}
+              disabled={!hasActiveFilters}
+            >
               Clear Filters
             </Button>
           </div>
@@ -182,7 +213,9 @@ export default function AuditLogsPage({ params }: PageProps) {
 
       {/* ── Info bar ───────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{total} log entries total</p>
+        <p className="text-sm text-muted-foreground">
+          {total} log entries total
+        </p>
       </div>
 
       {/* ── Table ──────────────────────────────────────────────────── */}
@@ -209,7 +242,9 @@ export default function AuditLogsPage({ params }: PageProps) {
               <TableRow>
                 <TableCell colSpan={6} className="h-48 text-center">
                   <p className="text-sm text-muted-foreground">
-                    {hasActiveFilters ? "No logs match your filters." : "No audit logs found."}
+                    {hasActiveFilters
+                      ? "No logs match your filters."
+                      : "No audit logs found."}
                   </p>
                 </TableCell>
               </TableRow>
@@ -217,12 +252,17 @@ export default function AuditLogsPage({ params }: PageProps) {
               logs.map((log) => (
                 <TableRow key={log._id}>
                   <TableCell>
-                    <Badge variant="outline" className={actionStyles[log.action]}>
+                    <Badge
+                      variant="outline"
+                      className={actionStyles[log.action]}
+                    >
                       {log.action}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-medium">{log.collectionName}</span>
+                    <span className="text-sm font-medium">
+                      {log.collectionName}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <span className="font-mono text-xs text-muted-foreground">
@@ -231,9 +271,13 @@ export default function AuditLogsPage({ params }: PageProps) {
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="text-sm">{log.performedBy?.name || "System"}</p>
+                      <p className="text-sm">
+                        {log.performedBy?.name || "System"}
+                      </p>
                       {log.performedBy?.role && (
-                        <p className="text-xs text-muted-foreground">{log.performedBy.role}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {log.performedBy.role}
+                        </p>
                       )}
                     </div>
                   </TableCell>

@@ -1,10 +1,5 @@
 import Link from "next/link";
-import {
-  Users,
-  Star,
-  Globe,
-  ArrowRight,
-} from "lucide-react";
+import { Users, Star, Globe, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -68,14 +63,13 @@ export default function AboutPage() {
   return (
     <>
       {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-primary/5 to-background">
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+      <section className="relative overflow-hidden `bg-linear-to-br from-primary/10 via-primary/5 to-background">
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-100 w-150 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
 
         <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-24 sm:px-6 sm:pt-32 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-              About{" "}
-              <span className="text-primary">Skill Workshop</span>
+              About <span className="text-primary">Skill Workshop</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
               We are on a mission to empower individuals across Bangladesh with
@@ -95,20 +89,20 @@ export default function AboutPage() {
           <div className="mt-6 space-y-4">
             <p className="leading-relaxed text-muted-foreground">
               Skill Workshop was founded in 2023 with a simple but powerful
-              vision: to make high-quality skill education accessible to everyone
-              in Bangladesh. What started as a small series of coding bootcamps
-              in Dhaka quickly grew into a thriving community of learners,
-              instructors, and industry professionals united by a shared passion
-              for growth.
+              vision: to make high-quality skill education accessible to
+              everyone in Bangladesh. What started as a small series of coding
+              bootcamps in Dhaka quickly grew into a thriving community of
+              learners, instructors, and industry professionals united by a
+              shared passion for growth.
             </p>
             <p className="leading-relaxed text-muted-foreground">
               Today, we operate workshops in multiple cities across the country,
               covering everything from web development and digital marketing to
-              graphic design and data science. Our graduates have gone on to land
-              roles at top tech companies, launch their own businesses, and
-              contribute meaningfully to Bangladesh&apos;s rapidly evolving digital
-              economy. We are proud of every milestone, but we are even more
-              excited about the journey ahead.
+              graphic design and data science. Our graduates have gone on to
+              land roles at top tech companies, launch their own businesses, and
+              contribute meaningfully to Bangladesh&apos;s rapidly evolving
+              digital economy. We are proud of every milestone, but we are even
+              more excited about the journey ahead.
             </p>
           </div>
         </div>
@@ -125,8 +119,8 @@ export default function AboutPage() {
               We aim to democratize skill education in Bangladesh by providing
               affordable, hands-on workshops led by industry experts. Whether
               you are a student, a working professional, or an aspiring
-              entrepreneur, we are here to help you build the skills that
-              matter — no matter where you are starting from.
+              entrepreneur, we are here to help you build the skills that matter
+              — no matter where you are starting from.
             </p>
           </div>
 
@@ -176,9 +170,7 @@ export default function AboutPage() {
                 <Badge variant="secondary" className="mt-1">
                   {member.role}
                 </Badge>
-                <CardDescription className="mt-3">
-                  {member.bio}
-                </CardDescription>
+                <CardDescription className="mt-3">{member.bio}</CardDescription>
               </CardContent>
             </Card>
           ))}

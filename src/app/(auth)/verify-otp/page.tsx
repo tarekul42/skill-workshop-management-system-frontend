@@ -57,7 +57,10 @@ export default function VerifyOTPPage() {
       setLoading(true);
 
       try {
-        await apiClient("/otp/verify", { method: "POST", body: { email, otp } });
+        await apiClient("/otp/verify", {
+          method: "POST",
+          body: { email, otp },
+        });
         clearOTPEmail();
         toast.success("Email verified! Please sign in.");
         router.push("/login");
@@ -71,7 +74,7 @@ export default function VerifyOTPPage() {
         setLoading(false);
       }
     },
-    [otp, email, router]
+    [otp, email, router],
   );
 
   const handleResend = useCallback(async () => {

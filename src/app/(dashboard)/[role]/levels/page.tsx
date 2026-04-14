@@ -24,7 +24,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import { PageHeader, ConfirmDialog, TableSkeleton, EmptyState } from "@/components/shared";
+import {
+  PageHeader,
+  ConfirmDialog,
+  TableSkeleton,
+  EmptyState,
+} from "@/components/shared";
 import { formatDate } from "@/lib/formatters";
 import {
   fetchWorkshopLevels,
@@ -103,7 +108,9 @@ export default function LevelsPage({ params: _params }: PageProps) {
       fetchLevels();
       toast.success("Level created successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to create level");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to create level",
+      );
     } finally {
       setSaving(false);
     }
@@ -122,7 +129,9 @@ export default function LevelsPage({ params: _params }: PageProps) {
       fetchLevels();
       toast.success("Level updated successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update level");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to update level",
+      );
     } finally {
       setSaving(false);
     }
@@ -137,7 +146,9 @@ export default function LevelsPage({ params: _params }: PageProps) {
       fetchLevels();
       toast.success("Level deleted successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to delete level");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete level",
+      );
     } finally {
       setDeleting(false);
     }
@@ -147,7 +158,10 @@ export default function LevelsPage({ params: _params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Workshop Levels" description="Manage workshop difficulty levels">
+      <PageHeader
+        title="Workshop Levels"
+        description="Manage workshop difficulty levels"
+      >
         <Button onClick={openCreateDialog}>
           <Plus className="size-4" />
           Create Level
@@ -161,7 +175,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Created Date</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead className="w-25">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -178,7 +192,10 @@ export default function LevelsPage({ params: _params }: PageProps) {
                     icon={Layers}
                     title="No levels yet"
                     description="Create your first workshop level."
-                    action={{ label: "Create Level", onClick: openCreateDialog }}
+                    action={{
+                      label: "Create Level",
+                      onClick: openCreateDialog,
+                    }}
                   />
                 </TableCell>
               </TableRow>
@@ -190,7 +207,13 @@ export default function LevelsPage({ params: _params }: PageProps) {
                   </TableCell>
                   <TableCell>
                     <span className="text-sm text-muted-foreground">
-                      {formatDate(level._id.includes("created") ? new Date().toISOString() : new Date(parseInt(level._id.substring(0, 8), 16) * 1000).toISOString())}
+                      {formatDate(
+                        level._id.includes("created")
+                          ? new Date().toISOString()
+                          : new Date(
+                              parseInt(level._id.substring(0, 8), 16) * 1000,
+                            ).toISOString(),
+                      )}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -220,11 +243,18 @@ export default function LevelsPage({ params: _params }: PageProps) {
       </div>
 
       {/* ── Create Level Dialog ────────────────────────────────────── */}
-      <Dialog open={createOpen} onOpenChange={(open) => { if (!open) setCreateOpen(false); }}>
+      <Dialog
+        open={createOpen}
+        onOpenChange={(open) => {
+          if (!open) setCreateOpen(false);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Level</DialogTitle>
-            <DialogDescription>Add a new workshop difficulty level</DialogDescription>
+            <DialogDescription>
+              Add a new workshop difficulty level
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -234,12 +264,18 @@ export default function LevelsPage({ params: _params }: PageProps) {
                 placeholder="e.g., Beginner, Intermediate, Advanced"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") handleCreate(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleCreate();
+                }}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={saving}>
+            <Button
+              variant="outline"
+              onClick={() => setCreateOpen(false)}
+              disabled={saving}
+            >
               Cancel
             </Button>
             <Button onClick={handleCreate} disabled={saving}>
@@ -251,7 +287,12 @@ export default function LevelsPage({ params: _params }: PageProps) {
       </Dialog>
 
       {/* ── Edit Level Dialog ──────────────────────────────────────── */}
-      <Dialog open={!!editTarget} onOpenChange={(open) => { if (!open) setEditTarget(null); }}>
+      <Dialog
+        open={!!editTarget}
+        onOpenChange={(open) => {
+          if (!open) setEditTarget(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Level</DialogTitle>
@@ -265,12 +306,18 @@ export default function LevelsPage({ params: _params }: PageProps) {
                 placeholder="e.g., Beginner, Intermediate, Advanced"
                 value={formName}
                 onChange={(e) => setFormName(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") handleUpdate(); }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleUpdate();
+                }}
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditTarget(null)} disabled={saving}>
+            <Button
+              variant="outline"
+              onClick={() => setEditTarget(null)}
+              disabled={saving}
+            >
               Cancel
             </Button>
             <Button onClick={handleUpdate} disabled={saving}>

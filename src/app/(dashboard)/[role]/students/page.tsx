@@ -60,12 +60,12 @@ export default function MyStudentsPage({ params }: PageProps) {
 
         const enrollments =
           enrollmentsRes.status === "fulfilled"
-            ? enrollmentsRes.value.data ?? []
+            ? (enrollmentsRes.value.data ?? [])
             : [];
 
         const workshops =
           workshopsRes.status === "fulfilled"
-            ? workshopsRes.value.data ?? []
+            ? (workshopsRes.value.data ?? [])
             : [];
 
         // For instructor: find workshops created by this instructor
@@ -73,15 +73,16 @@ export default function MyStudentsPage({ params }: PageProps) {
         const myWorkshopIds = new Set(
           workshops
             .filter((w) => {
-              if (typeof w.createdBy === "string") return w.createdBy === userId;
+              if (typeof w.createdBy === "string")
+                return w.createdBy === userId;
               return w.createdBy?._id === userId;
             })
-            .map((w) => w._id)
+            .map((w) => w._id),
         );
 
         // Filter enrollments belonging to the instructor's workshops
         const myEnrollments = enrollments.filter((e) =>
-          myWorkshopIds.has(e.workshop?._id)
+          myWorkshopIds.has(e.workshop?._id),
         );
 
         // Build student rows
@@ -107,9 +108,7 @@ export default function MyStudentsPage({ params }: PageProps) {
         setStudents(Array.from(studentMap.values()));
       } catch (err) {
         setError(
-          err instanceof Error
-            ? err.message
-            : "Failed to load students"
+          err instanceof Error ? err.message : "Failed to load students",
         );
       } finally {
         setLoading(false);
@@ -138,16 +137,14 @@ export default function MyStudentsPage({ params }: PageProps) {
         accessorKey: "studentPhone",
         header: "Phone",
         cell: ({ row }) => (
-          <span className="text-sm">
-            {row.original.studentPhone ?? "—"}
-          </span>
+          <span className="text-sm">{row.original.studentPhone ?? "—"}</span>
         ),
       },
       {
         accessorKey: "workshopTitle",
         header: "Workshop",
         cell: ({ row }) => (
-          <span className="max-w-[200px] truncate block text-sm">
+          <span className="max-w-50 truncate block text-sm">
             {row.original.workshopTitle}
           </span>
         ),
@@ -179,10 +176,10 @@ export default function MyStudentsPage({ params }: PageProps) {
             status === "COMPLETE"
               ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400"
               : status === "PENDING"
-              ? "border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-400"
-              : status === "CANCEL"
-              ? "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-400"
-              : "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400";
+                ? "border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-400"
+                : status === "CANCEL"
+                  ? "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-400"
+                  : "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400";
 
           return (
             <span
@@ -194,7 +191,7 @@ export default function MyStudentsPage({ params }: PageProps) {
         },
       },
     ],
-    []
+    [],
   );
 
   return (
@@ -224,10 +221,7 @@ export default function MyStudentsPage({ params }: PageProps) {
       )}
 
       {!loading && error && (
-        <EmptyState
-          title="Failed to load students"
-          description={error}
-        />
+        <EmptyState title="Failed to load students" description={error} />
       )}
     </div>
   );

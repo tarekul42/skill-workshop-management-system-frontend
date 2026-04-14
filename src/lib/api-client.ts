@@ -70,7 +70,7 @@ interface ApiResponse<T> {
  */
 export async function apiClient<T>(
   endpoint: string,
-  options: ApiClientOptions = {}
+  options: ApiClientOptions = {},
 ): Promise<T> {
   const { method = "GET", body, headers = {}, skipCsrf = false } = options;
 
@@ -119,18 +119,16 @@ export async function apiClient<T>(
   // ── Token refresh on 401 ────────────────────────────────────────
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
     try {
-      const refreshRes = await fetch(
-        `${BACKEND_API_URL}/auth/refresh-token`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json();
         if (refreshData?.data?.accessToken) {
           setAccessToken(refreshData.data.accessToken);
-          fetchHeaders["Authorization"] = `Bearer ${refreshData.data.accessToken}`;
+          fetchHeaders["Authorization"] =
+            `Bearer ${refreshData.data.accessToken}`;
         }
         response = await fetch(url, fetchOptions);
       }
@@ -171,7 +169,7 @@ interface PaginatedResult<T> {
  */
 export async function apiClientPaginated<T>(
   endpoint: string,
-  options: ApiClientOptions = {}
+  options: ApiClientOptions = {},
 ): Promise<PaginatedResult<T>> {
   const url = `${BACKEND_API_URL}${endpoint}`;
 
@@ -195,18 +193,16 @@ export async function apiClientPaginated<T>(
   // ── Token refresh on 401 ────────────────────────────────────────
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
     try {
-      const refreshRes = await fetch(
-        `${BACKEND_API_URL}/auth/refresh-token`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json();
         if (refreshData?.data?.accessToken) {
           setAccessToken(refreshData.data.accessToken);
-          fetchHeaders["Authorization"] = `Bearer ${refreshData.data.accessToken}`;
+          fetchHeaders["Authorization"] =
+            `Bearer ${refreshData.data.accessToken}`;
         }
         response = await fetch(url, {
           method: options.method ?? "GET",
@@ -255,7 +251,7 @@ interface FormDataClientOptions {
  */
 export async function apiClientFormData<T>(
   endpoint: string,
-  options: FormDataClientOptions
+  options: FormDataClientOptions,
 ): Promise<T> {
   const { method = "POST", body, headers = {}, skipCsrf = false } = options;
 
@@ -297,18 +293,16 @@ export async function apiClientFormData<T>(
   // ── Token refresh on 401 ────────────────────────────────────────
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
     try {
-      const refreshRes = await fetch(
-        `${BACKEND_API_URL}/auth/refresh-token`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
+      const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json();
         if (refreshData?.data?.accessToken) {
           setAccessToken(refreshData.data.accessToken);
-          fetchHeaders["Authorization"] = `Bearer ${refreshData.data.accessToken}`;
+          fetchHeaders["Authorization"] =
+            `Bearer ${refreshData.data.accessToken}`;
         }
         response = await fetch(url, fetchOptions);
       }

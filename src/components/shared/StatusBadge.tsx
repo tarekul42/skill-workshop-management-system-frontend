@@ -1,7 +1,5 @@
 "use client";
 
-import React from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +24,9 @@ function getStatusCategory(status: string): StatusCategory {
   const normalized = status.toUpperCase().replace(/[\s_-]/g, "");
 
   if (
-    ["PENDING", "PENDINGPAYMENT", "PENDINGREVIEW", "PENDINGAPPROVAL"].includes(normalized)
+    ["PENDING", "PENDINGPAYMENT", "PENDINGREVIEW", "PENDINGAPPROVAL"].includes(
+      normalized,
+    )
   ) {
     return "pending";
   }
@@ -86,8 +86,7 @@ const statusStyles: Record<StatusCategory, string> = {
     "border-orange-300 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950/50 dark:text-orange-400",
   neutral:
     "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400",
-  info:
-    "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-700 dark:bg-violet-950/50 dark:text-violet-400",
+  info: "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-700 dark:bg-violet-950/50 dark:text-violet-400",
 };
 
 // ─── Component ──────────────────────────────────────────────────────
@@ -96,10 +95,7 @@ export function StatusBadge({ status, className }: StatusBadgeProps) {
   const category = getStatusCategory(status);
 
   return (
-    <Badge
-      variant="outline"
-      className={cn(statusStyles[category], className)}
-    >
+    <Badge variant="outline" className={cn(statusStyles[category], className)}>
       {status}
     </Badge>
   );

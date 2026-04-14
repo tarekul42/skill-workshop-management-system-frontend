@@ -24,13 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/api-client";
 
-function PasswordRule({
-  label,
-  valid,
-}: {
-  label: string;
-  valid: boolean;
-}) {
+function PasswordRule({ label, valid }: { label: string; valid: boolean }) {
   return (
     <div className="flex items-center gap-2 text-sm">
       <CheckCircle
@@ -42,9 +36,7 @@ function PasswordRule({
       />
       <span
         className={
-          valid
-            ? "text-green-600 dark:text-green-400"
-            : "text-muted-foreground"
+          valid ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
         }
       >
         {label}
@@ -85,12 +77,14 @@ function ResetPasswordContent() {
         valid: /[!@#$%^&*]/.test(newPassword),
       },
     ],
-    [newPassword]
+    [newPassword],
   );
 
   const allRulesValid = rules.every((r) => r.valid);
   const passwordsMatch =
-    newPassword.length > 0 && confirmPassword.length > 0 && newPassword === confirmPassword;
+    newPassword.length > 0 &&
+    confirmPassword.length > 0 &&
+    newPassword === confirmPassword;
 
   const isFormValid = allRulesValid && passwordsMatch;
 

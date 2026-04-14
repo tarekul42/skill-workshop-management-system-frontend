@@ -142,20 +142,26 @@ export default function PaymentsPage({ params }: PageProps) {
 
   const allStudentPayments = useMemo(
     () => extractPayments(studentEnrollments),
-    [studentEnrollments]
+    [studentEnrollments],
   );
 
   const filteredPayments = useMemo(() => {
     if (activeTab === "all") return allStudentPayments;
     return allStudentPayments.filter(
-      (p) => p.status.toUpperCase() === activeTab.toUpperCase()
+      (p) => p.status.toUpperCase() === activeTab.toUpperCase(),
     );
   }, [allStudentPayments, activeTab]);
 
   const countAll = allStudentPayments.length;
-  const countPaid = allStudentPayments.filter((p) => p.status.toUpperCase() === "PAID").length;
-  const countUnpaid = allStudentPayments.filter((p) => p.status.toUpperCase() === "UNPAID").length;
-  const countFailed = allStudentPayments.filter((p) => p.status.toUpperCase() === "FAILED").length;
+  const countPaid = allStudentPayments.filter(
+    (p) => p.status.toUpperCase() === "PAID",
+  ).length;
+  const countUnpaid = allStudentPayments.filter(
+    (p) => p.status.toUpperCase() === "UNPAID",
+  ).length;
+  const countFailed = allStudentPayments.filter(
+    (p) => p.status.toUpperCase() === "FAILED",
+  ).length;
 
   async function handleDownloadInvoice(paymentId: string) {
     try {
@@ -215,7 +221,9 @@ export default function PaymentsPage({ params }: PageProps) {
       fetchData();
       toast.success("Payment refunded successfully");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to refund payment");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to refund payment",
+      );
     } finally {
       setRefunding(false);
     }
@@ -312,7 +320,7 @@ export default function PaymentsPage({ params }: PageProps) {
                       <TableHead>Amount</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Date</TableHead>
-                      <TableHead className="w-[90px]">Actions</TableHead>
+                      <TableHead className="w-22.5">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -366,7 +374,9 @@ export default function PaymentsPage({ params }: PageProps) {
                               <Button
                                 variant="ghost"
                                 size="icon-xs"
-                                onClick={() => handleDownloadInvoice(payment.paymentId)}
+                                onClick={() =>
+                                  handleDownloadInvoice(payment.paymentId)
+                                }
                                 aria-label="Download invoice"
                               >
                                 <Download className="size-4" />
@@ -392,10 +402,15 @@ export default function PaymentsPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <PageHeader title="Payment Management" description="View and manage workshop payments" />
+      <PageHeader
+        title="Payment Management"
+        description="View and manage workshop payments"
+      />
 
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">{payments.length} payments on this page</p>
+        <p className="text-sm text-muted-foreground">
+          {payments.length} payments on this page
+        </p>
       </div>
 
       <div className="rounded-lg border">
@@ -407,7 +422,7 @@ export default function PaymentsPage({ params }: PageProps) {
               <TableHead>Amount</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
-              <TableHead className="w-[70px]">Actions</TableHead>
+              <TableHead className="w-17.5">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -420,7 +435,9 @@ export default function PaymentsPage({ params }: PageProps) {
             ) : payments.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-48 text-center">
-                  <p className="text-sm text-muted-foreground">No payments found.</p>
+                  <p className="text-sm text-muted-foreground">
+                    No payments found.
+                  </p>
                 </TableCell>
               </TableRow>
             ) : (
@@ -433,12 +450,18 @@ export default function PaymentsPage({ params }: PageProps) {
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="text-sm font-medium">{payment.studentName}</p>
-                      <p className="text-xs text-muted-foreground">{payment.workshopTitle}</p>
+                      <p className="text-sm font-medium">
+                        {payment.studentName}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {payment.workshopTitle}
+                      </p>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-medium">{formatCurrency(payment.amount)}</span>
+                    <span className="text-sm font-medium">
+                      {formatCurrency(payment.amount)}
+                    </span>
                   </TableCell>
                   <TableCell>
                     <StatusBadge status={payment.status} />
@@ -456,7 +479,9 @@ export default function PaymentsPage({ params }: PageProps) {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleViewInvoice(payment.paymentId)}>
+                        <DropdownMenuItem
+                          onClick={() => handleViewInvoice(payment.paymentId)}
+                        >
                           <FileText className="size-4" />
                           View Invoice
                         </DropdownMenuItem>
@@ -528,11 +553,15 @@ export default function PaymentsPage({ params }: PageProps) {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Amount</p>
-                  <p className="font-medium">{formatCurrency(refundTarget.amount)}</p>
+                  <p className="font-medium">
+                    {formatCurrency(refundTarget.amount)}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Transaction ID</p>
-                  <p className="font-mono text-xs">{refundTarget.transactionId}</p>
+                  <p className="font-mono text-xs">
+                    {refundTarget.transactionId}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Status</p>
@@ -552,10 +581,18 @@ export default function PaymentsPage({ params }: PageProps) {
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRefundTarget(null)} disabled={refunding}>
+            <Button
+              variant="outline"
+              onClick={() => setRefundTarget(null)}
+              disabled={refunding}
+            >
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleRefund} disabled={refunding || !refundReason.trim()}>
+            <Button
+              variant="destructive"
+              onClick={handleRefund}
+              disabled={refunding || !refundReason.trim()}
+            >
               {refunding ? "Processing..." : "Confirm Refund"}
             </Button>
           </DialogFooter>
@@ -563,7 +600,13 @@ export default function PaymentsPage({ params }: PageProps) {
       </Dialog>
 
       {/* ── Invoice Dialog ─────────────────────────────────────────── */}
-      <Dialog open={!!invoiceTarget} onOpenChange={() => { setInvoiceTarget(null); setInvoiceUrl(null); }}>
+      <Dialog
+        open={!!invoiceTarget}
+        onOpenChange={() => {
+          setInvoiceTarget(null);
+          setInvoiceUrl(null);
+        }}
+      >
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Invoice</DialogTitle>
@@ -571,7 +614,9 @@ export default function PaymentsPage({ params }: PageProps) {
           </DialogHeader>
           {loadingInvoice ? (
             <div className="flex items-center justify-center py-8">
-              <p className="text-sm text-muted-foreground">Loading invoice...</p>
+              <p className="text-sm text-muted-foreground">
+                Loading invoice...
+              </p>
             </div>
           ) : invoiceUrl ? (
             <div className="space-y-4">
@@ -587,7 +632,9 @@ export default function PaymentsPage({ params }: PageProps) {
             </div>
           ) : (
             <div className="flex items-center justify-center py-8">
-              <p className="text-sm text-muted-foreground">Invoice not available for this payment.</p>
+              <p className="text-sm text-muted-foreground">
+                Invoice not available for this payment.
+              </p>
             </div>
           )}
         </DialogContent>
