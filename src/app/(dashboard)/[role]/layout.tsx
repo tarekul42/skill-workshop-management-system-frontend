@@ -1,6 +1,18 @@
+import type { Metadata } from "next";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { DashboardHeader } from "@/components/layout/DashboardHeader";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
+export const metadata: Metadata = {
+  title: {
+    absolute: "Dashboard | Skill Workshop",
+  },
+  description: "Manage your workshops, enrollments, students, and settings from your Skill Workshop dashboard.",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function DashboardLayout({
   children,
