@@ -177,7 +177,7 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
 
 export default function FAQPage() {
   return (
-    <section className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+    <section className="site-container py-12 md:py-16 lg:py-20">
       {/* Page Header */}
       <div className="mx-auto mb-10 max-w-2xl text-center md:mb-14">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
