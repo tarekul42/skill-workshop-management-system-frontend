@@ -28,7 +28,7 @@ import {
   clearSavedUser,
   clearAuthCookie,
 } from "@/lib/auth-helpers";
-import { clearAccessToken } from "@/lib/api-client";
+import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
 
 import type { SavedUser } from "@/lib/auth-helpers";
@@ -55,7 +55,12 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const user: SavedUser | null = getSavedUser();
   const role = getUserRole();
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await apiClient("/auth/logout", { method: "POST", skipCsrf: true });
+    } catch {
+      // Continue with client-side cleanup even if backend call fails
+    }
     clearSavedUser();
     clearAccessToken();
     clearAuthCookie();

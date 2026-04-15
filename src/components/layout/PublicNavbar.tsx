@@ -28,7 +28,7 @@ import {
   clearSavedUser,
   clearAuthCookie,
 } from "@/lib/auth-helpers";
-import { clearAccessToken } from "@/lib/api-client";
+import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
 import { DASHBOARD_ROUTES } from "@/lib/constants";
 
@@ -69,7 +69,12 @@ export function PublicNavbar() {
     };
   }, [syncUser]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    try {
+      await apiClient("/auth/logout", { method: "POST", skipCsrf: true });
+    } catch {
+      // Continue with client-side cleanup even if backend call fails
+    }
     clearSavedUser();
     clearAccessToken();
     clearAuthCookie();

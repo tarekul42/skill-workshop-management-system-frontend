@@ -118,3 +118,8 @@ export function getOTPName(): string | null {
   if (typeof window === "undefined") return null;
   return sessionStorage.getItem(OTP_NAME_KEY);
 }
+
+export function clearOTPName(): void {
+  if (typeof window === "undefined") return;
+  sessionStorage.removeItem(OTP_NAME_KEY);
+}
