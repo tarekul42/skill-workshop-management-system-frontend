@@ -110,7 +110,7 @@ export async function changePassword(
 ): Promise<void> {
   return apiClient<void>("/auth/change-password", {
     method: "POST",
-    body: { currentPassword, newPassword },
+    body: { oldPassword: currentPassword, newPassword },
   });
 }
 

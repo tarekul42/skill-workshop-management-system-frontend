@@ -63,7 +63,7 @@ interface ApiResponse<T> {
  *
  * - Prepends BACKEND_API_URL to every endpoint
  * - Uses Authorization: Bearer <token> header (token stored in sessionStorage)
- * - Falls back to credentials: "include" for cookie-based auth
+ * - Uses credentials: "include" for cross-origin cookie support on refresh requests
  * - Fetches CSRF token from /csrf-token for mutating requests (unless exempt)
  * - Parses JSON and throws on !success
  * - On 401, attempts one token refresh then retries once
@@ -122,6 +122,7 @@ export async function apiClient<T>(
       const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
       });
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json();
@@ -196,6 +197,7 @@ export async function apiClientPaginated<T>(
       const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
       });
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json();
@@ -296,6 +298,7 @@ export async function apiClientFormData<T>(
       const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
       });
       if (refreshRes.ok) {
         const refreshData = await refreshRes.json();
