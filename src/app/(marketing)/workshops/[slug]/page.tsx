@@ -270,7 +270,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
   return (
     <div className="bg-background">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="site-container py-8">
         {/* Breadcrumb */}
         <nav aria-label="Breadcrumb" className="mb-6">
           <ol className="flex items-center gap-1.5 text-sm text-muted-foreground">

@@ -63,10 +63,10 @@ export default function AboutPage() {
   return (
     <>
       {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden `bg-linear-to-br from-primary/10 via-primary/5 to-background">
+      <section className="relative overflow-hidden bg-linear-to-br from-primary/10 via-primary/5 to-background">
         <div className="pointer-events-none absolute -top-24 left-1/2 h-100 w-150 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-24 sm:px-6 sm:pt-32 lg:px-8">
+        <div className="site-container relative pb-16 pt-24 sm:pt-32">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               About <span className="text-primary">Skill Workshop</span>
@@ -81,7 +81,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Our Story ─────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="site-container py-20">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Our Story
@@ -110,7 +110,7 @@ export default function AboutPage() {
 
       {/* ── Our Mission ───────────────────────────────────────────── */}
       <section className="bg-muted/40">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="site-container py-20">
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Our Mission
@@ -145,7 +145,7 @@ export default function AboutPage() {
       </section>
 
       {/* ── Our Team ──────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="site-container py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Meet Our Team
@@ -179,7 +179,7 @@ export default function AboutPage() {
 
       {/* ── CTA ────────────────────────────────────────────────────── */}
       <section className="bg-primary">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="site-container py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-primary-foreground sm:text-3xl">
               Join Our Growing Community

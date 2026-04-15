@@ -119,6 +119,13 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+@layer components {
+  /* Shared fixed-width container for consistent site-wide alignment */
+  .site-container {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
