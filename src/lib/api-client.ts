@@ -1,5 +1,28 @@
 import { BACKEND_API_URL } from "./constants";
 
+// ─── Auth session expired helper ──────────────────────────────────
+
+/**
+ * Clears all auth state (access token, user data, role cookie) and
+ * redirects the browser to the login page. Called when a 401 persists
+ * even after a refresh-token attempt.
+ */
+export function handleSessionExpired(): void {
+  if (typeof window === "undefined") return;
+
+  // Clear access token from sessionStorage
+  clearAccessToken();
+
+  // Clear saved user from localStorage
+  localStorage.removeItem("skillworkshop_user");
+
+  // Clear role cookie
+  document.cookie = "swms_role=;path=/;max-age=0;SameSite=Lax";
+
+  // Redirect to login
+  window.location.href = "/login";
+}
+
 // ─── CSRF-exempt paths (backend doesn't require x-csrf-token) ──────
 
 const CSRF_EXEMPT_PATHS = [
@@ -17,7 +40,7 @@ function isCsrfExempt(endpoint: string): boolean {
   return CSRF_EXEMPT_PATHS.some((p) => endpoint.startsWith(p));
 }
 
-// ─── Token storage (in-memory + localStorage fallback) ────────────
+// ─── Token storage (sessionStorage) ────────────────────────────────
 
 const TOKEN_KEY = "skillworkshop_access_token";
 
@@ -39,6 +62,49 @@ export function clearAccessToken(): void {
 /** Call this after login to store the access token */
 export function storeAccessToken(token: string): void {
   setAccessToken(token);
+}
+
+// ─── Shared 401 refresh logic ─────────────────────────────────────
+
+const SESSION_EXPIRED_MSG = "Session expired. Please log in again.";
+
+/**
+ * Attempts to refresh the access token when a 401 is received.
+ * Returns the new response if refresh succeeded, or throws if it failed.
+ */
+async function attemptTokenRefresh(
+  fetchHeaders: Record<string, string>,
+  url: string,
+  fetchOptions: RequestInit,
+): Promise<Response> {
+  try {
+    const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
+
+    if (refreshRes.ok) {
+      const refreshData = await refreshRes.json();
+      if (refreshData?.data?.accessToken) {
+        setAccessToken(refreshData.data.accessToken);
+        fetchHeaders["Authorization"] =
+          `Bearer ${refreshData.data.accessToken}`;
+      }
+      return await fetch(url, fetchOptions);
+    }
+
+    // Refresh endpoint returned non-200 — session is dead
+    handleSessionExpired();
+    throw new Error(SESSION_EXPIRED_MSG);
+  } catch (err) {
+    if (err instanceof Error && err.message === SESSION_EXPIRED_MSG) {
+      throw err;
+    }
+    // Network error on refresh — session is dead
+    handleSessionExpired();
+    throw new Error(SESSION_EXPIRED_MSG);
+  }
 }
 
 // ─── Main API client ───────────────────────────────────────────────
@@ -67,6 +133,7 @@ interface ApiResponse<T> {
  * - Fetches CSRF token from /csrf-token for mutating requests (unless exempt)
  * - Parses JSON and throws on !success
  * - On 401, attempts one token refresh then retries once
+ * - If refresh also fails, clears auth state and redirects to login
  */
 export async function apiClient<T>(
   endpoint: string,
@@ -118,24 +185,7 @@ export async function apiClient<T>(
 
   // ── Token refresh on 401 ────────────────────────────────────────
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
-    try {
-      const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      if (refreshRes.ok) {
-        const refreshData = await refreshRes.json();
-        if (refreshData?.data?.accessToken) {
-          setAccessToken(refreshData.data.accessToken);
-          fetchHeaders["Authorization"] =
-            `Bearer ${refreshData.data.accessToken}`;
-        }
-        response = await fetch(url, fetchOptions);
-      }
-    } catch {
-      // Refresh failed — continue with original 401
-    }
+    response = await attemptTokenRefresh(fetchHeaders, url, fetchOptions);
   }
 
   const json = (await response.json().catch(() => null)) as ApiResponse<T>;
@@ -186,34 +236,20 @@ export async function apiClientPaginated<T>(
     Object.assign(fetchHeaders, options.headers);
   }
 
-  let response = await fetch(url, {
+  const fetchOptions: RequestInit = {
     method: options.method ?? "GET",
     headers: fetchHeaders,
-  });
+  };
+
+  let response = await fetch(url, fetchOptions);
 
   // ── Token refresh on 401 ────────────────────────────────────────
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
-    try {
-      const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      if (refreshRes.ok) {
-        const refreshData = await refreshRes.json();
-        if (refreshData?.data?.accessToken) {
-          setAccessToken(refreshData.data.accessToken);
-          fetchHeaders["Authorization"] =
-            `Bearer ${refreshData.data.accessToken}`;
-        }
-        response = await fetch(url, {
-          method: options.method ?? "GET",
-          headers: fetchHeaders,
-        });
-      }
-    } catch {
-      // Refresh failed — continue with original 401
-    }
+    response = await attemptTokenRefresh(
+      fetchHeaders,
+      url,
+      fetchOptions,
+    );
   }
 
   const json = (await response.json().catch(() => null)) as ApiResponse<T> & {
@@ -294,24 +330,7 @@ export async function apiClientFormData<T>(
 
   // ── Token refresh on 401 ────────────────────────────────────────
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
-    try {
-      const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
-      if (refreshRes.ok) {
-        const refreshData = await refreshRes.json();
-        if (refreshData?.data?.accessToken) {
-          setAccessToken(refreshData.data.accessToken);
-          fetchHeaders["Authorization"] =
-            `Bearer ${refreshData.data.accessToken}`;
-        }
-        response = await fetch(url, fetchOptions);
-      }
-    } catch {
-      // Refresh failed — continue with original 401
-    }
+    response = await attemptTokenRefresh(fetchHeaders, url, fetchOptions);
   }
 
   const json = (await response.json().catch(() => null)) as ApiResponse<T>;

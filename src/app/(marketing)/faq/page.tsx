@@ -162,10 +162,14 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
   return (
     <Accordion type="single" collapsible className="w-full">
       {faqList.map((faq) => (
-        <AccordionItem key={faq.id} value={faq.id}>
-          <AccordionTrigger>{faq.question}</AccordionTrigger>
-          <AccordionContent>
-            <p>{faq.answer}</p>
+        <AccordionItem key={faq.id} value={faq.id} className="border-b-border/50">
+          <AccordionTrigger className="px-2 py-4 text-[15px] leading-relaxed hover:no-underline">
+            {faq.question}
+          </AccordionTrigger>
+          <AccordionContent className="px-2">
+            <p className="text-muted-foreground leading-relaxed">
+              {faq.answer}
+            </p>
           </AccordionContent>
         </AccordionItem>
       ))}
@@ -203,7 +207,7 @@ export default function FAQPage() {
         {/* All Tab */}
         <TabsContent value="all">
           <Card>
-            <CardContent className="p-4 md:p-6">
+            <CardContent className="p-4 sm:p-6 lg:p-8">
               <FAQAccordion faqs={faqs} />
             </CardContent>
           </Card>
@@ -212,7 +216,7 @@ export default function FAQPage() {
         {/* General Tab */}
         <TabsContent value="general">
           <Card>
-            <CardContent className="p-4 md:p-6">
+            <CardContent className="p-4 sm:p-6 lg:p-8">
               <FAQAccordion
                 faqs={faqs.filter((f) => f.category === "general")}
               />
@@ -223,7 +227,7 @@ export default function FAQPage() {
         {/* Enrollment Tab */}
         <TabsContent value="enrollment">
           <Card>
-            <CardContent className="p-4 md:p-6">
+            <CardContent className="p-4 sm:p-6 lg:p-8">
               <FAQAccordion
                 faqs={faqs.filter((f) => f.category === "enrollment")}
               />
@@ -234,7 +238,7 @@ export default function FAQPage() {
         {/* Payment Tab */}
         <TabsContent value="payment">
           <Card>
-            <CardContent className="p-4 md:p-6">
+            <CardContent className="p-4 sm:p-6 lg:p-8">
               <FAQAccordion
                 faqs={faqs.filter((f) => f.category === "payment")}
               />
@@ -245,7 +249,7 @@ export default function FAQPage() {
         {/* Workshops Tab */}
         <TabsContent value="workshops">
           <Card>
-            <CardContent className="p-4 md:p-6">
+            <CardContent className="p-4 sm:p-6 lg:p-8">
               <FAQAccordion
                 faqs={faqs.filter((f) => f.category === "workshops")}
               />

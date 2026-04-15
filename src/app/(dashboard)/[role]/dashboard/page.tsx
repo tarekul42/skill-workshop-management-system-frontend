@@ -438,7 +438,7 @@ export default function DashboardPage({ params }: PageProps) {
             ? "Track your workshop enrollments and progress."
             : role === "INSTRUCTOR"
               ? "Monitor your workshops, students, and revenue."
-              : "Here&apos;s an overview of your platform."}
+              : "Here's an overview of your platform."}
         </p>
       </div>
 
