@@ -174,7 +174,7 @@ export default function HomePage() {
         {/* Decorative blobs */}
         <div className="pointer-events-none absolute -top-24 left-1/2 h-125 w-175 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
 
-        <div className="relative mx-auto max-w-6xl px-4 pb-16 pt-24 sm:px-6 sm:pt-32 lg:px-8 lg:pt-40">
+        <div className="site-container relative pb-16 pt-24 sm:pt-32 lg:pt-40">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               Master New Skills with{" "}
@@ -213,7 +213,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Featured Workshops ──────────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="site-container py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Featured Workshops
@@ -283,7 +283,7 @@ export default function HomePage() {
 
       {/* ── Categories Section ──────────────────────────────────────── */}
       <section className="bg-muted/40">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="site-container py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               Explore Categories
@@ -333,7 +333,7 @@ export default function HomePage() {
       </section>
 
       {/* ── Why Choose Us ───────────────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+      <section className="site-container py-20">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Why Choose Skill Workshop?
@@ -361,7 +361,7 @@ export default function HomePage() {
 
       {/* ── Testimonials ────────────────────────────────────────────── */}
       <section className="bg-muted/40">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="site-container py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
               What Our Students Say
@@ -404,7 +404,7 @@ export default function HomePage() {
 
       {/* ── CTA Section ─────────────────────────────────────────────── */}
       <section className="bg-primary">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="site-container py-20">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-2xl font-bold tracking-tight text-primary-foreground sm:text-3xl">
               Ready to Start Learning?

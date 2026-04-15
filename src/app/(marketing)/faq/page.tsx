@@ -1,16 +1,25 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import Link from "next/link";
-import { HelpCircle } from "lucide-react";
+import {
+  HelpCircle,
+  Search,
+  MessageCircle,
+  Headphones,
+  BookOpen,
+  CreditCard,
+  ClipboardList,
+  ArrowRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Accordion,
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
 } from "@/components/ui/accordion";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
 
 // ─── Inline FAQ Data ─────────────────────────────────────────────────────
 
@@ -35,7 +44,7 @@ const faqs: IFAQ[] = [
     id: "faq-002",
     question: "Who can attend the workshops?",
     answer:
-      "Anyone with a passion for learning can join! Most workshops have a minimum age requirement (usually 14–18 depending on the topic) and some may require basic prerequisites, which are clearly listed on each workshop page.",
+      "Anyone with a passion for learning can join! Most workshops have a minimum age requirement (usually 14\u201318 depending on the topic) and some may require basic prerequisites, which are clearly listed on each workshop page.",
     category: "general",
   },
   {
@@ -63,7 +72,7 @@ const faqs: IFAQ[] = [
     id: "faq-006",
     question: "Can I cancel my enrollment and get a refund?",
     answer:
-      "Yes, you can cancel your enrollment up to 7 days before the workshop start date for a full refund minus a processing fee of ৳200. Cancellations within 7 days are not eligible for a refund, but you may transfer your seat to another person.",
+      "Yes, you can cancel your enrollment up to 7 days before the workshop start date for a full refund minus a processing fee of \u09F3200. Cancellations within 7 days are not eligible for a refund, but you may transfer your seat to another person.",
     category: "enrollment",
   },
   {
@@ -112,7 +121,7 @@ const faqs: IFAQ[] = [
     id: "faq-013",
     question: "Are the workshop prices inclusive of VAT and taxes?",
     answer:
-      "All listed prices are inclusive of applicable taxes and VAT. There are no hidden charges — the price you see on the workshop page is what you pay.",
+      "All listed prices are inclusive of applicable taxes and VAT. There are no hidden charges \u2014 the price you see on the workshop page is what you pay.",
     category: "payment",
   },
   {
@@ -138,14 +147,50 @@ const faqs: IFAQ[] = [
   },
 ];
 
-// ─── Tabs Config ───────────────────────────────────────────────────────────
+// ─── Category Config ─────────────────────────────────────────────────────
 
-const tabItems: { value: string; label: string; filter?: FAQCategory }[] = [
-  { value: "all", label: "All" },
-  { value: "general", label: "General", filter: "general" },
-  { value: "enrollment", label: "Enrollment", filter: "enrollment" },
-  { value: "payment", label: "Payment", filter: "payment" },
-  { value: "workshops", label: "Workshops", filter: "workshops" },
+const categories: {
+  value: FAQCategory | "all";
+  label: string;
+  icon: React.ElementType;
+  description: string;
+  count: number;
+}[] = [
+  {
+    value: "all",
+    label: "All Questions",
+    icon: HelpCircle,
+    description: "Browse all frequently asked questions",
+    count: faqs.length,
+  },
+  {
+    value: "general",
+    label: "General",
+    icon: MessageCircle,
+    description: "Platform info, locations, and certificates",
+    count: faqs.filter((f) => f.category === "general").length,
+  },
+  {
+    value: "enrollment",
+    label: "Enrollment",
+    icon: ClipboardList,
+    description: "How to enroll, cancel, and transfer seats",
+    count: faqs.filter((f) => f.category === "enrollment").length,
+  },
+  {
+    value: "payment",
+    label: "Payment",
+    icon: CreditCard,
+    description: "Payment methods, pricing, and refunds",
+    count: faqs.filter((f) => f.category === "payment").length,
+  },
+  {
+    value: "workshops",
+    label: "Workshops",
+    icon: BookOpen,
+    description: "Duration, instructors, and materials",
+    count: faqs.filter((f) => f.category === "workshops").length,
+  },
 ];
 
 // ─── FAQ Accordion ────────────────────────────────────────────────────────
@@ -153,8 +198,11 @@ const tabItems: { value: string; label: string; filter?: FAQCategory }[] = [
 function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
   if (faqList.length === 0) {
     return (
-      <div className="py-8 text-center text-muted-foreground">
-        No questions found for this category.
+      <div className="py-12 text-center">
+        <HelpCircle className="mx-auto mb-3 size-10 text-muted-foreground/40" />
+        <p className="text-muted-foreground">
+          No questions found for this category.
+        </p>
       </div>
     );
   }
@@ -162,14 +210,12 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
   return (
     <Accordion type="single" collapsible className="w-full">
       {faqList.map((faq) => (
-        <AccordionItem key={faq.id} value={faq.id} className="border-b-border/50">
-          <AccordionTrigger className="px-2 py-4 text-[15px] leading-relaxed hover:no-underline">
+        <AccordionItem key={faq.id} value={faq.id}>
+          <AccordionTrigger className="text-left text-sm font-medium leading-relaxed hover:no-underline sm:text-base">
             {faq.question}
           </AccordionTrigger>
-          <AccordionContent className="px-2">
-            <p className="text-muted-foreground leading-relaxed">
-              {faq.answer}
-            </p>
+          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+            {faq.answer}
           </AccordionContent>
         </AccordionItem>
       ))}
@@ -180,97 +226,167 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
 // ─── FAQ Page ─────────────────────────────────────────────────────────────
 
 export default function FAQPage() {
+  const [activeCategory, setActiveCategory] = useState<FAQCategory | "all">("all");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredFAQs = useMemo(() => {
+    let results =
+      activeCategory === "all"
+        ? faqs
+        : faqs.filter((f) => f.category === activeCategory);
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase().trim();
+      results = results.filter(
+        (f) =>
+          f.question.toLowerCase().includes(query) ||
+          f.answer.toLowerCase().includes(query),
+      );
+    }
+
+    return results;
+  }, [activeCategory, searchQuery]);
+
   return (
-    <section className="container mx-auto px-4 py-12 md:py-16 lg:py-20">
+    <section className="site-container py-12 md:py-16 lg:py-20">
       {/* Page Header */}
-      <div className="mx-auto mb-10 max-w-2xl text-center md:mb-14">
+      <div className="mb-10 md:mb-14">
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Frequently Asked Questions
         </h1>
-        <p className="mt-3 text-muted-foreground">
-          Find answers to common questions about our workshops
+        <p className="mt-3 max-w-2xl text-muted-foreground">
+          Find answers to common questions about our workshops, enrollment,
+          payments, and more.
         </p>
       </div>
 
-      {/* Tabs */}
-      <Tabs defaultValue="all" className="w-full">
-        <div className="flex justify-center">
-          <TabsList>
-            {tabItems.map((tab) => (
-              <TabsTrigger key={tab.value} value={tab.value}>
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+      {/* Two-Column Layout */}
+      <div className="grid gap-8 lg:grid-cols-[320px_1fr] lg:gap-12">
+        {/* ── Left Sidebar ───────────────────────────────────────── */}
+        <aside className="space-y-6">
+          {/* Search */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search questions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9"
+            />
+          </div>
+
+          {/* Category Cards */}
+          <div className="space-y-2">
+            <p className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Categories
+            </p>
+            <nav className="space-y-1">
+              {categories.map((cat) => {
+                const isActive = activeCategory === cat.value;
+                const Icon = cat.icon;
+                return (
+                  <button
+                    key={cat.value}
+                    onClick={() => setActiveCategory(cat.value)}
+                    className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
+                      isActive
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                    }`}
+                  >
+                    <Icon className="size-4 shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <span className="block truncate font-medium">
+                        {cat.label}
+                      </span>
+                      {!isActive && (
+                        <span className="block truncate text-xs text-muted-foreground/70">
+                          {cat.description}
+                        </span>
+                      )}
+                    </div>
+                    <span
+                      className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
+                        isActive
+                          ? "bg-primary-foreground/20 text-primary-foreground"
+                          : "bg-muted text-muted-foreground"
+                      }`}
+                    >
+                      {cat.count}
+                    </span>
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          {/* CTA Card */}
+          <div className="rounded-xl border bg-muted/40 p-6">
+            <div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-primary/10">
+              <Headphones className="size-5 text-primary" />
+            </div>
+            <h3 className="text-sm font-semibold">Still have questions?</h3>
+            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+              Can&apos;t find the answer you&apos;re looking for? Our support
+              team is here to help.
+            </p>
+            <Button asChild size="sm" className="mt-4 w-full">
+              <Link href="/contact">
+                Contact Us
+                <ArrowRight className="ml-1 size-3.5" />
+              </Link>
+            </Button>
+          </div>
+        </aside>
+
+        {/* ── Right Content ───────────────────────────────────────── */}
+        <div>
+          {/* Active filter indicator */}
+          <div className="mb-4 flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              Showing{" "}
+              <span className="font-medium text-foreground">
+                {filteredFAQs.length}
+              </span>{" "}
+              question{filteredFAQs.length !== 1 ? "s" : ""}
+              {activeCategory !== "all" && (
+                <>
+                  {" "}
+                  in{" "}
+                  <span className="font-medium text-foreground">
+                    {categories.find((c) => c.value === activeCategory)?.label}
+                  </span>
+                </>
+              )}
+              {searchQuery.trim() && (
+                <>
+                  {" "}
+                  matching &ldquo;
+                  <span className="font-medium text-foreground">
+                    {searchQuery}
+                  </span>
+                  &rdquo;
+                </>
+              )}
+            </p>
+            {(activeCategory !== "all" || searchQuery.trim()) && (
+              <button
+                onClick={() => {
+                  setActiveCategory("all");
+                  setSearchQuery("");
+                }}
+                className="text-xs font-medium text-primary hover:underline"
+              >
+                Clear filters
+              </button>
+            )}
+          </div>
+
+          {/* FAQ Accordion */}
+          <div className="rounded-xl border bg-card">
+            <FAQAccordion faqs={filteredFAQs} />
+          </div>
         </div>
-
-        {/* All Tab */}
-        <TabsContent value="all">
-          <Card>
-            <CardContent className="p-4 sm:p-6 lg:p-8">
-              <FAQAccordion faqs={faqs} />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* General Tab */}
-        <TabsContent value="general">
-          <Card>
-            <CardContent className="p-4 sm:p-6 lg:p-8">
-              <FAQAccordion
-                faqs={faqs.filter((f) => f.category === "general")}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Enrollment Tab */}
-        <TabsContent value="enrollment">
-          <Card>
-            <CardContent className="p-4 sm:p-6 lg:p-8">
-              <FAQAccordion
-                faqs={faqs.filter((f) => f.category === "enrollment")}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Payment Tab */}
-        <TabsContent value="payment">
-          <Card>
-            <CardContent className="p-4 sm:p-6 lg:p-8">
-              <FAQAccordion
-                faqs={faqs.filter((f) => f.category === "payment")}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Workshops Tab */}
-        <TabsContent value="workshops">
-          <Card>
-            <CardContent className="p-4 sm:p-6 lg:p-8">
-              <FAQAccordion
-                faqs={faqs.filter((f) => f.category === "workshops")}
-              />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Bottom CTA */}
-      <div className="mx-auto mt-12 max-w-md rounded-lg border bg-muted/50 p-8 text-center md:mt-16">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-          <HelpCircle className="size-6 text-muted-foreground" />
-        </div>
-        <h2 className="text-lg font-semibold">Still have questions?</h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Can&apos;t find the answer you&apos;re looking for? Our team is here
-          to help.
-        </p>
-        <Button asChild className="mt-5" size="lg">
-          <Link href="/contact">Contact Us</Link>
-        </Button>
       </div>
     </section>
   );
