@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
   MapPin,
@@ -114,6 +115,58 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
       </CardContent>
     </Card>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+
+  try {
+    const res = await fetch(`${BACKEND_API_URL}/workshop/${slug}`, {
+      next: { revalidate: 60 },
+    });
+
+    if (!res.ok) {
+      return {
+        title: "Workshop Not Found",
+      };
+    }
+
+    const json = await res.json();
+    if (!json?.success) {
+      return {
+        title: "Workshop Not Found",
+      };
+    }
+
+    const workshop = json.data.data ?? json.data;
+    if (!workshop) {
+      return {
+        title: "Workshop Not Found",
+      };
+    }
+
+    const levelName = getLevelName(workshop.level);
+    const categoryName = getCategoryName(workshop.category);
+    const description = workshop.description
+      ? workshop.description.slice(0, 160)
+      : `Enroll in ${workshop.title} — a ${levelName.toLowerCase()} ${categoryName.toLowerCase()} workshop. Expert-led, hands-on training with real-world projects.`;
+
+    return {
+      title: workshop.title,
+      description,
+      openGraph: {
+        title: `${workshop.title} | Skill Workshop`,
+        description,
+        type: "article",
+      },
+    };
+  } catch {
+    return {
+      title: "Workshop",
+    };
+  }
 }
 
 export default async function WorkshopDetailPage({ params }: PageProps) {
