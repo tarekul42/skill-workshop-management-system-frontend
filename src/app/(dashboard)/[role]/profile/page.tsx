@@ -13,6 +13,7 @@ import {
   EyeOff,
   Check,
   X,
+  Palette,
 } from "lucide-react";
 import { z } from "zod/v4";
 import { toast } from "sonner";
@@ -32,6 +33,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { AvatarImage } from "@/components/ui/avatar";
 import { PageHeader, StatusBadge, FormSkeleton } from "@/components/shared";
+import { ThemeToggle } from "@/components/shared/ThemeToggle";
 
 import { getMe, updateUser, changePassword } from "@/lib/api/services";
 import { formatDate, getInitials } from "@/lib/formatters";
@@ -541,6 +543,31 @@ export default function ProfilePage({ params }: PageProps) {
                   </div>
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          {/* Theme Settings */}
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Palette className="size-4 text-muted-foreground" />
+                <div>
+                  <CardTitle className="text-base">Appearance</CardTitle>
+                  <CardDescription>
+                    Customize how the application looks on your device
+                  </CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">
+                  Choose your preferred theme. Select &quot;System&quot; to
+                  automatically match your device&apos;s appearance settings.
+                  Your preference will be saved and remembered across sessions.
+                </p>
+                <ThemeToggle />
+              </div>
             </CardContent>
           </Card>
 
