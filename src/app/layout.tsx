@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 import "./globals.css";
 import QueryProviders from "../providers/QueryProvider";
 import { FRONTEND_URL } from "@/lib/constants";
@@ -75,14 +76,21 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <QueryProviders>
-          {children}
-          <Toaster position="top-right" richColors />
-        </QueryProviders>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <QueryProviders>
+            {children}
+            <Toaster position="top-right" richColors />
+          </QueryProviders>
+        </ThemeProvider>
       </body>
     </html>
   );

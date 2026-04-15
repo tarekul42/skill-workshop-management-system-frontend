@@ -14,3 +14,4 @@ export {
 export { PageHeader } from "./PageHeader";
 export { StatsCard } from "./StatsCard";
 export { StatusBadge } from "./StatusBadge";
+export { ThemeToggle } from "./ThemeToggle";
