@@ -34,53 +34,62 @@ import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
 
 
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const passwordValid = isPasswordValid(password);
-  const passwordsMatch = password.length > 0 && confirmPassword === password;
-  const formValid =
-    name.trim().length >= 2 &&
-    name.trim().length <= 50 &&
-    email.trim().length > 0 &&
-    passwordValid &&
-    passwordsMatch;
+  const form = useForm<RegisterInput>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const { watch } = form;
+  const password = watch("password");
+
+  async function onSubmit(values: RegisterInput) {
     setError("");
-
-    if (!formValid) return;
-
     setLoading(true);
     try {
       await apiClient("/user/register", {
         method: "POST",
         body: {
-          name: name.trim(),
-          email: email.trim(),
-          password,
-          phone: phone.trim() || undefined,
+          name: values.name.trim(),
+          email: values.email.trim(),
+          password: values.password,
+          phone: values.phone?.trim() || undefined,
         },
       });
       await apiClient("/otp/send", {
         method: "POST",
         body: {
-          email: email.trim(),
-          name: name.trim(),
+          email: values.email.trim(),
+          name: values.name.trim(),
         },
       });
-      storeOTPEmail(email.trim());
+      storeOTPEmail(values.email.trim());
       router.push("/verify-otp");
     } catch (err: unknown) {
       const message =
@@ -105,155 +114,174 @@ export default function RegisterPage() {
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          {/* Full Name */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="name">
-              <User className="size-3.5" />
-              Full Name
-            </Label>
-            <Input
-              id="name"
-              type="text"
-              required
-              placeholder="Enter your full name"
-              minLength={2}
-              maxLength={50}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={loading}
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+            <FormField
+              control={form.control}
+              name="name"
+              render={({ field }) => (
+                <FormItem className="grid gap-1.5">
+                  <FormLabel>
+                    <User className="mr-1.5 inline-block size-3.5" />
+                    Full Name
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="Enter your full name"
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Email */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="email">
-              <Mail className="size-3.5" />
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              required
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem className="grid gap-1.5">
+                  <FormLabel>
+                    <Mail className="mr-1.5 inline-block size-3.5" />
+                    Email
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter your email"
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
 
-          {/* Phone */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="phone">
-              <Phone className="size-3.5" />
-              Phone{" "}
-              <span className="text-muted-foreground font-normal">
-                (optional)
-              </span>
-            </Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+8801XXXXXXXXX"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              disabled={loading}
+            <FormField
+              control={form.control}
+              name="phone"
+              render={({ field }) => (
+                <FormItem className="grid gap-1.5">
+                  <FormLabel>
+                    <Phone className="mr-1.5 inline-block size-3.5" />
+                    Phone{" "}
+                    <span className="text-muted-foreground font-normal">
+                      (optional)
+                    </span>
+                  </FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="+8801XXXXXXXXX"
+                      disabled={loading}
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormDescription className="text-xs">
+                    Bangladesh format
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-            <p className="text-xs text-muted-foreground">Bangladesh format</p>
-          </div>
 
-          {/* Password */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="password">
-              <Lock className="size-3.5" />
-              Password
-            </Label>
-            <div className="relative">
-              <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
-                required
-                placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                disabled={loading}
-                className="pr-9"
-              />
-              <button
-                type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
-              </button>
-            </div>
+            <FormField
+              control={form.control}
+              name="password"
+              render={({ field }) => (
+                <FormItem className="grid gap-1.5">
+                  <FormLabel>
+                    <Lock className="mr-1.5 inline-block size-3.5" />
+                    Password
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Create a password"
+                        disabled={loading}
+                        className="pr-9"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={() => setShowPassword(!showPassword)}
+                        tabIndex={-1}
+                        aria-label={showPassword ? "Hide password" : "Show password"}
+                      >
+                        {showPassword ? (
+                          <EyeOff className="size-4" />
+                        ) : (
+                          <Eye className="size-4" />
+                        )}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <PasswordChecklist password={password} />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-            <PasswordChecklist password={password} />
-          </div>
+            <FormField
+              control={form.control}
+              name="confirmPassword"
+              render={({ field }) => (
+                <FormItem className="grid gap-1.5">
+                  <FormLabel>
+                    <Lock className="mr-1.5 inline-block size-3.5" />
+                    Confirm Password
+                  </FormLabel>
+                  <FormControl>
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Confirm your password"
+                        disabled={loading}
+                        className="pr-9"
+                        {...field}
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        tabIndex={-1}
+                        aria-label={
+                          showConfirmPassword ? "Hide password" : "Show password"
+                        }
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="size-4" />
+                        ) : (
+                          <Eye className="size-4" />
+                        )}
+                      </button>
+                    </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-          {/* Confirm Password */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="confirmPassword">
-              <Lock className="size-3.5" />
-              Confirm Password
-            </Label>
-            <div className="relative">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                required
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                className="pr-9"
-                aria-invalid={confirmPassword.length > 0 && !passwordsMatch}
-              />
-              <button
-                type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                tabIndex={-1}
-                aria-label={
-                  showConfirmPassword ? "Hide password" : "Show password"
-                }
-              >
-                {showConfirmPassword ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
-              </button>
-            </div>
-            {confirmPassword.length > 0 && !passwordsMatch && (
-              <p className="text-xs text-red-500">Passwords do not match</p>
+            {error && (
+              <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+                {error}
+              </div>
             )}
-          </div>
 
-          {/* Error */}
-          {error && (
-            <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
-              {error}
-            </div>
-          )}
-
-          {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full"
-            size="lg"
-            disabled={!formValid || loading}
-          >
-            {loading && <Loader2 className="animate-spin" />}
-            Create Account
-          </Button>
-        </form>
+            <Button
+              type="submit"
+              className="w-full"
+              size="lg"
+              disabled={loading}
+            >
+              {loading && <Loader2 className="animate-spin" />}
+              Create Account
+            </Button>
+          </form>
+        </Form>
 
         {/* Divider */}
         <div className="relative my-6">
