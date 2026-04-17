@@ -1,8 +1,8 @@
-if (!process.env.NEXT_PUBLIC_BACKEND_API_URL) {
-  throw new Error("NEXT_PUBLIC_BACKEND_API_URL is not configured");
-}
+export const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || "";
 
-export const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL as string;
+if (!BACKEND_API_URL && typeof window !== "undefined") {
+  console.warn("NEXT_PUBLIC_BACKEND_API_URL is not configured");
+}
 
 export const FRONTEND_URL =
   process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
