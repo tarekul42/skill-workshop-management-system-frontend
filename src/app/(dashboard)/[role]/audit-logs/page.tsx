@@ -60,7 +60,7 @@ const KNOWN_COLLECTIONS = [
 // ─── Component ───────────────────────────────────────────────────────
 
 export default function AuditLogsPage({ params }: PageProps) {
-  React.use(params); // Resolve params synchronously
+  React.use(params);
   // Data state
   const [logs, setLogs] = useState<IAuditLog[]>([]);
   const [loading, setLoading] = useState(true);
