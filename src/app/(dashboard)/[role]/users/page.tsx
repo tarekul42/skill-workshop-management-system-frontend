@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import {
   MoreHorizontal,
   Eye,
@@ -79,12 +80,13 @@ const roleColors: Record<UserRole, string> = {
 // ─── Component ───────────────────────────────────────────────────────
 
 export default function UsersPage({ params }: PageProps) {
-  const [role, setRole] = useState<string>("");
+  const { role } = React.use(params);
 
   // Data state
   const [users, setUsers] = useState<IUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -101,12 +103,7 @@ export default function UsersPage({ params }: PageProps) {
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    params.then((p) => setRole(p.role));
-  }, [params]);
-
   // ── Fetch users ────────────────────────────────────────────────────
-
   const fetchUsers = useCallback(async () => {
     setLoading(true);
     try {
@@ -115,7 +112,7 @@ export default function UsersPage({ params }: PageProps) {
       setTotalPages(res.meta.totalPage);
       setTotal(res.meta.total);
     } catch {
-      // Error handled silently — table shows empty state
+      toast.error("Failed to fetch users");
     } finally {
       setLoading(false);
     }
@@ -123,22 +120,31 @@ export default function UsersPage({ params }: PageProps) {
 
   useEffect(() => {
     if (!role) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchUsers();
   }, [role, fetchUsers]);
+
+  // ── Debounce search ────────────────────────────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(inputValue);
+      setPage(1);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [inputValue]);
 
   // ── Handlers ───────────────────────────────────────────────────────
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    setPage(1);
+    setInputValue(value);
   };
 
   const handleViewUser = async (userId: string) => {
     try {
       const user = await getUserById(userId);
       setViewUser(user);
-    } catch {
-      // Error handled silently
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to load user details");
     }
   };
 
@@ -154,9 +160,9 @@ export default function UsersPage({ params }: PageProps) {
       await updateUser(editUser._id, { role: editRole });
       setEditUser(null);
       fetchUsers();
-      // sonner toast is used by other pages, but we can use a simple approach
-    } catch {
-      // Error handled silently
+      toast.success("User role updated successfully");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update role");
     } finally {
       setUpdating(false);
     }
@@ -171,8 +177,11 @@ export default function UsersPage({ params }: PageProps) {
       await updateUser(toggleTarget._id, { isActive: newStatus });
       setToggleTarget(null);
       fetchUsers();
-    } catch {
-      // Error handled silently
+      toast.success(
+        newStatus === "BLOCKED" ? "User blocked successfully" : "User activated successfully"
+      );
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to update user status");
     } finally {
       setUpdating(false);
     }
@@ -185,8 +194,9 @@ export default function UsersPage({ params }: PageProps) {
       await deleteUser(deleteTarget._id);
       setDeleteTarget(null);
       fetchUsers();
-    } catch {
-      // Error handled silently
+      toast.success("User deleted successfully");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete user");
     } finally {
       setDeleting(false);
     }
@@ -207,7 +217,7 @@ export default function UsersPage({ params }: PageProps) {
           <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by name or email..."
-            value={searchTerm}
+            value={inputValue}
             onChange={(e) => handleSearch(e.target.value)}
             className="pl-8"
           />

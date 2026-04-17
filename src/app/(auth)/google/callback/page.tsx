@@ -5,9 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { GraduationCap, Loader2 } from "lucide-react";
 import {
   saveUser,
-  setAuthCookie,
   redirectToDashboard,
 } from "@/lib/auth-helpers";
+import { setSecureAuthCookie } from "@/app/actions/auth";
 import { storeAccessToken } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
 
@@ -81,7 +81,7 @@ function GoogleCallbackContent() {
           isVerified: user.isVerified ?? true,
         });
         storeAccessToken(accessToken);
-        setAuthCookie(user.role);
+        await setSecureAuthCookie(user.role);
         router.push(redirectToDashboard(user.role));
       } catch (err) {
         console.error("Google OAuth callback error:", err);

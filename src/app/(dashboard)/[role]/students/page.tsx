@@ -31,16 +31,12 @@ interface StudentRow {
 // ─── Page ─────────────────────────────────────────────────────────
 
 export default function MyStudentsPage({ params }: PageProps) {
-  const [role, setRole] = useState<string>("");
+  const { role } = React.use(params);
   const [students, setStudents] = useState<StudentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const user = getSavedUser();
-
-  useEffect(() => {
-    params.then((p) => setRole(p.role));
-  }, [params]);
 
   useEffect(() => {
     if (!role || !user?._id) return;

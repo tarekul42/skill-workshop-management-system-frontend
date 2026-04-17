@@ -4,6 +4,13 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Plus,
   MoreHorizontal,
@@ -63,12 +70,13 @@ interface PageProps {
 
 export default function WorkshopsPage({ params }: PageProps) {
   const router = useRouter();
-  const [role, setRole] = useState<string>("");
+  const { role } = React.use(params);
 
   // Data state
   const [workshops, setWorkshops] = useState<IWorkshop[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [inputValue, setInputValue] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
@@ -79,12 +87,7 @@ export default function WorkshopsPage({ params }: PageProps) {
   const [deleteTarget, setDeleteTarget] = useState<IWorkshop | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  useEffect(() => {
-    params.then((p) => setRole(p.role));
-  }, [params]);
-
   // ── Fetch workshops ────────────────────────────────────────────────
-
   const fetchWorkshopData = useCallback(async () => {
     setLoading(true);
     try {
@@ -105,23 +108,32 @@ export default function WorkshopsPage({ params }: PageProps) {
         setTotalPages(workshopsRes.value.meta.totalPage);
         setTotal(workshopsRes.value.meta.total);
       }
-    } catch {
-      // Error handled silently
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to load workshops");
     } finally {
       setLoading(false);
     }
   }, [page, limit, searchTerm]);
 
+  // ── Debounce search ────────────────────────────────────────────────
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchTerm(inputValue);
+      setPage(1);
+    }, 500); // 500ms delay
+    return () => clearTimeout(timer);
+  }, [inputValue]);
+
   useEffect(() => {
     if (!role) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchWorkshopData();
   }, [role, fetchWorkshopData]);
 
   // ── Handlers ───────────────────────────────────────────────────────
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value);
-    setPage(1);
+    setInputValue(value);
   };
 
   const handleDelete = async () => {
@@ -131,8 +143,9 @@ export default function WorkshopsPage({ params }: PageProps) {
       await deleteWorkshop(deleteTarget._id);
       setDeleteTarget(null);
       fetchWorkshopData();
-    } catch {
-      // Error handled silently
+      toast.success("Workshop deleted successfully");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to delete workshop");
     } finally {
       setDeleting(false);
     }
@@ -158,7 +171,7 @@ export default function WorkshopsPage({ params }: PageProps) {
           <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             placeholder="Search by title..."
-            value={searchTerm}
+            value={inputValue}
             onChange={(e) => handleSearch(e.target.value)}
             className="pl-8"
           />
@@ -456,15 +469,8 @@ export default function WorkshopsPage({ params }: PageProps) {
 
 // ─── Workshop Actions ─────────────────────────────────────────────────
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-
 function WorkshopActions({
-  role: _userRole,
+  role,
   onView,
   onEdit,
   onDelete,
@@ -475,7 +481,8 @@ function WorkshopActions({
   onEdit: () => void;
   onDelete: () => void;
 }) {
-  void _userRole;
+  // role is used by consumers; keep the prop but avoid lint warnings
+  void role;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

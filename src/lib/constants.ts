@@ -1,6 +1,9 @@
-export const BACKEND_API_URL =
-  process.env.NEXT_PUBLIC_BACKEND_API_URL ||
-  "https://skill-workshop-management-system-backend.vercel.app/api/v1";
+if (!process.env.NEXT_PUBLIC_BACKEND_API_URL) {
+  throw new Error("NEXT_PUBLIC_BACKEND_API_URL is not configured");
+}
+
+export const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL as string;
+
 export const FRONTEND_URL =
   process.env.NEXT_PUBLIC_FRONTEND_URL || "http://localhost:3000";
 

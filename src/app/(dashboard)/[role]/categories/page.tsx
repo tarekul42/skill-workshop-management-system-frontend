@@ -77,6 +77,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchCategoriesData();
   }, [fetchCategoriesData]);
 

@@ -166,7 +166,7 @@ function ActivityItem({
 // ─── Dashboard Page ─────────────────────────────────────────────────
 
 export default function DashboardPage({ params }: PageProps) {
-  const [role, setRole] = React.useState<string>("STUDENT");
+  const { role } = React.use(params);
   const user = getSavedUser();
 
   const [loading, setLoading] = useState(true);
@@ -176,10 +176,6 @@ export default function DashboardPage({ params }: PageProps) {
     [],
   );
   const [recentWorkshops, setRecentWorkshops] = useState<WorkshopItem[]>([]);
-
-  React.useEffect(() => {
-    params.then((p) => setRole(p.role));
-  }, [params]);
 
   useEffect(() => {
     if (!role) return;

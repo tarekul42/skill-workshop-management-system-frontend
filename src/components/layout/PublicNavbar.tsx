@@ -26,8 +26,8 @@ import { cn } from "@/lib/utils";
 import {
   getSavedUser,
   clearSavedUser,
-  clearAuthCookie,
 } from "@/lib/auth-helpers";
+import { clearSecureAuthCookie } from "@/app/actions/auth";
 import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
 import { DASHBOARD_ROUTES } from "@/lib/constants";
@@ -77,7 +77,7 @@ export function PublicNavbar() {
     }
     clearSavedUser();
     clearAccessToken();
-    clearAuthCookie();
+    await clearSecureAuthCookie();
     router.push("/login");
   };
 
@@ -94,15 +94,15 @@ export function PublicNavbar() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md supports-backdrop-filter:bg-background/60">
       <div className="site-container flex h-14 items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2">
+        <Link href="/" className="flex shrink-0 items-center gap-2">
           <GraduationCap className="size-6 text-primary" />
-          <span className="text-lg font-semibold text-foreground">
+          <span className="truncate text-lg font-semibold text-foreground sm:inline-block">
             Skill Workshop
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden lg:flex lg:items-center lg:gap-1">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -123,7 +123,7 @@ export function PublicNavbar() {
         </nav>
 
         {/* Desktop Actions */}
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden lg:flex lg:items-center lg:gap-2">
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

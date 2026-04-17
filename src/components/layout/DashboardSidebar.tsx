@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { GraduationCap, ExternalLink, LogOut } from "lucide-react";
 import {
   LayoutDashboard,
@@ -37,6 +37,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Menu } from "lucide-react";
+
+import { clearSavedUser } from "@/lib/auth-helpers";
+import { clearSecureAuthCookie } from "@/app/actions/auth";
+import { clearAccessToken, apiClient } from "@/lib/api-client";
 
 import type { NavSection } from "@/types/dashboard.types";
 
@@ -263,17 +267,20 @@ function SidebarNavContent({
                           href={item.href}
                           onClick={onNavigate}
                           className={cn(
-                            "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                            "group/nav-item relative flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
                             isActive
-                              ? "bg-accent text-accent-foreground"
+                              ? "bg-primary/10 text-primary shadow-sm"
                               : "text-muted-foreground hover:bg-muted hover:text-foreground",
                           )}
                           aria-current={isActive ? "page" : undefined}
                         >
-                          {IconComponent && (
-                            <IconComponent className="size-4 shrink-0" />
+                          {isActive && (
+                            <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-primary animate-in fade-in zoom-in duration-300" />
                           )}
-                          <span>{item.label}</span>
+                          {IconComponent && (
+                            <IconComponent className={cn("size-4 shrink-0 transition-transform group-hover/nav-item:scale-110", isActive && "text-primary")} />
+                          )}
+                          <span className={cn(isActive && "pl-1")}>{item.label}</span>
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent side="right" className="lg:hidden">
@@ -295,7 +302,20 @@ function SidebarNavContent({
 
 export function DashboardSidebar({ role }: DashboardSidebarProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const sections = sidebarConfig[role] ?? [];
+
+  const handleLogout = async () => {
+    try {
+      await apiClient("/auth/logout", { method: "POST", skipCsrf: true });
+    } catch {
+      // Continue with client-side cleanup even if backend call fails
+    }
+    clearSavedUser();
+    clearAccessToken();
+    await clearSecureAuthCookie();
+    router.push("/login");
+  };
 
   return (
     <>
@@ -332,6 +352,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
           <Button
             variant="ghost"
             size="sm"
+            onClick={handleLogout}
             className="justify-start gap-3 text-muted-foreground hover:text-destructive"
           >
             <LogOut className="size-4" />
@@ -342,7 +363,7 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
       {/* ── Mobile Sidebar (Sheet) ────────────────────────────────── */}
       <div className="lg:hidden">
-        <MobileSheetSidebar sections={sections} pathname={pathname} />
+        <MobileSheetSidebar sections={sections} pathname={pathname} onLogout={handleLogout} />
       </div>
     </>
   );
@@ -353,9 +374,11 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 function MobileSheetSidebar({
   sections,
   pathname,
+  onLogout,
 }: {
   sections: NavSection[];
   pathname: string;
+  onLogout: () => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -405,6 +428,7 @@ function MobileSheetSidebar({
           <Button
             variant="ghost"
             size="sm"
+            onClick={onLogout}
             className="justify-start gap-3 text-muted-foreground hover:text-destructive"
           >
             <LogOut className="size-4" />

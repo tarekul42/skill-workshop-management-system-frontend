@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   },
 };
 
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
+
 export default function MarketingLayout({
   children,
 }: {
@@ -27,7 +29,12 @@ export default function MarketingLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <PublicNavbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1">
+        <div className="site-container pt-6 -mb-6 relative z-10">
+          <Breadcrumbs />
+        </div>
+        {children}
+      </main>
       <PublicFooter />
     </div>
   );

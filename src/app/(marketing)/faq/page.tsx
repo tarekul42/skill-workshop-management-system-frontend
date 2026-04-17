@@ -211,10 +211,10 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
     <Accordion type="single" collapsible className="w-full">
       {faqList.map((faq) => (
         <AccordionItem key={faq.id} value={faq.id}>
-          <AccordionTrigger className="text-left text-sm font-medium leading-relaxed hover:no-underline sm:text-base">
+          <AccordionTrigger className="px-6 py-4 text-left text-sm font-medium leading-relaxed hover:no-underline sm:text-base">
             {faq.question}
           </AccordionTrigger>
-          <AccordionContent className="text-sm leading-relaxed text-muted-foreground">
+          <AccordionContent className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground">
             {faq.answer}
           </AccordionContent>
         </AccordionItem>

@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -59,6 +60,7 @@ const KNOWN_COLLECTIONS = [
 // ─── Component ───────────────────────────────────────────────────────
 
 export default function AuditLogsPage({ params }: PageProps) {
+  React.use(params); // Resolve params synchronously
   // Data state
   const [logs, setLogs] = useState<IAuditLog[]>([]);
   const [loading, setLoading] = useState(true);
@@ -73,10 +75,6 @@ export default function AuditLogsPage({ params }: PageProps) {
   const [filterStartDate, setFilterStartDate] = useState("");
   const [filterEndDate, setFilterEndDate] = useState("");
 
-  useEffect(() => {
-    // Resolve params to avoid unused warning
-    params.then(() => {});
-  }, [params]);
 
   // ── Fetch logs ─────────────────────────────────────────────────────
 
@@ -94,8 +92,8 @@ export default function AuditLogsPage({ params }: PageProps) {
       setLogs(res.data);
       setTotalPages(res.meta.totalPage);
       setTotal(res.meta.total);
-    } catch {
-      // Error handled silently
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to load audit logs");
     } finally {
       setLoading(false);
     }
@@ -109,6 +107,7 @@ export default function AuditLogsPage({ params }: PageProps) {
   ]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLogs();
   }, [fetchLogs]);
 

@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { jwtVerify } from "jose";
 
 // ─── Configuration ──────────────────────────────────────────────────────
 
@@ -25,12 +26,17 @@ const AUTH_PREFIXES = [
 
 // ─── Helpers ────────────────────────────────────────────────────────────
 
-/**
- * Reads the `swms_role` cookie from the request.
- * Returns the raw cookie value (uppercase role string) or `null`.
- */
-function getRoleCookie(request: NextRequest): string | null {
-  return request.cookies.get(ROLE_COOKIE)?.value ?? null;
+async function getRoleCookie(request: NextRequest): Promise<string | null> {
+  const token = request.cookies.get(ROLE_COOKIE)?.value;
+  if (!token) return null;
+  
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "default_secret_for_development_only");
+    const { payload } = await jwtVerify(token, secret);
+    return payload.role as string;
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -55,9 +61,9 @@ function isAuthPage(pathname: string): boolean {
 
 // ─── Middleware ─────────────────────────────────────────────────────────
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const roleCookie = getRoleCookie(request);
+  const roleCookie = await getRoleCookie(request);
 
   // ── Protected dashboard routes ──────────────────────────────────────
   const expectedRole = getExpectedRole(pathname);

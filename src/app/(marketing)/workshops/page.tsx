@@ -171,7 +171,7 @@ export default function WorkshopsPage() {
 
           {/* Category Select */}
           <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full sm:w-45">
+            <SelectTrigger className="w-full sm:w-45 transition-all hover:bg-muted focus:ring-primary/20">
               <SelectValue placeholder="All Categories" />
             </SelectTrigger>
             <SelectContent>
@@ -189,7 +189,7 @@ export default function WorkshopsPage() {
             value={selectedLevel}
             onValueChange={(v) => setSelectedLevel(v as LevelOption)}
           >
-            <SelectTrigger className="w-full sm:w-42.5">
+            <SelectTrigger className="w-full sm:w-42.5 transition-all hover:bg-muted focus:ring-primary/20">
               <SelectValue placeholder="All Levels" />
             </SelectTrigger>
             <SelectContent>
@@ -205,7 +205,7 @@ export default function WorkshopsPage() {
             value={sortBy}
             onValueChange={(v) => setSortBy(v as SortOption)}
           >
-            <SelectTrigger className="w-full sm:w-50">
+            <SelectTrigger className="w-full sm:w-50 transition-all hover:bg-muted focus:ring-primary/20">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -221,7 +221,7 @@ export default function WorkshopsPage() {
               variant="ghost"
               size="sm"
               onClick={resetFilters}
-              className="h-9 px-3 text-muted-foreground hover:text-foreground"
+              className="h-9 px-3 text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
             >
               <RotateCcw className="mr-2 size-4" />
               Clear all
@@ -235,7 +235,7 @@ export default function WorkshopsPage() {
         ) : (
           <>
             {/* Results Count */}
-            <p className="mb-6 text-sm text-muted-foreground">
+            <p className="mb-6 text-sm text-muted-foreground animate-fade-in">
               Showing{" "}
               <span className="font-medium text-foreground">
                 {filteredWorkshops.length}
@@ -245,41 +245,41 @@ export default function WorkshopsPage() {
 
             {/* Workshop Grid or Empty State */}
             {filteredWorkshops.length === 0 ? (
-              <div className="flex flex-col items-center justify-center rounded-xl border border-dashed py-16 text-center">
-                <div className="mb-4 flex size-16 items-center justify-center rounded-full bg-muted">
-                  <BookOpen className="size-8 text-muted-foreground" />
+              <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-muted/30 py-16 text-center animate-fade-in">
+                <div className="mb-4 flex size-20 items-center justify-center rounded-full bg-background shadow-sm border mb-5 transition-transform hover:scale-105 duration-300">
+                  <BookOpen className="size-10 text-primary/60" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">
+                <h3 className="text-xl font-bold text-foreground tracking-tight">
                   No workshops found
                 </h3>
-                <p className="mt-1 max-w-md text-sm text-muted-foreground">
+                <p className="mt-2 max-w-md text-sm text-muted-foreground leading-relaxed">
                   Try adjusting your filters or search terms to find what
                   you&apos;re looking for.
                 </p>
                 <Button
                   variant="outline"
-                  className="mt-4"
+                  className="mt-8 transition-all hover:shadow-lg active:scale-95"
                   onClick={resetFilters}
                 >
-                  <RotateCcw />
+                  <RotateCcw className="mr-2 size-4" />
                   Reset Filters
                 </Button>
               </div>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 reveal active">
                 {filteredWorkshops.map((workshop) => (
                   <Card
                     key={workshop._id}
-                    className="flex flex-col overflow-hidden"
+                    className="group/workshop overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl border-dashed"
                   >
                     {/* Placeholder Image */}
-                    <div className="relative flex aspect-16/10 items-center justify-center bg-muted">
-                      <BookOpen className="size-12 text-muted-foreground/50" />
+                    <div className="relative flex aspect-16/10 items-center justify-center bg-muted transition-colors group-hover/workshop:bg-muted/70">
+                      <BookOpen className="size-12 text-muted-foreground/50 transition-transform group-hover/workshop:scale-110 duration-500" />
                       <Badge
                         variant={getLevelBadgeVariant(
                           getLevelName(workshop.level),
                         )}
-                        className="absolute top-3 right-3"
+                        className="absolute top-3 right-3 shadow-sm"
                       >
                         {getLevelName(workshop.level)}
                       </Badge>
