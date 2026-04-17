@@ -28,8 +28,8 @@ import { Separator } from "@/components/ui/separator";
 import {
   saveUser,
   redirectToDashboard,
-  setAuthCookie,
 } from "@/lib/auth-helpers";
+import { setSecureAuthCookie } from "@/app/actions/auth";
 import { apiClient, storeAccessToken } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
 
@@ -47,6 +47,7 @@ function LoginContent() {
   useEffect(() => {
     const urlError = searchParams.get("error");
     if (urlError) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError(decodeURIComponent(urlError));
     }
   }, [searchParams]);
@@ -75,7 +76,7 @@ function LoginContent() {
 
       saveUser(data.user);
       storeAccessToken(data.accessToken);
-      setAuthCookie(data.user.role);
+      await setSecureAuthCookie(data.user.role);
       router.push(redirectToDashboard(data.user.role));
     } catch (err: unknown) {
       if (err instanceof Error) {

@@ -170,11 +170,14 @@ export default function HomePage() {
   return (
     <>
       {/* ── Hero Section ────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-linear-to-br from-primary/10 via-primary/5 to-background">
+      <section className="relative flex min-h-[calc(100vh-3.5rem)] items-center overflow-hidden bg-linear-to-br from-primary/10 via-primary/5 to-background">
+        {/* Dot pattern background */}
+        <div className="bg-dot-pattern absolute inset-0 opacity-40" />
+        
         {/* Decorative blobs */}
         <div className="pointer-events-none absolute -top-24 left-1/2 h-125 w-175 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
 
-        <div className="site-container relative pb-16 pt-24 sm:pt-32 lg:pt-40">
+        <div className="site-container relative py-16 sm:py-20 lg:py-24 animate-fade-in-up">
           <div className="mx-auto max-w-3xl text-center">
             <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
               Master New Skills with{" "}
@@ -226,9 +229,9 @@ export default function HomePage() {
         {loading ? (
           <WorkshopCardSkeleton count={4} variant="compact" />
         ) : featuredWorkshops.length > 0 ? (
-          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 reveal active">
             {featuredWorkshops.map((workshop) => (
-              <Card key={workshop._id} className="flex flex-col">
+              <Card key={workshop._id} className="group/card flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl border-dashed">
                 {/* Image placeholder */}
                 <div className="flex h-40 items-center justify-center rounded-t-xl bg-muted">
                   <BookOpen className="size-10 text-muted-foreground/40" />
@@ -296,11 +299,11 @@ export default function HomePage() {
           {loading ? (
             <CategoryCardSkeleton count={3} />
           ) : categories.length > 0 ? (
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 md:grid-cols-3 reveal active">
               {categories.map((cat) => (
-                <Card key={cat._id}>
+                <Card key={cat._id} className="transition-all duration-300 hover:shadow-md hover:border-primary/30">
                   <CardContent className="flex items-start gap-4">
-                    <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-primary/10 group-hover:bg-primary/20 transition-colors">
                       <BookOpen className="size-6 text-primary" />
                     </div>
                     <div className="flex-1">

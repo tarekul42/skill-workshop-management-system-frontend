@@ -26,8 +26,8 @@ import {
   getSavedUser,
   getUserRole,
   clearSavedUser,
-  clearAuthCookie,
 } from "@/lib/auth-helpers";
+import { clearSecureAuthCookie } from "@/app/actions/auth";
 import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
 
@@ -63,7 +63,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     }
     clearSavedUser();
     clearAccessToken();
-    clearAuthCookie();
+    await clearSecureAuthCookie();
     router.push("/login");
   };
 

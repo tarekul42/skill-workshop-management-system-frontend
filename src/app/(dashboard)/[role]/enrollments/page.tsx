@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -207,15 +207,11 @@ function StudentEnrollmentDetailDialog({
 // ═════════════════════════════════════════════════════════════════════
 
 export default function EnrollmentsPage({ params }: PageProps) {
-  const [role, setRole] = useState<string>("");
+  const { role } = React.use(params);
 
   // ── Admin/Instructor state ───────────────────────────────────────
-  const [enrollments, setEnrollments] = useState<IEnrollment[]>([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
   const [viewEnrollment, setViewEnrollment] = useState<IEnrollment | null>(
     null,
   );
@@ -231,10 +227,6 @@ export default function EnrollmentsPage({ params }: PageProps) {
     useState<IEnrollment | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
-
-  useEffect(() => {
-    params.then((p) => setRole(p.role));
-  }, [params]);
 
   // ═══════════════════════════════════════════════════════════════════
   // STUDENT: React Query
@@ -266,27 +258,22 @@ export default function EnrollmentsPage({ params }: PageProps) {
   });
 
   // ═══════════════════════════════════════════════════════════════════
-  // ADMIN/INSTRUCTOR: useEffect data fetching
+  // ADMIN/INSTRUCTOR: React Query
   // ═══════════════════════════════════════════════════════════════════
 
-  const fetchEnrollments = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await getAllEnrollments({ page, limit });
-      setEnrollments(res.data);
-      setTotalPages(res.meta.totalPage);
-      setTotal(res.meta.total);
-    } catch {
-      // Error handled silently
-    } finally {
-      setLoading(false);
-    }
-  }, [page, limit]);
+  const {
+    data: adminEnrollmentsData,
+    isLoading: adminLoading,
+    refetch: refetchEnrollments,
+  } = useQuery({
+    queryKey: ["all-enrollments", page, limit],
+    queryFn: () => getAllEnrollments({ page, limit }),
+    enabled: !!role && role !== "STUDENT",
+  });
 
-  useEffect(() => {
-    if (!role || role === "STUDENT") return;
-    fetchEnrollments();
-  }, [role, fetchEnrollments]);
+  const enrollments = adminEnrollmentsData?.data || [];
+  const totalPages = adminEnrollmentsData?.meta?.totalPage || 1;
+  const total = adminEnrollmentsData?.meta?.total || 0;
 
   // ── Admin handlers ───────────────────────────────────────────────
 
@@ -296,7 +283,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
     try {
       await updateEnrollmentStatus(statusTarget._id, newStatus);
       setStatusTarget(null);
-      fetchEnrollments();
+      refetchEnrollments();
       toast.success("Enrollment status updated successfully");
     } catch (err) {
       toast.error(
@@ -313,7 +300,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
     try {
       await deleteEnrollment(deleteTarget._id);
       setDeleteTarget(null);
-      fetchEnrollments();
+      refetchEnrollments();
       toast.success("Enrollment deleted successfully");
     } catch (err) {
       toast.error(
@@ -528,7 +515,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {adminLoading ? (
               <TableRow>
                 <TableCell colSpan={7} className="p-4">
                   <TableSkeleton rows={5} columns={7} />
@@ -612,7 +599,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
         </Table>
       </div>
 
-      {!loading && totalPages > 1 && (
+      {!adminLoading && totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             Page {page} of {totalPages}

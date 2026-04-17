@@ -3,7 +3,7 @@ import {
   apiClientFormData,
   apiClientPaginated,
 } from "@/lib/api-client";
-import { BACKEND_API_URL } from "@/lib/constants";
+
 import type {
   EnrollmentStats,
   EnrollmentStatus,
@@ -247,15 +247,9 @@ export async function fetchWorkshops(
   if (params?.sort) searchParams.set("sort", params.sort);
 
   const queryString = searchParams.toString();
-  const url = `${BACKEND_API_URL}/workshop${queryString ? `?${queryString}` : ""}`;
+  const endpoint = `/workshop${queryString ? `?${queryString}` : ""}`;
 
-  const res = await fetch(url);
-  const json = await res.json();
-
-  return {
-    data: json.data,
-    meta: json.meta,
-  };
+  return apiClientPaginated<IWorkshop[]>(endpoint);
 }
 
 /**
@@ -263,15 +257,8 @@ export async function fetchWorkshops(
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchWorkshopBySlug(slug: string): Promise<IWorkshop> {
-  const res = await fetch(`${BACKEND_API_URL}/workshop/${slug}`);
-  const json = await res.json();
-
-  if (!res.ok || !json?.success) {
-    throw new Error(json?.message ?? `Failed to fetch workshop: ${slug}`);
-  }
-
-  // Handle double-nested response: { success, data: { data: {...} } }
-  return json.data.data ?? json.data;
+  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(`/workshop/${slug}`);
+  return (data as { data: IWorkshop }).data ?? (data as IWorkshop);
 }
 
 /**
@@ -320,15 +307,8 @@ export async function deleteWorkshop(id: string): Promise<void> {
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchWorkshopLevels(): Promise<ILevel[]> {
-  const res = await fetch(`${BACKEND_API_URL}/workshop/levels`);
-  const json = await res.json();
-
-  if (!res.ok || !json?.success) {
-    throw new Error(json?.message ?? "Failed to fetch workshop levels");
-  }
-
-  // Handle double-nested response: { success, data: { data: [...], meta } }
-  return json.data.data ?? json.data;
+  const data = await apiClient<{ data: ILevel[] } | ILevel[]>("/workshop/levels");
+  return (data as { data: ILevel[] }).data ?? (data as ILevel[]);
 }
 
 /**
@@ -336,15 +316,8 @@ export async function fetchWorkshopLevels(): Promise<ILevel[]> {
  * Uses raw `fetch` (handles double-nested response from detail endpoint).
  */
 export async function fetchWorkshopById(id: string): Promise<IWorkshop> {
-  const res = await fetch(`${BACKEND_API_URL}/workshop/${id}`);
-  const json = await res.json();
-
-  if (!res.ok || !json?.success) {
-    throw new Error(json?.message ?? `Failed to fetch workshop: ${id}`);
-  }
-
-  // Handle double-nested response: { success, data: { data: {...} } }
-  return json.data.data ?? json.data;
+  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(`/workshop/${id}`);
+  return (data as { data: IWorkshop }).data ?? (data as IWorkshop);
 }
 
 // ─── Workshop Enrichment Helpers ────────────────────────────────────
@@ -478,14 +451,7 @@ export async function deleteLevel(id: string): Promise<void> {
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchCategories(): Promise<ICategory[]> {
-  const res = await fetch(`${BACKEND_API_URL}/category`);
-  const json = await res.json();
-
-  if (!res.ok || !json?.success) {
-    throw new Error(json?.message ?? "Failed to fetch categories");
-  }
-
-  return json.data;
+  return apiClient<ICategory[]>("/category");
 }
 
 /**
@@ -493,14 +459,7 @@ export async function fetchCategories(): Promise<ICategory[]> {
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchCategoryBySlug(slug: string): Promise<ICategory> {
-  const res = await fetch(`${BACKEND_API_URL}/category/${slug}`);
-  const json = await res.json();
-
-  if (!res.ok || !json?.success) {
-    throw new Error(json?.message ?? `Failed to fetch category: ${slug}`);
-  }
-
-  return json.data;
+  return apiClient<ICategory>(`/category/${slug}`);
 }
 
 /**

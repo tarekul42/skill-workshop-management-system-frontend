@@ -12,9 +12,9 @@ const quickLinks = [
 
 const supportLinks = [
   { label: "FAQ", href: "/faq" },
-  { label: "Help Center", href: "#" },
-  { label: "Terms of Service", href: "#" },
-  { label: "Privacy Policy", href: "#" },
+  { label: "Help Center", href: "/help" },
+  { label: "Terms of Service", href: "/terms" },
+  { label: "Privacy Policy", href: "/privacy" },
 ] as const;
 
 const socialLinks = [
@@ -130,7 +130,7 @@ export function PublicFooter() {
         {/* Bottom Bar */}
         <Separator className="my-8" />
         <p className="text-center text-sm text-muted-foreground">
-          &copy; 2025 Skill Workshop. All rights reserved.
+          &copy; {new Date().getFullYear()} Skill Workshop. All rights reserved.
         </p>
       </div>
     </footer>

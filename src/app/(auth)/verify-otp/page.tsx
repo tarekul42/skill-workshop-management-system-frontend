@@ -36,6 +36,7 @@ export default function VerifyOTPPage() {
       router.replace("/register");
       return;
     }
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setEmail(savedEmail);
     setName(savedName);
   }, [router]);

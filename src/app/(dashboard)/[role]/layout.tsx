@@ -14,6 +14,12 @@ export const metadata: Metadata = {
   },
 };
 
+import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
+
+import { notFound } from "next/navigation";
+
+const VALID_ROLES = ["super-admin", "admin", "instructor", "student"];
+
 export default async function DashboardLayout({
   children,
   params,
@@ -23,15 +29,28 @@ export default async function DashboardLayout({
 }) {
   const { role } = await params;
 
+  if (!VALID_ROLES.includes(role)) {
+    notFound();
+  }
+
+  const normalizedRole = role.toUpperCase().replace("-", "_") as
+    | "SUPER_ADMIN"
+    | "ADMIN"
+    | "INSTRUCTOR"
+    | "STUDENT";
+
   return (
     <TooltipProvider>
       <div className="flex min-h-screen">
         <DashboardSidebar
-          role={role as "SUPER_ADMIN" | "ADMIN" | "INSTRUCTOR" | "STUDENT"}
+          role={normalizedRole}
         />
         <div className="flex flex-1 flex-col lg:pl-64">
           <DashboardHeader />
-          <main className="flex-1 p-6">{children}</main>
+          <main className="flex-1 p-4 md:p-6">
+            <Breadcrumbs />
+            {children}
+          </main>
         </div>
       </div>
     </TooltipProvider>

@@ -102,7 +102,7 @@ function extractPayments(enrollments: IEnrollment[]): PaymentRow[] {
 // ═════════════════════════════════════════════════════════════════════
 
 export default function PaymentsPage({ params }: PageProps) {
-  const [role, setRole] = useState<string>("");
+  const { role } = React.use(params);
 
   // ── Admin/Instructor state ───────────────────────────────────────
   const [payments, setPayments] = useState<PaymentRow[]>([]);
@@ -120,10 +120,6 @@ export default function PaymentsPage({ params }: PageProps) {
 
   // ── Student state ────────────────────────────────────────────────
   const [activeTab, setActiveTab] = useState("all");
-
-  useEffect(() => {
-    params.then((p) => setRole(p.role));
-  }, [params]);
 
   // ═══════════════════════════════════════════════════════════════════
   // STUDENT: React Query
@@ -203,6 +199,7 @@ export default function PaymentsPage({ params }: PageProps) {
 
   useEffect(() => {
     if (!role || role === "STUDENT") return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData();
   }, [role, fetchData]);
 

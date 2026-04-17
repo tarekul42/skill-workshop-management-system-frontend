@@ -12,8 +12,6 @@ import {
   Mail,
   Phone,
   Lock,
-  Check,
-  X,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -31,26 +29,10 @@ import { Separator } from "@/components/ui/separator";
 import { storeOTPEmail } from "@/lib/auth-helpers";
 import { apiClient } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
+import { isPasswordValid } from "@/lib/validation/password";
+import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
 
-interface PasswordChecks {
-  minLength: boolean;
-  hasUppercase: boolean;
-  hasDigit: boolean;
-  hasSpecial: boolean;
-}
 
-function getPasswordChecks(password: string): PasswordChecks {
-  return {
-    minLength: password.length >= 6,
-    hasUppercase: /[A-Z]/.test(password),
-    hasDigit: /[0-9]/.test(password),
-    hasSpecial: /[!@#$%^&*]/.test(password),
-  };
-}
-
-function isPasswordValid(checks: PasswordChecks): boolean {
-  return Object.values(checks).every(Boolean);
-}
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -65,8 +47,7 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const passwordChecks = getPasswordChecks(password);
-  const passwordValid = isPasswordValid(passwordChecks);
+  const passwordValid = isPasswordValid(password);
   const passwordsMatch = password.length > 0 && confirmPassword === password;
   const formValid =
     name.trim().length >= 2 &&
@@ -213,75 +194,7 @@ export default function RegisterPage() {
               </button>
             </div>
 
-            {/* Password Strength Checklist */}
-            {password.length > 0 && (
-              <ul className="grid gap-1 mt-1">
-                <li className="flex items-center gap-1.5 text-xs">
-                  {passwordChecks.minLength ? (
-                    <Check className="size-3 text-green-600 shrink-0" />
-                  ) : (
-                    <X className="size-3 text-red-500 shrink-0" />
-                  )}
-                  <span
-                    className={
-                      passwordChecks.minLength
-                        ? "text-green-600"
-                        : "text-muted-foreground"
-                    }
-                  >
-                    At least 6 characters
-                  </span>
-                </li>
-                <li className="flex items-center gap-1.5 text-xs">
-                  {passwordChecks.hasUppercase ? (
-                    <Check className="size-3 text-green-600 shrink-0" />
-                  ) : (
-                    <X className="size-3 text-red-500 shrink-0" />
-                  )}
-                  <span
-                    className={
-                      passwordChecks.hasUppercase
-                        ? "text-green-600"
-                        : "text-muted-foreground"
-                    }
-                  >
-                    At least 1 uppercase letter
-                  </span>
-                </li>
-                <li className="flex items-center gap-1.5 text-xs">
-                  {passwordChecks.hasDigit ? (
-                    <Check className="size-3 text-green-600 shrink-0" />
-                  ) : (
-                    <X className="size-3 text-red-500 shrink-0" />
-                  )}
-                  <span
-                    className={
-                      passwordChecks.hasDigit
-                        ? "text-green-600"
-                        : "text-muted-foreground"
-                    }
-                  >
-                    At least 1 digit
-                  </span>
-                </li>
-                <li className="flex items-center gap-1.5 text-xs">
-                  {passwordChecks.hasSpecial ? (
-                    <Check className="size-3 text-green-600 shrink-0" />
-                  ) : (
-                    <X className="size-3 text-red-500 shrink-0" />
-                  )}
-                  <span
-                    className={
-                      passwordChecks.hasSpecial
-                        ? "text-green-600"
-                        : "text-muted-foreground"
-                    }
-                  >
-                    At least 1 special character (!@#$%^&amp;*)
-                  </span>
-                </li>
-              </ul>
-            )}
+            <PasswordChecklist password={password} />
           </div>
 
           {/* Confirm Password */}
@@ -325,7 +238,7 @@ export default function RegisterPage() {
 
           {/* Error */}
           {error && (
-            <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive">
+            <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
               {error}
             </div>
           )}

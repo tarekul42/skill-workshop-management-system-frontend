@@ -33,21 +33,21 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center",
+        "flex flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-muted/30 py-16 text-center animate-fade-in",
         className,
       )}
     >
-      <div className="flex size-12 items-center justify-center rounded-full bg-muted mb-3">
-        <Comp className="size-5 text-muted-foreground" />
+      <div className="flex size-20 items-center justify-center rounded-full bg-background shadow-sm border mb-5 transition-transform hover:scale-105 duration-300">
+        <Comp className="size-8 text-primary/60" />
       </div>
-      <p className="text-sm font-medium text-muted-foreground">{title}</p>
+      <h3 className="text-lg font-semibold text-foreground tracking-tight">{title}</h3>
       {description && (
-        <p className="mt-1 max-w-sm text-xs text-muted-foreground">
+        <p className="mt-2 max-w-sm text-sm text-muted-foreground leading-relaxed">
           {description}
         </p>
       )}
       {action && (
-        <Button className="mt-4" onClick={action.onClick}>
+        <Button className="mt-8 transition-all hover:shadow-lg active:scale-95" onClick={action.onClick}>
           {action.label}
         </Button>
       )}

@@ -40,11 +40,7 @@ import { formatDate, getInitials } from "@/lib/formatters";
 import { getSavedUser, saveUser } from "@/lib/auth-helpers";
 import type { IUser } from "@/types";
 
-// ─── Props ────────────────────────────────────────────────────────
 
-interface PageProps {
-  params: Promise<{ role: string }>;
-}
 
 // ─── Validation schemas ───────────────────────────────────────────
 
@@ -115,10 +111,9 @@ function PasswordStrengthBar({ password }: { password: string }) {
 
 // ─── Page ─────────────────────────────────────────────────────────
 
-export default function ProfilePage({ params }: PageProps) {
+export default function ProfilePage() {
   const savedUser = getSavedUser();
 
-  const [, setRole] = useState<string>("");
   const [user, setUser] = useState<IUser | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -149,11 +144,6 @@ export default function ProfilePage({ params }: PageProps) {
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  // Resolve role
-  useEffect(() => {
-    params.then((p) => setRole(p.role));
-  }, [params]);
 
   // Fetch user profile
   useEffect(() => {

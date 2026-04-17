@@ -80,6 +80,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchLevels();
   }, [fetchLevels]);
 
