@@ -46,11 +46,11 @@ export default function DashboardError({
         </p>
 
         {/* Error detail card (development only) */}
-        {error.message && process.env.NODE_ENV === "development" && (
+        {error.message && (
           <Card className="mt-6 text-left">
             <CardContent className="p-4">
               <p className="text-xs font-medium text-muted-foreground mb-1">
-                Error Details (Development Only)
+                Error Details
               </p>
               <p className="text-sm text-destructive font-mono break-words">
                 {error.message}

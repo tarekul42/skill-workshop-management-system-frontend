@@ -1,7 +1,9 @@
-export const BACKEND_API_URL = process.env.NEXT_PUBLIC_BACKEND_API_URL || "";
+export const BACKEND_API_URL = 
+  process.env.NEXT_PUBLIC_BACKEND_API_URL || 
+  "https://skill-workshop-management-system-backend.vercel.app/api/v1";
 
-if (!BACKEND_API_URL && typeof window !== "undefined") {
-  console.warn("NEXT_PUBLIC_BACKEND_API_URL is not configured");
+if (!process.env.NEXT_PUBLIC_BACKEND_API_URL && typeof window !== "undefined") {
+  console.warn("NEXT_PUBLIC_BACKEND_API_URL is not configured, using fallback URL.");
 }
 
 export const FRONTEND_URL =
