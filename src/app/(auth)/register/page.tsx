@@ -24,12 +24,10 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { storeOTPEmail } from "@/lib/auth-helpers";
 import { apiClient } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
-import { isPasswordValid } from "@/lib/validation/password";
 import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
 
 

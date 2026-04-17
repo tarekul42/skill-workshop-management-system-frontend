@@ -26,7 +26,6 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import {
   Form,
@@ -64,6 +63,7 @@ function LoginContent() {
   useEffect(() => {
     const urlError = searchParams.get("error");
     if (urlError) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setError(decodeURIComponent(urlError));
     }
   }, [searchParams]);

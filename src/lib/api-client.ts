@@ -109,9 +109,9 @@ export interface ApiClientOptions {
 
 export class ApiError extends Error {
   status: number;
-  data: any;
+  data: unknown;
 
-  constructor(status: number, message: string, data: any = null) {
+  constructor(status: number, message: string, data: unknown = null) {
     super(message);
     this.status = status;
     this.data = data;
