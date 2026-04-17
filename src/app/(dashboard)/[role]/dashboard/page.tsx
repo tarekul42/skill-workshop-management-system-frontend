@@ -22,8 +22,9 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getSavedUser } from "@/lib/auth-helpers";
-import { apiClient } from "@/lib/api-client";
+import { apiClient, apiClientPaginated } from "@/lib/api-client";
 import { formatCurrency, formatDate } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 
 // ─── Props ──────────────────────────────────────────────────────────
 
@@ -186,29 +187,37 @@ export default function DashboardPage({ params }: PageProps) {
 
       try {
         if (role === "SUPER_ADMIN" || role === "ADMIN") {
-          const [usersRes, workshopsRes, enrollmentsRes, paymentsRes] =
-            await Promise.allSettled([
-              apiClient<{ total: number }>("/stats/users"),
-              apiClient<{ total: number }>("/stats/workshops"),
-              apiClient<{ total: number }>("/stats/enrollment"),
-              apiClient<{ total: number; totalAmount: number }>(
-                "/stats/payment",
-              ),
-            ]);
+          const [
+            usersRes,
+            workshopsRes,
+            enrollmentsRes,
+            paymentsRes,
+            workshopsListRes,
+            enrollmentsListRes,
+          ] = await Promise.allSettled([
+            apiClient<{ totalUsers: number }>("/stats/users"),
+            apiClient<{ totalWorkshop: number }>("/stats/workshops"),
+            apiClient<{ totalEnrollment: number }>("/stats/enrollment"),
+            apiClient<{ totalRevenue: { _id: null; totalRevenue: number }[] }>(
+              "/stats/payment",
+            ),
+            apiClientPaginated<WorkshopItem[]>("/workshop?page=1&limit=4"),
+            apiClientPaginated<EnrollmentItem[]>("/enrollment?page=1&limit=5"),
+          ]);
 
           const totalUsers =
-            usersRes.status === "fulfilled" ? (usersRes.value.total ?? 0) : 0;
+            usersRes.status === "fulfilled" ? (usersRes.value.totalUsers ?? 0) : 0;
           const totalWorkshops =
             workshopsRes.status === "fulfilled"
-              ? (workshopsRes.value.total ?? 0)
+              ? (workshopsRes.value.totalWorkshop ?? 0)
               : 0;
           const totalEnrollments =
             enrollmentsRes.status === "fulfilled"
-              ? (enrollmentsRes.value.total ?? 0)
+              ? (enrollmentsRes.value.totalEnrollment ?? 0)
               : 0;
           const totalRevenue =
             paymentsRes.status === "fulfilled"
-              ? (paymentsRes.value.totalAmount ?? 0)
+              ? (paymentsRes.value.totalRevenue?.[0]?.totalRevenue ?? 0)
               : 0;
 
           if (
@@ -221,31 +230,34 @@ export default function DashboardPage({ params }: PageProps) {
             return;
           }
 
-          // Recent workshops (latest 4)
-          const workshopsListRes = await Promise.allSettled([
-            apiClient<{ data: WorkshopItem[] }>("/workshop?page=1&limit=4"),
-          ]);
-          if (workshopsListRes[0].status === "fulfilled") {
-            setRecentWorkshops(workshopsListRes[0].value.data ?? []);
-          }
+          // Recent data
+          const recentWorkshops =
+            workshopsListRes.status === "fulfilled"
+              ? workshopsListRes.value.data
+              : [];
+          const recentEnrollmentsList =
+            enrollmentsListRes.status === "fulfilled"
+              ? enrollmentsListRes.value.data
+              : [];
+
+          setRecentWorkshops(recentWorkshops);
+          setRecentEnrollments(recentEnrollmentsList);
 
           setStats([
             {
-              icon: (
-                <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />
-              ),
-              label: "Total Workshops",
-              value: String(totalWorkshops),
-              change: "Active on platform",
+              icon: <Users className="size-4 text-blue-600 dark:text-blue-400" />,
+              label: "Total Users",
+              value: String(totalUsers),
+              change: "From all roles",
               iconBg: "bg-blue-50 dark:bg-blue-950/50",
             },
             {
               icon: (
-                <Users className="size-4 text-emerald-600 dark:text-emerald-400" />
+                <BookOpen className="size-4 text-emerald-600 dark:text-emerald-400" />
               ),
-              label: "Total Users",
-              value: String(totalUsers),
-              change: "Registered users",
+              label: "Workshops",
+              value: String(totalWorkshops),
+              change: "Active on platform",
               iconBg: "bg-emerald-50 dark:bg-emerald-950/50",
             },
             {
@@ -270,10 +282,8 @@ export default function DashboardPage({ params }: PageProps) {
         } else if (role === "INSTRUCTOR") {
           // Instructor stats
           const [workshopsRes, enrollmentsRes] = await Promise.allSettled([
-            apiClient<{ data: WorkshopItem[]; meta: { total: number } }>(
-              "/workshop?page=1&limit=100",
-            ),
-            apiClient<EnrollmentItem[]>("/enrollment?page=1&limit=100"),
+            apiClientPaginated<WorkshopItem[]>("/workshop?page=1&limit=100"),
+            apiClientPaginated<EnrollmentItem[]>("/enrollment?page=1&limit=100"),
           ]);
 
           const instructorWorkshops =
@@ -283,9 +293,8 @@ export default function DashboardPage({ params }: PageProps) {
           const totalWorkshops = instructorWorkshops.length;
 
           const allEnrollments =
-            enrollmentsRes.status === "fulfilled" &&
-            Array.isArray(enrollmentsRes.value)
-              ? enrollmentsRes.value
+            enrollmentsRes.status === "fulfilled"
+              ? (enrollmentsRes.value.data ?? [])
               : [];
 
           const totalStudents = allEnrollments.length;
@@ -315,9 +324,7 @@ export default function DashboardPage({ params }: PageProps) {
 
           setStats([
             {
-              icon: (
-                <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />
-              ),
+              icon: <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />,
               label: "My Workshops",
               value: String(totalWorkshops),
               change: "Created workshops",
@@ -373,9 +380,7 @@ export default function DashboardPage({ params }: PageProps) {
 
           setStats([
             {
-              icon: (
-                <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />
-              ),
+              icon: <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />,
               label: "Enrolled",
               value: String(totalEnrollments),
               change: "Total enrollments",
@@ -522,7 +527,7 @@ export default function DashboardPage({ params }: PageProps) {
       {!loading &&
         !error &&
         recentWorkshops.length > 0 &&
-        (role === "SUPER_ADMIN" || role === "INSTRUCTOR") && (
+        (role === "SUPER_ADMIN" || role === "ADMIN" || role === "INSTRUCTOR") && (
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center gap-2">

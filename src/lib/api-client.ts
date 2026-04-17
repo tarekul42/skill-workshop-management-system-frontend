@@ -155,6 +155,7 @@ export async function apiRequest<T>(
   const fetchOptions: RequestInit = {
     method,
     headers: fetchHeaders,
+    credentials: "include",
   };
 
   if (body !== undefined) {
@@ -177,7 +178,7 @@ export async function apiRequest<T>(
   if (returnMeta) {
     return {
       data: json.data,
-      meta: json.meta!,
+      meta: json.meta ?? { page: 1, limit: 10, total: 0, totalPage: 1 },
     };
   }
 
