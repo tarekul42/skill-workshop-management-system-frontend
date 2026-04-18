@@ -35,6 +35,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { AnimatedPage } from "@/components/shared/AnimatedPage";
 import {
   saveUser,
   redirectToDashboard,
@@ -105,18 +106,20 @@ function LoginContent() {
   }
 
   return (
-    <Card className="w-full max-w-md">
-      {/* Logo & Header */}
-      <CardHeader className="items-center text-center">
-        <Link href="/" className="mb-2 flex items-center gap-2">
-          <GraduationCap className="size-8 text-primary" />
-          <span className="text-xl font-semibold">Skill Workshop</span>
-        </Link>
-        <CardTitle className="text-2xl">Welcome Back</CardTitle>
-        <CardDescription>Sign in to your account</CardDescription>
-      </CardHeader>
+    <AnimatedPage className="w-full max-w-md">
+      <Card>
+        {/* Logo & Header */}
+        <CardHeader className="items-center text-center">
+          <Link href="/" className="mb-2 flex items-center gap-2">
+            <GraduationCap className="size-8 text-primary" />
+            <span className="text-xl font-semibold">Skill Workshop</span>
+          </Link>
+          <CardTitle className="text-2xl">Welcome Back</CardTitle>
+          <CardDescription>Sign in to your account</CardDescription>
+        </CardHeader>
 
-      <CardContent>
+        <CardContent>
+          {/* ... (form content remains same) */}
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
             <FormField
@@ -265,6 +268,7 @@ function LoginContent() {
         </Link>
       </CardFooter>
     </Card>
+    </AnimatedPage>
   );
 }
 
