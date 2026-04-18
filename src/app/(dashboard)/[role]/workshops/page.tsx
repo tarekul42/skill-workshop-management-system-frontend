@@ -1,8 +1,8 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import {
@@ -70,65 +70,71 @@ interface PageProps {
 
 export default function WorkshopsPage({ params }: PageProps) {
   const router = useRouter();
-  const { role } = React.use(params);
+  const { role: dashboardRole } = React.use(params);
+  const queryClient = useQueryClient();
 
-  // Data state
-  const [workshops, setWorkshops] = useState<IWorkshop[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Search/Pagination state
   const [searchTerm, setSearchTerm] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
 
   // Dialogs state
   const [viewWorkshop, setViewWorkshop] = useState<IWorkshop | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<IWorkshop | null>(null);
-  const [deleting, setDeleting] = useState(false);
 
-  // ── Fetch workshops ────────────────────────────────────────────────
-  const fetchWorkshopData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const [workshopsRes, categoriesRes, levelsRes] = await Promise.allSettled(
-        [
-          fetchWorkshops({ page, limit, searchTerm }),
-          fetchCategories(),
-          fetchWorkshopLevels(),
-        ],
-      );
+  // ── Queries ───────────────────────────────────────────────────────
 
-      const cats =
-        categoriesRes.status === "fulfilled" ? categoriesRes.value : [];
-      const lvls = levelsRes.status === "fulfilled" ? levelsRes.value : [];
+  const { data: categories = [] } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
-      if (workshopsRes.status === "fulfilled") {
-        setWorkshops(enrichWorkshops(workshopsRes.value.data, cats, lvls));
-        setTotalPages(workshopsRes.value.meta.totalPage);
-        setTotal(workshopsRes.value.meta.total);
-      }
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to load workshops");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, limit, searchTerm]);
+  const { data: levels = [] } = useQuery({
+    queryKey: ["levels"],
+    queryFn: fetchWorkshopLevels,
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const { data: workshopsData, isLoading } = useQuery({
+    queryKey: ["workshops", { page, limit, searchTerm }],
+    queryFn: () => fetchWorkshops({ page, limit, searchTerm }),
+    enabled: !!dashboardRole,
+  });
+
+  const meta = workshopsData?.meta;
+  const totalPages = meta?.totalPage || 1;
+  const total = meta?.total || 0;
+
+  // Enrich workshops with category/level names
+  const workshops = React.useMemo(() => {
+    const raw = workshopsData?.data || [];
+    return enrichWorkshops(raw, categories, levels);
+  }, [workshopsData, categories, levels]);
+
+  // ── Mutations ─────────────────────────────────────────────────────
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteWorkshop(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["workshops"] });
+      setDeleteTarget(null);
+      toast.success("Workshop deleted successfully");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to delete workshop");
+    },
+  });
 
   // ── Debounce search ────────────────────────────────────────────────
   useEffect(() => {
     const timer = setTimeout(() => {
       setSearchTerm(inputValue);
       setPage(1);
-    }, 500); // 500ms delay
+    }, 500);
     return () => clearTimeout(timer);
   }, [inputValue]);
-
-  useEffect(() => {
-    if (!role) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchWorkshopData();
-  }, [role, fetchWorkshopData]);
 
   // ── Handlers ───────────────────────────────────────────────────────
 
@@ -136,19 +142,9 @@ export default function WorkshopsPage({ params }: PageProps) {
     setInputValue(value);
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      await deleteWorkshop(deleteTarget._id);
-      setDeleteTarget(null);
-      fetchWorkshopData();
-      toast.success("Workshop deleted successfully");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to delete workshop");
-    } finally {
-      setDeleting(false);
-    }
+    deleteMutation.mutate(deleteTarget._id);
   };
 
   // ── Render ─────────────────────────────────────────────────────────
@@ -159,7 +155,7 @@ export default function WorkshopsPage({ params }: PageProps) {
         title="Workshop Management"
         description="Manage all workshops"
       >
-        <Button onClick={() => router.push(`/${role}/workshops/create`)}>
+        <Button onClick={() => router.push(`/${dashboardRole}/workshops/create`)}>
           <Plus className="size-4" />
           Create Workshop
         </Button>
@@ -184,6 +180,7 @@ export default function WorkshopsPage({ params }: PageProps) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-[80px]">Image</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Level</TableHead>
@@ -195,15 +192,15 @@ export default function WorkshopsPage({ params }: PageProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {isLoading ? (
               <TableRow>
-                <TableCell colSpan={8} className="p-4">
-                  <TableSkeleton rows={5} columns={8} />
+                <TableCell colSpan={9} className="p-4">
+                  <TableSkeleton rows={5} columns={9} />
                 </TableCell>
               </TableRow>
             ) : workshops.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8} className="h-48 text-center">
+                <TableCell colSpan={9} className="h-48 text-center">
                   <p className="text-sm text-muted-foreground">
                     {searchTerm
                       ? "No workshops match your search."
@@ -212,11 +209,27 @@ export default function WorkshopsPage({ params }: PageProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              workshops.map((ws) => {
+              workshops.map((ws: IWorkshop) => {
                 const availableSeats =
-                  (ws.maxSeats ?? 0) - ws.currentEnrollments;
+                  (ws.maxSeats ?? 0) - (ws.currentEnrollments || 0);
                 return (
                   <TableRow key={ws._id}>
+                    <TableCell>
+                      <div className="relative size-12 overflow-hidden rounded-md border bg-muted">
+                        {ws.images && ws.images.length > 0 ? (
+                          <Image
+                            src={ws.images[0]}
+                            alt={ws.title}
+                            fill
+                            className="object-cover"
+                          />
+                        ) : (
+                          <div className="flex size-full items-center justify-center text-[10px] text-muted-foreground">
+                            No Image
+                          </div>
+                        )}
+                      </div>
+                    </TableCell>
                     <TableCell>
                       <p className="truncate text-sm font-medium max-w-50">
                         {ws.title}
@@ -269,10 +282,10 @@ export default function WorkshopsPage({ params }: PageProps) {
                     <TableCell>
                       <WorkshopActions
                         workshop={ws}
-                        role={role}
+                        role={dashboardRole}
                         onView={() => setViewWorkshop(ws)}
                         onEdit={() =>
-                          router.push(`/${role}/workshops/${ws._id}/edit`)
+                          router.push(`/${dashboardRole}/workshops/${ws._id}/edit`)
                         }
                         onDelete={() => setDeleteTarget(ws)}
                       />
@@ -286,7 +299,7 @@ export default function WorkshopsPage({ params }: PageProps) {
       </div>
 
       {/* ── Server Pagination ──────────────────────────────────────── */}
-      {!loading && totalPages > 1 && (
+      {!isLoading && totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             Page {page} of {totalPages}
@@ -324,16 +337,22 @@ export default function WorkshopsPage({ params }: PageProps) {
           {viewWorkshop && (
             <div className="space-y-4">
               {/* Images */}
-              {viewWorkshop.images.length > 0 && (
+              {viewWorkshop.images && viewWorkshop.images.length > 0 ? (
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {viewWorkshop.images.map((img, i) => (
-                    <img
-                      key={i}
-                      src={img}
-                      alt={`${viewWorkshop.title} ${i + 1}`}
-                      className="h-32 w-auto rounded-md object-cover"
-                    />
+                    <div key={i} className="relative h-32 w-48 shrink-0 overflow-hidden rounded-md">
+                      <Image
+                        src={img}
+                        alt={`${viewWorkshop.title} ${i + 1}`}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                   ))}
+                </div>
+              ) : (
+                <div className="aspect-video relative overflow-hidden rounded-lg border bg-muted flex items-center justify-center text-muted-foreground">
+                  No images available
                 </div>
               )}
 
@@ -459,7 +478,7 @@ export default function WorkshopsPage({ params }: PageProps) {
         title="Delete Workshop"
         description={`Are you sure you want to delete "${deleteTarget?.title}"? This action cannot be undone.`}
         onConfirm={handleDelete}
-        isLoading={deleting}
+        isLoading={deleteMutation.isPending}
         variant="destructive"
         confirmLabel="Delete Workshop"
       />
