@@ -107,6 +107,18 @@ export interface ApiClientOptions {
   returnMeta?: boolean;
 }
 
+export class ApiError extends Error {
+  status: number;
+  data: unknown;
+
+  constructor(status: number, message: string, data: unknown = null) {
+    super(message);
+    this.status = status;
+    this.data = data;
+    this.name = "ApiError";
+  }
+}
+
 export async function apiRequest<T>(
   endpoint: string,
   options: ApiClientOptions & { returnMeta: true },
@@ -162,7 +174,13 @@ export async function apiRequest<T>(
     fetchOptions.body = isFormData ? (body as FormData) : JSON.stringify(body);
   }
 
-  let response = await fetch(url, fetchOptions);
+  let response: Response;
+  try {
+    response = await fetch(url, fetchOptions);
+  } catch (err) {
+    console.error("Network error during API request:", err);
+    throw new ApiError(0, "Network error. Please check your internet connection.");
+  }
 
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
     response = await attemptTokenRefresh(fetchHeaders, url, fetchOptions);
@@ -171,8 +189,15 @@ export async function apiRequest<T>(
   const json = (await response.json().catch(() => null)) as ApiResponse<T>;
 
   if (!response.ok || !json?.success) {
-    const message = json?.message ?? `Request failed with status ${response.status}`;
-    throw new Error(message);
+    const status = response.status;
+    const message = json?.message ?? `Request failed with status ${status}`;
+    
+    // Log critical errors
+    if (status >= 500) {
+      console.error(`[API Server Error] ${method} ${endpoint}:`, json || status);
+    }
+
+    throw new ApiError(status, message, json?.data);
   }
 
   if (returnMeta) {

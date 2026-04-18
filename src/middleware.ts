@@ -65,46 +65,56 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const roleCookie = await getRoleCookie(request);
 
+  // Initialize response
+  let response = NextResponse.next();
+
   // ── Protected dashboard routes ──────────────────────────────────────
   const expectedRole = getExpectedRole(pathname);
 
   if (expectedRole) {
-    // No cookie at all → redirect to login
     if (!roleCookie) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
       loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-
-    // Cookie present but role doesn't match the URL segment → redirect to login
-    if (roleCookie !== expectedRole) {
+      response = NextResponse.redirect(loginUrl);
+    } else if (roleCookie !== expectedRole) {
       const loginUrl = request.nextUrl.clone();
       loginUrl.pathname = "/login";
-      return NextResponse.redirect(loginUrl);
+      response = NextResponse.redirect(loginUrl);
     }
-
-    // Role matches — allow request through
-    return NextResponse.next();
-  }
-
-  // ── Auth pages ─────────────────────────────────────────────────────
-  if (isAuthPage(pathname)) {
-    // If the user already has a valid role cookie, redirect them to their
-    // dashboard so they don't linger on login/register pages.
+  } else if (isAuthPage(pathname)) {
     if (roleCookie && ROLE_ROUTES[roleCookie.toLowerCase()]) {
       const dashboardPath = `/${roleCookie.toLowerCase()}/dashboard`;
       const dashboardUrl = request.nextUrl.clone();
       dashboardUrl.pathname = dashboardPath;
-      return NextResponse.redirect(dashboardUrl);
+      response = NextResponse.redirect(dashboardUrl);
     }
-
-    // Not authenticated — allow access to auth pages
-    return NextResponse.next();
   }
 
-  // ── All other routes (public marketing pages, API routes, etc.) ────
-  return NextResponse.next();
+  // ── Security Headers ────────────────────────────────────────────────
+  const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' blob: data: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com;
+    font-src 'self' data: https://fonts.gstatic.com;
+    connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"} https://lh3.googleusercontent.com;
+    frame-src 'self' https://sandbox.sslcommerz.com;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    upgrade-insecure-requests;
+  `.replace(/\s{2,}/g, " ").trim();
+
+  response.headers.set("Content-Security-Policy", cspHeader);
+  response.headers.set("X-Frame-Options", "DENY");
+  response.headers.set("X-Content-Type-Options", "nosniff");
+  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
+  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+
+  return response;
 }
 
 // ─── Matcher ────────────────────────────────────────────────────────────

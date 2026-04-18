@@ -50,6 +50,7 @@ import {
   TableSkeleton,
 } from "@/components/shared";
 import { formatDate, getInitials } from "@/lib/formatters";
+import { maskEmail, maskPhone } from "@/lib/utils/masking";
 import {
   getAllUsers,
   getUserById,
@@ -265,19 +266,20 @@ export default function UsersPage({ params }: PageProps) {
                           {getInitials(user.name)}
                         </AvatarFallback>
                       </Avatar>
+
                       <div className="min-w-0">
                         <p className="truncate text-sm font-medium">
                           {user.name}
                         </p>
-                        <p className="truncate text-xs text-muted-foreground">
-                          {user.email}
+                        <p className="truncate text-xs text-muted-foreground" title={user.email}>
+                          {maskEmail(user.email)}
                         </p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground">
-                      {user.phone || "—"}
+                    <span className="text-sm text-muted-foreground" title={user.phone}>
+                      {user.phone ? maskPhone(user.phone) : "—"}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -357,15 +359,17 @@ export default function UsersPage({ params }: PageProps) {
                 </Avatar>
                 <div>
                   <p className="font-semibold">{viewUser.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {viewUser.email}
+                  <p className="text-sm text-muted-foreground" title={viewUser.email}>
+                    {maskEmail(viewUser.email)}
                   </p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Phone</p>
-                  <p className="font-medium">{viewUser.phone || "—"}</p>
+                  <p className="font-medium" title={viewUser.phone || ""}>
+                    {viewUser.phone ? maskPhone(viewUser.phone) : "—"}
+                  </p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Age</p>
