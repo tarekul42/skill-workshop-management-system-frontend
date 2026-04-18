@@ -3,10 +3,7 @@
 import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { GraduationCap, Loader2 } from "lucide-react";
-import {
-  saveUser,
-  redirectToDashboard,
-} from "@/lib/auth-helpers";
+import { saveUser, redirectToDashboard } from "@/lib/auth-helpers";
 import { setSecureAuthCookie } from "@/app/actions/auth";
 import { storeAccessToken } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";

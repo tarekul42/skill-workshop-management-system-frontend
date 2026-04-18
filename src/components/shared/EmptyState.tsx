@@ -40,14 +40,19 @@ export function EmptyState({
       <div className="flex size-20 items-center justify-center rounded-full bg-background shadow-sm border mb-5 transition-transform hover:scale-105 duration-300">
         <Comp className="size-8 text-primary/60" />
       </div>
-      <h3 className="text-lg font-semibold text-foreground tracking-tight">{title}</h3>
+      <h3 className="text-lg font-semibold text-foreground tracking-tight">
+        {title}
+      </h3>
       {description && (
         <p className="mt-2 max-w-sm text-sm text-muted-foreground leading-relaxed">
           {description}
         </p>
       )}
       {action && (
-        <Button className="mt-8 transition-all hover:shadow-lg active:scale-95" onClick={action.onClick}>
+        <Button
+          className="mt-8 transition-all hover:shadow-lg active:scale-95"
+          onClick={action.onClick}
+        >
           {action.label}
         </Button>
       )}

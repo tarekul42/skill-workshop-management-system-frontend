@@ -7,6 +7,7 @@ A modern, high-performance, and feature-rich frontend for the Skill Workshop Man
 ## 🌟 Features
 
 ### 🎓 For Students
+
 - **Course Discovery**: Browse workshops with advanced filtering by category, level, and price.
 - **Secure Enrollment**: Smooth registration process with real-time capacity checks.
 - **Integrated Payments**: Secure checkout using SSLCommerz.
@@ -14,11 +15,13 @@ A modern, high-performance, and feature-rich frontend for the Skill Workshop Man
 - **Theme Support**: Seamless switching between Light and Dark modes.
 
 ### 👨‍🏫 For Instructors
+
 - **Workshop Management**: Create and manage workshop content, schedules, and prerequisites.
 - **Student Insights**: Monitor enrollments and student progress for individual workshops.
 - **Earnings Overview**: View revenue statistics from course enrollments.
 
 ### 🛡️ For Administrators
+
 - **Comprehensive Analytics**: Real-time dashboard with stats on users, workshops, and revenue.
 - **User Management**: Oversee all users, manage roles, and handle account statuses.
 - **Audit Trails**: Detailed logs of system actions for security and accountability.
@@ -72,23 +75,27 @@ src/
 ### Installation
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/tarekul42/skill-workshop-management-system-frontend.git
    cd skill-workshop-management-system-frontend
    ```
 
 2. **Install dependencies**:
+
    ```bash
    bun install
    ```
 
 3. **Environment Setup**:
    Create a `.env` file in the root directory:
+
    ```env
    NEXT_PUBLIC_API_URL=http://localhost:5000/api/v1
    ```
 
 4. **Run the development server**:
+
    ```bash
    bun run dev
    ```
@@ -114,6 +121,7 @@ src/
 ## 🎨 Theme Customization
 
 The application supports system-level theme detection and manual toggling.
+
 - **Dark Mode**: High-contrast, accessibility-focused design.
 - **Light Mode**: Clean, professional layout with soft colors.
 

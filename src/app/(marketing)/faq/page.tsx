@@ -226,7 +226,9 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
 // ─── FAQ Page ─────────────────────────────────────────────────────────────
 
 export default function FAQPage() {
-  const [activeCategory, setActiveCategory] = useState<FAQCategory | "all">("all");
+  const [activeCategory, setActiveCategory] = useState<FAQCategory | "all">(
+    "all",
+  );
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredFAQs = useMemo(() => {

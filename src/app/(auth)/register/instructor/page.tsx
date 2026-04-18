@@ -33,8 +33,6 @@ import { apiClient } from "@/lib/api-client";
 import { isPasswordValid } from "@/lib/validation/password";
 import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
 
-
-
 export default function InstructorRegisterPage() {
   const router = useRouter();
 
@@ -282,7 +280,10 @@ export default function InstructorRegisterPage() {
 
           {/* Error */}
           {error && (
-            <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+            <div
+              className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              role="alert"
+            >
               {error}
             </div>
           )}

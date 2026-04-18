@@ -52,7 +52,7 @@ export default function DashboardError({
               <p className="text-xs font-medium text-muted-foreground mb-1">
                 Error Details
               </p>
-              <p className="text-sm text-destructive font-mono break-words">
+              <p className="text-sm text-destructive font-mono wrap-break-words">
                 {error.message}
               </p>
               {error.digest && (

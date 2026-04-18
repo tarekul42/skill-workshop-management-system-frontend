@@ -1,5 +1,5 @@
-import type { MetadataRoute } from "next";
 import { FRONTEND_URL } from "@/lib/constants";
+import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -7,7 +7,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/login", "/register", "/forgot-password", "/reset-password", "/verify-otp", "/google/callback", "/unauthorized"],
+        disallow: [
+          "/login",
+          "/register",
+          "/forgot-password",
+          "/reset-password",
+          "/verify-otp",
+          "/google/callback",
+          "/unauthorized",
+        ],
       },
       {
         userAgent: "*",

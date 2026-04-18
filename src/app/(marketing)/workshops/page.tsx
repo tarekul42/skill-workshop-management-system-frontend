@@ -22,9 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  WorkshopCardSkeleton,
-} from "@/components/shared/LoadingSkeleton";
+import { WorkshopCardSkeleton } from "@/components/shared/LoadingSkeleton";
 import {
   fetchWorkshops,
   fetchCategories,
@@ -55,8 +53,6 @@ function getLevelBadgeVariant(
       return "default";
   }
 }
-
-
 
 export default function WorkshopsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -246,7 +242,7 @@ export default function WorkshopsPage() {
             {/* Workshop Grid or Empty State */}
             {filteredWorkshops.length === 0 ? (
               <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed bg-muted/30 py-16 text-center animate-fade-in">
-                <div className="mb-4 flex size-20 items-center justify-center rounded-full bg-background shadow-sm border mb-5 transition-transform hover:scale-105 duration-300">
+                <div className="mb-4 flex size-20 items-center justify-center rounded-full bg-background shadow-sm border transition-transform hover:scale-105 duration-300">
                   <BookOpen className="size-10 text-primary/60" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground tracking-tight">

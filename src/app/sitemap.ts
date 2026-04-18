@@ -1,5 +1,5 @@
+import { BACKEND_API_URL, FRONTEND_URL } from "@/lib/constants";
 import type { MetadataRoute } from "next";
-import { FRONTEND_URL, BACKEND_API_URL } from "@/lib/constants";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
@@ -52,12 +52,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const json = await res.json();
       const workshops = json?.data ?? [];
       if (Array.isArray(workshops)) {
-        workshopPages = workshops.map((workshop: { slug: string; updatedAt?: string }) => ({
-          url: `${FRONTEND_URL}/workshops/${workshop.slug}`,
-          lastModified: workshop.updatedAt ? new Date(workshop.updatedAt) : new Date(),
-          changeFrequency: "weekly" as const,
-          priority: 0.8,
-        }));
+        workshopPages = workshops.map(
+          (workshop: { slug: string; updatedAt?: string }) => ({
+            url: `${FRONTEND_URL}/workshops/${workshop.slug}`,
+            lastModified: workshop.updatedAt
+              ? new Date(workshop.updatedAt)
+              : new Date(),
+            changeFrequency: "weekly" as const,
+            priority: 0.8,
+          }),
+        );
       }
     }
   } catch {

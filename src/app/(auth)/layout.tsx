@@ -4,7 +4,8 @@ export const metadata: Metadata = {
   title: {
     absolute: "Sign In | Skill Workshop",
   },
-  description: "Sign in to your Skill Workshop account to manage enrollments, view workshops, and track your learning progress.",
+  description:
+    "Sign in to your Skill Workshop account to manage enrollments, view workshops, and track your learning progress.",
   robots: {
     index: false,
     follow: false,

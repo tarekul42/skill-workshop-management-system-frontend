@@ -22,11 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import {
-  getSavedUser,
-  getUserRole,
-  clearSavedUser,
-} from "@/lib/auth-helpers";
+import { getSavedUser, getUserRole, clearSavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie } from "@/app/actions/auth";
 import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";

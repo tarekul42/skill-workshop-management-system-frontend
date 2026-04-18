@@ -15,10 +15,10 @@ export default function DashboardError({
   }, [error]);
 
   return (
-    <div className="flex h-full min-h-[600px] items-center justify-center p-6">
-      <ErrorDisplay 
-        error={error} 
-        reset={reset} 
+    <div className="flex h-full min-h-50 items-center justify-center p-6">
+      <ErrorDisplay
+        error={error}
+        reset={reset}
         title="Dashboard Error"
         description="We had trouble loading your dashboard data. This might be a temporary connection issue."
         showHome={false}

@@ -58,7 +58,7 @@ export default function GlobalError({
                 <p className="mb-1 text-xs font-medium text-muted-foreground">
                   Error Details (Development Only)
                 </p>
-                <p className="break-words font-mono text-sm text-destructive">
+                <p className="wrap-break-words font-mono text-sm text-destructive">
                   {error.message}
                 </p>
                 {error.digest && (

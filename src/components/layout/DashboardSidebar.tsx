@@ -278,9 +278,16 @@ function SidebarNavContent({
                             <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-primary animate-in fade-in zoom-in duration-300" />
                           )}
                           {IconComponent && (
-                            <IconComponent className={cn("size-4 shrink-0 transition-transform group-hover/nav-item:scale-110", isActive && "text-primary")} />
+                            <IconComponent
+                              className={cn(
+                                "size-4 shrink-0 transition-transform group-hover/nav-item:scale-110",
+                                isActive && "text-primary",
+                              )}
+                            />
                           )}
-                          <span className={cn(isActive && "pl-1")}>{item.label}</span>
+                          <span className={cn(isActive && "pl-1")}>
+                            {item.label}
+                          </span>
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent side="right" className="lg:hidden">
@@ -363,7 +370,11 @@ export function DashboardSidebar({ role }: DashboardSidebarProps) {
 
       {/* ── Mobile Sidebar (Sheet) ────────────────────────────────── */}
       <div className="lg:hidden">
-        <MobileSheetSidebar sections={sections} pathname={pathname} onLogout={handleLogout} />
+        <MobileSheetSidebar
+          sections={sections}
+          pathname={pathname}
+          onLogout={handleLogout}
+        />
       </div>
     </>
   );

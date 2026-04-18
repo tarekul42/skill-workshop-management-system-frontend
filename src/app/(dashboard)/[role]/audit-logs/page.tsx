@@ -75,7 +75,6 @@ export default function AuditLogsPage({ params }: PageProps) {
   const [filterStartDate, setFilterStartDate] = useState("");
   const [filterEndDate, setFilterEndDate] = useState("");
 
-
   // ── Fetch logs ─────────────────────────────────────────────────────
 
   const fetchLogs = useCallback(async () => {
@@ -93,7 +92,9 @@ export default function AuditLogsPage({ params }: PageProps) {
       setTotalPages(res.meta.totalPage);
       setTotal(res.meta.total);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to load audit logs");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to load audit logs",
+      );
     } finally {
       setLoading(false);
     }

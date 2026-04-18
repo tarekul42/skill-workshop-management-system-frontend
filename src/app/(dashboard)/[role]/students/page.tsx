@@ -4,7 +4,12 @@ import React, { useState, useEffect, useMemo } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Users } from "lucide-react";
 
-import { PageHeader, DataTable, EmptyState, TableSkeleton } from "@/components/shared";
+import {
+  PageHeader,
+  DataTable,
+  EmptyState,
+  TableSkeleton,
+} from "@/components/shared";
 
 import { getAllEnrollments, fetchWorkshops } from "@/lib/api/services";
 import { formatDateTime } from "@/lib/formatters";

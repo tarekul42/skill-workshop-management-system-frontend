@@ -1,9 +1,12 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { SignJWT } from "jose";
+import { cookies } from "next/headers";
 
-const getSecret = () => new TextEncoder().encode(process.env.JWT_SECRET || "default_secret_for_development_only");
+const getSecret = () =>
+  new TextEncoder().encode(
+    process.env.JWT_SECRET || "default_secret_for_development_only",
+  );
 
 export async function setSecureAuthCookie(role: string) {
   const jwt = await new SignJWT({ role })

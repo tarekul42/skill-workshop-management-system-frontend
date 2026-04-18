@@ -1,6 +1,6 @@
+import { jwtVerify } from "jose";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { jwtVerify } from "jose";
 
 // ─── Configuration ──────────────────────────────────────────────────────
 
@@ -29,9 +29,11 @@ const AUTH_PREFIXES = [
 async function getRoleCookie(request: NextRequest): Promise<string | null> {
   const token = request.cookies.get(ROLE_COOKIE)?.value;
   if (!token) return null;
-  
+
   try {
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET || "default_secret_for_development_only");
+    const secret = new TextEncoder().encode(
+      process.env.JWT_SECRET || "default_secret_for_development_only",
+    );
     const { payload } = await jwtVerify(token, secret);
     return payload.role as string;
   } catch {
@@ -105,14 +107,22 @@ export async function middleware(request: NextRequest) {
     form-action 'self';
     frame-ancestors 'none';
     upgrade-insecure-requests;
-  `.replace(/\s{2,}/g, " ").trim();
+  `
+    .replace(/\s{2,}/g, " ")
+    .trim();
 
   response.headers.set("Content-Security-Policy", cspHeader);
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=(), interest-cohort=()");
-  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  response.headers.set(
+    "Permissions-Policy",
+    "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+  );
+  response.headers.set(
+    "Strict-Transport-Security",
+    "max-age=31536000; includeSubDomains; preload",
+  );
 
   return response;
 }

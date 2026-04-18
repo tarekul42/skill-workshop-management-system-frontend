@@ -123,7 +123,9 @@ export default function WorkshopsPage({ params }: PageProps) {
       toast.success("Workshop deleted successfully");
     },
     onError: (err) => {
-      toast.error(err instanceof Error ? err.message : "Failed to delete workshop");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to delete workshop",
+      );
     },
   });
 
@@ -155,7 +157,9 @@ export default function WorkshopsPage({ params }: PageProps) {
         title="Workshop Management"
         description="Manage all workshops"
       >
-        <Button onClick={() => router.push(`/${dashboardRole}/workshops/create`)}>
+        <Button
+          onClick={() => router.push(`/${dashboardRole}/workshops/create`)}
+        >
           <Plus className="size-4" />
           Create Workshop
         </Button>
@@ -180,7 +184,7 @@ export default function WorkshopsPage({ params }: PageProps) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[80px]">Image</TableHead>
+              <TableHead className="w-20">Image</TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Level</TableHead>
@@ -285,7 +289,9 @@ export default function WorkshopsPage({ params }: PageProps) {
                         role={dashboardRole}
                         onView={() => setViewWorkshop(ws)}
                         onEdit={() =>
-                          router.push(`/${dashboardRole}/workshops/${ws._id}/edit`)
+                          router.push(
+                            `/${dashboardRole}/workshops/${ws._id}/edit`,
+                          )
                         }
                         onDelete={() => setDeleteTarget(ws)}
                       />
@@ -340,7 +346,10 @@ export default function WorkshopsPage({ params }: PageProps) {
               {viewWorkshop.images && viewWorkshop.images.length > 0 ? (
                 <div className="flex gap-2 overflow-x-auto pb-2">
                   {viewWorkshop.images.map((img, i) => (
-                    <div key={i} className="relative h-32 w-48 shrink-0 overflow-hidden rounded-md">
+                    <div
+                      key={i}
+                      className="relative h-32 w-48 shrink-0 overflow-hidden rounded-md"
+                    >
                       <Image
                         src={img}
                         alt={`${viewWorkshop.title} ${i + 1}`}

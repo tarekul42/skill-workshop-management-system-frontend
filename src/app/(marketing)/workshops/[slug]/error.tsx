@@ -28,7 +28,8 @@ export default function Error({
       </h2>
       <p className="mb-8 max-w-md text-muted-foreground">
         We encountered an error while trying to load the workshop details.
-        Please try refreshing the page or contact support if the problem persists.
+        Please try refreshing the page or contact support if the problem
+        persists.
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-3">
