@@ -30,7 +30,7 @@ import { apiClient } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
 import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
 import {
@@ -62,8 +62,10 @@ export default function RegisterPage() {
     },
   });
 
-  const { watch } = form;
-  const password = watch("password");
+  const password = useWatch({
+    control: form.control,
+    name: "password",
+  });
 
   async function onSubmit(values: RegisterInput) {
     setError("");
