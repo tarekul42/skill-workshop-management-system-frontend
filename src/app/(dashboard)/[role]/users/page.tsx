@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import {
   MoreHorizontal,
@@ -57,7 +58,7 @@ import {
   updateUser,
   deleteUser,
 } from "@/lib/api/services";
-import type { IUser, UserRole, IsActive } from "@/types";
+import type { IUser, UserRole, IsActive, PaginatedResponse } from "@/types";
 
 // ─── Page Props ──────────────────────────────────────────────────────
 
@@ -81,17 +82,14 @@ const roleColors: Record<UserRole, string> = {
 // ─── Component ───────────────────────────────────────────────────────
 
 export default function UsersPage({ params }: PageProps) {
-  const { role } = React.use(params);
+  const { role: dashboardRole } = React.use(params);
+  const queryClient = useQueryClient();
 
-  // Data state
-  const [users, setUsers] = useState<IUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  // Search/Pagination state
   const [searchTerm, setSearchTerm] = useState("");
   const [inputValue, setInputValue] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [total, setTotal] = useState(0);
 
   // Dialogs state
   const [viewUser, setViewUser] = useState<IUser | null>(null);
@@ -100,30 +98,89 @@ export default function UsersPage({ params }: PageProps) {
   const [deleteTarget, setDeleteTarget] = useState<IUser | null>(null);
   const [toggleTarget, setToggleTarget] = useState<IUser | null>(null);
 
-  // Mutations state
-  const [updating, setUpdating] = useState(false);
-  const [deleting, setDeleting] = useState(false);
+  // ── Queries ───────────────────────────────────────────────────────
+  const { data, isLoading } = useQuery({
+    queryKey: ["users", { page, limit, searchTerm }],
+    queryFn: () => getAllUsers({ page, limit, searchTerm }),
+    enabled: !!dashboardRole,
+  });
 
-  // ── Fetch users ────────────────────────────────────────────────────
-  const fetchUsers = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await getAllUsers({ page, limit, searchTerm });
-      setUsers(res.data);
-      setTotalPages(res.meta.totalPage);
-      setTotal(res.meta.total);
-    } catch {
-      toast.error("Failed to fetch users");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, limit, searchTerm]);
+  const users = data?.data || [];
+  const meta = data?.meta;
+  const totalPages = meta?.totalPage || 1;
+  const total = meta?.total || 0;
 
-  useEffect(() => {
-    if (!role) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchUsers();
-  }, [role, fetchUsers]);
+  // ── Mutations ─────────────────────────────────────────────────────
+
+  // 1. Update Role
+  const updateRoleMutation = useMutation({
+    mutationFn: ({ id, role }: { id: string; role: UserRole }) =>
+      updateUser(id, { role }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setEditUser(null);
+      toast.success("User role updated successfully");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to update role");
+    },
+  });
+
+  // 2. Toggle Status (Optimistic Update)
+  const toggleStatusMutation = useMutation({
+    mutationFn: ({ id, isActive }: { id: string; isActive: IsActive }) =>
+      updateUser(id, { isActive }),
+    onMutate: async ({ id, isActive }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ["users"] });
+
+      // Snapshot the previous value
+      const previousUsers = queryClient.getQueryData(["users", { page, limit, searchTerm }]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(["users", { page, limit, searchTerm }], (old: PaginatedResponse<IUser>) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data.map((user) =>
+            user._id === id ? { ...user, isActive } : user
+          ),
+        };
+      });
+
+      return { previousUsers };
+    },
+    onError: (err, __, context) => {
+      // Rollback to the previous value on error
+      if (context?.previousUsers) {
+        queryClient.setQueryData(["users", { page, limit, searchTerm }], context.previousUsers);
+      }
+      toast.error(err instanceof Error ? err.message : "Failed to update user status");
+    },
+    onSuccess: (_, variables) => {
+      setToggleTarget(null);
+      toast.success(
+        variables.isActive === "BLOCKED" ? "User blocked successfully" : "User activated successfully"
+      );
+    },
+    onSettled: () => {
+      // Always refetch after error or success to ensure server sync
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+    },
+  });
+
+  // 3. Delete User
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteUser(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setDeleteTarget(null);
+      toast.success("User deleted successfully");
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to delete user");
+    },
+  });
 
   // ── Debounce search ────────────────────────────────────────────────
   useEffect(() => {
@@ -154,53 +211,21 @@ export default function UsersPage({ params }: PageProps) {
     setEditRole(user.role);
   };
 
-  const handleEditRoleSave = async () => {
+  const handleEditRoleSave = () => {
     if (!editUser) return;
-    setUpdating(true);
-    try {
-      await updateUser(editUser._id, { role: editRole });
-      setEditUser(null);
-      fetchUsers();
-      toast.success("User role updated successfully");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update role");
-    } finally {
-      setUpdating(false);
-    }
+    updateRoleMutation.mutate({ id: editUser._id, role: editRole });
   };
 
-  const handleToggleActive = async () => {
+  const handleToggleActive = () => {
     if (!toggleTarget) return;
-    setUpdating(true);
-    try {
-      const newStatus: IsActive =
-        toggleTarget.isActive === "ACTIVE" ? "BLOCKED" : "ACTIVE";
-      await updateUser(toggleTarget._id, { isActive: newStatus });
-      setToggleTarget(null);
-      fetchUsers();
-      toast.success(
-        newStatus === "BLOCKED" ? "User blocked successfully" : "User activated successfully"
-      );
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to update user status");
-    } finally {
-      setUpdating(false);
-    }
+    const newStatus: IsActive =
+      toggleTarget.isActive === "ACTIVE" ? "BLOCKED" : "ACTIVE";
+    toggleStatusMutation.mutate({ id: toggleTarget._id, isActive: newStatus });
   };
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     if (!deleteTarget) return;
-    setDeleting(true);
-    try {
-      await deleteUser(deleteTarget._id);
-      setDeleteTarget(null);
-      fetchUsers();
-      toast.success("User deleted successfully");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to delete user");
-    } finally {
-      setDeleting(false);
-    }
+    deleteMutation.mutate(deleteTarget._id);
   };
 
   // ── Render ─────────────────────────────────────────────────────────
@@ -240,7 +265,7 @@ export default function UsersPage({ params }: PageProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {loading ? (
+            {isLoading ? (
               <TableRow>
                 <TableCell colSpan={6} className="p-4">
                   <TableSkeleton rows={5} columns={6} />
@@ -257,7 +282,7 @@ export default function UsersPage({ params }: PageProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              users.map((user) => (
+              users.map((user: IUser) => (
                 <TableRow key={user._id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
@@ -312,7 +337,7 @@ export default function UsersPage({ params }: PageProps) {
       </div>
 
       {/* ── Server Pagination ──────────────────────────────────────── */}
-      {!loading && totalPages > 1 && (
+      {!isLoading && totalPages > 1 && (
         <div className="flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
             Page {page} of {totalPages}
@@ -450,12 +475,12 @@ export default function UsersPage({ params }: PageProps) {
             <Button
               variant="outline"
               onClick={() => setEditUser(null)}
-              disabled={updating}
+              disabled={updateRoleMutation.isPending}
             >
               Cancel
             </Button>
-            <Button onClick={handleEditRoleSave} disabled={updating}>
-              {updating ? "Saving..." : "Save Changes"}
+            <Button onClick={handleEditRoleSave} disabled={updateRoleMutation.isPending}>
+              {updateRoleMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -474,7 +499,7 @@ export default function UsersPage({ params }: PageProps) {
             : `Are you sure you want to activate "${toggleTarget?.name}"? They will regain access to the platform.`
         }
         onConfirm={handleToggleActive}
-        isLoading={updating}
+        isLoading={toggleStatusMutation.isPending}
         variant={
           toggleTarget?.isActive === "ACTIVE" ? "destructive" : "default"
         }
@@ -490,7 +515,7 @@ export default function UsersPage({ params }: PageProps) {
         title="Delete User"
         description={`Are you sure you want to delete "${deleteTarget?.name}"? This action cannot be undone.`}
         onConfirm={handleDelete}
-        isLoading={deleting}
+        isLoading={deleteMutation.isPending}
         variant="destructive"
         confirmLabel="Delete User"
       />
