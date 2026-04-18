@@ -24,6 +24,11 @@ import { Button } from "@/components/ui/button";
 import { getSavedUser } from "@/lib/auth-helpers";
 import { apiClient, apiClientPaginated } from "@/lib/api-client";
 import { formatCurrency, formatDate } from "@/lib/formatters";
+import {
+  AnimatedPage,
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/shared/AnimatedPage";
 
 
 // ─── Props ──────────────────────────────────────────────────────────
@@ -428,7 +433,7 @@ export default function DashboardPage({ params }: PageProps) {
   const dashboardBase = `/${(role ?? "student").toLowerCase()}`;
 
   return (
-    <div className="space-y-6">
+    <AnimatedPage className="space-y-6">
       {/* ── Greeting ───────────────────────────────────────────────── */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">
@@ -459,68 +464,71 @@ export default function DashboardPage({ params }: PageProps) {
           </p>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <StaggerContainer className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat) => (
-            <StatCard
-              key={stat.label}
-              icon={stat.icon}
-              label={stat.label}
-              value={stat.value}
-              change={stat.change}
-              iconBg={stat.iconBg}
-            />
+            <StaggerItem key={stat.label}>
+              <StatCard
+                icon={stat.icon}
+                label={stat.label}
+                value={stat.value}
+                change={stat.change}
+                iconBg={stat.iconBg}
+              />
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       )}
 
       {/* ── Recent Enrollments (Students & Instructors) ────────────── */}
       {!loading && !error && recentEnrollments.length > 0 && (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div className="flex items-center gap-2">
-              <ClipboardList className="size-4 text-muted-foreground" />
-              <CardTitle className="text-base">
-                {role === "STUDENT"
-                  ? "My Recent Enrollments"
-                  : "Recent Student Enrollments"}
-              </CardTitle>
-            </div>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href={`${dashboardBase}/enrollments`}>
-                View All <ArrowRight className="ml-1 size-3.5" />
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {recentEnrollments.map((enrollment) => {
-                const workshopTitle =
-                  typeof enrollment.workshop === "object" &&
-                  enrollment.workshop?.title
-                    ? enrollment.workshop.title
-                    : "Workshop";
-                const workshopSlug =
-                  typeof enrollment.workshop === "object"
-                    ? enrollment.workshop?.slug
-                    : null;
+        <StaggerItem>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ClipboardList className="size-4 text-muted-foreground" />
+                <CardTitle className="text-base">
+                  {role === "STUDENT"
+                    ? "My Recent Enrollments"
+                    : "Recent Student Enrollments"}
+                </CardTitle>
+              </div>
+              <Button variant="ghost" size="sm" asChild>
+                <Link href={`${dashboardBase}/enrollments`}>
+                  View All <ArrowRight className="ml-1 size-3.5" />
+                </Link>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {recentEnrollments.map((enrollment) => {
+                  const workshopTitle =
+                    typeof enrollment.workshop === "object" &&
+                    enrollment.workshop?.title
+                      ? enrollment.workshop.title
+                      : "Workshop";
+                  const workshopSlug =
+                    typeof enrollment.workshop === "object"
+                      ? enrollment.workshop?.slug
+                      : null;
 
-                return (
-                  <ActivityItem
-                    key={enrollment._id}
-                    icon={<BookOpen className="size-4 text-muted-foreground" />}
-                    title={workshopTitle}
-                    subtitle={`Students: ${enrollment.studentCount ?? 1}`}
-                    badge={enrollmentStatusBadge(enrollment.status)}
-                    date={enrollment.createdAt}
-                    href={
-                      workshopSlug ? `/workshops/${workshopSlug}` : undefined
-                    }
-                  />
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                  return (
+                    <ActivityItem
+                      key={enrollment._id}
+                      icon={<BookOpen className="size-4 text-muted-foreground" />}
+                      title={workshopTitle}
+                      subtitle={`Students: ${enrollment.studentCount ?? 1}`}
+                      badge={enrollmentStatusBadge(enrollment.status)}
+                      date={enrollment.createdAt}
+                      href={
+                        workshopSlug ? `/workshops/${workshopSlug}` : undefined
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
+        </StaggerItem>
       )}
 
       {/* ── Recent Workshops (Admin & Instructors) ─────────────────── */}
@@ -528,41 +536,43 @@ export default function DashboardPage({ params }: PageProps) {
         !error &&
         recentWorkshops.length > 0 &&
         (role === "SUPER_ADMIN" || role === "ADMIN" || role === "INSTRUCTOR") && (
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Calendar className="size-4 text-muted-foreground" />
-                <CardTitle className="text-base">
-                  {role === "INSTRUCTOR" ? "My Workshops" : "Recent Workshops"}
-                </CardTitle>
-              </div>
-              <Button variant="ghost" size="sm" asChild>
-                <Link href={`${dashboardBase}/workshops`}>
-                  View All <ArrowRight className="ml-1 size-3.5" />
-                </Link>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                {recentWorkshops.map((workshop) => (
-                  <ActivityItem
-                    key={workshop._id}
-                    icon={<BookOpen className="size-4 text-muted-foreground" />}
-                    title={workshop.title}
-                    subtitle={
-                      workshop.maxSeats
-                        ? `${workshop.currentEnrollments ?? 0} / ${workshop.maxSeats} seats filled`
-                        : "No seat limit"
-                    }
-                    date={workshop.createdAt}
-                    href={
-                      workshop.slug ? `/workshops/${workshop.slug}` : undefined
-                    }
-                  />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+          <StaggerItem>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Calendar className="size-4 text-muted-foreground" />
+                  <CardTitle className="text-base">
+                    {role === "INSTRUCTOR" ? "My Workshops" : "Recent Workshops"}
+                  </CardTitle>
+                </div>
+                <Button variant="ghost" size="sm" asChild>
+                  <Link href={`${dashboardBase}/workshops`}>
+                    View All <ArrowRight className="ml-1 size-3.5" />
+                  </Link>
+                </Button>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  {recentWorkshops.map((workshop) => (
+                    <ActivityItem
+                      key={workshop._id}
+                      icon={<BookOpen className="size-4 text-muted-foreground" />}
+                      title={workshop.title}
+                      subtitle={
+                        workshop.maxSeats
+                          ? `${workshop.currentEnrollments ?? 0} / ${workshop.maxSeats} seats filled`
+                          : "No seat limit"
+                      }
+                      date={workshop.createdAt}
+                      href={
+                        workshop.slug ? `/workshops/${workshop.slug}` : undefined
+                      }
+                    />
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </StaggerItem>
         )}
 
       {/* ── Empty State (no activity) ──────────────────────────────── */}
@@ -570,39 +580,41 @@ export default function DashboardPage({ params }: PageProps) {
         !error &&
         recentEnrollments.length === 0 &&
         recentWorkshops.length === 0 && (
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Activity className="size-4 text-muted-foreground" />
-                <CardTitle>Recent Activity</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <div className="flex size-12 items-center justify-center rounded-full bg-muted mb-3">
-                  <ClipboardList className="size-5 text-muted-foreground" />
+          <StaggerItem>
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Activity className="size-4 text-muted-foreground" />
+                  <CardTitle>Recent Activity</CardTitle>
                 </div>
-                <p className="text-sm font-medium text-muted-foreground">
-                  {role === "STUDENT"
-                    ? "No enrollments yet"
-                    : "No recent activity"}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {role === "STUDENT"
-                    ? "Browse workshops and enroll to get started!"
-                    : "Activity will appear here as you use the platform."}
-                </p>
-                {role === "STUDENT" && (
-                  <Button size="sm" className="mt-4" asChild>
-                    <Link href="/workshops">
-                      Browse Workshops <ArrowRight className="ml-1 size-3.5" />
-                    </Link>
-                  </Button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col items-center justify-center py-8 text-center">
+                  <div className="flex size-12 items-center justify-center rounded-full bg-muted mb-3">
+                    <ClipboardList className="size-5 text-muted-foreground" />
+                  </div>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {role === "STUDENT"
+                      ? "No enrollments yet"
+                      : "No recent activity"}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {role === "STUDENT"
+                      ? "Browse workshops and enroll to get started!"
+                      : "Activity will appear here as you use the platform."}
+                  </p>
+                  {role === "STUDENT" && (
+                    <Button size="sm" className="mt-4" asChild>
+                      <Link href="/workshops">
+                        Browse Workshops <ArrowRight className="ml-1 size-3.5" />
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </StaggerItem>
         )}
-    </div>
+    </AnimatedPage>
   );
 }
