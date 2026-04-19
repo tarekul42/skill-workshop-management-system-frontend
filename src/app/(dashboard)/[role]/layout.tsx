@@ -7,7 +7,8 @@ export const metadata: Metadata = {
   title: {
     absolute: "Dashboard | Skill Workshop",
   },
-  description: "Manage your workshops, enrollments, students, and settings from your Skill Workshop dashboard.",
+  description:
+    "Manage your workshops, enrollments, students, and settings from your Skill Workshop dashboard.",
   robots: {
     index: false,
     follow: false,
@@ -42,9 +43,7 @@ export default async function DashboardLayout({
   return (
     <TooltipProvider>
       <div className="flex min-h-screen">
-        <DashboardSidebar
-          role={normalizedRole}
-        />
+        <DashboardSidebar role={normalizedRole} />
         <div className="flex flex-1 flex-col lg:pl-64">
           <DashboardHeader />
           <main className="flex-1 p-4 md:p-6">

@@ -135,32 +135,45 @@ export default function UsersPage({ params }: PageProps) {
       await queryClient.cancelQueries({ queryKey: ["users"] });
 
       // Snapshot the previous value
-      const previousUsers = queryClient.getQueryData(["users", { page, limit, searchTerm }]);
+      const previousUsers = queryClient.getQueryData([
+        "users",
+        { page, limit, searchTerm },
+      ]);
 
       // Optimistically update to the new value
-      queryClient.setQueryData(["users", { page, limit, searchTerm }], (old: PaginatedResponse<IUser>) => {
-        if (!old) return old;
-        return {
-          ...old,
-          data: old.data.map((user) =>
-            user._id === id ? { ...user, isActive } : user
-          ),
-        };
-      });
+      queryClient.setQueryData(
+        ["users", { page, limit, searchTerm }],
+        (old: PaginatedResponse<IUser>) => {
+          if (!old) return old;
+          return {
+            ...old,
+            data: old.data.map((user) =>
+              user._id === id ? { ...user, isActive } : user,
+            ),
+          };
+        },
+      );
 
       return { previousUsers };
     },
     onError: (err, __, context) => {
       // Rollback to the previous value on error
       if (context?.previousUsers) {
-        queryClient.setQueryData(["users", { page, limit, searchTerm }], context.previousUsers);
+        queryClient.setQueryData(
+          ["users", { page, limit, searchTerm }],
+          context.previousUsers,
+        );
       }
-      toast.error(err instanceof Error ? err.message : "Failed to update user status");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to update user status",
+      );
     },
     onSuccess: (_, variables) => {
       setToggleTarget(null);
       toast.success(
-        variables.isActive === "BLOCKED" ? "User blocked successfully" : "User activated successfully"
+        variables.isActive === "BLOCKED"
+          ? "User blocked successfully"
+          : "User activated successfully",
       );
     },
     onSettled: () => {
@@ -202,7 +215,9 @@ export default function UsersPage({ params }: PageProps) {
       const user = await getUserById(userId);
       setViewUser(user);
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to load user details");
+      toast.error(
+        err instanceof Error ? err.message : "Failed to load user details",
+      );
     }
   };
 
@@ -296,14 +311,20 @@ export default function UsersPage({ params }: PageProps) {
                         <p className="truncate text-sm font-medium">
                           {user.name}
                         </p>
-                        <p className="truncate text-xs text-muted-foreground" title={user.email}>
+                        <p
+                          className="truncate text-xs text-muted-foreground"
+                          title={user.email}
+                        >
                           {maskEmail(user.email)}
                         </p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground" title={user.phone}>
+                    <span
+                      className="text-sm text-muted-foreground"
+                      title={user.phone}
+                    >
                       {user.phone ? maskPhone(user.phone) : "—"}
                     </span>
                   </TableCell>
@@ -384,7 +405,10 @@ export default function UsersPage({ params }: PageProps) {
                 </Avatar>
                 <div>
                   <p className="font-semibold">{viewUser.name}</p>
-                  <p className="text-sm text-muted-foreground" title={viewUser.email}>
+                  <p
+                    className="text-sm text-muted-foreground"
+                    title={viewUser.email}
+                  >
                     {maskEmail(viewUser.email)}
                   </p>
                 </div>
@@ -479,7 +503,10 @@ export default function UsersPage({ params }: PageProps) {
             >
               Cancel
             </Button>
-            <Button onClick={handleEditRoleSave} disabled={updateRoleMutation.isPending}>
+            <Button
+              onClick={handleEditRoleSave}
+              disabled={updateRoleMutation.isPending}
+            >
               {updateRoleMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>

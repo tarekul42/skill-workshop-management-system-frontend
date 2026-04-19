@@ -4,7 +4,8 @@ export const metadata: Metadata = {
   title: {
     absolute: "Reset Password | Skill Workshop",
   },
-  description: "Set a new password for your Skill Workshop account using the verification code sent to your email.",
+  description:
+    "Set a new password for your Skill Workshop account using the verification code sent to your email.",
 };
 
 export default function ResetPasswordLayout({

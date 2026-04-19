@@ -58,7 +58,12 @@ export default function Error({
           <RefreshCcw className="size-4" />
           Try Again
         </Button>
-        <Button variant="outline" onClick={() => (window.location.href = "/")} size="lg" className="gap-2">
+        <Button
+          variant="outline"
+          onClick={() => (window.location.href = "/")}
+          size="lg"
+          className="gap-2"
+        >
           <Home className="size-4" />
           Return Home
         </Button>

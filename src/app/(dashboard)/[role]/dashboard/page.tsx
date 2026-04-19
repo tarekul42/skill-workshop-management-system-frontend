@@ -30,7 +30,6 @@ import {
   StaggerItem,
 } from "@/components/shared/AnimatedPage";
 
-
 // ─── Props ──────────────────────────────────────────────────────────
 
 interface PageProps {
@@ -211,7 +210,9 @@ export default function DashboardPage({ params }: PageProps) {
           ]);
 
           const totalUsers =
-            usersRes.status === "fulfilled" ? (usersRes.value.totalUsers ?? 0) : 0;
+            usersRes.status === "fulfilled"
+              ? (usersRes.value.totalUsers ?? 0)
+              : 0;
           const totalWorkshops =
             workshopsRes.status === "fulfilled"
               ? (workshopsRes.value.totalWorkshop ?? 0)
@@ -250,7 +251,9 @@ export default function DashboardPage({ params }: PageProps) {
 
           setStats([
             {
-              icon: <Users className="size-4 text-blue-600 dark:text-blue-400" />,
+              icon: (
+                <Users className="size-4 text-blue-600 dark:text-blue-400" />
+              ),
               label: "Total Users",
               value: String(totalUsers),
               change: "From all roles",
@@ -288,7 +291,9 @@ export default function DashboardPage({ params }: PageProps) {
           // Instructor stats
           const [workshopsRes, enrollmentsRes] = await Promise.allSettled([
             apiClientPaginated<WorkshopItem[]>("/workshop?page=1&limit=100"),
-            apiClientPaginated<EnrollmentItem[]>("/enrollment?page=1&limit=100"),
+            apiClientPaginated<EnrollmentItem[]>(
+              "/enrollment?page=1&limit=100",
+            ),
           ]);
 
           const instructorWorkshops =
@@ -329,7 +334,9 @@ export default function DashboardPage({ params }: PageProps) {
 
           setStats([
             {
-              icon: <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />,
+              icon: (
+                <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />
+              ),
               label: "My Workshops",
               value: String(totalWorkshops),
               change: "Created workshops",
@@ -385,7 +392,9 @@ export default function DashboardPage({ params }: PageProps) {
 
           setStats([
             {
-              icon: <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />,
+              icon: (
+                <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />
+              ),
               label: "Enrolled",
               value: String(totalEnrollments),
               change: "Total enrollments",
@@ -514,7 +523,9 @@ export default function DashboardPage({ params }: PageProps) {
                   return (
                     <ActivityItem
                       key={enrollment._id}
-                      icon={<BookOpen className="size-4 text-muted-foreground" />}
+                      icon={
+                        <BookOpen className="size-4 text-muted-foreground" />
+                      }
                       title={workshopTitle}
                       subtitle={`Students: ${enrollment.studentCount ?? 1}`}
                       badge={enrollmentStatusBadge(enrollment.status)}
@@ -535,14 +546,18 @@ export default function DashboardPage({ params }: PageProps) {
       {!loading &&
         !error &&
         recentWorkshops.length > 0 &&
-        (role === "SUPER_ADMIN" || role === "ADMIN" || role === "INSTRUCTOR") && (
+        (role === "SUPER_ADMIN" ||
+          role === "ADMIN" ||
+          role === "INSTRUCTOR") && (
           <StaggerItem>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Calendar className="size-4 text-muted-foreground" />
                   <CardTitle className="text-base">
-                    {role === "INSTRUCTOR" ? "My Workshops" : "Recent Workshops"}
+                    {role === "INSTRUCTOR"
+                      ? "My Workshops"
+                      : "Recent Workshops"}
                   </CardTitle>
                 </div>
                 <Button variant="ghost" size="sm" asChild>
@@ -556,7 +571,9 @@ export default function DashboardPage({ params }: PageProps) {
                   {recentWorkshops.map((workshop) => (
                     <ActivityItem
                       key={workshop._id}
-                      icon={<BookOpen className="size-4 text-muted-foreground" />}
+                      icon={
+                        <BookOpen className="size-4 text-muted-foreground" />
+                      }
                       title={workshop.title}
                       subtitle={
                         workshop.maxSeats
@@ -565,7 +582,9 @@ export default function DashboardPage({ params }: PageProps) {
                       }
                       date={workshop.createdAt}
                       href={
-                        workshop.slug ? `/workshops/${workshop.slug}` : undefined
+                        workshop.slug
+                          ? `/workshops/${workshop.slug}`
+                          : undefined
                       }
                     />
                   ))}
@@ -606,7 +625,8 @@ export default function DashboardPage({ params }: PageProps) {
                   {role === "STUDENT" && (
                     <Button size="sm" className="mt-4" asChild>
                       <Link href="/workshops">
-                        Browse Workshops <ArrowRight className="ml-1 size-3.5" />
+                        Browse Workshops{" "}
+                        <ArrowRight className="ml-1 size-3.5" />
                       </Link>
                     </Button>
                   )}

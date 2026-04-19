@@ -42,8 +42,8 @@ export default function NotFound() {
         transition={{ delay: 0.4, duration: 0.5 }}
         className="mb-8 max-w-md text-muted-foreground"
       >
-        The page you are looking for might have been removed, had its name changed,
-        or is temporarily unavailable.
+        The page you are looking for might have been removed, had its name
+        changed, or is temporarily unavailable.
       </motion.p>
 
       <motion.div

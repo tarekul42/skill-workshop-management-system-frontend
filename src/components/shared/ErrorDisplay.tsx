@@ -4,7 +4,13 @@ import React from "react";
 import Link from "next/link";
 import { AlertTriangle, RefreshCcw, Home, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface ErrorDisplayProps {
   error: Error & { digest?: string };
@@ -24,7 +30,7 @@ export function ErrorDisplay({
   showBack = false,
 }: ErrorDisplayProps) {
   return (
-    <div className="flex min-h-[400px] w-full items-center justify-center p-4">
+    <div className="flex min-h-100 w-full items-center justify-center p-4">
       <Card className="max-w-md border-destructive/20 bg-destructive/5 shadow-lg dark:bg-destructive/10">
         <CardHeader className="text-center">
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-destructive">
@@ -35,9 +41,7 @@ export function ErrorDisplay({
           </CardTitle>
         </CardHeader>
         <CardContent className="text-center">
-          <p className="text-muted-foreground">
-            {description}
-          </p>
+          <p className="text-muted-foreground">{description}</p>
           {error.digest && (
             <p className="mt-2 font-mono text-xs text-muted-foreground/60">
               Error ID: {error.digest}
@@ -53,7 +57,7 @@ export function ErrorDisplay({
             <RefreshCcw className="mr-2 h-4 w-4" />
             Try Again
           </Button>
-          
+
           {showBack && (
             <Button
               variant="outline"
@@ -66,11 +70,7 @@ export function ErrorDisplay({
           )}
 
           {showHome && (
-            <Button
-              variant="outline"
-              asChild
-              className="w-full sm:w-auto"
-            >
+            <Button variant="outline" asChild className="w-full sm:w-auto">
               <Link href="/">
                 <Home className="mr-2 h-4 w-4" />
                 Return Home

@@ -32,8 +32,8 @@ export default function Unauthorized() {
         </h2>
         <p className="mt-3 text-muted-foreground leading-relaxed">
           You do not have permission to access this page. This area is
-          restricted to authorized users only. If you believe this is a
-          mistake, please contact your administrator.
+          restricted to authorized users only. If you believe this is a mistake,
+          please contact your administrator.
         </p>
       </div>
 

@@ -62,6 +62,7 @@ The "First Impression" factor for recruiters.
 ## 🛠️ Where to start?
 
 I recommend starting with **Phase 1 (Stability & Error Resilience)**. Specifically:
+
 1.  Implementing comprehensive **Error Boundaries**.
 2.  Refining our **Skeleton Loaders** for all paginated tables.
 

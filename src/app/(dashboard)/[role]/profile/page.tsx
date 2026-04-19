@@ -40,8 +40,6 @@ import { formatDate, getInitials } from "@/lib/formatters";
 import { getSavedUser, saveUser } from "@/lib/auth-helpers";
 import type { IUser } from "@/types";
 
-
-
 // ─── Validation schemas ───────────────────────────────────────────
 
 const profileSchema = z.object({

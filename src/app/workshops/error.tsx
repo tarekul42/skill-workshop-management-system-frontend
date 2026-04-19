@@ -15,10 +15,10 @@ export default function WorkshopsError({
   }, [error]);
 
   return (
-    <div className="container mx-auto flex min-h-[500px] items-center justify-center px-4 py-12">
-      <ErrorDisplay 
-        error={error} 
-        reset={reset} 
+    <div className="container mx-auto flex min-h-125 items-center justify-center px-4 py-12">
+      <ErrorDisplay
+        error={error}
+        reset={reset}
         title="Catalog Error"
         description="We encountered an issue while loading the workshop catalog. Please refresh the page to try again."
         showHome={true}

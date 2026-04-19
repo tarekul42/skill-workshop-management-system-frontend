@@ -23,10 +23,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import {
-  getSavedUser,
-  clearSavedUser,
-} from "@/lib/auth-helpers";
+import { getSavedUser, clearSavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie } from "@/app/actions/auth";
 import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";

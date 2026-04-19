@@ -11,10 +11,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function FaqLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function FaqLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

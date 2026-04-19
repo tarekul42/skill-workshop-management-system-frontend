@@ -22,7 +22,10 @@ export const AnimatedPage = ({ children, className }: AnimatedPageProps) => {
   );
 };
 
-export const StaggerContainer = ({ children, className }: AnimatedPageProps) => {
+export const StaggerContainer = ({
+  children,
+  className,
+}: AnimatedPageProps) => {
   return (
     <motion.div
       initial="hidden"

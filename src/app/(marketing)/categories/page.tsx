@@ -19,9 +19,7 @@ import {
   CardDescription,
   CardContent,
 } from "@/components/ui/card";
-import {
-  CategoryCardSkeleton,
-} from "@/components/shared/LoadingSkeleton";
+import { CategoryCardSkeleton } from "@/components/shared/LoadingSkeleton";
 import { fetchCategories } from "@/lib/api/services";
 
 const PUBLIC_STALE_TIME = 5 * 60 * 1000;
@@ -43,8 +41,6 @@ const categoryIconMap: Record<
   Photography: { icon: Camera, bgClass: "bg-pink-100 text-pink-600" },
   "Data Science": { icon: BarChart3, bgClass: "bg-cyan-100 text-cyan-600" },
 };
-
-
 
 export default function CategoriesPage() {
   const { data: categoriesData, isLoading: loading } = useQuery({

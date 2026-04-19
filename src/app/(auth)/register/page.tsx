@@ -30,9 +30,7 @@ import { apiClient } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
 import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
 
-
-
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerSchema, type RegisterInput } from "@/lib/validations/auth";
 import {
@@ -64,8 +62,10 @@ export default function RegisterPage() {
     },
   });
 
-  const { watch } = form;
-  const password = watch("password");
+  const password = useWatch({
+    control: form.control,
+    name: "password",
+  });
 
   async function onSubmit(values: RegisterInput) {
     setError("");
@@ -207,7 +207,9 @@ export default function RegisterPage() {
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                         onClick={() => setShowPassword(!showPassword)}
                         tabIndex={-1}
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
                       >
                         {showPassword ? (
                           <EyeOff className="size-4" />
@@ -244,10 +246,14 @@ export default function RegisterPage() {
                       <button
                         type="button"
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         tabIndex={-1}
                         aria-label={
-                          showConfirmPassword ? "Hide password" : "Show password"
+                          showConfirmPassword
+                            ? "Hide password"
+                            : "Show password"
                         }
                       >
                         {showConfirmPassword ? (
@@ -264,7 +270,10 @@ export default function RegisterPage() {
             />
 
             {error && (
-              <div className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+              <div
+                className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                role="alert"
+              >
                 {error}
               </div>
             )}
