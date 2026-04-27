@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import {
   Search,
@@ -268,14 +269,24 @@ export default function WorkshopsPage() {
                     key={workshop._id}
                     className="group/workshop overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-xl border-dashed"
                   >
-                    {/* Placeholder Image */}
-                    <div className="relative flex aspect-16/10 items-center justify-center bg-muted transition-colors group-hover/workshop:bg-muted/70">
-                      <BookOpen className="size-12 text-muted-foreground/50 transition-transform group-hover/workshop:scale-110 duration-500" />
+                    {/* Image / Placeholder */}
+                    <div className="relative flex aspect-16/10 overflow-hidden items-center justify-center bg-muted transition-colors group-hover/workshop:bg-muted/70">
+                      {workshop.images && workshop.images.length > 0 ? (
+                        <Image
+                          src={workshop.images[0]}
+                          alt={workshop.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover/workshop:scale-105"
+                          unoptimized
+                        />
+                      ) : (
+                        <BookOpen className="size-12 text-muted-foreground/50 transition-transform group-hover/workshop:scale-110 duration-500" />
+                      )}
                       <Badge
                         variant={getLevelBadgeVariant(
                           getLevelName(workshop.level),
                         )}
-                        className="absolute top-3 right-3 shadow-sm"
+                        className="absolute top-3 right-3 shadow-sm z-10"
                       >
                         {getLevelName(workshop.level)}
                       </Badge>

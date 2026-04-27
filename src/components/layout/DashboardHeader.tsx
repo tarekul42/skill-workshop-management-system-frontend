@@ -48,8 +48,13 @@ const roleLabels: Record<string, string> = {
 
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const router = useRouter();
-  const user: SavedUser | null = getSavedUser();
-  const role = getUserRole();
+  const [mounted, setMounted] = React.useState(false);
+  const user = React.useMemo(() => (mounted ? getSavedUser() : null), [mounted]);
+  const role = React.useMemo(() => (mounted ? getUserRole() : null), [mounted]);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     try {

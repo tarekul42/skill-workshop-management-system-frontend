@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -76,9 +77,19 @@ function computeDuration(start: string, end: string): string {
 
 function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
   return (
-    <Card className="overflow-hidden">
-      <div className="relative flex aspect-16/10 items-center justify-center bg-muted">
-        <BookOpen className="size-10 text-muted-foreground/50" />
+    <Card className="overflow-hidden group/card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg border-dashed">
+      <div className="relative flex aspect-16/10 overflow-hidden items-center justify-center bg-muted transition-colors group-hover/card:bg-muted/70">
+        {workshop.images && workshop.images.length > 0 ? (
+          <Image
+            src={workshop.images[0]}
+            alt={workshop.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover/card:scale-105"
+            unoptimized
+          />
+        ) : (
+          <BookOpen className="size-10 text-muted-foreground/50 transition-transform group-hover/card:scale-110 duration-500" />
+        )}
         <Badge
           variant={getLevelBadgeVariant(getLevelName(workshop.level))}
           className="absolute top-2 right-2"

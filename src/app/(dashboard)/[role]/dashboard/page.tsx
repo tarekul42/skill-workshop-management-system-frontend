@@ -172,7 +172,8 @@ function ActivityItem({
 
 export default function DashboardPage({ params }: PageProps) {
   const { role } = React.use(params);
-  const user = getSavedUser();
+  const [mounted, setMounted] = useState(false);
+  const user = mounted ? getSavedUser() : null;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -436,6 +437,7 @@ export default function DashboardPage({ params }: PageProps) {
       }
     }
 
+    setMounted(true);
     loadDashboard();
   }, [role]);
 

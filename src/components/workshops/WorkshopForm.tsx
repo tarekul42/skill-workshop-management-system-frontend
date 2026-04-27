@@ -292,34 +292,35 @@ export function WorkshopForm({
 
     const fd = new FormData();
 
-    // Basic fields
-    fd.append("title", formData.title);
-    if (formData.description) fd.append("description", formData.description);
-    if (formData.location) fd.append("location", formData.location);
-    if (formData.price !== undefined)
-      fd.append("price", String(formData.price));
-    if (formData.startDate) fd.append("startDate", formData.startDate);
-    if (formData.endDate) fd.append("endDate", formData.endDate);
-    fd.append("level", formData.level);
-    fd.append("category", formData.category);
+    // Prepare JSON payload for the 'data' field
+    const payloadData: any = {
+      title: formData.title,
+      level: formData.level,
+      category: formData.category,
+    };
 
-    // Array fields
-    formData.whatYouLearn?.forEach((item) => fd.append("whatYouLearn[]", item));
-    formData.prerequisites?.forEach((item) =>
-      fd.append("prerequisites[]", item),
-    );
-    formData.benefits?.forEach((item) => fd.append("benefits[]", item));
-    formData.syllabus?.forEach((item) => fd.append("syllabus[]", item));
+    if (formData.description) payloadData.description = formData.description;
+    if (formData.location) payloadData.location = formData.location;
+    if (formData.price !== undefined) payloadData.price = formData.price;
+    if (formData.startDate) payloadData.startDate = formData.startDate;
+    if (formData.endDate) payloadData.endDate = formData.endDate;
+    if (formData.maxSeats) payloadData.maxSeats = formData.maxSeats;
+    if (formData.minAge) payloadData.minAge = formData.minAge;
+    
+    if (formData.whatYouLearn && formData.whatYouLearn.length > 0) payloadData.whatYouLearn = formData.whatYouLearn;
+    if (formData.prerequisites && formData.prerequisites.length > 0) payloadData.prerequisites = formData.prerequisites;
+    if (formData.benefits && formData.benefits.length > 0) payloadData.benefits = formData.benefits;
+    if (formData.syllabus && formData.syllabus.length > 0) payloadData.syllabus = formData.syllabus;
+    
+    if (imagesToDelete.length > 0) {
+      payloadData.deleteImages = imagesToDelete;
+    }
 
-    // Number fields
-    if (formData.maxSeats) fd.append("maxSeats", String(formData.maxSeats));
-    if (formData.minAge) fd.append("minAge", String(formData.minAge));
+    // Append the JSON payload
+    fd.append("data", JSON.stringify(payloadData));
 
-    // New images
+    // Append new images
     imageFiles.forEach((file) => fd.append("files", file));
-
-    // Images to delete (edit only)
-    imagesToDelete.forEach((url) => fd.append("deleteImages[]", url));
 
     try {
       await onSubmit(fd);
