@@ -293,7 +293,7 @@ export function WorkshopForm({
     const fd = new FormData();
 
     // Prepare JSON payload for the 'data' field
-    const payloadData: any = {
+    const payloadData: Record<string, unknown> = {
       title: formData.title,
       level: formData.level,
       category: formData.category,

@@ -536,7 +536,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                           </p>
                         )}
                         {workshop.createdBy.bio && (
-                          <p className="italic">"{workshop.createdBy.bio}"</p>
+                          <p className="italic">&quot;{workshop.createdBy.bio}&quot;</p>
                         )}
                       </div>
                     )}

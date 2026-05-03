@@ -437,6 +437,7 @@ export default function DashboardPage({ params }: PageProps) {
       }
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     loadDashboard();
   }, [role]);
