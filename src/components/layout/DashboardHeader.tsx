@@ -27,7 +27,7 @@ import { clearSecureAuthCookie } from "@/app/actions/auth";
 import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
 
-import type { SavedUser } from "@/lib/auth-helpers";
+
 
 // ─── Props ──────────────────────────────────────────────────────────
 
@@ -48,8 +48,14 @@ const roleLabels: Record<string, string> = {
 
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const router = useRouter();
-  const user: SavedUser | null = getSavedUser();
-  const role = getUserRole();
+  const [mounted, setMounted] = React.useState(false);
+  const user = React.useMemo(() => (mounted ? getSavedUser() : null), [mounted]);
+  const role = React.useMemo(() => (mounted ? getUserRole() : null), [mounted]);
+
+  React.useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
 
   const handleLogout = async () => {
     try {

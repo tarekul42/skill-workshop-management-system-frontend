@@ -63,7 +63,7 @@ function isAuthPage(pathname: string): boolean {
 
 // ─── Middleware ─────────────────────────────────────────────────────────
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const roleCookie = await getRoleCookie(request);
 
@@ -93,20 +93,29 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // ── Security Headers ────────────────────────────────────────────────
+  // ─── Security Headers ────────────────────────────────────────────────
+  // CSP connect-src requires an origin (scheme+host+port), not a full path.
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:5000/api/v1";
+  let backendOrigin = backendUrl;
+  try {
+    backendOrigin = new URL(backendUrl).origin;
+  } catch {
+    // If parsing fails, fall back to the raw value
+  }
+
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval';
+    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com;
+    img-src 'self' blob: data: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com https://vercel.live https://vercel.com;
     font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' ${process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"} https://lh3.googleusercontent.com;
-    frame-src 'self' https://sandbox.sslcommerz.com;
+    connect-src 'self' ${backendOrigin} https://lh3.googleusercontent.com https://vercel.live https://*.vercel.app;
+    frame-src 'self' https://sandbox.sslcommerz.com https://vercel.live;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    upgrade-insecure-requests;
+    ${process.env.NODE_ENV === "production" ? "upgrade-insecure-requests;" : ""}
   `
     .replace(/\s{2,}/g, " ")
     .trim();

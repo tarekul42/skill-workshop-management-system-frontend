@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -233,9 +234,19 @@ export default function HomePage() {
                 key={workshop._id}
                 className="group/card flex flex-col transition-all duration-300 hover:-translate-y-2 hover:shadow-xl border-dashed"
               >
-                {/* Image placeholder */}
-                <div className="flex h-40 items-center justify-center rounded-t-xl bg-muted">
-                  <BookOpen className="size-10 text-muted-foreground/40" />
+                {/* Image / Placeholder */}
+                <div className="relative flex h-40 overflow-hidden items-center justify-center rounded-t-xl bg-muted transition-colors group-hover/card:bg-muted/70">
+                  {workshop.images && workshop.images.length > 0 ? (
+                    <Image
+                      src={workshop.images[0]}
+                      alt={workshop.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover/card:scale-105"
+                      unoptimized
+                    />
+                  ) : (
+                    <BookOpen className="size-10 text-muted-foreground/40 transition-transform group-hover/card:scale-110 duration-500" />
+                  )}
                 </div>
 
                 <CardHeader>

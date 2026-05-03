@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import {
@@ -76,9 +77,19 @@ function computeDuration(start: string, end: string): string {
 
 function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
   return (
-    <Card className="overflow-hidden">
-      <div className="relative flex aspect-16/10 items-center justify-center bg-muted">
-        <BookOpen className="size-10 text-muted-foreground/50" />
+    <Card className="overflow-hidden group/card transition-all duration-300 hover:-translate-y-1 hover:shadow-lg border-dashed">
+      <div className="relative flex aspect-16/10 overflow-hidden items-center justify-center bg-muted transition-colors group-hover/card:bg-muted/70">
+        {workshop.images && workshop.images.length > 0 ? (
+          <Image
+            src={workshop.images[0]}
+            alt={workshop.title}
+            fill
+            className="object-cover transition-transform duration-500 group-hover/card:scale-105"
+            unoptimized
+          />
+        ) : (
+          <BookOpen className="size-10 text-muted-foreground/50 transition-transform group-hover/card:scale-110 duration-500" />
+        )}
         <Badge
           variant={getLevelBadgeVariant(getLevelName(workshop.level))}
           className="absolute top-2 right-2"
@@ -498,22 +509,37 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   <Separator />
 
                   {/* Instructor Info */}
-                  <div className="flex items-center gap-3">
-                    <Avatar size="lg">
-                      <AvatarFallback>
-                        {getInitials(
-                          getCreatorName(workshop.createdBy) || "IN",
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {getCreatorName(workshop.createdBy)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Instructor
-                      </p>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar size="lg">
+                        <AvatarFallback>
+                          {getInitials(
+                            getCreatorName(workshop.createdBy) || "IN",
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          {getCreatorName(workshop.createdBy)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Instructor
+                        </p>
+                      </div>
                     </div>
+                    {typeof workshop.createdBy === "object" && (
+                      <div className="space-y-2 text-sm text-muted-foreground">
+                        {workshop.createdBy.expertise && (
+                          <p>
+                            <span className="font-medium text-foreground">Expertise:</span>{" "}
+                            {workshop.createdBy.expertise}
+                          </p>
+                        )}
+                        {workshop.createdBy.bio && (
+                          <p className="italic">&quot;{workshop.createdBy.bio}&quot;</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>

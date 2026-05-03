@@ -30,7 +30,15 @@ export interface IWorkshop {
   currentEnrollments: number;
   category: string | ICategory;
   level: string | ILevel;
-  createdBy?: string | { _id: string; name: string; email: string };
+  createdBy?:
+    | string
+    | {
+        _id: string;
+        name: string;
+        email: string;
+        expertise?: string;
+        bio?: string;
+      };
   createdAt: string;
   updatedAt: string;
 }

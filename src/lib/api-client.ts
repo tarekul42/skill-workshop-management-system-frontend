@@ -152,6 +152,7 @@ export async function apiRequest<T>(
     try {
       const csrfRes = await fetch(`${BACKEND_API_URL}/csrf-token`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
+        credentials: "include",
       });
       if (csrfRes.ok) {
         const csrfData = await csrfRes.json();
