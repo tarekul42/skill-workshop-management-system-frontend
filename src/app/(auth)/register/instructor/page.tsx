@@ -75,6 +75,9 @@ export default function InstructorRegisterPage() {
           email: email.trim(),
           password,
           phone: phone.trim() || undefined,
+          role: "INSTRUCTOR",
+          expertise: expertise.trim(),
+          bio: bio.trim(),
         },
       });
       await apiClient("/otp/send", {

@@ -509,22 +509,37 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   <Separator />
 
                   {/* Instructor Info */}
-                  <div className="flex items-center gap-3">
-                    <Avatar size="lg">
-                      <AvatarFallback>
-                        {getInitials(
-                          getCreatorName(workshop.createdBy) || "IN",
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="text-sm font-medium text-foreground">
-                        {getCreatorName(workshop.createdBy)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Instructor
-                      </p>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-3">
+                      <Avatar size="lg">
+                        <AvatarFallback>
+                          {getInitials(
+                            getCreatorName(workshop.createdBy) || "IN",
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          {getCreatorName(workshop.createdBy)}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Instructor
+                        </p>
+                      </div>
                     </div>
+                    {typeof workshop.createdBy === "object" && (
+                      <div className="space-y-2 text-sm text-muted-foreground">
+                        {workshop.createdBy.expertise && (
+                          <p>
+                            <span className="font-medium text-foreground">Expertise:</span>{" "}
+                            {workshop.createdBy.expertise}
+                          </p>
+                        )}
+                        {workshop.createdBy.bio && (
+                          <p className="italic">"{workshop.createdBy.bio}"</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
