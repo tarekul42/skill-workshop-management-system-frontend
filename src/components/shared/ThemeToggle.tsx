@@ -1,36 +1,39 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import { Sun, Moon, Monitor } from "lucide-react";
-import { cn } from "@/lib/utils";
-
-const themes = [
-  { value: "light", label: "Light", icon: Sun },
-  { value: "dark", label: "Dark", icon: Moon },
-  { value: "system", label: "System", icon: Monitor },
-] as const;
+import { Sun, Moon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
+        <div className="h-4 w-4" />
+      </Button>
+    );
+  }
 
   return (
-    <div className="inline-flex items-center rounded-lg border bg-muted p-1">
-      {themes.map(({ value, label, icon: Icon }) => (
-        <button
-          key={value}
-          onClick={() => setTheme(value)}
-          className={cn(
-            "inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-            theme === value
-              ? "bg-background text-foreground shadow-sm"
-              : "text-muted-foreground hover:text-foreground",
-          )}
-          aria-label={`Switch to ${label} theme`}
-        >
-          <Icon className="size-4" />
-          <span className="hidden sm:inline">{label}</span>
-        </button>
-      ))}
-    </div>
+    <Button
+      variant="ghost"
+      size="icon"
+      className="h-9 w-9 rounded-lg transition-transform hover:scale-110 active:scale-95"
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+      aria-label="Toggle theme"
+    >
+      {theme === "dark" ? (
+        <Sun className="h-4 w-4 text-accent" />
+      ) : (
+        <Moon className="h-4 w-4 text-primary" />
+      )}
+    </Button>
   );
 }
