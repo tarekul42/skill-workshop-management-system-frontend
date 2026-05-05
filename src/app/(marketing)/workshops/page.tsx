@@ -42,14 +42,14 @@ type LevelOption = "all" | "Beginner" | "Intermediate" | "Advanced";
 
 function getLevelBadgeVariant(
   level: string,
-): "default" | "secondary" | "destructive" {
+): "default" | "secondary" | "danger" {
   switch (level) {
     case "Beginner":
       return "default";
     case "Intermediate":
       return "secondary";
     case "Advanced":
-      return "destructive";
+      return "danger";
     default:
       return "default";
   }

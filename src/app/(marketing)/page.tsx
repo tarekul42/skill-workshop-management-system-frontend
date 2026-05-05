@@ -135,7 +135,7 @@ function HeroIllustration() {
   return (
     <div className="relative h-[400px] w-full lg:h-[500px]">
       <motion.div
-        animate={{ rotate: [0, 2, -2, 0], y: [0, -10, 10, 0] } as any}
+        animate={{ rotate: [0, 2, -2, 0], y: [0, -10, 10, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
         className="relative z-10 mx-auto aspect-video w-[85%] max-w-[440px] rounded-2xl border border-border bg-surface-2 p-4 shadow-spotlight backdrop-blur-sm"
       >
@@ -157,7 +157,7 @@ function HeroIllustration() {
         
         {/* Orbiting Elements */}
         <motion.div 
-           animate={{ y: [0, -15, 0] } as any}
+           animate={{ y: [0, -15, 0] }}
            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
            className="absolute -right-8 -top-8 rounded-xl border border-border bg-surface-1 p-3 shadow-float"
         >
@@ -165,7 +165,7 @@ function HeroIllustration() {
         </motion.div>
         
         <motion.div 
-           animate={{ x: [0, 15, 0] } as any}
+           animate={{ x: [0, 15, 0] }}
            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
            className="absolute -left-12 top-1/2 rounded-xl border border-border bg-surface-1 p-3 shadow-float"
         >
@@ -176,7 +176,7 @@ function HeroIllustration() {
         </motion.div>
 
         <motion.div 
-           animate={{ scale: [1, 1.1, 1] } as any}
+           animate={{ scale: [1, 1.1, 1] }}
            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
            className="absolute -bottom-6 right-4 rounded-xl border border-border bg-surface-1 p-3 shadow-float"
         >

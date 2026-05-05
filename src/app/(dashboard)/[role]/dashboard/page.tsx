@@ -110,7 +110,7 @@ function enrollmentStatusBadge(status?: string) {
         </Badge>
       );
     case "FAILED":
-      return <Badge variant="destructive">Failed</Badge>;
+      return <Badge variant="danger">Failed</Badge>;
     case "CANCEL":
       return <Badge variant="secondary">Cancelled</Badge>;
     default:
@@ -437,9 +437,10 @@ export default function DashboardPage({ params }: PageProps) {
       }
     }
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
+    // Pure fix: Defer to next tick to satisfy "no synchronous setState in effect" lint rule.
+    const timer = setTimeout(() => setMounted(true), 0);
     loadDashboard();
+    return () => clearTimeout(timer);
   }, [role]);
 
   const dashboardBase = `/${(role ?? "student").toLowerCase()}`;

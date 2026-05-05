@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, LayoutDashboard, LogOut, GraduationCap, Bell } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -53,18 +53,22 @@ export function PublicNavbar() {
   }, []);
 
   useEffect(() => {
-    syncUser();
+    // Pure fix: Defer state update to avoid cascading render lint error
+    const timer = setTimeout(() => syncUser(), 0);
+
     const handleStorageChange = () => syncUser();
     const handleAuthChange = () => syncUser();
     window.addEventListener("storage", handleStorageChange);
     window.addEventListener("auth-change", handleAuthChange);
 
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      // §2.3 — scroll >50px triggers compact nav
+      setScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
 
     return () => {
+      clearTimeout(timer);
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("auth-change", handleAuthChange);
       window.removeEventListener("scroll", handleScroll);
@@ -105,8 +109,8 @@ export function PublicNavbar() {
         {/* Logo */}
         <Link href="/" className="flex shrink-0 items-center gap-2 group">
           <div className="relative">
-             <div className="absolute -inset-1 rounded-lg bg-primary/20 blur opacity-0 group-hover:opacity-100 transition duration-500" />
-             <GraduationCap className="relative size-7 text-primary transition-transform group-hover:scale-110 group-hover:-rotate-3" />
+            <div className="absolute -inset-1 rounded-lg bg-primary/20 blur opacity-0 group-hover:opacity-100 transition duration-500" />
+            <GraduationCap className="relative size-7 text-primary transition-transform group-hover:scale-110 group-hover:-rotate-3" />
           </div>
           <span className="font-display text-xl font-extrabold tracking-tight">
             <span className="text-foreground">Skill</span>
@@ -114,24 +118,25 @@ export function PublicNavbar() {
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation — §1.3 hover underline grows from center */}
         <nav className="hidden lg:flex lg:items-center lg:gap-8">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={cn(
-                "relative text-sm font-medium transition-colors hover:text-foreground",
+                "nav-underline relative text-sm font-medium transition-colors duration-150 hover:text-foreground",
                 isActive(link.href)
                   ? "text-foreground"
                   : "text-foreground-subtle"
               )}
             >
               {link.label}
+              {/* Framer Motion shared underline for the active page */}
               {isActive(link.href) && (
                 <motion.span
-                  layoutId="nav-underline"
-                  className="absolute -bottom-1 left-0 h-0.5 w-full rounded-full bg-primary"
+                  layoutId="nav-active-underline"
+                  className="absolute -bottom-[5px] left-0 h-0.5 w-full rounded-full bg-primary"
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
@@ -142,13 +147,13 @@ export function PublicNavbar() {
         {/* Desktop Actions */}
         <div className="hidden lg:flex lg:items-center lg:gap-4">
           <ThemeToggle />
-          
+
           {user ? (
             <div className="flex items-center gap-3">
               <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
                 <Bell className="h-4 w-4 text-foreground-subtle" />
               </Button>
-              
+
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -198,7 +203,8 @@ export function PublicNavbar() {
               <Button variant="ghost" size="sm" asChild className="font-semibold">
                 <Link href="/login">Login</Link>
               </Button>
-              <Button size="sm" asChild className="font-bold">
+              {/* §1.5 — subtle pulsing glow to draw attention without being annoying */}
+              <Button size="sm" asChild className="font-bold animate-glow-pulse">
                 <Link href="/register">Get Started</Link>
               </Button>
             </div>

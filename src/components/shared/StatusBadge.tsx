@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 
 interface StatusBadgeProps {
   status: string;
+  /** Show a leading 6px colored dot (§1.3 Dot variant) */
+  dot?: boolean;
   className?: string;
 }
 
@@ -42,24 +44,40 @@ function getStatusCategory(status: string): StatusCategory {
   return "default";
 }
 
-export function StatusBadge({ status, className }: StatusBadgeProps) {
+/** §1.3 — Status Badge dot color map (matches category → foreground token) */
+const dotColorMap: Record<StatusCategory, string> = {
+  warning: "bg-warning",
+  success: "bg-success",
+  danger:  "bg-danger",
+  muted:   "bg-foreground-muted",
+  info:    "bg-info",
+  default: "bg-foreground-subtle",
+};
+
+const variantMap: Record<StatusCategory, "warning" | "success" | "danger" | "muted" | "info" | "secondary"> = {
+  warning: "warning",
+  success: "success",
+  danger:  "danger",
+  muted:   "muted",
+  info:    "info",
+  default: "secondary",
+};
+
+export function StatusBadge({ status, dot = false, className }: StatusBadgeProps) {
   const category = getStatusCategory(status);
 
-  // Map internal categories to UI badge variants
-  const variantMap: Record<StatusCategory, any> = {
-    warning: "warning",
-    success: "success",
-    danger: "danger",
-    muted: "muted",
-    info: "info",
-    default: "secondary",
-  };
-
   return (
-    <Badge 
-      variant={variantMap[category]} 
+    <Badge
+      variant={variantMap[category]}
       className={cn("font-bold uppercase tracking-wider text-[10px] px-2 py-0.5", className)}
     >
+      {/* §1.3 — Dot variant: prepend a 6px circle in the matching foreground color */}
+      {dot && (
+        <span
+          className={cn("inline-block size-[6px] shrink-0 rounded-full", dotColorMap[category])}
+          aria-hidden="true"
+        />
+      )}
       {status.replace(/_/g, " ")}
     </Badge>
   );
