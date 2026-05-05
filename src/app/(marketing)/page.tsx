@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, useSpring, useTransform, useInView } from "framer-motion";
 import {
   Users,
   BookOpen,
@@ -130,6 +130,37 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
+// ─── Component: AnimatedCounter ───────────────────────────────────────────
+function AnimatedCounter({ value }: { value: string }) {
+  const match = value.match(/^([\d.]+)(.*)$/);
+  const number = match ? parseFloat(match[1]) : 0;
+  const suffix = match ? match[2] : "";
+  const isDecimal = value.includes(".");
+
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const springValue = useSpring(0, {
+    stiffness: 80,
+    damping: 20,
+    duration: 1200,
+  });
+
+  useEffect(() => {
+    if (isInView) {
+      springValue.set(number);
+    }
+  }, [isInView, number, springValue]);
+
+  const displayValue = useTransform(springValue, (current) => {
+    if (isDecimal) {
+      return current.toFixed(1) + suffix;
+    }
+    return Math.floor(current) + suffix;
+  });
+
+  return <motion.span ref={ref}>{displayValue}</motion.span>;
+}
+
 // ─── Component: HeroIllustration ──────────────────────────────────────────
 function HeroIllustration() {
   return (
@@ -241,30 +272,30 @@ export default function HomePage() {
             className="text-left"
           >
             <motion.div variants={fadeInUp} className="mb-6">
-              <Badge variant="accent" className="h-8 rounded-full px-4 text-xs font-bold uppercase tracking-wider">
+              <Badge variant="accent" className="h-6 rounded-full px-3 py-1 text-[12px] font-semibold uppercase tracking-[0.08em]">
                 🇧🇩 Made for Bangladesh
               </Badge>
             </motion.div>
             
-            <motion.h1 variants={fadeInUp} className="font-display text-5xl font-extrabold leading-[1.08] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-              Unlock <span className="relative inline-block">
+            <motion.h1 variants={fadeInUp} className="font-display text-[56px] font-extrabold leading-[1.08] tracking-[-0.03em] text-foreground">
+              Unlock <span className="relative inline-block text-primary">
                 Real Skills.
-                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 10C50 2 150 2 198 10" stroke="var(--accent)" strokeWidth="4" strokeLinecap="round"/>
+                <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5 12C80 2 220 2 295 12" stroke="var(--accent)" strokeWidth="4" strokeLinecap="round"/>
                 </svg>
               </span><br />
               Build Your Future.
             </motion.h1>
 
-            <motion.p variants={fadeInUp} className="mt-8 max-w-lg text-lg leading-relaxed text-foreground-subtle sm:text-xl">
+            <motion.p variants={fadeInUp} className="mt-8 max-w-[480px] text-lg leading-relaxed text-foreground-subtle">
               Connect with industry experts across Bangladesh through hands-on workshops designed for real-world results.
             </motion.p>
 
-            <motion.div variants={fadeInUp} className="mt-10 flex flex-wrap gap-4">
-              <Button size="lg" asChild className="rounded-xl px-8 shadow-primary-glow">
+            <motion.div variants={fadeInUp} className="mt-10 flex flex-wrap gap-3">
+              <Button size="lg" asChild className="px-8 shadow-primary-glow">
                 <Link href="/workshops">Browse Workshops</Link>
               </Button>
-              <Button size="lg" variant="ghost" asChild className="gap-2 rounded-xl text-foreground font-semibold">
+              <Button size="lg" variant="ghost" asChild className="gap-2 text-foreground font-semibold">
                 <Link href="/about">
                   <div className="flex size-10 items-center justify-center rounded-full bg-surface-2 text-primary">
                     <Play className="ml-1 size-4 fill-current" />
@@ -274,13 +305,18 @@ export default function HomePage() {
               </Button>
             </motion.div>
 
-            {/* In-hero stats */}
-            <motion.div variants={fadeInUp} className="mt-16 grid grid-cols-2 gap-8 border-t border-border pt-12 sm:grid-cols-4">
-              {stats.map((stat) => (
-                <div key={stat.label} className="flex flex-col">
-                  <span className="font-display text-2xl font-extrabold text-foreground">{stat.value}</span>
-                  <span className="text-[11px] font-bold uppercase tracking-widest text-foreground-muted">{stat.label}</span>
-                </div>
+            {/* In-hero stats - 4 stats separated by | dividers */}
+            <motion.div variants={fadeInUp} className="mt-16 flex flex-wrap items-center gap-6 border-t border-border pt-12">
+              {stats.map((stat, idx) => (
+                <React.Fragment key={stat.label}>
+                  {idx > 0 && <div className="h-8 w-px bg-border" />}
+                  <div className="flex flex-col items-center">
+                    <span className="font-display text-2xl font-bold text-foreground">
+                      <AnimatedCounter value={stat.value} />
+                    </span>
+                    <span className="text-[12px] font-semibold uppercase tracking-[0.08em] text-foreground-muted">{stat.label}</span>
+                  </div>
+                </React.Fragment>
               ))}
             </motion.div>
           </motion.div>
@@ -305,7 +341,9 @@ export default function HomePage() {
                   <stat.icon className="size-6 text-primary" />
                </div>
                <div className="flex flex-col">
-                  <span className="font-display text-2xl font-bold text-foreground leading-none">{stat.value}</span>
+                  <span className="font-display text-2xl font-bold text-foreground leading-none">
+                    <AnimatedCounter value={stat.value} />
+                  </span>
                   <span className="text-sm font-medium text-foreground-muted">{stat.label}</span>
                </div>
             </div>
