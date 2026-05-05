@@ -1,5 +1,5 @@
 import React from "react";
-import { Check, X } from "lucide-react";
+import { CheckCircle2, Circle } from "lucide-react";
 import { PASSWORD_CHECKS } from "@/lib/validation/password";
 
 interface PasswordChecklistProps {
@@ -10,18 +10,18 @@ export function PasswordChecklist({ password }: PasswordChecklistProps) {
   if (password.length === 0) return null;
 
   return (
-    <ul className="grid gap-1 mt-1">
+    <ul className="grid gap-2 mt-2">
       {PASSWORD_CHECKS.map((check) => {
         const isValid = check.test(password);
         return (
-          <li key={check.id} className="flex items-center gap-1.5 text-xs">
+          <li key={check.id} className="flex items-center gap-2 text-[13px]">
             {isValid ? (
-              <Check className="size-3 text-green-600 shrink-0" />
+              <CheckCircle2 className="size-4 text-success shrink-0" />
             ) : (
-              <X className="size-3 text-red-500 shrink-0" />
+              <Circle className="size-4 text-foreground-disabled shrink-0" />
             )}
             <span
-              className={isValid ? "text-green-600" : "text-muted-foreground"}
+              className={isValid ? "text-success font-medium" : "text-foreground-subtle"}
             >
               {check.label}
             </span>

@@ -7,9 +7,6 @@ import {
   Users,
   DollarSign,
   ClipboardList,
-  Trophy,
-  CreditCard,
-  Award,
   Activity,
   ArrowRight,
   ExternalLink,
@@ -29,6 +26,8 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/components/shared/AnimatedPage";
+import { StudentDashboard } from "@/components/dashboard/StudentDashboard";
+import { InstructorDashboard, type InstructorWorkshopItem, type InstructorEnrollmentItem } from "@/components/dashboard/InstructorDashboard";
 
 // ─── Props ──────────────────────────────────────────────────────────
 
@@ -182,6 +181,26 @@ export default function DashboardPage({ params }: PageProps) {
     [],
   );
   const [recentWorkshops, setRecentWorkshops] = useState<WorkshopItem[]>([]);
+  const [studentData, setStudentData] = useState<{
+    stats: {
+      enrolled: number;
+      completed: number;
+      totalSpent: number;
+      pendingPayments: number;
+    };
+    recentEnrollments: EnrollmentItem[];
+  } | null>(null);
+  const [instructorData, setInstructorData] = useState<{
+    stats: {
+      totalWorkshops: number;
+      totalStudents: number;
+      totalRevenue: number;
+      publishedCount: number;
+      draftCount: number;
+    };
+    recentWorkshops: InstructorWorkshopItem[];
+    recentEnrollments: InstructorEnrollmentItem[];
+  } | null>(null);
 
   useEffect(() => {
     if (!role) return;
@@ -289,7 +308,6 @@ export default function DashboardPage({ params }: PageProps) {
             },
           ]);
         } else if (role === "INSTRUCTOR") {
-          // Instructor stats
           const [workshopsRes, enrollmentsRes] = await Promise.allSettled([
             apiClientPaginated<WorkshopItem[]>("/workshop?page=1&limit=100"),
             apiClientPaginated<EnrollmentItem[]>(
@@ -314,7 +332,6 @@ export default function DashboardPage({ params }: PageProps) {
             0,
           );
 
-          // Get workshop titles for recent enrollments
           const workshopMap = new Map<string, string>();
           instructorWorkshops.forEach((w) => {
             workshopMap.set(w._id, w.title);
@@ -330,38 +347,34 @@ export default function DashboardPage({ params }: PageProps) {
             )
             .slice(0, 5);
 
-          setRecentEnrollments(recentInstructorEnrollments);
-          setRecentWorkshops(instructorWorkshops.slice(0, 4));
+          const publishedCount = instructorWorkshops.filter(w => w.status === "PUBLISHED" || w.status === "ACTIVE").length;
+          const draftCount = totalWorkshops - publishedCount;
 
-          setStats([
-            {
-              icon: (
-                <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />
-              ),
-              label: "My Workshops",
-              value: String(totalWorkshops),
-              change: "Created workshops",
-              iconBg: "bg-blue-50 dark:bg-blue-950/50",
+          setInstructorData({
+            stats: {
+              totalWorkshops,
+              totalStudents,
+              totalRevenue,
+              publishedCount,
+              draftCount,
             },
-            {
-              icon: (
-                <Users className="size-4 text-emerald-600 dark:text-emerald-400" />
-              ),
-              label: "Total Students",
-              value: String(totalStudents),
-              change: "Across all workshops",
-              iconBg: "bg-emerald-50 dark:bg-emerald-950/50",
-            },
-            {
-              icon: (
-                <DollarSign className="size-4 text-amber-600 dark:text-amber-400" />
-              ),
-              label: "Revenue",
-              value: formatCurrency(totalRevenue),
-              change: "From enrollments",
-              iconBg: "bg-amber-50 dark:bg-amber-950/50",
-            },
-          ]);
+            recentWorkshops: instructorWorkshops.slice(0, 5).map(w => ({
+              _id: w._id,
+              title: w.title,
+              slug: w.slug,
+              currentEnrollments: w.currentEnrollments,
+              maxSeats: w.maxSeats,
+              status: w.status,
+              createdAt: w.createdAt,
+            })),
+            recentEnrollments: recentInstructorEnrollments.map(e => ({
+              _id: e._id,
+              studentName: "Student", 
+              workshopTitle: typeof e.workshop === "object" ? e.workshop.title : workshopMap.get(e.workshop as string) || "Workshop",
+              date: e.createdAt || "",
+              status: e.status || "PENDING",
+            })),
+          });
         } else if (role === "STUDENT") {
           const enrollmentsRes = await Promise.allSettled([
             apiClient<EnrollmentItem[]>("/enrollment/my-enrollments"),
@@ -381,54 +394,25 @@ export default function DashboardPage({ params }: PageProps) {
 
           const totalEnrollments = enrollments.length;
           const completedCount = enrollments.filter(
-            (e) => e.status === "COMPLETE",
+            (e) => e.status === "COMPLETE" || e.status === "PAID" || e.status === "ACTIVE",
           ).length;
           const totalSpent = enrollments.reduce(
             (sum, e) => sum + (e.payment?.amount ?? e.amount ?? 0),
             0,
           );
+          const pendingPayments = enrollments.filter(
+            (e) => e.status === "PENDING" || e.payment?.status === "UNPAID",
+          ).length;
 
-          // Recent enrollments (last 5)
-          setRecentEnrollments(enrollments.slice(0, 5));
-
-          setStats([
-            {
-              icon: (
-                <BookOpen className="size-4 text-blue-600 dark:text-blue-400" />
-              ),
-              label: "Enrolled",
-              value: String(totalEnrollments),
-              change: "Total enrollments",
-              iconBg: "bg-blue-50 dark:bg-blue-950/50",
+          setStudentData({
+            stats: {
+              enrolled: totalEnrollments,
+              completed: completedCount,
+              totalSpent,
+              pendingPayments,
             },
-            {
-              icon: (
-                <Trophy className="size-4 text-emerald-600 dark:text-emerald-400" />
-              ),
-              label: "Completed",
-              value: String(completedCount),
-              change: "Workshops completed",
-              iconBg: "bg-emerald-50 dark:bg-emerald-950/50",
-            },
-            {
-              icon: (
-                <CreditCard className="size-4 text-amber-600 dark:text-amber-400" />
-              ),
-              label: "Total Spent",
-              value: formatCurrency(totalSpent),
-              change: "All time",
-              iconBg: "bg-amber-50 dark:bg-amber-950/50",
-            },
-            {
-              icon: (
-                <Award className="size-4 text-violet-600 dark:text-violet-400" />
-              ),
-              label: "Certificates",
-              value: String(completedCount),
-              change: "Earned certificates",
-              iconBg: "bg-violet-50 dark:bg-violet-950/50",
-            },
-          ]);
+            recentEnrollments: enrollments.slice(0, 5),
+          });
         }
       } catch {
         setError("Unable to load statistics");
@@ -444,6 +428,28 @@ export default function DashboardPage({ params }: PageProps) {
   }, [role]);
 
   const dashboardBase = `/${(role ?? "student").toLowerCase()}`;
+
+  if (role === "STUDENT" && studentData && !loading && !error) {
+    return (
+      <StudentDashboard
+        user={user}
+        activeEnrollments={studentData.stats.enrolled}
+        stats={studentData.stats}
+        recentEnrollments={studentData.recentEnrollments}
+      />
+    );
+  }
+
+  if (role === "INSTRUCTOR" && instructorData && !loading && !error) {
+    return (
+      <InstructorDashboard
+        user={user}
+        stats={instructorData.stats}
+        recentWorkshops={instructorData.recentWorkshops}
+        recentEnrollments={instructorData.recentEnrollments}
+      />
+    );
+  }
 
   return (
     <AnimatedPage className="space-y-6">

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { AuthSidebar } from "./AuthSidebar";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Sign In | Skill Workshop",
+    absolute: "Skill Workshop | Authentication",
   },
   description:
     "Sign in to your Skill Workshop account to manage enrollments, view workshops, and track your learning progress.",
@@ -18,8 +19,16 @@ export default function AuthLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4 py-12">
-      {children}
+    <div className="flex min-h-screen bg-background">
+      {/* Left Panel - Hidden on mobile, 40% width on desktop */}
+      <AuthSidebar />
+
+      {/* Right Panel - 100% on mobile, 60% on desktop */}
+      <div className="flex w-full flex-col items-center justify-center p-6 lg:w-3/5 lg:p-12">
+        <div className="w-full max-w-[480px]">
+          {children}
+        </div>
+      </div>
     </div>
   );
 }

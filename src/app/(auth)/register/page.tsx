@@ -12,6 +12,9 @@ import {
   Mail,
   Phone,
   Lock,
+  Check,
+  AlertTriangle,
+  BookOpen
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -42,6 +45,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { AnimatedPage } from "@/components/shared/AnimatedPage";
+import { StepIndicator } from "@/components/shared/StepIndicator";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -101,15 +106,17 @@ export default function RegisterPage() {
   }
 
   return (
-    <Card className="w-full max-w-lg">
-      <CardHeader className="text-center">
-        <Link href="/" className="mx-auto mb-2 flex items-center gap-2">
-          <GraduationCap className="size-6 text-primary" />
-          <span className="text-lg font-semibold">Skill Workshop</span>
-        </Link>
-        <CardTitle className="text-xl">Create Account</CardTitle>
-        <CardDescription>Sign up as a student</CardDescription>
-      </CardHeader>
+    <AnimatedPage className="w-full">
+      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+        <CardHeader className="text-center pb-2">
+          <Link href="/" className="mb-6 flex items-center justify-center gap-2">
+            <BookOpen className="size-9 text-primary" />
+            <span className="font-display text-2xl font-bold">Skill Workshop</span>
+          </Link>
+          <StepIndicator currentStep={1} />
+          <CardTitle className="font-display text-[28px] font-bold mt-2">Create Account</CardTitle>
+          <CardDescription className="text-[14px] text-foreground-muted mt-1 mb-5">Sign up as a student</CardDescription>
+        </CardHeader>
 
       <CardContent>
         <Form {...form}>
@@ -271,10 +278,11 @@ export default function RegisterPage() {
 
             {error && (
               <div
-                className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+                className="flex items-start gap-2 rounded-lg border-l-[3px] border-l-danger bg-danger-subtle px-4 py-3 relative"
                 role="alert"
               >
-                {error}
+                <AlertTriangle className="size-4 shrink-0 text-danger mt-0.5" />
+                <p className="flex-1 text-[14px] text-danger pr-4">{error}</p>
               </div>
             )}
 
@@ -324,26 +332,22 @@ export default function RegisterPage() {
         </Button>
       </CardContent>
 
-      <CardFooter className="flex-col gap-2 text-center">
-        <p className="text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-primary font-medium hover:underline"
-          >
-            Sign in
-          </Link>
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Want to teach?{" "}
-          <Link
-            href="/register/instructor"
-            className="text-primary font-medium hover:underline"
-          >
-            Register as Instructor
-          </Link>
-        </p>
-      </CardFooter>
-    </Card>
+        <CardFooter className="flex-col gap-2 pt-2 pb-2">
+          <p className="text-[14px] text-foreground-muted text-center flex items-center justify-center flex-wrap gap-x-1.5">
+            <span>Already have an account?</span>
+            <Link href="/login" className="text-primary hover:underline font-medium">
+              Sign in
+            </Link>
+            <span className="text-foreground-muted">·</span>
+            <Link
+              href="/register/instructor"
+              className="text-primary hover:underline font-medium"
+            >
+              Sign up as Instructor
+            </Link>
+          </p>
+        </CardFooter>
+      </Card>
+    </AnimatedPage>
   );
 }

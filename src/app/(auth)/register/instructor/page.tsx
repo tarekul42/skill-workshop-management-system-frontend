@@ -14,6 +14,7 @@ import {
   Lock,
   BookOpen,
   PenLine,
+  AlertTriangle,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -32,6 +33,8 @@ import { storeOTPEmail } from "@/lib/auth-helpers";
 import { apiClient } from "@/lib/api-client";
 import { isPasswordValid } from "@/lib/validation/password";
 import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
+import { AnimatedPage } from "@/components/shared/AnimatedPage";
+import { StepIndicator } from "@/components/shared/StepIndicator";
 
 export default function InstructorRegisterPage() {
   const router = useRouter();
@@ -101,15 +104,17 @@ export default function InstructorRegisterPage() {
   }
 
   return (
-    <Card className="w-full max-w-xl">
-      <CardHeader className="text-center">
-        <Link href="/" className="mx-auto mb-2 flex items-center gap-2">
-          <GraduationCap className="size-6 text-primary" />
-          <span className="text-lg font-semibold">Skill Workshop</span>
-        </Link>
-        <CardTitle className="text-xl">Register as Instructor</CardTitle>
-        <CardDescription>Share your expertise with students</CardDescription>
-      </CardHeader>
+    <AnimatedPage className="w-full">
+      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+        <CardHeader className="text-center pb-2">
+          <Link href="/" className="mb-6 flex items-center justify-center gap-2">
+            <BookOpen className="size-9 text-primary" />
+            <span className="font-display text-2xl font-bold">Skill Workshop</span>
+          </Link>
+          <StepIndicator currentStep={1} />
+          <CardTitle className="font-display text-[28px] font-bold mt-2">Register as Instructor</CardTitle>
+          <CardDescription className="text-[14px] text-foreground-muted mt-1 mb-5">Share your expertise with students</CardDescription>
+        </CardHeader>
 
       <CardContent>
         <form onSubmit={handleSubmit} className="grid gap-4">
@@ -204,44 +209,51 @@ export default function InstructorRegisterPage() {
             <PasswordChecklist password={password} />
           </div>
 
-          {/* Confirm Password */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="confirmPassword">
-              <Lock className="size-3.5" />
-              Confirm Password
-            </Label>
-            <div className="relative">
-              <Input
-                id="confirmPassword"
-                type={showConfirmPassword ? "text" : "password"}
-                required
-                placeholder="Confirm your password"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                className="pr-9"
-                aria-invalid={confirmPassword.length > 0 && !passwordsMatch}
-              />
-              <button
-                type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                tabIndex={-1}
-                aria-label={
-                  showConfirmPassword ? "Hide password" : "Show password"
-                }
-              >
-                {showConfirmPassword ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
-              </button>
+            {/* Confirm Password */}
+            <div className="grid gap-1.5">
+              <Label htmlFor="confirmPassword">
+                <Lock className="size-3.5" />
+                Confirm Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  required
+                  placeholder="Confirm your password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={loading}
+                  className="pr-9"
+                  aria-invalid={confirmPassword.length > 0 && !passwordsMatch}
+                />
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  tabIndex={-1}
+                  aria-label={
+                    showConfirmPassword ? "Hide password" : "Show password"
+                  }
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
+              </div>
+              {confirmPassword.length > 0 && !passwordsMatch && (
+                <p className="text-xs text-danger mt-1">Passwords do not match</p>
+              )}
             </div>
-            {confirmPassword.length > 0 && !passwordsMatch && (
-              <p className="text-xs text-red-500">Passwords do not match</p>
-            )}
-          </div>
+            
+            <div className="relative flex items-center justify-center py-2 mt-2">
+              <Separator className="absolute w-full border-border" />
+              <span className="relative bg-surface-1 px-4 text-[12px] font-semibold text-foreground">
+                Instructor Profile
+              </span>
+            </div>
 
           {/* Expertise */}
           <div className="grid gap-1.5">
@@ -284,10 +296,11 @@ export default function InstructorRegisterPage() {
           {/* Error */}
           {error && (
             <div
-              className="rounded-lg bg-destructive/10 px-3 py-2 text-sm text-destructive"
+              className="flex items-start gap-2 rounded-lg border-l-[3px] border-l-danger bg-danger-subtle px-4 py-3 mt-2"
               role="alert"
             >
-              {error}
+              <AlertTriangle className="size-4 shrink-0 text-danger mt-0.5" />
+              <p className="flex-1 text-[14px] text-danger">{error}</p>
             </div>
           )}
 
@@ -304,26 +317,22 @@ export default function InstructorRegisterPage() {
         </form>
       </CardContent>
 
-      <CardFooter className="flex-col gap-2 text-center">
-        <p className="text-sm text-muted-foreground">
-          Already have an account?{" "}
-          <Link
-            href="/login"
-            className="text-primary font-medium hover:underline"
-          >
-            Sign in
-          </Link>
-        </p>
-        <p className="text-xs text-muted-foreground">
-          Just want to learn?{" "}
-          <Link
-            href="/register"
-            className="text-primary font-medium hover:underline"
-          >
-            Register as Student
-          </Link>
-        </p>
-      </CardFooter>
-    </Card>
+        <CardFooter className="flex-col gap-2 pt-2 pb-2">
+          <p className="text-[14px] text-foreground-muted text-center flex items-center justify-center flex-wrap gap-x-1.5">
+            <span>Already have an account?</span>
+            <Link href="/login" className="text-primary hover:underline font-medium">
+              Sign in
+            </Link>
+            <span className="text-foreground-muted">·</span>
+            <Link
+              href="/register"
+              className="text-primary hover:underline font-medium"
+            >
+              Register as Student
+            </Link>
+          </p>
+        </CardFooter>
+      </Card>
+    </AnimatedPage>
   );
 }

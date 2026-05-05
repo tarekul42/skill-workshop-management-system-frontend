@@ -23,27 +23,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/api-client";
+import { AnimatedPage } from "@/components/shared/AnimatedPage";
+import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
+import { isPasswordValid } from "@/lib/validation/password";
+import { motion } from "framer-motion";
 
-function PasswordRule({ label, valid }: { label: string; valid: boolean }) {
-  return (
-    <div className="flex items-center gap-2 text-sm">
-      <CheckCircle
-        className={`size-4 shrink-0 transition-colors ${
-          valid
-            ? "text-green-600 dark:text-green-400"
-            : "text-muted-foreground/40"
-        }`}
-      />
-      <span
-        className={
-          valid ? "text-green-600 dark:text-green-400" : "text-muted-foreground"
-        }
-      >
-        {label}
-      </span>
-    </div>
-  );
-}
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -58,29 +42,7 @@ function ResetPasswordContent() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
 
-  const rules = useMemo(
-    () => [
-      {
-        label: "At least 6 characters",
-        valid: newPassword.length >= 6,
-      },
-      {
-        label: "Contains uppercase letter",
-        valid: /[A-Z]/.test(newPassword),
-      },
-      {
-        label: "Contains a digit",
-        valid: /\d/.test(newPassword),
-      },
-      {
-        label: "Contains special character (!@#$%^&*)",
-        valid: /[!@#$%^&*]/.test(newPassword),
-      },
-    ],
-    [newPassword],
-  );
-
-  const allRulesValid = rules.every((r) => r.valid);
+  const allRulesValid = isPasswordValid(newPassword);
   const passwordsMatch =
     newPassword.length > 0 &&
     confirmPassword.length > 0 &&
@@ -126,179 +88,167 @@ function ResetPasswordContent() {
 
   if (!token) {
     return (
-      <Card className="w-full max-w-md">
-        <CardHeader className="items-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-destructive/10">
-            <Lock className="size-7 text-destructive" />
-          </div>
-          <CardTitle className="mt-4 text-xl font-semibold">
-            Invalid Reset Link
-          </CardTitle>
-          <CardDescription className="mt-1">
-            This password reset link is invalid or has expired. Please request a
-            new one.
-          </CardDescription>
-        </CardHeader>
+      <AnimatedPage className="w-full">
+        <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+          <CardHeader className="items-center text-center pb-2">
+            <div className="flex size-16 items-center justify-center rounded-full bg-danger-subtle mt-4">
+              <span className="text-2xl">🔑</span>
+            </div>
+            <CardTitle className="font-display text-[28px] font-bold mt-4">
+              Invalid Reset Link
+            </CardTitle>
+            <CardDescription className="text-[14px] text-foreground-muted mt-2 max-w-sm">
+              This password reset link is invalid or has expired. Please request a new one.
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent>
-          <Button asChild className="w-full" size="lg">
-            <Link href="/forgot-password">Request New Reset Link</Link>
-          </Button>
-        </CardContent>
-      </Card>
+          <CardContent className="pt-4">
+            <Button asChild className="w-full h-12 text-base font-semibold">
+              <Link href="/forgot-password">Request New Reset Link</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </AnimatedPage>
     );
   }
 
   if (success) {
     return (
-      <Card className="w-full max-w-md">
-        <CardHeader className="items-center text-center">
-          <div className="flex size-14 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30">
-            <CheckCircle className="size-7 text-green-600 dark:text-green-400" />
-          </div>
-          <CardTitle className="mt-4 text-xl font-semibold">
-            Password Reset Successfully!
-          </CardTitle>
-          <CardDescription className="mt-1">
-            Redirecting to login...
-          </CardDescription>
-        </CardHeader>
+      <AnimatedPage className="w-full">
+        <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+          <CardHeader className="items-center text-center pb-2">
+            <div className="flex size-16 items-center justify-center rounded-full bg-success/10 mt-4">
+              <motion.svg
+                width="32"
+                height="32"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="text-success"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
+                <motion.polyline points="20 6 9 17 4 12" />
+              </motion.svg>
+            </div>
+            <CardTitle className="font-display text-[28px] font-bold mt-4">
+              Password Reset Successfully!
+            </CardTitle>
+            <CardDescription className="text-[14px] text-foreground-muted mt-2">
+              Redirecting to login...
+            </CardDescription>
+          </CardHeader>
 
-        <CardContent>
-          <Button asChild className="w-full" size="lg">
-            <Link href="/login">Sign In</Link>
-          </Button>
-        </CardContent>
-      </Card>
+          <CardContent className="pt-4">
+            <Button asChild className="w-full h-12 text-base font-semibold">
+              <Link href="/login">Sign In</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </AnimatedPage>
     );
   }
 
   return (
-    <Card className="w-full max-w-md">
-      <CardHeader className="items-center text-center">
-        <div className="flex size-14 items-center justify-center rounded-full bg-primary/10">
-          <Lock className="size-7 text-primary" />
-        </div>
-        <CardTitle className="mt-4 text-xl font-semibold">
-          Reset Password
-        </CardTitle>
-        <CardDescription className="mt-1">
-          Enter your new password below
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* New Password */}
-          <div className="space-y-2">
-            <Label htmlFor="newPassword">New Password</Label>
-            <div className="relative">
-              <Input
-                id="newPassword"
-                type={showNew ? "text" : "password"}
-                placeholder="Enter new password"
-                required
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                disabled={loading}
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowNew(!showNew)}
-                className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                tabIndex={-1}
-                aria-label={showNew ? "Hide password" : "Show password"}
-              >
-                {showNew ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
-              </button>
-            </div>
+    <AnimatedPage className="w-full">
+      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+        <CardHeader className="items-center text-center pb-2">
+          <div className="flex size-16 items-center justify-center rounded-full bg-primary-subtle mt-4">
+            <Lock className="size-8 text-primary" />
           </div>
+          <CardTitle className="font-display text-[28px] font-bold mt-4">
+            Set new password
+          </CardTitle>
+          <CardDescription className="text-[14px] text-foreground-muted mt-2">
+            Enter your new password below
+          </CardDescription>
+        </CardHeader>
 
-          {/* Confirm Password */}
-          <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
-            <div className="relative">
-              <Input
-                id="confirmPassword"
-                type={showConfirm ? "text" : "password"}
-                placeholder="Confirm new password"
-                required
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                disabled={loading}
-                className="pr-10"
-              />
-              <button
-                type="button"
-                onClick={() => setShowConfirm(!showConfirm)}
-                className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                tabIndex={-1}
-                aria-label={showConfirm ? "Hide password" : "Show password"}
-              >
-                {showConfirm ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Password Strength Checklist */}
-          {newPassword.length > 0 && (
-            <div className="space-y-2 rounded-lg border bg-muted/40 p-3">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <ShieldCheck className="size-4 text-muted-foreground" />
-                <span>Password Requirements</span>
-              </div>
-              <div className="space-y-1.5 pl-6">
-                {rules.map((rule) => (
-                  <PasswordRule
-                    key={rule.label}
-                    label={rule.label}
-                    valid={rule.valid}
-                  />
-                ))}
-                {confirmPassword.length > 0 && (
-                  <PasswordRule
-                    label="Passwords match"
-                    valid={passwordsMatch}
-                  />
-                )}
+        <CardContent className="pt-4">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid gap-1.5">
+              <Label htmlFor="newPassword" className="text-[13px] font-semibold text-foreground">New Password</Label>
+              <div className="relative">
+                <Input
+                  id="newPassword"
+                  type={showNew ? "text" : "password"}
+                  placeholder="Enter new password"
+                  required
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  disabled={loading}
+                  className="pr-10 h-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowNew(!showNew)}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                  aria-label={showNew ? "Hide password" : "Show password"}
+                >
+                  {showNew ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
               </div>
             </div>
-          )}
 
-          {error && (
-            <p className="text-center text-sm text-destructive">{error}</p>
-          )}
+            <div className="grid gap-1.5">
+              <Label htmlFor="confirmPassword" className="text-[13px] font-semibold text-foreground">Confirm Password</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirm ? "text" : "password"}
+                  placeholder="Confirm new password"
+                  required
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  disabled={loading}
+                  className="pr-10 h-11"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirm(!showConfirm)}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={-1}
+                  aria-label={showConfirm ? "Hide password" : "Show password"}
+                >
+                  {showConfirm ? (
+                    <EyeOff className="size-4" />
+                  ) : (
+                    <Eye className="size-4" />
+                  )}
+                </button>
+              </div>
+            </div>
 
-          <Button
-            type="submit"
-            className="w-full"
-            size="lg"
-            disabled={!isFormValid || loading}
-          >
-            {loading && <Loader2 className="animate-spin" />}
-            Reset Password
-          </Button>
-        </form>
-      </CardContent>
+            {/* Password Strength Checklist */}
+            <div className="bg-surface-2 rounded-xl border border-border p-4">
+              <PasswordChecklist password={newPassword} />
+            </div>
 
-      <CardFooter>
-        <div className="flex w-full items-center gap-3">
-          <span className="text-sm text-muted-foreground">Back to</span>
-          <Button asChild variant="link" className="h-auto p-0">
-            <Link href="/login">Sign In</Link>
-          </Button>
-        </div>
-      </CardFooter>
-    </Card>
+            {error && (
+              <p className="text-center text-[14px] text-danger">{error}</p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full h-12 text-base font-semibold"
+              disabled={!isFormValid || loading}
+            >
+              {loading && <Loader2 className="mr-2 size-4 animate-spin" />}
+              Update Password
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </AnimatedPage>
   );
 }
 
