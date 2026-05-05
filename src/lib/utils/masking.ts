@@ -28,6 +28,8 @@ export function maskName(name: string | null | undefined): string {
   if (!name) return "N/A";
   return name
     .split(" ")
-    .map((part) => (part.length > 0 ? part[0] + "*".repeat(part.length - 1) : ""))
+    .map((part) =>
+      part.length > 0 ? part[0] + "*".repeat(part.length - 1) : "",
+    )
     .join(" ");
 }

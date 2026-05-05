@@ -1,4 +1,5 @@
 # SWMS — Premium UI/UX Redesign Blueprint
+
 ### Skill Workshop Management System · Bangladesh Market · Production-Ready
 
 > **How to read this document**: Every section is implementation-ready. No guesswork. Every value is exact. Every behavior is described. A developer who has never seen this product should be able to build it from this document alone.
@@ -12,6 +13,7 @@
 ## 1.1 🎨 Color System
 
 ### Rationale
+
 The existing blue-violet is too corporate and cold for a skills marketplace in Bangladesh. We evolve to a richer, more saturated **Deep Violet** primary paired with **Warm Amber** as the accent — creating the emotional register of "premium knowledge, warm guidance." The palette is built in oklch for perceptual uniformity across light/dark modes.
 
 ### Primary Palette (oklch)
@@ -19,95 +21,96 @@ The existing blue-violet is too corporate and cold for a skills marketplace in B
 ```css
 :root {
   /* === PRIMARY — Deep Violet === */
-  --primary:           oklch(0.42 0.25 272);   /* #4318A8 equiv — rich, authoritative */
-  --primary-hover:     oklch(0.38 0.25 272);   /* 10% darker on hover */
-  --primary-active:    oklch(0.34 0.25 272);   /* pressed state */
-  --primary-subtle:    oklch(0.95 0.06 272);   /* tinted background fills */
+  --primary: oklch(0.42 0.25 272); /* #4318A8 equiv — rich, authoritative */
+  --primary-hover: oklch(0.38 0.25 272); /* 10% darker on hover */
+  --primary-active: oklch(0.34 0.25 272); /* pressed state */
+  --primary-subtle: oklch(0.95 0.06 272); /* tinted background fills */
   --primary-foreground: oklch(0.99 0.005 272); /* white text on primary */
 
   /* === ACCENT — Warm Amber === */
-  --accent:            oklch(0.78 0.18 68);    /* #F5A623 equiv — energy, warmth */
-  --accent-hover:      oklch(0.73 0.18 68);
-  --accent-foreground: oklch(0.18 0.05 68);   /* near-black text on amber */
-  --accent-subtle:     oklch(0.96 0.06 68);   /* amber tint for badges */
+  --accent: oklch(0.78 0.18 68); /* #F5A623 equiv — energy, warmth */
+  --accent-hover: oklch(0.73 0.18 68);
+  --accent-foreground: oklch(0.18 0.05 68); /* near-black text on amber */
+  --accent-subtle: oklch(0.96 0.06 68); /* amber tint for badges */
 
   /* === SUCCESS — Rich Green === */
-  --success:           oklch(0.55 0.20 148);   /* #1D8A4E */
-  --success-subtle:    oklch(0.95 0.06 148);
+  --success: oklch(0.55 0.2 148); /* #1D8A4E */
+  --success-subtle: oklch(0.95 0.06 148);
   --success-foreground: oklch(0.99 0.01 148);
 
   /* === DANGER — Vivid Crimson === */
-  --danger:            oklch(0.52 0.24 22);    /* #D93025 */
-  --danger-hover:      oklch(0.47 0.24 22);
-  --danger-subtle:     oklch(0.96 0.06 22);
+  --danger: oklch(0.52 0.24 22); /* #D93025 */
+  --danger-hover: oklch(0.47 0.24 22);
+  --danger-subtle: oklch(0.96 0.06 22);
   --danger-foreground: oklch(0.99 0.01 22);
 
   /* === WARNING — Saffron === */
-  --warning:           oklch(0.72 0.17 50);    /* #E87C00 */
-  --warning-subtle:    oklch(0.97 0.05 50);
-  --warning-foreground: oklch(0.20 0.05 50);
+  --warning: oklch(0.72 0.17 50); /* #E87C00 */
+  --warning-subtle: oklch(0.97 0.05 50);
+  --warning-foreground: oklch(0.2 0.05 50);
 
   /* === INFO — Cerulean === */
-  --info:              oklch(0.58 0.18 230);
-  --info-subtle:       oklch(0.95 0.05 230);
-  --info-foreground:   oklch(0.99 0.01 230);
+  --info: oklch(0.58 0.18 230);
+  --info-subtle: oklch(0.95 0.05 230);
+  --info-foreground: oklch(0.99 0.01 230);
 
   /* === BACKGROUND SYSTEM (Light) === */
-  --background:        oklch(0.988 0.006 270); /* warm near-white, violet undertone */
-  --surface-1:         oklch(0.975 0.010 270); /* cards on page background */
-  --surface-2:         oklch(0.960 0.014 270); /* modals, elevated cards */
-  --surface-3:         oklch(0.940 0.018 272); /* hovered cards, inputs */
+  --background: oklch(0.988 0.006 270); /* warm near-white, violet undertone */
+  --surface-1: oklch(0.975 0.01 270); /* cards on page background */
+  --surface-2: oklch(0.96 0.014 270); /* modals, elevated cards */
+  --surface-3: oklch(0.94 0.018 272); /* hovered cards, inputs */
 
   /* === FOREGROUND / TEXT === */
-  --foreground:        oklch(0.16 0.04 270);   /* near-black, slight violet cast */
-  --foreground-subtle: oklch(0.40 0.04 270);   /* secondary text */
-  --foreground-muted:  oklch(0.62 0.03 270);   /* placeholders, captions */
+  --foreground: oklch(0.16 0.04 270); /* near-black, slight violet cast */
+  --foreground-subtle: oklch(0.4 0.04 270); /* secondary text */
+  --foreground-muted: oklch(0.62 0.03 270); /* placeholders, captions */
   --foreground-disabled: oklch(0.75 0.02 270);
 
   /* === BORDER / DIVIDER === */
-  --border:            oklch(0.88 0.02 270);
-  --border-strong:     oklch(0.74 0.04 270);
-  --border-focus:      oklch(0.42 0.25 272);   /* = primary, for focus rings */
+  --border: oklch(0.88 0.02 270);
+  --border-strong: oklch(0.74 0.04 270);
+  --border-focus: oklch(0.42 0.25 272); /* = primary, for focus rings */
 
   /* === SPECIAL SURFACES === */
-  --sidebar-bg:        oklch(0.10 0.04 272);   /* dashboard sidebar — near-black */
-  --sidebar-text:      oklch(0.92 0.02 270);
+  --sidebar-bg: oklch(0.1 0.04 272); /* dashboard sidebar — near-black */
+  --sidebar-text: oklch(0.92 0.02 270);
   --sidebar-text-muted: oklch(0.58 0.04 270);
-  --sidebar-active:    oklch(0.42 0.25 272);   /* active nav item */
-  --sidebar-hover:     oklch(0.18 0.05 272);
-  --sidebar-border:    oklch(0.20 0.05 272);
+  --sidebar-active: oklch(0.42 0.25 272); /* active nav item */
+  --sidebar-hover: oklch(0.18 0.05 272);
+  --sidebar-border: oklch(0.2 0.05 272);
 }
 
 .dark {
-  --primary:           oklch(0.68 0.22 272);   /* lighter for dark bg readability */
-  --primary-hover:     oklch(0.73 0.22 272);
-  --primary-subtle:    oklch(0.18 0.08 272);
-  --primary-foreground: oklch(0.10 0.03 272);  /* dark text on light primary */
+  --primary: oklch(0.68 0.22 272); /* lighter for dark bg readability */
+  --primary-hover: oklch(0.73 0.22 272);
+  --primary-subtle: oklch(0.18 0.08 272);
+  --primary-foreground: oklch(0.1 0.03 272); /* dark text on light primary */
 
-  --accent:            oklch(0.78 0.18 68);
-  --accent-subtle:     oklch(0.18 0.07 68);
+  --accent: oklch(0.78 0.18 68);
+  --accent-subtle: oklch(0.18 0.07 68);
 
-  --background:        oklch(0.10 0.025 270);  /* rich near-black */
-  --surface-1:         oklch(0.14 0.030 270);
-  --surface-2:         oklch(0.18 0.035 272);
-  --surface-3:         oklch(0.22 0.040 272);
+  --background: oklch(0.1 0.025 270); /* rich near-black */
+  --surface-1: oklch(0.14 0.03 270);
+  --surface-2: oklch(0.18 0.035 272);
+  --surface-3: oklch(0.22 0.04 272);
 
-  --foreground:        oklch(0.94 0.012 270);
+  --foreground: oklch(0.94 0.012 270);
   --foreground-subtle: oklch(0.72 0.025 270);
-  --foreground-muted:  oklch(0.52 0.025 270);
+  --foreground-muted: oklch(0.52 0.025 270);
   --foreground-disabled: oklch(0.35 0.02 270);
 
-  --border:            oklch(0.24 0.04 270);
-  --border-strong:     oklch(0.34 0.05 270);
+  --border: oklch(0.24 0.04 270);
+  --border-strong: oklch(0.34 0.05 270);
 
-  --success-subtle:    oklch(0.16 0.07 148);
-  --danger-subtle:     oklch(0.16 0.08 22);
-  --warning-subtle:    oklch(0.16 0.06 50);
-  --info-subtle:       oklch(0.15 0.06 230);
+  --success-subtle: oklch(0.16 0.07 148);
+  --danger-subtle: oklch(0.16 0.08 22);
+  --warning-subtle: oklch(0.16 0.06 50);
+  --info-subtle: oklch(0.15 0.06 230);
 }
 ```
 
 ### Status Badge Color Map (extends existing StatusBadge component)
+
 ```
 PENDING / PENDING_PAYMENT    → warning   (amber, --warning-subtle bg, --warning text)
 COMPLETE / PAID / ACTIVE     → success   (green, --success-subtle bg, --success text)
@@ -121,6 +124,7 @@ REFUNDED / PROCESSING        → info      (blue, --info-subtle bg, --info text)
 ## 1.2 🔤 Typography
 
 ### Font Stack Decision
+
 **Replace Geist Sans** with a more characterful pairing:
 
 - **Display / Headings**: `"Bricolage Grotesque"` — highly expressive variable grotesque; conveys confidence and modernity without feeling cold. Self-hosted via `next/font/google`.
@@ -159,34 +163,38 @@ const mono = JetBrains_Mono({
 /* Add to globals.css */
 :root {
   --font-display: "Bricolage Grotesque", sans-serif;
-  --font-body:    "DM Sans", sans-serif;
-  --font-mono:    "JetBrains Mono", monospace;
+  --font-body: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
 }
 
 /* Body base */
-body { font-family: var(--font-body); }
+body {
+  font-family: var(--font-body);
+}
 ```
 
-| Token | Tailwind Class | Size | Weight | Line Height | Letter Spacing | Usage |
-|---|---|---|---|---|---|---|
-| `display-2xl` | `text-[72px]` | 72px | 800 | 1.0 | -0.04em | Hero H1 only |
-| `display-xl` | `text-[56px]` | 56px | 700 | 1.08 | -0.03em | Page H1 |
-| `display-lg` | `text-[40px]` | 40px | 700 | 1.12 | -0.02em | Section headings |
-| `display-md` | `text-[32px]` | 32px | 700 | 1.18 | -0.015em | Card headings |
-| `display-sm` | `text-[24px]` | 24px | 600 | 1.25 | -0.01em | Sub-headings |
-| `text-xl` | `text-xl` | 20px | 500 | 1.4 | 0 | Lead text, card titles |
-| `text-lg` | `text-lg` | 18px | 400 | 1.55 | 0 | Body large |
-| `text-base` | `text-base` | 16px | 400 | 1.6 | 0 | Body default |
-| `text-sm` | `text-sm` | 14px | 400 | 1.55 | 0.01em | UI labels, small body |
-| `text-xs` | `text-xs` | 12px | 500 | 1.5 | 0.02em | Captions, tags |
-| `text-2xs` | `text-[11px]` | 11px | 600 | 1.4 | 0.04em | Eyebrows, overlines |
+| Token         | Tailwind Class | Size | Weight | Line Height | Letter Spacing | Usage                  |
+| ------------- | -------------- | ---- | ------ | ----------- | -------------- | ---------------------- |
+| `display-2xl` | `text-[72px]`  | 72px | 800    | 1.0         | -0.04em        | Hero H1 only           |
+| `display-xl`  | `text-[56px]`  | 56px | 700    | 1.08        | -0.03em        | Page H1                |
+| `display-lg`  | `text-[40px]`  | 40px | 700    | 1.12        | -0.02em        | Section headings       |
+| `display-md`  | `text-[32px]`  | 32px | 700    | 1.18        | -0.015em       | Card headings          |
+| `display-sm`  | `text-[24px]`  | 24px | 600    | 1.25        | -0.01em        | Sub-headings           |
+| `text-xl`     | `text-xl`      | 20px | 500    | 1.4         | 0              | Lead text, card titles |
+| `text-lg`     | `text-lg`      | 18px | 400    | 1.55        | 0              | Body large             |
+| `text-base`   | `text-base`    | 16px | 400    | 1.6         | 0              | Body default           |
+| `text-sm`     | `text-sm`      | 14px | 400    | 1.55        | 0.01em         | UI labels, small body  |
+| `text-xs`     | `text-xs`      | 12px | 500    | 1.5         | 0.02em         | Captions, tags         |
+| `text-2xs`    | `text-[11px]`  | 11px | 600    | 1.4         | 0.04em         | Eyebrows, overlines    |
 
 ### Font Family Application Rules
+
 - `font-display` class → apply `Bricolage Grotesque` → use on: ALL headings (H1–H3), hero text, section titles, stat numbers, card titles, CTA buttons (not form buttons)
 - `font-body` → default everywhere else
 - `font-mono` → transaction IDs, timestamps in admin tables, code snippets
 
 ### Custom Tailwind Plugin (add to tailwind.config)
+
 ```js
 // tailwind.config.ts additions
 theme: {
@@ -207,6 +215,7 @@ theme: {
 ### Buttons
 
 **Primary Button** (the single most important element on any conversion-critical page)
+
 ```css
 /* Default */
 bg: --primary | text: --primary-foreground | border-radius: 10px
@@ -227,6 +236,7 @@ opacity: 0.45 | cursor: not-allowed | no transform
 ```
 
 **Secondary Button (outlined)**
+
 ```css
 bg: transparent | border: 1.5px solid --border-strong | text: --foreground
 border-radius: 10px | padding: 9px 19px (1px less to compensate border)
@@ -237,6 +247,7 @@ transform: translateY(-1px) | transition: 200ms spring
 ```
 
 **Destructive Button**
+
 ```css
 bg: --danger | text: --danger-foreground
 /* same spring hover/active as primary */
@@ -244,6 +255,7 @@ box-shadow: 0 4px 12px oklch(0.52 0.24 22 / 0.30)
 ```
 
 **Ghost Button** (sidebar items, toolbar actions)
+
 ```css
 bg: transparent | text: --foreground-subtle | border-radius: 8px
 padding: 8px 12px
@@ -254,6 +266,7 @@ transition: 150ms ease
 ```
 
 **Icon Button** (table actions, header icons)
+
 ```css
 width: 36px | height: 36px | border-radius: 8px
 display: flex | align-items: center | justify-content: center
@@ -263,6 +276,7 @@ bg: --surface-2 | scale(1.05) | transition: 150ms ease
 ```
 
 **Loading State (all buttons)**
+
 ```tsx
 // Spinner replaces icon/text, button stays same width
 // Use Framer Motion AnimatePresence for smooth swap
@@ -282,6 +296,7 @@ bg: --surface-2 | scale(1.05) | transition: 150ms ease
 ### Cards
 
 **Base Card**
+
 ```css
 bg: --surface-1 | border: 1px solid --border | border-radius: 16px
 box-shadow: 0 1px 4px oklch(0 0 0 / 0.06), 0 0 0 1px oklch(0 0 0 / 0.02)
@@ -295,6 +310,7 @@ transition: all 250ms cubic-bezier(0.22, 1, 0.36, 1)
 ```
 
 **Workshop Card (catalog)**
+
 ```css
 border-radius: 20px | overflow: hidden
 /* Image top 56.25% (16:9) with object-fit: cover */
@@ -304,6 +320,7 @@ border-radius: 20px | overflow: hidden
 ```
 
 **Stats Card (dashboard)**
+
 ```css
 border-radius: 16px | padding: 24px
 /* Icon: 48×48 pill in --primary-subtle bg */
@@ -312,6 +329,7 @@ border-radius: 16px | padding: 24px
 ```
 
 **Category Card (marketing)**
+
 ```css
 border-radius: 20px | aspect-ratio: 1 | overflow: hidden
 /* Background: category thumbnail or gradient placeholder */
@@ -346,6 +364,7 @@ min-height: 120px | padding: 12px 14px | resize: vertical
 ```
 
 **Search Input (catalog/tables)**
+
 ```css
 /* Prepend: Search icon in muted color, 20px, left: 14px */
 /* Input padding-left: 44px */
@@ -427,14 +446,14 @@ width: 120px | display: flex | gap: 4px | justify-content: flex-end
 
 ## 1.4 🌫 Shadows & Depth (Elevation System)
 
-| Level | CSS | Usage |
-|---|---|---|
-| 0 — Flat | `none` | Inline elements, disabled cards |
-| 1 — Raised | `0 1px 3px oklch(0 0 0/.08), 0 1px 2px oklch(0 0 0/.06)` | Cards at rest, inputs |
-| 2 — Float | `0 4px 12px oklch(0 0 0/.10), 0 2px 6px oklch(0 0 0/.08)` | Hovered cards, dropdowns |
-| 3 — Overlay | `0 8px 24px oklch(0 0 0/.14), 0 4px 12px oklch(0 0 0/.10)` | Sticky sidebar, fixed headers |
-| 4 — Modal | `0 24px 64px oklch(0 0 0/.24), 0 8px 24px oklch(0 0 0/.12)` | Dialogs, modals |
-| 5 — Spotlight | `0 32px 80px oklch(0.42 0.25 272 / 0.20)` | Primary CTA buttons, featured cards |
+| Level         | CSS                                                         | Usage                               |
+| ------------- | ----------------------------------------------------------- | ----------------------------------- |
+| 0 — Flat      | `none`                                                      | Inline elements, disabled cards     |
+| 1 — Raised    | `0 1px 3px oklch(0 0 0/.08), 0 1px 2px oklch(0 0 0/.06)`    | Cards at rest, inputs               |
+| 2 — Float     | `0 4px 12px oklch(0 0 0/.10), 0 2px 6px oklch(0 0 0/.08)`   | Hovered cards, dropdowns            |
+| 3 — Overlay   | `0 8px 24px oklch(0 0 0/.14), 0 4px 12px oklch(0 0 0/.10)`  | Sticky sidebar, fixed headers       |
+| 4 — Modal     | `0 24px 64px oklch(0 0 0/.24), 0 8px 24px oklch(0 0 0/.12)` | Dialogs, modals                     |
+| 5 — Spotlight | `0 32px 80px oklch(0.42 0.25 272 / 0.20)`                   | Primary CTA buttons, featured cards |
 
 **Primary Glow** (use on primary buttons, featured CTAs):
 `box-shadow: 0 4px 20px oklch(0.42 0.25 272 / 0.35)`
@@ -449,53 +468,68 @@ width: 120px | display: flex | gap: 4px | justify-content: flex-end
 ## 1.5 🎞 Motion System
 
 ### Core Easing Functions
+
 ```css
 :root {
-  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);  /* bouncy, feels alive */
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);       /* smooth deceleration */
-  --ease-out-circ: cubic-bezier(0, 0.55, 0.45, 1);      /* snappy exit */
-  --ease-in-expo:  cubic-bezier(0.7, 0, 0.84, 0);       /* elements leaving screen */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* bouncy, feels alive */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1); /* smooth deceleration */
+  --ease-out-circ: cubic-bezier(0, 0.55, 0.45, 1); /* snappy exit */
+  --ease-in-expo: cubic-bezier(0.7, 0, 0.84, 0); /* elements leaving screen */
 }
 ```
 
 ### Timing Standards
-| Action | Duration | Easing |
-|---|---|---|
-| Hover state (color/bg) | 150ms | ease |
-| Hover state (transform) | 200ms | --ease-spring |
-| Button press (active) | 80ms | ease-out |
-| Page transition (fade+slide) | 300ms | --ease-out-expo |
-| Modal open | 200ms | --ease-out-expo |
-| Modal close | 150ms | --ease-in-expo |
-| Card reveal (scroll) | 500ms | --ease-out-expo |
-| Stagger delay (list items) | 60ms per item | — |
-| Skeleton shimmer | 1.8s | linear infinite |
-| Toast in | 250ms | --ease-spring |
-| Toast out | 200ms | --ease-in-expo |
-| Number counter (stats) | 1200ms | --ease-out-expo |
+
+| Action                       | Duration      | Easing          |
+| ---------------------------- | ------------- | --------------- |
+| Hover state (color/bg)       | 150ms         | ease            |
+| Hover state (transform)      | 200ms         | --ease-spring   |
+| Button press (active)        | 80ms          | ease-out        |
+| Page transition (fade+slide) | 300ms         | --ease-out-expo |
+| Modal open                   | 200ms         | --ease-out-expo |
+| Modal close                  | 150ms         | --ease-in-expo  |
+| Card reveal (scroll)         | 500ms         | --ease-out-expo |
+| Stagger delay (list items)   | 60ms per item | —               |
+| Skeleton shimmer             | 1.8s          | linear infinite |
+| Toast in                     | 250ms         | --ease-spring   |
+| Toast out                    | 200ms         | --ease-in-expo  |
+| Number counter (stats)       | 1200ms        | --ease-out-expo |
 
 ### Framer Motion Reusable Variants
+
 Define these once in `lib/motion-variants.ts` and import everywhere:
 
 ```ts
 export const fadeInUp = {
   initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-  exit:    { opacity: 0, y: -12, transition: { duration: 0.2 } }
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+  },
+  exit: { opacity: 0, y: -12, transition: { duration: 0.2 } },
 };
 
 export const staggerContainer = {
-  animate: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } }
+  animate: { transition: { staggerChildren: 0.06, delayChildren: 0.1 } },
 };
 
 export const scaleIn = {
   initial: { opacity: 0, scale: 0.92 },
-  animate: { opacity: 1, scale: 1, transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] } }
+  animate: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.3, ease: [0.16, 1, 0.3, 1] },
+  },
 };
 
 export const slideInRight = {
   initial: { opacity: 0, x: 32 },
-  animate: { opacity: 1, x: 0, transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] } }
+  animate: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] },
+  },
 };
 
 export const countUp = {
@@ -505,6 +539,7 @@ export const countUp = {
 ```
 
 ### When Motion Should Fire
+
 - **On mount**: Hero content, dashboard greeting, first-visit only (no repeat on route change)
 - **On scroll**: Cards, section headings — use Intersection Observer (not scroll-distance). Trigger at 15% visible.
 - **On hover**: Buttons (transform), cards (elevation), nav items (underline grow), icons (rotate/scale)
@@ -512,6 +547,7 @@ export const countUp = {
 - **Never**: Motion on every keystroke, motion on data refetch, motion on resize
 
 ### Reduced Motion Support
+
 ```css
 @media (prefers-reduced-motion: reduce) {
   * {
@@ -529,11 +565,11 @@ export const countUp = {
 
 ## 2.1 What the User Should FEEL
 
-| User Type | Emotion on Entry | Emotion on Exit |
-|---|---|---|
-| **Student** | "This platform is legit. People get real skills here." | "I want this. I'm enrolling right now." |
+| User Type      | Emotion on Entry                                           | Emotion on Exit                                      |
+| -------------- | ---------------------------------------------------------- | ---------------------------------------------------- |
+| **Student**    | "This platform is legit. People get real skills here."     | "I want this. I'm enrolling right now."              |
 | **Instructor** | "I can build my reputation here. This feels professional." | "Creating a workshop is easy. My time is respected." |
-| **Admin** | "I have full visibility. Everything is organized." | "I controlled everything I needed to." |
+| **Admin**      | "I have full visibility. Everything is organized."         | "I controlled everything I needed to."               |
 
 ---
 
@@ -553,18 +589,23 @@ export const countUp = {
 ## 2.3 How the UI Guides the Primary Action
 
 ### Rule 1: One CTA per screen section
+
 Never put two equal-weight CTAs side by side. One is Primary (filled), one is Ghost.
 
 ### Rule 2: The Enrollment Button is sacred
+
 On Workshop Detail: The right sidebar `EnrollButton` must be permanently visible (sticky on desktop, bottom-fixed on mobile). Its state must be crystal clear. No cognitive friction between "want" and "enroll."
 
 ### Rule 3: Trust before transaction
+
 Always show: Instructor credibility → social proof (seat count) → money-back guarantee → THEN the price. Order matters.
 
 ### Rule 4: Progress reduces abandonment
+
 Multi-step forms (registration, workshop creation) need a visible step indicator. Users who can see progress continue.
 
 ### Rule 5: Empty states are opportunities
+
 Never show a blank screen. Every empty state gets: an illustration, a clear explanation, and one primary action. Students with no enrollments see "Browse Popular Workshops." Instructors with no workshops see "Create your first workshop."
 
 ---
@@ -576,6 +617,7 @@ Never show a blank screen. Every empty state gets: an illustration, a clear expl
 ## PAGE 1: HOMEPAGE (`/`)
 
 ### 🎯 Goal
+
 Convert browser into registrant. Create immediate impression of quality and trust. Push to Workshop Catalog.
 
 ---
@@ -585,6 +627,7 @@ Convert browser into registrant. Create immediate impression of quality and trus
 **Height**: 72px fixed sticky. **Background**: `--background / 92%` with `backdrop-filter: blur(20px)`. 1px bottom border `--border`. `box-shadow: 0 1px 0 --border` (subtle, not heavy).
 
 **Layout**: `max-w-7xl` centered, 3-column flex:
+
 - Left: Logo (text mark "Skill Workshop" — "Skill" in `--foreground` Bricolage Grotesque 700, "Workshop" in `--primary` 700)
 - Center: Nav links (Home, Workshops, Categories, About, Contact) — DM Sans 15px/500, `--foreground-subtle`. On hover: color transitions to `--foreground` in 150ms + 2px underline grows from center (width: 0→100%, `transform-origin: center`, 200ms ease-out)
 - Right: ThemeToggle icon button + Login (ghost) + "Get Started" (primary, small)
@@ -602,6 +645,7 @@ Convert browser into registrant. Create immediate impression of quality and trus
 **Layout**: Full width, `min-height: calc(100vh - 72px)` (fills above fold). `padding: 100px 0 80px`.
 
 **Background construction** (critical — creates "WOW" immediately):
+
 ```css
 /* Layer stack (bottom to top): */
 1. Base: --background
@@ -614,6 +658,7 @@ Convert browser into registrant. Create immediate impression of quality and trus
 **Content**: Two-column, 50/50, center-aligned vertically. Gap: 64px.
 
 **Left column**:
+
 - Eyebrow: Pill badge — "🇧🇩 Made for Bangladesh" — `--accent-subtle` bg, `--accent-foreground` text, 12px/600, border-radius: 999px, padding: 4px 12px. Appears with `fadeInUp` 0ms delay.
 - H1: "Unlock Real Skills. Build Your Future." — `font-display`, 56px/800, `--foreground`, letter-spacing: -0.03em, line-height: 1.08. "Real Skills" underlined with hand-drawn SVG underline in `--accent`. Appears at 100ms delay.
 - Lead text: "Connect with industry experts across Bangladesh through hands-on workshops designed for real-world results." — DM Sans 18px/400, `--foreground-subtle`, max-width: 480px. Appears at 200ms.
@@ -621,6 +666,7 @@ Convert browser into registrant. Create immediate impression of quality and trus
 - Stats row: 4 stats separated by `|` dividers. Animated counter on mount. Format: Number in `font-display 28px/700 --foreground` + Label in `12px/600 --foreground-muted uppercase`. Stats: `500+ Students · 50+ Workshops · 30+ Instructors · 4.8★ Rating`. At 400ms.
 
 **Right column**: Hero illustration — DO NOT use stock photo. Instead: Abstract 3D-style composition built in SVG/CSS:
+
 - Central floating card element showing a mini workshop preview (title, instructor avatar, price in BDT)
 - 3 orbiting smaller badges: "Certificate", "Live Sessions", "Expert Mentors"
 - Floating emoji/icon elements: 📊 💻 🎨 🔧 (relevant to workshop categories)
@@ -638,10 +684,11 @@ Convert browser into registrant. Create immediate impression of quality and trus
 **Layout**: 4 stats in a horizontal flex (space-evenly) with vertical separators. On mobile: 2×2 grid.
 
 **Each stat**:
+
 ```
-[Icon 24px in --primary-subtle circle]  
-[Number font-display 32px/700 --foreground]  
-[Label DM Sans 13px/500 --foreground-muted]  
+[Icon 24px in --primary-subtle circle]
+[Number font-display 32px/700 --foreground]
+[Label DM Sans 13px/500 --foreground-muted]
 ```
 
 ---
@@ -649,6 +696,7 @@ Convert browser into registrant. Create immediate impression of quality and trus
 ### Section 4: Featured Workshops
 
 **Section header** (applies to all sections):
+
 - Eyebrow: `font: DM Sans 12px/600 uppercase letter-spacing: 0.08em color: --primary`
 - H2: `font: Bricolage Grotesque 40px/700 --foreground letter-spacing: -0.02em`
 - Subtext: `DM Sans 17px/400 --foreground-subtle max-width: 560px`
@@ -657,6 +705,7 @@ Convert browser into registrant. Create immediate impression of quality and trus
 **Grid**: 2×2 at desktop, `gap: 24px`. On tablet: 2 columns. On mobile: 1 column.
 
 **Workshop Card (Featured variant)**:
+
 ```
 border-radius: 20px | overflow: hidden | bg: --surface-1 | border: 1px solid --border
 elevation-1 | hover → elevation-2 + translateY(-3px) | transition: 280ms ease-out-expo
@@ -670,7 +719,7 @@ Level badge: --primary-subtle bg, --primary text
 Category badge: --accent-subtle bg, --accent-foreground text
 
 [PRICE — absolute top-right, 12px margin]
-"৳12,500" — Bricolage Grotesque 16px/700 bg: --background/90 backdrop-blur:4px 
+"৳12,500" — Bricolage Grotesque 16px/700 bg: --background/90 backdrop-blur:4px
 padding: 4px 10px | border-radius: 8px
 
 [BODY — padding: 20px]
@@ -688,6 +737,7 @@ Meta row: 📍 Location · 📅 Date — DM Sans 13px/400 --foreground-muted
 **Grid**: 3 columns at desktop, auto-scroll carousel on mobile (snap-x, overflow-x-auto, no scrollbar).
 
 **Category Card**:
+
 ```
 border-radius: 20px | height: 200px | overflow: hidden | cursor: pointer
 position: relative | border: 1px solid --border
@@ -717,6 +767,7 @@ Overlay darkens slightly (0.72 → 0.80)
 **Grid**: 2×2 at desktop. On mobile: 1 column.
 
 **Feature Card**:
+
 ```
 bg: --background | border: 1px solid --border | border-radius: 20px | padding: 28px
 elevation-1 | group | hover → elevation-2 + border-color: --primary/40
@@ -732,6 +783,7 @@ P: DM Sans 15px/400 --foreground-subtle | line-height: 1.65 | margin-top: 8px
 ```
 
 Features (in this order, anti-clockwise importance):
+
 1. Expert Instructors — "Learn from verified industry professionals with years of real-world experience"
 2. Hands-on Learning — "Practical workshops, not passive lectures. Build skills you can use on Day 1"
 3. Flexible Schedule — "Choose workshops that fit your life. Weekend and evening batches available"
@@ -746,6 +798,7 @@ Features (in this order, anti-clockwise importance):
 **Layout**: Masonry-style 2-column grid. 4 testimonials. Add 1 more for asymmetry (5 total in a 3+2 layout).
 
 **Testimonial Card**:
+
 ```
 bg: --surface-1 | border: 1px solid --border | border-radius: 20px | padding: 28px
 elevation-1
@@ -775,6 +828,7 @@ Role + Workshop: DM Sans 13px/400 --foreground-muted
 **Layout**: Center-aligned text + 2 buttons.
 
 **Content**:
+
 - Eyebrow: "Join 500+ learners across Bangladesh" — `--primary-foreground/70` 12px/600 uppercase
 - H2: "Your skills upgrade starts today." — Bricolage 40px/700 white
 - Subtext: DM Sans 17px/400 `--primary-foreground/80`
@@ -790,6 +844,7 @@ Role + Workshop: DM Sans 13px/400 --foreground-muted
 **Layout**: `padding: 64px 0 32px`. 4-column grid + bottom bar.
 
 **Columns**:
+
 1. Brand: Logo, 2-line tagline, social icons (Facebook, LinkedIn, Twitter, YouTube) as ghost icon buttons
 2. Platform: Workshop Catalog, Categories, About Us, Contact, FAQ
 3. For Instructors: Become an Instructor, Instructor Dashboard, Resources, Support
@@ -820,6 +875,7 @@ Role + Workshop: DM Sans 13px/400 --foreground-muted
 ## PAGE 2: WORKSHOPS CATALOG (`/workshops`)
 
 ### 🎯 Goal
+
 Help student find the right workshop quickly. Remove friction between discovery and enrollment.
 
 ---
@@ -843,6 +899,7 @@ Subtext: "Browse {total} workshops taught by verified experts across Bangladesh"
 **Layout**: Single row at desktop. `bg: --background/95 backdrop-blur: 12px`. `padding: 16px 0`. `border-bottom: 1px solid --border`.
 
 **Elements** (left to right):
+
 1. Search input: `width: 280px` — magnifying glass icon prepend + clear X button
 2. Category Select: Shadcn Select, width 180px, "All Categories"
 3. Level Select: width 160px, "All Levels"
@@ -860,6 +917,7 @@ Subtext: "Browse {total} workshops taught by verified experts across Bangladesh"
 **Layout**: `grid-template-columns: repeat(3, 1fr)` at lg, `repeat(2, 1fr)` at md, `1fr` at sm. `gap: 24px`.
 
 **Workshop Card (Catalog variant)** — slightly more detailed than homepage variant:
+
 ```
 border-radius: 20px | overflow: hidden | bg: --surface-1 | border: 1px solid --border
 elevation-1 | hover → elevation-2 + translateY(-3px) | cursor: pointer
@@ -888,6 +946,7 @@ RIGHT: "Enroll Now →" ghost button — transforms to primary on card hover
 ```
 
 **Card Skeleton (loading)**:
+
 ```
 Same dimensions | bg: --surface-2
 All content: shimmer rectangles
@@ -896,6 +955,7 @@ Animation: shimmer gradient moves left-to-right
 ```
 
 **Empty State**:
+
 ```
 Center of grid | padding: 80px 0
 Illustration: Large SVG of a telescope (searching metaphor) in --primary muted colors
@@ -911,6 +971,7 @@ Buttons: "Clear Filters" (primary) + "Browse All" (ghost)
 **Layout**: `flex justify-center align-center gap: 8px | padding: 40px 0`
 
 **Controls**: Previous button | Page numbers (show 5, ellipsis for overflow) | Next button
+
 - Current page: `bg: --primary, color: --primary-foreground, border-radius: 8px`
 - Other pages: ghost buttons, hover → --surface-2
 - Disabled prev/next: opacity 0.4
@@ -930,6 +991,7 @@ Buttons: "Clear Filters" (primary) + "Browse All" (ghost)
 ## PAGE 3: WORKSHOP DETAIL (`/workshops/[slug]`) ⭐ MOST CRITICAL
 
 ### 🎯 Goal
+
 Remove every barrier between the user's interest and clicking "Enroll Now." Build maximum trust in minimum time.
 
 ---
@@ -951,6 +1013,7 @@ Breadcrumb: Home > Workshops > [Workshop Title (truncated 40 chars)]
 **LEFT — Main content (scrollable)**:
 
 **Hero block** (first thing visible):
+
 ```
 [IMAGE CAROUSEL]
 height: 440px | border-radius: 20px | overflow: hidden
@@ -965,13 +1028,14 @@ If no images: illustrated placeholder (workshop silhouette in --primary-subtle)
 H1: Bricolage 40px/700 --foreground letter-spacing: -0.02em | margin: 12px 0
 [Meta pills row — flex wrap gap: 12px]
 Each pill: bg --surface-2 | border: 1px solid --border | border-radius: 8px | padding: 8px 14px
-  📍 [Location] | 📅 [Start Date] | ⏱ [Duration: endDate - startDate] 
+  📍 [Location] | 📅 [Start Date] | ⏱ [Duration: endDate - startDate]
   👥 [N seats total] | 🎯 [Level] | 💰 [Price]
 ```
 
 **Content sections (below hero block)**:
 
 Each content section uses this pattern:
+
 ```
 [Section heading: Bricolage 24px/700 --foreground | margin: 32px 0 16px]
 [1px --border divider under heading]
@@ -979,11 +1043,13 @@ Each content section uses this pattern:
 ```
 
 **About this Workshop**:
+
 ```
 DM Sans 16px/400 --foreground | line-height: 1.75
 ```
 
 **What You'll Learn** (whatYouLearn array):
+
 ```
 2-column grid | gap: 12px
 Each item: flex | gap: 10px
@@ -992,19 +1058,22 @@ Each item: flex | gap: 10px
 ```
 
 **Prerequisites** (prerequisites array):
+
 ```
 Vertical list | gap: 8px
-Each item: flex | gap: 10px  
+Each item: flex | gap: 10px
   Dot icon: 6px circle bg --foreground-muted
   Text: DM Sans 15px/400 --foreground-subtle
 ```
 
 **Benefits** (benefits array):
+
 ```
 Same visual as "What You'll Learn" but with star ⭐ icon in --accent bg
 ```
 
 **Syllabus** (syllabus array):
+
 ```
 Accordion-style numbered list
 Each item: flex | gap: 14px
@@ -1014,6 +1083,7 @@ Each item: flex | gap: 14px
 ```
 
 **Instructor Card**:
+
 ```
 bg: --surface-1 | border: 1px solid --border | border-radius: 20px | padding: 28px
 flex gap: 20px
@@ -1026,6 +1096,7 @@ Bio: DM Sans 15px/400 --foreground-subtle | line-height: 1.65 | 4-line clamp wit
 ```
 
 **Similar Workshops** (3 horizontal cards, scrollable on mobile):
+
 ```
 Section: "You Might Also Like"
 3 compact cards in a row | same catalog card variant | smaller (no description)
@@ -1089,7 +1160,7 @@ States (matches existing EnrollButton state machine):
 [TRUST SIGNALS — below button, padding-top: 16px]
 3 rows, each: flex gap: 8px | DM Sans 13px/400 --foreground-subtle
   🔒 "Secure payment via SSLCommerz"
-  ↩ "7-day money-back guarantee"  
+  ↩ "7-day money-back guarantee"
   📧 "Instant confirmation email"
 
 [DIVIDER]
@@ -1107,6 +1178,7 @@ Icon buttons: 36px ghost circles
 ```
 
 **Mobile Sidebar behavior**:
+
 - Sidebar disappears from right column (single-column layout)
 - Enroll button becomes a **fixed bottom bar**: `position: fixed; bottom: 0; left: 0; right: 0`
 - Bar: `bg: --background/95 backdrop-blur: 12px; border-top: 1px solid --border; padding: 12px 16px; safe-area-inset-bottom`
@@ -1128,6 +1200,7 @@ Icon buttons: 36px ghost circles
 ## PAGE 4: AUTH PAGES (`/login`, `/register`, `/verify-otp`, `/forgot-password`, `/reset-password`)
 
 ### 🎯 Goal
+
 Fast, frictionless auth. Build confidence at the exact moment of commitment.
 
 ---
@@ -1135,6 +1208,7 @@ Fast, frictionless auth. Build confidence at the exact moment of commitment.
 ### Auth Layout Shell
 
 **Background**: full-viewport. Split-screen at desktop (lg+):
+
 - **Left panel** (40% width): `bg: --primary`. Contains brand storytelling:
   ```
   Vertical center
@@ -1150,6 +1224,7 @@ Fast, frictionless auth. Build confidence at the exact moment of commitment.
 **Mobile**: No split. Full-page centered card. Logo at top. Left panel content collapses to a small trust row beneath the submit button.
 
 **Auth Card**:
+
 ```
 bg: --surface-1 | border: 1px solid --border | border-radius: 24px | padding: 40px
 elevation-3
@@ -1160,6 +1235,7 @@ elevation-3
 ### Login Page
 
 **Card content order**:
+
 ```
 Logo mark (36px height) + "Skill Workshop" text | center-aligned | margin-bottom: 32px
 
@@ -1198,6 +1274,7 @@ DM Sans 14px/400 --foreground-muted | center-aligned
 ### Register Page (Student + Instructor variants)
 
 **Step indicator** (NEW — does not exist currently but adds massive UX value):
+
 ```
 3 steps: [1 Account Details] → [2 Verify Email] → [3 You're In!]
 Step bar: flex | gap: 0 | margin-bottom: 32px
@@ -1208,11 +1285,13 @@ Upcoming step: --surface-3 bg, --foreground-muted text
 ```
 
 **Student fields**:
+
 - Full Name | Email | Phone | Password | Confirm Password
 - Password strength meter (PasswordChecklist below field — existing component, style upgrade)
 - Existing `PasswordChecklist` component: redesign each item as `flex gap: 8px | DM Sans 13px | icon: circle check (green filled when met, gray outline when not)`
 
 **Instructor additional fields** (collapsible card appears below base fields):
+
 ```
 [Section divider: "Instructor Profile"]
 Expertise (text input) | Short Bio (textarea, 300 char counter bottom-right)
@@ -1223,11 +1302,12 @@ Expertise (text input) | Short Bio (textarea, 300 char counter bottom-right)
 ### OTP Verify Page
 
 **Card content**:
+
 ```
 [Email icon illustration — 64px envelope in --primary-subtle circle]
 
 H2: "Check your inbox" | Bricolage 28px/700
-Subtext: "We sent a 6-digit code to {email}" 
+Subtext: "We sent a 6-digit code to {email}"
   Email in --primary 500 weight
 
 [OTP Input — existing input-otp, style upgrade]
@@ -1260,6 +1340,7 @@ Active after: "Resend code" --primary underline link
 **Two-state flow** (existing behavior, visual upgrade):
 
 **State 1 (Input)**:
+
 ```
 [Icon: Lock with question mark — 64px in --warning-subtle circle]
 H2: "Reset your password"
@@ -1270,6 +1351,7 @@ Subtext: "Enter your email and we'll send you reset instructions"
 ```
 
 **State 2 (Success)**:
+
 ```
 [Animated checkmark — Framer Motion drawing SVG check in --success circle]
 H2: "Check your email"
@@ -1298,6 +1380,7 @@ H2: "Set new password"
 ## PAGE 5: STUDENT DASHBOARD (`/student/dashboard`)
 
 ### 🎯 Goal
+
 Give student a clear picture of their progress and guide next action (browse more workshops / complete payment).
 
 ---
@@ -1305,6 +1388,7 @@ Give student a clear picture of their progress and guide next action (browse mor
 ### Layout: Dashboard Shell
 
 **Sidebar** (dark, 260px fixed left):
+
 ```
 bg: --sidebar-bg | border-right: 1px solid --sidebar-border | padding: 24px 0
 position: fixed | height: 100vh | z-index: 40
@@ -1330,6 +1414,7 @@ Logout button: ghost, full width, --danger text on hover
 **Main content area**: `margin-left: 260px | padding: 32px`. `bg: --background`. Min-height: 100vh.
 
 **Header bar** (top of main content):
+
 ```
 height: 64px | flex justify-between align-center | margin-bottom: 32px
 LEFT: Breadcrumbs (auto from URL) | DM Sans 13px/400 --foreground-muted
@@ -1343,6 +1428,7 @@ RIGHT: ThemeToggle + Notification bell (with unread count badge) + Avatar (40px,
 ### Student Dashboard Home — Section Breakdown
 
 **Section 1: Greeting**
+
 ```
 [padding-bottom: 32px | border-bottom: 1px solid --border]
 
@@ -1354,6 +1440,7 @@ Right side (absolute at desktop): Quick action button "Browse Workshops →"
 ```
 
 **Section 2: Stats Cards**
+
 ```
 Grid: 4 columns at lg, 2 at md, 1 at sm | gap: 20px | margin-bottom: 32px
 ```
@@ -1361,6 +1448,7 @@ Grid: 4 columns at lg, 2 at md, 1 at sm | gap: 20px | margin-bottom: 32px
 4 cards: **Enrolled, Completed, Total Spent (BDT), Pending Payments**
 
 Each `StatsCard` (upgraded from existing):
+
 ```
 bg: --surface-1 | border: 1px solid --border | border-radius: 16px | padding: 24px
 elevation-1
@@ -1379,12 +1467,14 @@ If neutral: "--foreground-muted"
 ```
 
 Icon colors per stat:
+
 - Enrolled: `bg: --primary-subtle` | BookOpen icon `--primary`
 - Completed: `bg: --success-subtle` | CheckCircle `--success`
 - Total Spent: `bg: --accent-subtle` | BanknoteIcon `--accent-foreground`
 - Pending Payments: `bg: --warning-subtle` | Clock `--warning`
 
 **Section 3: My Enrollments (Recent)**
+
 ```
 [Section header: "My Recent Enrollments" + "View All →" right link]
 
@@ -1393,14 +1483,14 @@ Each row: bg --surface-1 | border: 1px solid --border | border-radius: 14px | pa
   flex align-center gap: 16px
 
   Image: 60px × 60px border-radius: 10px | object-fit: cover | bg --surface-3 (fallback)
-  
+
   LEFT content:
     Workshop title: DM Sans 16px/600 --foreground | 1-line clamp | link to /workshops/[slug]
     Meta: "📅 Starts Jan 5, 2025 · 👥 2 students" | 13px/400 --foreground-muted
-  
+
   RIGHT content:
     StatusBadge (existing component, style upgraded per new palette)
-    
+
     [If status === "PENDING" and payment UNPAID]
     "Complete Payment →" — --warning text 13px/600 link
 
@@ -1411,6 +1501,7 @@ Empty state:
 ```
 
 **Section 4: Quick Actions**
+
 ```
 [Section: "Quick Actions" | 3-column grid | gap: 16px]
 
@@ -1429,16 +1520,19 @@ Actions:
 ## PAGE 6: INSTRUCTOR DASHBOARD (`/instructor/dashboard`)
 
 ### 🎯 Goal
+
 Motivate instructor through visible progress metrics. Surface fastest path to more students.
 
 ---
 
 **Stats Grid (3 columns)**:
+
 - My Workshops (total count + "N published, N draft")
 - Total Students (across all workshops)
 - Total Revenue (in BDT, formatted: "৳1,25,000")
 
 **Revenue Chart (Recharts — currently underutilized)**:
+
 ```
 [Section: "Monthly Revenue" + Month selector (last 3/6/12 months tabs)]
 
@@ -1454,6 +1548,7 @@ AreaChart from Recharts:
 ```
 
 **My Workshops Table** (compact, top 5 by recent):
+
 ```
 [Section header + "Manage Workshops →" link]
 
@@ -1464,12 +1559,14 @@ Table:
 ```
 
 **Recent Enrollments** (list, last 5):
+
 ```
 Each: Student avatar + Name + Workshop name + Date + Status badge
 Compact row style
 ```
 
 **Enrollment Trend Chart**:
+
 ```
 BarChart (Recharts):
   Last 8 weeks of enrollment counts
@@ -1482,11 +1579,13 @@ BarChart (Recharts):
 ## PAGE 7: ADMIN / SUPER-ADMIN DASHBOARD
 
 ### 🎯 Goal
+
 Full platform visibility at a glance. Surface anomalies instantly.
 
 ---
 
 **Stats Grid (4 columns at lg)**:
+
 - Total Users | Total Workshops | Total Revenue (BDT) | Total Enrollments
 
 Each card upgraded with: `sparkline mini-chart` (7-day trend, 80px wide, Recharts LineChart with no axes, just the line in --primary) rendered in bottom-right of each stats card.
@@ -1494,12 +1593,14 @@ Each card upgraded with: `sparkline mini-chart` (7-day trend, 80px wide, Rechart
 **Main Dashboard Content — 2 columns (3fr + 2fr)**:
 
 **Left (3fr)**:
+
 ```
 [Revenue Chart: AreaChart, 12-month view, tabs: Revenue / Enrollments / Users]
 [Recent Audit Logs: compact table, last 10 | Action badge | Collection | Who | When]
 ```
 
 **Right (2fr)**:
+
 ```
 [User Growth PieChart: Students vs Instructors vs Admins | Recharts PieChart with legend]
 [Workshop Distribution BarChart: Enrollments by category | horizontal BarChart]
@@ -1508,6 +1609,7 @@ Each card upgraded with: `sparkline mini-chart` (7-day trend, 80px wide, Rechart
 ```
 
 **Platform Health Section**:
+
 ```
 Fetches GET /health/health-check and /health/dashboard
 3 cards: API Server | MongoDB | Redis
@@ -1522,6 +1624,7 @@ Auto-refreshes every 60s (TanStack Query refetchInterval)
 ### LIST PAGE (`/{role}/workshops`)
 
 **Page Header**:
+
 ```
 [flex space-between align-center | margin-bottom: 24px]
 LEFT: H1 "Workshops" | Breadcrumb above
@@ -1538,7 +1641,7 @@ RIGHT: "+ Create Workshop" primary button
 Columns:
 1. [Image 52×40px border-radius: 6px] + [Title DM Sans 15px/600 + slug below 12px muted]
 2. Category — badge (--accent-subtle)
-3. Level — badge (--primary-subtle)  
+3. Level — badge (--primary-subtle)
 4. Price — Bricolage 16px/600 "৳12,500" or "Free"
 5. Seats — [n/max] | bar-fill visualization inline | "FULL" danger badge if full
 6. Status — StatusBadge (Published / Draft)
@@ -1555,6 +1658,7 @@ Columns:
 **Form Layout**: Single-column max-width: 720px, left-aligned within content area. Split into collapsible card sections.
 
 **Section Cards**:
+
 ```
 Each section: bg --surface-1 | border: 1px solid --border | border-radius: 16px | padding: 28px | margin-bottom: 20px
 
@@ -1570,6 +1674,7 @@ Sections:
 ```
 
 **List Field Editor** (whatYouLearn, etc.):
+
 ```
 Existing: each item shown as chip/tag with remove button
 Upgrade:
@@ -1582,13 +1687,14 @@ Upgrade:
 ```
 
 **Image Upload Area**:
+
 ```
 Upload zone: dashed border 2px --border | border-radius: 16px | padding: 40px
   Center content: Cloud upload icon (40px --primary) + "Drag & drop images here"
   + "or click to browse" (--primary link) + "Max 5 images, JPG/PNG"
   Hover: border-color --primary | bg --primary-subtle/30
 
-Uploaded images grid: 3 columns | each: 
+Uploaded images grid: 3 columns | each:
   position: relative | border-radius: 12px | overflow: hidden
   [Image: object-fit cover | aspect-ratio: 16/9]
   [Hover overlay: dark 50% | X button center-top-right | "Set as Cover" button if first]
@@ -1603,6 +1709,7 @@ Uploaded images grid: 3 columns | each:
 **Layout**: Tabs at top (All | Paid | Unpaid | Failed) with counts in badges.
 
 **Payment card** (replaces plain table for student view):
+
 ```
 bg: --surface-1 | border: 1px solid --border | border-radius: 16px | padding: 20px
 flex gap: 16px | margin-bottom: 12px
@@ -1647,7 +1754,7 @@ Amount paid: Bricolage 24px/700
 
 ```
 [Same animated circle but --danger-subtle with ✗ icon in --danger]
-H2: "Payment was not completed" 
+H2: "Payment was not completed"
 Subtext: "Your enrollment is still pending. No charge was made."
 "Try Again" (primary) + "Contact Support" (ghost)
 ```
@@ -1657,9 +1764,11 @@ Subtext: "Your enrollment is still pending. No charge was made."
 ## PAGE 10: CATEGORIES PAGE (`/categories`)
 
 ### 🎯 Goal
+
 Help students find workshops by domain. Make exploration feel exciting.
 
 **Hero**:
+
 ```
 padding: 60px 0 | bg: linear-gradient(to bottom, --primary-subtle, --background)
 H1: "Explore by Category" | eyebrow: "All Disciplines"
@@ -1668,6 +1777,7 @@ H1: "Explore by Category" | eyebrow: "All Disciplines"
 **Category Grid**: 4 columns at desktop. 2 at tablet. 1 at mobile. `gap: 24px`.
 
 **Category Card (detailed variant)**:
+
 ```
 border-radius: 24px | overflow: hidden | cursor: pointer | aspect-ratio: 4/3
 position: relative | border: 1px solid --border
@@ -1780,8 +1890,12 @@ All skeleton variants must use the new shimmer animation:
 }
 
 @keyframes shimmer {
-  0%   { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 ```
 
@@ -1819,7 +1933,7 @@ LEFT:
   H1: Bricolage 28px/700 --foreground
   Subtext: DM Sans 15px/400 --foreground-subtle [if provided]
 
-RIGHT: 
+RIGHT:
   [Action buttons slot — typically "Create +" primary button]
 ```
 
@@ -1830,6 +1944,7 @@ RIGHT:
 ---
 
 ### Rank 1 ⚡ Workshop Detail Sidebar — Fixed Mobile Enroll Bar
+
 **Impact**: Highest. Every mobile user (likely 60%+ in Bangladesh) will see this. Removes the #1 conversion drop-off point. A user shouldn't have to scroll to enroll.
 **Effort**: Low (position: fixed, existing EnrollButton component).
 **Ship in**: Sprint 1.
@@ -1837,6 +1952,7 @@ RIGHT:
 ---
 
 ### Rank 2 ⚡ Animated Stats Counters on Dashboard & Homepage
+
 **Impact**: Creates immediate "this feels premium" perception. Numbers counting up from 0 create emotional investment in the data.
 **Effort**: Low (Framer Motion useSpring, 20 lines of code).
 **Ship in**: Sprint 1.
@@ -1844,6 +1960,7 @@ RIGHT:
 ---
 
 ### Rank 3 ⚡ Revenue & Enrollment Charts on Dashboards
+
 **Impact**: Recharts is already installed but unused. Adding real charts (AreaChart for revenue, BarChart for enrollments) transforms the dashboard from a table viewer into a genuine analytics tool. Instructors and admins will feel the product's value every day.
 **Effort**: Medium (TanStack Query for stats endpoints + Recharts setup).
 **Ship in**: Sprint 1-2.
@@ -1851,6 +1968,7 @@ RIGHT:
 ---
 
 ### Rank 4 ⚡ Workshop Card Image Carousel (Detail Page)
+
 **Impact**: The model already supports up to 10 images. Using only the first image wastes massive conversion potential. A swipeable image gallery increases trust and session time.
 **Effort**: Medium (custom carousel component or import `embla-carousel-react`).
 **Ship in**: Sprint 2.
@@ -1858,6 +1976,7 @@ RIGHT:
 ---
 
 ### Rank 5 ⚡ Registration Step Indicator
+
 **Impact**: Multi-field registration (especially instructor: 7 fields + OTP) has high abandonment. A visible "Step 1 of 3" indicator reduces drop-off by ~25-40% (industry data).
 **Effort**: Low (UI state machine, existing registration flow unchanged).
 **Ship in**: Sprint 1.
@@ -1865,6 +1984,7 @@ RIGHT:
 ---
 
 ### Rank 6 ⚡ Hero Illustration (Homepage)
+
 **Impact**: Replaces the current "generic blob + text" pattern with a distinctive, memorable visual that communicates the product in 1 second. First impression is everything for new visitors.
 **Effort**: Medium-High (custom SVG illustration, CSS animations).
 **Ship in**: Sprint 2.
@@ -1872,6 +1992,7 @@ RIGHT:
 ---
 
 ### Rank 7 ⚡ Payment Success Animated Page
+
 **Impact**: The post-payment moment is the highest-emotion touchpoint. A generic redirect page wastes the euphoria moment. An animated success screen creates a shareable, memorable moment.
 **Effort**: Low (Framer Motion SVG animation, replace the existing static page).
 **Ship in**: Sprint 1.
@@ -1879,6 +2000,7 @@ RIGHT:
 ---
 
 ### Rank 8 ⚡ Font Replacement (Geist → Bricolage Grotesque + DM Sans)
+
 **Impact**: Typography is 70% of design. This single change makes the entire platform feel more premium with zero layout changes. Bricolage Grotesque on headings creates instant character.
 **Effort**: Very Low (2 font imports + CSS variable update).
 **Ship in**: Sprint 1, Day 1.
@@ -1886,6 +2008,7 @@ RIGHT:
 ---
 
 ### Rank 9 ⚡ Notification System (real data, not placeholder)
+
 **Impact**: The bell currently shows static "Coming Soon." Wiring it to actual events (new enrollment for instructors, payment confirmation for students) adds a retention loop that brings users back.
 **Effort**: Medium (no backend changes needed — poll from existing enrollment/payment endpoints).
 **Ship in**: Sprint 2-3.
@@ -1893,6 +2016,7 @@ RIGHT:
 ---
 
 ### Rank 10 ⚡ Sticky Filter Bar on Workshop Catalog
+
 **Impact**: Users who filter and then scroll down lose context. Making the filter bar sticky (below the navbar) lets them refine without scrolling back up, reducing filter friction by significant margin.
 **Effort**: Very Low (1 line of CSS position: sticky).
 **Ship in**: Sprint 1, Day 1.
@@ -1904,60 +2028,70 @@ RIGHT:
 ---
 
 ### ❌ NEVER: Two primary CTAs in the same visual hierarchy
+
 **Why it's happening**: "Browse Workshops" and "Learn More" both styled the same way in hero.
 **Fix**: "Browse Workshops" = primary (filled). "Learn More" = ghost. Always exactly one primary CTA per section.
 
 ---
 
 ### ❌ NEVER: Placeholders that look like content
+
 **Why it's happening**: When thumbnail is null, the card shows a gray box. Users don't know if it's loading or intentional.
 **Fix**: Add a real placeholder: workshop icon in a gradient background using the category name as seed. Never show bare gray.
 
 ---
 
 ### ❌ NEVER: Using the same color for primary + accent actions
+
 **Why it's happening**: The Enroll button and nav links both use --primary.
 **Fix**: Enroll button = --accent (amber). Nav links, secondary actions = --primary. Create visual distinction between "explore" and "commit" actions.
 
 ---
 
 ### ❌ NEVER: Inconsistent border-radius within the same page
+
 **Current state**: Some cards use rounded-md, some rounded-lg, some rounded-xl.
 **Fix**: Strict system: Cards = 20px, dialogs = 20px, inputs = 10px, badges = 6px, buttons = 10px, pills = 999px. Define these as Tailwind theme values.
 
 ---
 
 ### ❌ NEVER: Tables without empty states
+
 **Why it's happening**: When a student/instructor has no data, the DataTable renders with just headers.
 **Fix**: Every DataTable has an EmptyState component. Pass `emptyMessage` and `emptyAction` as props. This is already possible with the existing DataTable — just not implemented everywhere.
 
 ---
 
 ### ❌ NEVER: Form errors only at the top
+
 **Current state**: API errors show as a top-of-form alert. Field-level errors show below fields.
 **Fix**: Keep both. But the top alert should also list which fields failed (from API `errors` array). And auto-scroll to the first errored field on submit.
 
 ---
 
 ### ❌ NEVER: Price displayed without formatting
+
 **Current state**: Some places show `12500` raw.
 **Fix**: Always use `formatCurrency()` from `lib/formatters.ts`. Should output: `৳12,500` with BDT Taka symbol, comma-separated. On cards: `৳12,500`. On checkout: `BDT 12,500.00`.
 
 ---
 
 ### ❌ NEVER: Loading states that block the entire page
+
 **Current state**: Some components show full page spinners during data fetching.
 **Fix**: Use skeleton screens that match the final layout's dimensions. The user should never see a blank rectangle or a centered spinner that replaces meaningful content.
 
 ---
 
 ### ❌ NEVER: Motion that isn't meaningful
+
 **Rule**: If an animation doesn't communicate state change, status, or direction — remove it. Decorative-only animations that repeat infinitely (except very slow ones) feel cheap.
 **Fix**: Audit all animations. Each must answer: "What does this communicate to the user?"
 
 ---
 
 ### ❌ NEVER: Instructor registration using manual useState instead of react-hook-form
+
 **Current state (from context)**: Instructor registration uses manual `useState`, while student uses `react-hook-form + Zod`.
 **Fix**: Unify both on `react-hook-form + Zod`. The inconsistency creates bugs, inconsistent validation feedback, and code debt.
 
@@ -1968,6 +2102,7 @@ RIGHT:
 ---
 
 ## Sprint 0 (1 day) — Design Tokens Only
+
 **Zero risk, maximum leverage. No component changes.**
 
 1. Add `Bricolage Grotesque` + `DM Sans` to `app/layout.tsx` via `next/font/google`
@@ -1981,9 +2116,11 @@ RIGHT:
 ---
 
 ## Sprint 1 (1 week) — Core Conversion Elements
+
 **Target: Homepage + Workshop Detail + Auth + Critical micro-animations**
 
 Priority order:
+
 1. `globals.css` — shimmer skeleton upgrade + animation easing variables
 2. `PublicNavbar` — backdrop blur, scroll behavior, auth state upgrade
 3. Homepage Hero — new background layers (pure CSS), stats counter animation
@@ -1995,6 +2132,7 @@ Priority order:
 ---
 
 ## Sprint 2 (1 week) — Dashboard & Data Visualization
+
 **Target: All dashboards functional with charts**
 
 1. Dashboard Sidebar — dark theme, role-based nav items, mobile sheet
@@ -2007,6 +2145,7 @@ Priority order:
 ---
 
 ## Sprint 3 (1 week) — Catalog & Content Pages
+
 **Target: Workshop catalog, categories, about, FAQ**
 
 1. Workshop Catalog — card upgrade, sticky filter bar, mobile filter Sheet
@@ -2018,6 +2157,7 @@ Priority order:
 ---
 
 ## Sprint 4 (1 week) — Management & Polish
+
 **Target: CRUD forms, tables, modals, notification system**
 
 1. `WorkshopForm` — section card layout, list editor upgrade, image upload zone
@@ -2031,6 +2171,7 @@ Priority order:
 ---
 
 ## Sprint 5 (1 week) — Performance & Accessibility
+
 **Target: Production-readiness**
 
 1. Audit all images → `next/image` with proper `sizes` and `priority` attributes
@@ -2057,33 +2198,33 @@ Priority order:
 
 To avoid confusion, here is exactly which file to modify for each change:
 
-| Change | File |
-|---|---|
-| Fonts + CSS tokens | `app/globals.css` + `app/layout.tsx` |
-| Tailwind config | `tailwind.config.ts` |
-| Motion variants | `lib/motion-variants.ts` (CREATE) |
-| Navbar | `components/layout/PublicNavbar.tsx` |
-| Footer | `components/layout/PublicFooter.tsx` |
-| Sidebar | `components/layout/DashboardSidebar.tsx` |
-| Dashboard header | `components/layout/DashboardHeader.tsx` |
-| Homepage | `app/(marketing)/page.tsx` |
-| Catalog | `app/(marketing)/workshops/page.tsx` |
-| Workshop detail | `app/(marketing)/workshops/[slug]/page.tsx` |
-| EnrollButton | `components/workshop/EnrollButton.tsx` |
-| WorkshopForm | `components/workshops/WorkshopForm.tsx` |
-| DataTable | `components/shared/DataTable.tsx` |
-| EmptyState | `components/shared/EmptyState.tsx` |
-| StatsCard | `components/shared/StatsCard.tsx` |
-| LoadingSkeleton | `components/shared/LoadingSkeleton.tsx` |
-| ConfirmDialog | `components/shared/ConfirmDialog.tsx` |
-| StatusBadge | `components/shared/StatusBadge.tsx` |
-| Login | `app/(auth)/login/page.tsx` |
-| Register | `app/(auth)/register/page.tsx` |
-| OTP | `app/(auth)/verify-otp/page.tsx` |
-| All dashboard pages | `app/(dashboard)/[role]/*/page.tsx` |
+| Change              | File                                        |
+| ------------------- | ------------------------------------------- |
+| Fonts + CSS tokens  | `app/globals.css` + `app/layout.tsx`        |
+| Tailwind config     | `tailwind.config.ts`                        |
+| Motion variants     | `lib/motion-variants.ts` (CREATE)           |
+| Navbar              | `components/layout/PublicNavbar.tsx`        |
+| Footer              | `components/layout/PublicFooter.tsx`        |
+| Sidebar             | `components/layout/DashboardSidebar.tsx`    |
+| Dashboard header    | `components/layout/DashboardHeader.tsx`     |
+| Homepage            | `app/(marketing)/page.tsx`                  |
+| Catalog             | `app/(marketing)/workshops/page.tsx`        |
+| Workshop detail     | `app/(marketing)/workshops/[slug]/page.tsx` |
+| EnrollButton        | `components/workshop/EnrollButton.tsx`      |
+| WorkshopForm        | `components/workshops/WorkshopForm.tsx`     |
+| DataTable           | `components/shared/DataTable.tsx`           |
+| EmptyState          | `components/shared/EmptyState.tsx`          |
+| StatsCard           | `components/shared/StatsCard.tsx`           |
+| LoadingSkeleton     | `components/shared/LoadingSkeleton.tsx`     |
+| ConfirmDialog       | `components/shared/ConfirmDialog.tsx`       |
+| StatusBadge         | `components/shared/StatusBadge.tsx`         |
+| Login               | `app/(auth)/login/page.tsx`                 |
+| Register            | `app/(auth)/register/page.tsx`              |
+| OTP                 | `app/(auth)/verify-otp/page.tsx`            |
+| All dashboard pages | `app/(dashboard)/[role]/*/page.tsx`         |
 
 ---
 
-*Blueprint version 1.0 — Skill Workshop Management System*
-*Target: Next.js 16 + Tailwind 4.0 + Shadcn UI + Framer Motion + Recharts*
-*Market: Bangladesh · Currency: BDT · Payment: SSLCommerz*
+_Blueprint version 1.0 — Skill Workshop Management System_
+_Target: Next.js 16 + Tailwind 4.0 + Shadcn UI + Framer Motion + Recharts_
+_Market: Bangladesh · Currency: BDT · Payment: SSLCommerz_

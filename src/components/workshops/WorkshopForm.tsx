@@ -306,12 +306,16 @@ export function WorkshopForm({
     if (formData.endDate) payloadData.endDate = formData.endDate;
     if (formData.maxSeats) payloadData.maxSeats = formData.maxSeats;
     if (formData.minAge) payloadData.minAge = formData.minAge;
-    
-    if (formData.whatYouLearn && formData.whatYouLearn.length > 0) payloadData.whatYouLearn = formData.whatYouLearn;
-    if (formData.prerequisites && formData.prerequisites.length > 0) payloadData.prerequisites = formData.prerequisites;
-    if (formData.benefits && formData.benefits.length > 0) payloadData.benefits = formData.benefits;
-    if (formData.syllabus && formData.syllabus.length > 0) payloadData.syllabus = formData.syllabus;
-    
+
+    if (formData.whatYouLearn && formData.whatYouLearn.length > 0)
+      payloadData.whatYouLearn = formData.whatYouLearn;
+    if (formData.prerequisites && formData.prerequisites.length > 0)
+      payloadData.prerequisites = formData.prerequisites;
+    if (formData.benefits && formData.benefits.length > 0)
+      payloadData.benefits = formData.benefits;
+    if (formData.syllabus && formData.syllabus.length > 0)
+      payloadData.syllabus = formData.syllabus;
+
     if (imagesToDelete.length > 0) {
       payloadData.deleteImages = imagesToDelete;
     }

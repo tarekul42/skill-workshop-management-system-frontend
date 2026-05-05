@@ -43,64 +43,193 @@ import { clearAccessToken, apiClient } from "@/lib/api-client";
 import type { NavSection } from "@/types/dashboard.types";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  LayoutDashboard, Shield, Users, BookOpen, ClipboardList, CreditCard, Tag, Layers, FileText, Settings, PlusCircle, GraduationCap, Search, BookMarked, User, ExternalLink, LogOut,
+  LayoutDashboard,
+  Shield,
+  Users,
+  BookOpen,
+  ClipboardList,
+  CreditCard,
+  Tag,
+  Layers,
+  FileText,
+  Settings,
+  PlusCircle,
+  GraduationCap,
+  Search,
+  BookMarked,
+  User,
+  ExternalLink,
+  LogOut,
 };
 
 const sidebarConfig: Record<string, NavSection[]> = {
   SUPER_ADMIN: [
-    { title: "Overview", items: [{ label: "Dashboard", href: "/super-admin/dashboard", icon: "LayoutDashboard" }] },
-    { title: "Management", items: [
-      { label: "Admins", href: "/super-admin/admins", icon: "Shield" },
-      { label: "Users", href: "/super-admin/users", icon: "Users" },
-      { label: "Workshops", href: "/super-admin/workshops", icon: "BookOpen" },
-      { label: "Enrollments", href: "/super-admin/enrollments", icon: "ClipboardList" },
-      { label: "Payments", href: "/super-admin/payments", icon: "CreditCard" },
-      { label: "Categories", href: "/super-admin/categories", icon: "Tag" },
-      { label: "Levels", href: "/super-admin/levels", icon: "Layers" },
-    ]},
-    { title: "System", items: [
-      { label: "Audit Logs", href: "/super-admin/audit-logs", icon: "FileText" },
-      { label: "Settings", href: "/super-admin/settings", icon: "Settings" },
-    ]},
+    {
+      title: "Overview",
+      items: [
+        {
+          label: "Dashboard",
+          href: "/super-admin/dashboard",
+          icon: "LayoutDashboard",
+        },
+      ],
+    },
+    {
+      title: "Management",
+      items: [
+        { label: "Admins", href: "/super-admin/admins", icon: "Shield" },
+        { label: "Users", href: "/super-admin/users", icon: "Users" },
+        {
+          label: "Workshops",
+          href: "/super-admin/workshops",
+          icon: "BookOpen",
+        },
+        {
+          label: "Enrollments",
+          href: "/super-admin/enrollments",
+          icon: "ClipboardList",
+        },
+        {
+          label: "Payments",
+          href: "/super-admin/payments",
+          icon: "CreditCard",
+        },
+        { label: "Categories", href: "/super-admin/categories", icon: "Tag" },
+        { label: "Levels", href: "/super-admin/levels", icon: "Layers" },
+      ],
+    },
+    {
+      title: "System",
+      items: [
+        {
+          label: "Audit Logs",
+          href: "/super-admin/audit-logs",
+          icon: "FileText",
+        },
+        { label: "Settings", href: "/super-admin/settings", icon: "Settings" },
+      ],
+    },
   ],
   ADMIN: [
-    { title: "Overview", items: [{ label: "Dashboard", href: "/admin/dashboard", icon: "LayoutDashboard" }] },
-    { title: "Management", items: [
-      { label: "Users", href: "/admin/users", icon: "Users" },
-      { label: "Workshops", href: "/admin/workshops", icon: "BookOpen" },
-      { label: "Enrollments", href: "/admin/enrollments", icon: "ClipboardList" },
-      { label: "Payments", href: "/admin/payments", icon: "CreditCard" },
-      { label: "Categories", href: "/admin/categories", icon: "Tag" },
-      { label: "Levels", href: "/admin/levels", icon: "Layers" },
-    ]},
-    { title: "Reports", items: [{ label: "Audit Logs", href: "/admin/audit-logs", icon: "FileText" }] },
+    {
+      title: "Overview",
+      items: [
+        {
+          label: "Dashboard",
+          href: "/admin/dashboard",
+          icon: "LayoutDashboard",
+        },
+      ],
+    },
+    {
+      title: "Management",
+      items: [
+        { label: "Users", href: "/admin/users", icon: "Users" },
+        { label: "Workshops", href: "/admin/workshops", icon: "BookOpen" },
+        {
+          label: "Enrollments",
+          href: "/admin/enrollments",
+          icon: "ClipboardList",
+        },
+        { label: "Payments", href: "/admin/payments", icon: "CreditCard" },
+        { label: "Categories", href: "/admin/categories", icon: "Tag" },
+        { label: "Levels", href: "/admin/levels", icon: "Layers" },
+      ],
+    },
+    {
+      title: "Reports",
+      items: [
+        { label: "Audit Logs", href: "/admin/audit-logs", icon: "FileText" },
+      ],
+    },
   ],
   INSTRUCTOR: [
-    { title: "Overview", items: [{ label: "Dashboard", href: "/instructor/dashboard", icon: "LayoutDashboard" }] },
-    { title: "Workshops", items: [
-      { label: "My Workshops", href: "/instructor/workshops", icon: "BookOpen" },
-      { label: "Create Workshop", href: "/instructor/workshops/create", icon: "PlusCircle" },
-    ]},
-    { title: "Students", items: [
-      { label: "My Students", href: "/instructor/students", icon: "GraduationCap" },
-      { label: "Enrollments", href: "/instructor/enrollments", icon: "ClipboardList" },
-    ]},
-    { title: "Account", items: [{ label: "Profile", href: "/instructor/profile", icon: "User" }] },
+    {
+      title: "Overview",
+      items: [
+        {
+          label: "Dashboard",
+          href: "/instructor/dashboard",
+          icon: "LayoutDashboard",
+        },
+      ],
+    },
+    {
+      title: "Workshops",
+      items: [
+        {
+          label: "My Workshops",
+          href: "/instructor/workshops",
+          icon: "BookOpen",
+        },
+        {
+          label: "Create Workshop",
+          href: "/instructor/workshops/create",
+          icon: "PlusCircle",
+        },
+      ],
+    },
+    {
+      title: "Students",
+      items: [
+        {
+          label: "My Students",
+          href: "/instructor/students",
+          icon: "GraduationCap",
+        },
+        {
+          label: "Enrollments",
+          href: "/instructor/enrollments",
+          icon: "ClipboardList",
+        },
+      ],
+    },
+    {
+      title: "Account",
+      items: [{ label: "Profile", href: "/instructor/profile", icon: "User" }],
+    },
   ],
   STUDENT: [
-    { title: "Overview", items: [{ label: "Dashboard", href: "/student/dashboard", icon: "LayoutDashboard" }] },
-    { title: "Learning", items: [
-      { label: "Browse Workshops", href: "/workshops", icon: "Search" },
-      { label: "My Enrollments", href: "/student/enrollments", icon: "BookMarked" },
-    ]},
-    { title: "Account", items: [
-      { label: "Payments", href: "/student/payments", icon: "CreditCard" },
-      { label: "Profile", href: "/student/profile", icon: "User" },
-    ]},
+    {
+      title: "Overview",
+      items: [
+        {
+          label: "Dashboard",
+          href: "/student/dashboard",
+          icon: "LayoutDashboard",
+        },
+      ],
+    },
+    {
+      title: "Learning",
+      items: [
+        { label: "Browse Workshops", href: "/workshops", icon: "Search" },
+        {
+          label: "My Enrollments",
+          href: "/student/enrollments",
+          icon: "BookMarked",
+        },
+      ],
+    },
+    {
+      title: "Account",
+      items: [
+        { label: "Payments", href: "/student/payments", icon: "CreditCard" },
+        { label: "Profile", href: "/student/profile", icon: "User" },
+      ],
+    },
   ],
 };
 
-function SidebarNavContent({ sections, pathname, onNavigate }: { sections: NavSection[]; pathname: string; onNavigate?: () => void; }) {
+function SidebarNavContent({
+  sections,
+  pathname,
+  onNavigate,
+}: {
+  sections: NavSection[];
+  pathname: string;
+  onNavigate?: () => void;
+}) {
   return (
     <nav className="flex-1 overflow-y-auto px-4 py-6">
       <ul className="flex flex-col gap-8">
@@ -131,7 +260,9 @@ function SidebarNavContent({ sections, pathname, onNavigate }: { sections: NavSe
                             <IconComponent
                               className={cn(
                                 "size-5 shrink-0 transition-transform group-hover/nav-item:scale-110",
-                                isActive ? "text-white" : "text-sidebar-text-muted group-hover/nav-item:text-primary",
+                                isActive
+                                  ? "text-white"
+                                  : "text-sidebar-text-muted group-hover/nav-item:text-primary",
                               )}
                             />
                           )}
@@ -159,8 +290,13 @@ export function DashboardSidebar({ role }: { role: string }) {
   const sections = sidebarConfig[role] ?? [];
 
   const handleLogout = async () => {
-    try { await apiClient("/auth/logout", { method: "POST", skipCsrf: true }); } catch {}
-    clearSavedUser(); clearAccessToken(); await clearSecureAuthCookie(); router.push("/login");
+    try {
+      await apiClient("/auth/logout", { method: "POST", skipCsrf: true });
+    } catch {}
+    clearSavedUser();
+    clearAccessToken();
+    await clearSecureAuthCookie();
+    router.push("/login");
   };
 
   return (
@@ -168,7 +304,10 @@ export function DashboardSidebar({ role }: { role: string }) {
       <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r border-sidebar-border bg-sidebar-bg text-sidebar-text z-30">
         <div className="flex h-20 items-center gap-3 px-6">
           <GraduationCap className="size-8 text-primary" />
-          <Link href="/" className="font-display text-xl font-extrabold tracking-tight">
+          <Link
+            href="/"
+            className="font-display text-xl font-extrabold tracking-tight"
+          >
             Skill<span className="text-primary">Workshop</span>
           </Link>
         </div>
@@ -200,13 +339,25 @@ export function DashboardSidebar({ role }: { role: string }) {
       </aside>
 
       <div className="lg:hidden">
-        <MobileSheetSidebar sections={sections} pathname={pathname} onLogout={handleLogout} />
+        <MobileSheetSidebar
+          sections={sections}
+          pathname={pathname}
+          onLogout={handleLogout}
+        />
       </div>
     </>
   );
 }
 
-function MobileSheetSidebar({ sections, pathname, onLogout }: { sections: NavSection[]; pathname: string; onLogout: () => void; }) {
+function MobileSheetSidebar({
+  sections,
+  pathname,
+  onLogout,
+}: {
+  sections: NavSection[];
+  pathname: string;
+  onLogout: () => void;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -220,7 +371,11 @@ function MobileSheetSidebar({ sections, pathname, onLogout }: { sections: NavSec
           <Menu className="size-6" />
         </Button>
       </SheetTrigger>
-      <SheetContent side="left" className="w-[280px] p-0 border-r border-sidebar-border bg-sidebar-bg text-sidebar-text" showCloseButton={false}>
+      <SheetContent
+        side="left"
+        className="w-70 p-0 border-r border-sidebar-border bg-sidebar-bg text-sidebar-text"
+        showCloseButton={false}
+      >
         <SheetHeader className="flex flex-row items-center gap-3 px-6 h-20 border-b border-sidebar-border">
           <GraduationCap className="size-7 text-primary" />
           <Link href="/" onClick={() => setOpen(false)}>
@@ -230,7 +385,11 @@ function MobileSheetSidebar({ sections, pathname, onLogout }: { sections: NavSec
           </Link>
         </SheetHeader>
 
-        <SidebarNavContent sections={sections} pathname={pathname} onNavigate={() => setOpen(false)} />
+        <SidebarNavContent
+          sections={sections}
+          pathname={pathname}
+          onNavigate={() => setOpen(false)}
+        />
 
         <div className="mt-auto flex flex-col gap-2 p-4 border-t border-sidebar-border bg-black/20">
           <Button

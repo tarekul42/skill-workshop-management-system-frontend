@@ -64,7 +64,8 @@ async function attemptTokenRefresh(
       const refreshData = await refreshRes.json();
       if (refreshData?.data?.accessToken) {
         setAccessToken(refreshData.data.accessToken);
-        fetchHeaders["Authorization"] = `Bearer ${refreshData.data.accessToken}`;
+        fetchHeaders["Authorization"] =
+          `Bearer ${refreshData.data.accessToken}`;
       }
       return await fetch(url, fetchOptions);
     }
@@ -131,13 +132,19 @@ export async function apiRequest<T>(
   endpoint: string,
   options: ApiClientOptions = {},
 ): Promise<T | PaginatedResult<T>> {
-  const { method = "GET", body, headers = {}, skipCsrf = false, returnMeta = false } = options;
+  const {
+    method = "GET",
+    body,
+    headers = {},
+    skipCsrf = false,
+    returnMeta = false,
+  } = options;
 
   const url = `${BACKEND_API_URL}${endpoint}`;
   const isFormData = body instanceof FormData;
 
   const fetchHeaders: Record<string, string> = { ...headers };
-  
+
   if (!isFormData && !fetchHeaders["Content-Type"]) {
     fetchHeaders["Content-Type"] = "application/json";
   }
@@ -180,7 +187,10 @@ export async function apiRequest<T>(
     response = await fetch(url, fetchOptions);
   } catch (err) {
     console.error("Network error during API request:", err);
-    throw new ApiError(0, "Network error. Please check your internet connection.");
+    throw new ApiError(
+      0,
+      "Network error. Please check your internet connection.",
+    );
   }
 
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
@@ -192,10 +202,13 @@ export async function apiRequest<T>(
   if (!response.ok || !json?.success) {
     const status = response.status;
     const message = json?.message ?? `Request failed with status ${status}`;
-    
+
     // Log critical errors
     if (status >= 500) {
-      console.error(`[API Server Error] ${method} ${endpoint}:`, json || status);
+      console.error(
+        `[API Server Error] ${method} ${endpoint}:`,
+        json || status,
+      );
     }
 
     throw new ApiError(status, message, json?.data);

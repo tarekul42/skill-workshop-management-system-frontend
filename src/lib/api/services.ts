@@ -257,7 +257,9 @@ export async function fetchWorkshops(
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchWorkshopBySlug(slug: string): Promise<IWorkshop> {
-  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(`/workshop/${slug}`);
+  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(
+    `/workshop/${slug}`,
+  );
   return (data as { data: IWorkshop }).data ?? (data as IWorkshop);
 }
 
@@ -307,7 +309,9 @@ export async function deleteWorkshop(id: string): Promise<void> {
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchWorkshopLevels(): Promise<ILevel[]> {
-  const data = await apiClient<{ data: ILevel[] } | ILevel[]>("/workshop/levels");
+  const data = await apiClient<{ data: ILevel[] } | ILevel[]>(
+    "/workshop/levels",
+  );
   return (data as { data: ILevel[] }).data ?? (data as ILevel[]);
 }
 
@@ -316,7 +320,9 @@ export async function fetchWorkshopLevels(): Promise<ILevel[]> {
  * Uses raw `fetch` (handles double-nested response from detail endpoint).
  */
 export async function fetchWorkshopById(id: string): Promise<IWorkshop> {
-  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(`/workshop/${id}`);
+  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(
+    `/workshop/${id}`,
+  );
   return (data as { data: IWorkshop }).data ?? (data as IWorkshop);
 }
 

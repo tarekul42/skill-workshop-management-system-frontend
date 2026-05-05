@@ -2,7 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, LayoutDashboard, LogOut, GraduationCap, Bell } from "lucide-react";
+import {
+  Menu,
+  LayoutDashboard,
+  LogOut,
+  GraduationCap,
+  Bell,
+} from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -102,7 +108,7 @@ export function PublicNavbar() {
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
           ? "h-16 border-b border-border bg-background/92 shadow-overlay backdrop-blur-xl"
-          : "h-[72px] bg-transparent"
+          : "h-18 bg-transparent",
       )}
     >
       <div className="site-container flex h-full items-center justify-between">
@@ -128,7 +134,7 @@ export function PublicNavbar() {
                 "nav-underline relative text-sm font-medium transition-colors duration-150 hover:text-foreground",
                 isActive(link.href)
                   ? "text-foreground"
-                  : "text-foreground-subtle"
+                  : "text-foreground-subtle",
               )}
             >
               {link.label}
@@ -136,7 +142,7 @@ export function PublicNavbar() {
               {isActive(link.href) && (
                 <motion.span
                   layoutId="nav-active-underline"
-                  className="absolute -bottom-[5px] left-0 h-0.5 w-full rounded-full bg-primary"
+                  className="absolute -bottom-1.25 left-0 h-0.5 w-full rounded-full bg-primary"
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
@@ -150,7 +156,11 @@ export function PublicNavbar() {
 
           {user ? (
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 rounded-lg"
+              >
                 <Bell className="h-4 w-4 text-foreground-subtle" />
               </Button>
 
@@ -168,10 +178,15 @@ export function PublicNavbar() {
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-semibold">{user.name.split(' ')[0]}</span>
+                    <span className="text-sm font-semibold">
+                      {user.name.split(" ")[0]}
+                    </span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 p-2 rounded-xl">
+                <DropdownMenuContent
+                  align="end"
+                  className="w-56 p-2 rounded-xl"
+                >
                   <DropdownMenuLabel className="font-normal p-3">
                     <div className="flex flex-col gap-0.5">
                       <p className="text-sm font-bold">{user.name}</p>
@@ -181,7 +196,10 @@ export function PublicNavbar() {
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild className="rounded-lg p-2.5 cursor-pointer">
+                  <DropdownMenuItem
+                    asChild
+                    className="rounded-lg p-2.5 cursor-pointer"
+                  >
                     <Link href={dashboardRoute}>
                       <LayoutDashboard className="mr-2 size-4 text-primary" />
                       <span>Dashboard</span>
@@ -200,11 +218,20 @@ export function PublicNavbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" asChild className="font-semibold">
+              <Button
+                variant="ghost"
+                size="sm"
+                asChild
+                className="font-semibold"
+              >
                 <Link href="/login">Login</Link>
               </Button>
               {/* §1.5 — subtle pulsing glow to draw attention without being annoying */}
-              <Button size="sm" asChild className="font-bold animate-glow-pulse">
+              <Button
+                size="sm"
+                asChild
+                className="font-bold animate-glow-pulse"
+              >
                 <Link href="/register">Get Started</Link>
               </Button>
             </div>
@@ -224,7 +251,10 @@ export function PublicNavbar() {
                 <Menu className="size-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[85%] sm:w-[380px] p-0 border-l border-border bg-background">
+            <SheetContent
+              side="right"
+              className="w-[85%] sm:w-95 p-0 border-l border-border bg-background"
+            >
               <SheetHeader className="p-6 border-b border-border">
                 <SheetTitle className="text-left">
                   <Link
@@ -251,7 +281,7 @@ export function PublicNavbar() {
                         "flex items-center gap-3 rounded-xl px-4 py-3 text-base font-semibold transition-all",
                         isActive(link.href)
                           ? "bg-primary-subtle text-primary"
-                          : "text-foreground-subtle hover:bg-surface-2 hover:text-foreground"
+                          : "text-foreground-subtle hover:bg-surface-2 hover:text-foreground",
                       )}
                     >
                       {link.label}
@@ -282,7 +312,10 @@ export function PublicNavbar() {
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <Button asChild variant="outline" className="h-11">
-                          <Link href={dashboardRoute} onClick={() => setOpen(false)}>
+                          <Link
+                            href={dashboardRoute}
+                            onClick={() => setOpen(false)}
+                          >
                             Dashboard
                           </Link>
                         </Button>
@@ -300,7 +333,11 @@ export function PublicNavbar() {
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
-                      <Button variant="outline" asChild className="h-12 text-base font-bold">
+                      <Button
+                        variant="outline"
+                        asChild
+                        className="h-12 text-base font-bold"
+                      >
                         <Link href="/login" onClick={() => setOpen(false)}>
                           Login
                         </Link>

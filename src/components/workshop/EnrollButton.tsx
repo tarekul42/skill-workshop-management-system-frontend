@@ -2,7 +2,13 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, CheckCircle, GraduationCap, AlertCircle, RefreshCw } from "lucide-react";
+import {
+  Loader2,
+  CheckCircle,
+  GraduationCap,
+  AlertCircle,
+  RefreshCw,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -31,7 +37,6 @@ type EnrollState =
 export function EnrollButton({
   workshopId,
   slug,
-  price,
   seatsAvailable,
   disabled = false,
   variant = "default",
@@ -134,7 +139,10 @@ export function EnrollButton({
           variant="secondary"
           size={size}
           disabled
-          className={cn("w-full bg-success/20 text-success-foreground border border-success-subtle hover:bg-success/20 opacity-100", className)}
+          className={cn(
+            "w-full bg-success/20 text-success-foreground border border-success-subtle hover:bg-success/20 opacity-100",
+            className,
+          )}
         >
           <CheckCircle className="mr-2 size-4 text-success" />
           Already Enrolled
@@ -153,7 +161,10 @@ export function EnrollButton({
         variant="default"
         size={size}
         disabled
-        className={cn("w-full bg-accent text-accent-foreground opacity-90", className)}
+        className={cn(
+          "w-full bg-accent text-accent-foreground opacity-90",
+          className,
+        )}
       >
         <Loader2 className="mr-2 size-4 animate-spin" />
         Redirecting to Payment...
@@ -168,7 +179,10 @@ export function EnrollButton({
         variant="outline"
         size={size}
         disabled
-        className={cn("w-full relative overflow-hidden text-transparent border-border", className)}
+        className={cn(
+          "w-full relative overflow-hidden text-transparent border-border",
+          className,
+        )}
       >
         Checking
         <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent via-primary/10 to-transparent" />
@@ -183,7 +197,10 @@ export function EnrollButton({
         variant="default"
         size={size}
         disabled
-        className={cn("w-full bg-accent text-accent-foreground opacity-90", className)}
+        className={cn(
+          "w-full bg-accent text-accent-foreground opacity-90",
+          className,
+        )}
       >
         <Loader2 className="mr-2 size-4 animate-spin" />
         Processing...
@@ -200,7 +217,10 @@ export function EnrollButton({
           size={size}
           disabled={isDisabled}
           onClick={handleEnroll}
-          className={cn("w-full bg-danger text-danger-foreground hover:bg-danger/90", className)}
+          className={cn(
+            "w-full bg-danger text-danger-foreground hover:bg-danger/90",
+            className,
+          )}
         >
           <RefreshCw className="mr-2 size-4" />
           Retry ↺
@@ -224,7 +244,10 @@ export function EnrollButton({
         size={size}
         disabled={isDisabled}
         onClick={handleEnroll}
-        className={cn("w-full bg-accent text-accent-foreground hover:bg-accent/90", className)}
+        className={cn(
+          "w-full bg-accent text-accent-foreground hover:bg-accent/90",
+          className,
+        )}
       >
         {seatsAvailable <= 0 ? (
           "Workshop is Full"

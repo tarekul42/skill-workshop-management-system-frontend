@@ -1,5 +1,14 @@
 import Link from "next/link";
-import { GraduationCap, Mail, Phone, MapPin, Globe, MessageSquare, Share2, Play } from "lucide-react";
+import {
+  GraduationCap,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  MessageSquare,
+  Share2,
+  Play,
+} from "lucide-react";
 
 const platformLinks = [
   { label: "Browse Workshops", href: "/workshops" },
@@ -37,7 +46,9 @@ export function PublicFooter() {
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-sidebar-text-muted max-w-xs">
-              Empowering the next generation of Bangladeshi professionals through high-impact, hands-on skill training led by industry experts.
+              Empowering the next generation of Bangladeshi professionals
+              through high-impact, hands-on skill training led by industry
+              experts.
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map((social) => (
@@ -55,7 +66,9 @@ export function PublicFooter() {
 
           {/* Column 2: Platform */}
           <div>
-            <h3 className="mb-6 font-display text-lg font-bold text-white">Platform</h3>
+            <h3 className="mb-6 font-display text-lg font-bold text-white">
+              Platform
+            </h3>
             <ul className="space-y-4">
               {platformLinks.map((link) => (
                 <li key={link.href}>
@@ -72,7 +85,9 @@ export function PublicFooter() {
 
           {/* Column 3: Instructors */}
           <div>
-            <h3 className="mb-6 font-display text-lg font-bold text-white">For Instructors</h3>
+            <h3 className="mb-6 font-display text-lg font-bold text-white">
+              For Instructors
+            </h3>
             <ul className="space-y-4">
               {instructorLinks.map((link) => (
                 <li key={link.label}>
@@ -89,39 +104,53 @@ export function PublicFooter() {
 
           {/* Column 4: Contact */}
           <div>
-            <h3 className="mb-6 font-display text-lg font-bold text-white">Contact Info</h3>
+            <h3 className="mb-6 font-display text-lg font-bold text-white">
+              Contact Info
+            </h3>
             <ul className="space-y-5">
               <li className="flex items-start gap-4">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-hover">
                   <Mail className="size-5 text-primary" />
                 </div>
                 <div className="flex flex-col">
-                   <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">Email Us</span>
-                   <a href="mailto:info@skillworkshop.com" className="text-sm font-medium transition-colors hover:text-primary">
-                     info@skillworkshop.com
-                   </a>
+                  <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">
+                    Email Us
+                  </span>
+                  <a
+                    href="mailto:info@skillworkshop.com"
+                    className="text-sm font-medium transition-colors hover:text-primary"
+                  >
+                    info@skillworkshop.com
+                  </a>
                 </div>
               </li>
               <li className="flex items-start gap-4">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-hover">
-                   <Phone className="size-5 text-primary" />
+                  <Phone className="size-5 text-primary" />
                 </div>
                 <div className="flex flex-col">
-                   <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">Call Us</span>
-                   <a href="tel:+8801234567890" className="text-sm font-medium transition-colors hover:text-primary">
-                     +880 1234-567890
-                   </a>
+                  <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">
+                    Call Us
+                  </span>
+                  <a
+                    href="tel:+8801234567890"
+                    className="text-sm font-medium transition-colors hover:text-primary"
+                  >
+                    +880 1234-567890
+                  </a>
                 </div>
               </li>
               <li className="flex items-start gap-4">
                 <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-hover">
-                   <MapPin className="size-5 text-primary" />
+                  <MapPin className="size-5 text-primary" />
                 </div>
                 <div className="flex flex-col">
-                   <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">Office</span>
-                   <span className="text-sm font-medium text-sidebar-text">
-                     Dhaka, Bangladesh
-                   </span>
+                  <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">
+                    Office
+                  </span>
+                  <span className="text-sm font-medium text-sidebar-text">
+                    Dhaka, Bangladesh
+                  </span>
                 </div>
               </li>
             </ul>
@@ -131,11 +160,22 @@ export function PublicFooter() {
         {/* Bottom Bar */}
         <div className="mt-20 border-t border-white/5 pt-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
           <p className="text-sm text-sidebar-text-muted">
-            &copy; {new Date().getFullYear()} Skill Workshop. All rights reserved.
+            &copy; {new Date().getFullYear()} Skill Workshop. All rights
+            reserved.
           </p>
           <div className="flex items-center gap-8">
-            <Link href="/privacy" className="text-xs font-medium text-sidebar-text-muted hover:text-primary transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="text-xs font-medium text-sidebar-text-muted hover:text-primary transition-colors">Terms of Service</Link>
+            <Link
+              href="/privacy"
+              className="text-xs font-medium text-sidebar-text-muted hover:text-primary transition-colors"
+            >
+              Privacy Policy
+            </Link>
+            <Link
+              href="/terms"
+              className="text-xs font-medium text-sidebar-text-muted hover:text-primary transition-colors"
+            >
+              Terms of Service
+            </Link>
           </div>
         </div>
       </div>

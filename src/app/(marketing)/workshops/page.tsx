@@ -9,12 +9,10 @@ import {
   MapPin,
   Calendar,
   BookOpen,
-  ArrowRight,
   RotateCcw,
   Clock,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
@@ -143,24 +141,27 @@ export default function WorkshopsPage() {
   return (
     <div className="bg-background min-h-screen">
       {/* Section 1: Page Header */}
-      <section className="bg-gradient-to-b from-primary-subtle to-background py-[60px]">
+      <section className="bg-linear-to-b from-primary-subtle to-background py-15">
         <div className="site-container text-center">
-          <span className="mb-3 block text-xs font-bold uppercase tracking-[0.2em] text-primary">Explore Workshops</span>
+          <span className="mb-3 block text-xs font-bold uppercase tracking-[0.2em] text-primary">
+            Explore Workshops
+          </span>
           <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
             Find Your Perfect Workshop
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-foreground-subtle">
-            Browse {filteredWorkshops.length} workshops taught by verified experts across Bangladesh
+            Browse {filteredWorkshops.length} workshops taught by verified
+            experts across Bangladesh
           </p>
         </div>
       </section>
 
       <div className="site-container py-12">
         {/* Filter Bar - Sticky on scroll */}
-        <div className="sticky top-[72px] z-30 -mx-4 mb-8 bg-background/95 px-4 py-4 backdrop-blur-md border-b border-border shadow-3">
+        <div className="sticky top-18 z-30 -mx-4 mb-8 bg-background/95 px-4 py-4 backdrop-blur-md border-b border-border shadow-3">
           <div className="site-container flex flex-wrap items-center gap-3">
             {/* Search Input - width 280px */}
-            <div className="relative w-[280px] flex-shrink-0">
+            <div className="relative w-70 shrink-0">
               <Search className="absolute left-4 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search workshops..."
@@ -171,8 +172,11 @@ export default function WorkshopsPage() {
             </div>
 
             {/* Category Select - width 180px */}
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-[180px] h-11 transition-all hover:bg-surface-2">
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
+              <SelectTrigger className="w-45 h-11 transition-all hover:bg-surface-2">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
@@ -190,7 +194,7 @@ export default function WorkshopsPage() {
               value={selectedLevel}
               onValueChange={(v) => setSelectedLevel(v as LevelOption)}
             >
-              <SelectTrigger className="w-[160px] h-11 transition-all hover:bg-surface-2">
+              <SelectTrigger className="w-40 h-11 transition-all hover:bg-surface-2">
                 <SelectValue placeholder="All Levels" />
               </SelectTrigger>
               <SelectContent>
@@ -206,13 +210,17 @@ export default function WorkshopsPage() {
               value={sortBy}
               onValueChange={(v) => setSortBy(v as SortOption)}
             >
-              <SelectTrigger className="w-[200px] h-11 transition-all hover:bg-surface-2">
+              <SelectTrigger className="w-50 h-11 transition-all hover:bg-surface-2">
                 <SelectValue placeholder="Sort: Newest First" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Sort: Newest First</SelectItem>
-                <SelectItem value="price-asc">Sort: Price Low to High</SelectItem>
-                <SelectItem value="price-desc">Sort: Price High to Low</SelectItem>
+                <SelectItem value="price-asc">
+                  Sort: Price Low to High
+                </SelectItem>
+                <SelectItem value="price-desc">
+                  Sort: Price High to Low
+                </SelectItem>
               </SelectContent>
             </Select>
 
@@ -222,7 +230,15 @@ export default function WorkshopsPage() {
             {/* Active filter count badge */}
             {isFiltered && (
               <Badge variant="default" className="h-6 px-2.5">
-                {[searchQuery.trim(), selectedCategory !== 'all', selectedLevel !== 'all', sortBy !== 'newest'].filter(Boolean).length} Filters
+                {
+                  [
+                    searchQuery.trim(),
+                    selectedCategory !== "all",
+                    selectedLevel !== "all",
+                    sortBy !== "newest",
+                  ].filter(Boolean).length
+                }{" "}
+                Filters
               </Badge>
             )}
 
@@ -265,7 +281,16 @@ export default function WorkshopsPage() {
               <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-20 text-center animate-fade-in">
                 {/* SVG Illustration - Telescope */}
                 <div className="mb-6 flex justify-center text-primary/30">
-                  <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                  <svg
+                    width="120"
+                    height="120"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
                     <circle cx="11" cy="11" r="8"></circle>
                     <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                     <line x1="11" y1="8" x2="11" y2="14"></line>
@@ -279,31 +304,22 @@ export default function WorkshopsPage() {
                   Try adjusting your search or clearing the filters
                 </p>
                 <div className="mt-8 flex gap-3">
-                  <Button
-                    variant="default"
-                    onClick={resetFilters}
-                  >
+                  <Button variant="default" onClick={resetFilters}>
                     <RotateCcw className="mr-2 size-4" />
                     Clear Filters
                   </Button>
-                  <Button
-                    variant="ghost"
-                    asChild
-                  >
+                  <Button variant="ghost" asChild>
                     <Link href="/workshops">Browse All</Link>
                   </Button>
                 </div>
               </div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredWorkshops.map((workshop, idx) => (
-                  <div
-                    key={workshop._id}
-                    className="group block"
-                  >
-                    <div className="overflow-hidden rounded-[20px] border border-border bg-surface-1 shadow-raised transition-all duration-300 hover:shadow-float hover:-translate-y-[3px]">
+                {filteredWorkshops.map((workshop) => (
+                  <div key={workshop._id} className="group block">
+                    <div className="overflow-hidden rounded-[20px] border border-border bg-surface-1 shadow-raised transition-all duration-300 hover:shadow-float hover:-translate-y-0.75">
                       {/* Image Container - height 200px */}
-                      <div className="relative h-[200px] overflow-hidden">
+                      <div className="relative h-50 overflow-hidden">
                         {workshop.images && workshop.images.length > 0 ? (
                           <Image
                             src={workshop.images[0]}
@@ -375,7 +391,12 @@ export default function WorkshopsPage() {
                           {workshop.startDate && workshop.endDate && (
                             <div className="flex items-center gap-1.5">
                               <Clock className="size-3.5 text-primary" />
-                              <span>{computeDuration(workshop.startDate, workshop.endDate)}</span>
+                              <span>
+                                {computeDuration(
+                                  workshop.startDate,
+                                  workshop.endDate,
+                                )}
+                              </span>
                             </div>
                           )}
                         </div>
@@ -388,27 +409,45 @@ export default function WorkshopsPage() {
                           <div className="flex-1">
                             {/* Seats progress bar */}
                             {(() => {
-                              const percentEnrolled = workshop.currentEnrollments / (workshop.maxSeats ?? 1);
-                              const bgClass = percentEnrolled <= 0.5 ? 'bg-success' : percentEnrolled <= 0.75 ? 'bg-warning' : 'bg-danger';
-                              const textClass = percentEnrolled <= 0.5 ? 'text-success' : percentEnrolled <= 0.75 ? 'text-warning' : 'text-danger';
+                              const percentEnrolled =
+                                workshop.currentEnrollments /
+                                (workshop.maxSeats ?? 1);
+                              const bgClass =
+                                percentEnrolled <= 0.5
+                                  ? "bg-success"
+                                  : percentEnrolled <= 0.75
+                                    ? "bg-warning"
+                                    : "bg-danger";
+                              const textClass =
+                                percentEnrolled <= 0.5
+                                  ? "text-success"
+                                  : percentEnrolled <= 0.75
+                                    ? "text-warning"
+                                    : "text-danger";
                               return (
                                 <>
                                   <div className="mb-1 h-1.5 w-full rounded-full bg-border">
-                                    <div 
+                                    <div
                                       className={`h-full rounded-full ${bgClass}`}
-                                      style={{ 
-                                        width: `${Math.min(100, percentEnrolled * 100)}%` 
+                                      style={{
+                                        width: `${Math.min(100, percentEnrolled * 100)}%`,
                                       }}
                                     />
                                   </div>
-                                  <p className={`text-[12px] font-semibold ${textClass}`}>
-                                    {workshop.maxSeats ? workshop.maxSeats - workshop.currentEnrollments : '∞'} seats left
+                                  <p
+                                    className={`text-[12px] font-semibold ${textClass}`}
+                                  >
+                                    {workshop.maxSeats
+                                      ? workshop.maxSeats -
+                                        workshop.currentEnrollments
+                                      : "∞"}{" "}
+                                    seats left
                                   </p>
                                 </>
                               );
                             })()}
                           </div>
-                          <Link 
+                          <Link
                             href={`/workshops/${workshop.slug}`}
                             className="text-sm font-semibold text-primary transition-colors group-hover:underline ml-4"
                           >
@@ -427,12 +466,31 @@ export default function WorkshopsPage() {
         {/* Pagination Section placeholder */}
         {filteredWorkshops.length > 0 && (
           <div className="mt-12 flex items-center justify-center gap-2 py-10 border-t border-border">
-            <Button variant="ghost" disabled className="opacity-40">Previous</Button>
-            <Button variant="default" className="rounded-lg h-9 w-9 p-0 bg-primary text-primary-foreground">1</Button>
-            <Button variant="ghost" className="rounded-lg h-9 w-9 p-0 hover:bg-surface-2">2</Button>
-            <Button variant="ghost" className="rounded-lg h-9 w-9 p-0 hover:bg-surface-2">3</Button>
+            <Button variant="ghost" disabled className="opacity-40">
+              Previous
+            </Button>
+            <Button
+              variant="default"
+              className="rounded-lg h-9 w-9 p-0 bg-primary text-primary-foreground"
+            >
+              1
+            </Button>
+            <Button
+              variant="ghost"
+              className="rounded-lg h-9 w-9 p-0 hover:bg-surface-2"
+            >
+              2
+            </Button>
+            <Button
+              variant="ghost"
+              className="rounded-lg h-9 w-9 p-0 hover:bg-surface-2"
+            >
+              3
+            </Button>
             <span className="px-2 text-foreground-muted">...</span>
-            <Button variant="ghost" disabled className="opacity-40">Next</Button>
+            <Button variant="ghost" disabled className="opacity-40">
+              Next
+            </Button>
           </div>
         )}
       </div>
