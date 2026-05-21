@@ -1,7 +1,6 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { ConfirmDialog } from "../ConfirmDialog";
 
 // Mock framer-motion
@@ -74,12 +73,9 @@ describe("ConfirmDialog", () => {
 
   // ── Loading state ────────────────────────────────────────────────
   it("shows loading spinner when isLoading=true", () => {
-    const { container } = render(
-      <ConfirmDialog {...defaultProps} isLoading />,
-    );
-    // Loader2 icon renders as SVG with animate-spin class
-    const spinner = container.querySelector(".animate-spin");
-    expect(spinner).toBeInTheDocument();
+    render(<ConfirmDialog {...defaultProps} isLoading />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.querySelector(".animate-spin")).toBeInTheDocument();
   });
 
   it("disables confirm button when isLoading=true", () => {
@@ -96,19 +92,15 @@ describe("ConfirmDialog", () => {
 
   // ── Icon variants ────────────────────────────────────────────────
   it("renders icon container for destructive variant", () => {
-    const { container } = render(
-      <ConfirmDialog {...defaultProps} variant="destructive" />,
-    );
-    const iconContainer = container.querySelector(".bg-danger-subtle");
-    expect(iconContainer).toBeInTheDocument();
+    render(<ConfirmDialog {...defaultProps} variant="destructive" />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.querySelector(".bg-danger-subtle")).toBeInTheDocument();
   });
 
   it("renders icon container for default variant", () => {
-    const { container } = render(
-      <ConfirmDialog {...defaultProps} variant="default" />,
-    );
-    const iconContainer = container.querySelector(".bg-warning-subtle");
-    expect(iconContainer).toBeInTheDocument();
+    render(<ConfirmDialog {...defaultProps} variant="default" />);
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.querySelector(".bg-warning-subtle")).toBeInTheDocument();
   });
 
   // ── requireConfirmText ───────────────────────────────────────────
@@ -125,27 +117,27 @@ describe("ConfirmDialog", () => {
     expect(confirmBtn).toBeDisabled();
   });
 
-  it("disables confirm button when input does not match requireConfirmText", async () => {
-    const user = userEvent.setup();
+  it("disables confirm button when input does not match requireConfirmText", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="DELETE" />);
     const input = screen.getByPlaceholderText("Type 'DELETE' to confirm");
-    await user.type(input, "DELET");
+    fireEvent.change(input, { target: { value: "DELET" } });
     const confirmBtn = screen.getByText("Confirm").closest("button");
     expect(confirmBtn).toBeDisabled();
   });
 
-  it("enables confirm button when input exactly matches requireConfirmText", async () => {
-    const user = userEvent.setup();
+  it("enables confirm button when input exactly matches requireConfirmText", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="DELETE" />);
     const input = screen.getByPlaceholderText("Type 'DELETE' to confirm");
-    await user.type(input, "DELETE");
+    fireEvent.change(input, { target: { value: "DELETE" } });
     const confirmBtn = screen.getByText("Confirm").closest("button");
     expect(confirmBtn).not.toBeDisabled();
   });
 
   it("shows the requireConfirmText value in the instruction text", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="CONFIRM" />);
-    expect(screen.getByText("CONFIRM")).toBeInTheDocument();
+    expect(
+      screen.getByPlaceholderText("Type 'CONFIRM' to confirm"),
+    ).toBeInTheDocument();
   });
 
   it("does not render confirmation input when requireConfirmText is not provided", () => {
