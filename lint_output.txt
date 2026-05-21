@@ -34,12 +34,10 @@
   105:2  error  Parsing error: Expression expected
 
 /home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(dashboard)/[role]/dashboard/page.tsx
-    7:3   warning  'Users' is defined but never used                          @typescript-eslint/no-unused-vars
-    8:3   warning  'DollarSign' is defined but never used                     @typescript-eslint/no-unused-vars
-  180:17  warning  'setStats' is assigned a value but never used              @typescript-eslint/no-unused-vars
-  181:29  warning  'setRecentEnrollments' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  184:27  warning  'setRecentWorkshops' is assigned a value but never used    @typescript-eslint/no-unused-vars
-  235:13  warning  'healthRes' is assigned a value but never used             @typescript-eslint/no-unused-vars
+  178:17  warning  'setStats' is assigned a value but never used              @typescript-eslint/no-unused-vars
+  179:29  warning  'setRecentEnrollments' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  182:27  warning  'setRecentWorkshops' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  233:13  warning  'healthRes' is assigned a value but never used             @typescript-eslint/no-unused-vars
 
-✖ 22 problems (8 errors, 14 warnings)
+✖ 20 problems (8 errors, 12 warnings)
 

@@ -3,11 +3,10 @@
 import React, { useState, useCallback } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
-import { z } from "zod/v4";
-import { Loader2, Plus, Trash2, X } from "lucide-react";
+import { z } from "zod";
+import { Loader2, Plus, Trash2, X, LayoutGrid, Calendar, Tags, Users, ClipboardList, Image as ImageIcon, Check } from "lucide-react";
 import { toast } from "sonner";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -20,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 
 import {
   fetchCategories,
@@ -97,8 +97,8 @@ function ListFieldEditor({
   };
 
   return (
-    <div className="space-y-2">
-      <Label className="text-sm font-medium">{label}</Label>
+    <div className="space-y-3">
+      <Label className="text-[13px] font-bold text-foreground uppercase tracking-wider">{label}</Label>
 
       <div className="flex gap-2">
         <Input
@@ -106,38 +106,53 @@ function ListFieldEditor({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
+          className="h-11 rounded-xl bg-surface-2 border-border focus:ring-primary/20"
         />
         <Button
           type="button"
-          variant="outline"
-          size="sm"
           onClick={handleAdd}
           disabled={!inputValue.trim()}
+          className="h-11 w-11 rounded-xl shrink-0"
         >
-          <Plus className="size-4" />
-          Add
+          <Plus className="size-5" />
         </Button>
       </div>
 
       {items.length > 0 && (
-        <ul className="mt-2 space-y-1.5">
+        <div className="flex flex-wrap gap-2 pt-1">
           {items.map((item, index) => (
-            <li
+            <div
               key={index}
-              className="flex items-center justify-between gap-2 rounded-md border bg-muted/50 px-3 py-2 text-sm"
+              className="flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-3 py-2 transition-all hover:border-primary/30"
             >
-              <span className="flex-1 truncate">{item}</span>
+              <span className="text-sm font-medium text-foreground">{item}</span>
               <button
                 type="button"
                 onClick={() => handleRemove(index)}
-                className="shrink-0 text-muted-foreground transition-colors hover:text-destructive"
+                className="text-muted-foreground hover:text-destructive transition-colors"
               >
                 <X className="size-3.5" />
               </button>
-            </li>
+            </div>
           ))}
-        </ul>
+        </div>
       )}
+    </div>
+  );
+}
+
+// ─── Section Card Component ───────────────────────────────────────
+
+function SectionCard({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="rounded-[24px] border border-border bg-surface-1 p-7 shadow-sm transition-all hover:shadow-md">
+      <div className="mb-6 flex items-center gap-3">
+        <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          {icon}
+        </div>
+        <h2 className="font-display text-[18px] font-bold text-foreground tracking-tight">{title}</h2>
+      </div>
+      <div className="space-y-5">{children}</div>
     </div>
   );
 }
@@ -199,6 +214,7 @@ export function WorkshopForm({
     initialData?.images ?? [],
   );
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
+  const [dragActive, setDragActive] = useState(false);
 
   // ── Fetch categories & levels ────────────────────────────────────
   const { data: categories = [] } = useQuery<ICategory[]>({
@@ -214,28 +230,42 @@ export function WorkshopForm({
   });
 
   // ── Image handling ───────────────────────────────────────────────
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const newFiles = Array.from(files).filter((file) =>
-      file.type.startsWith("image/"),
-    );
+  const handleFiles = (files: File[]) => {
+    const newFiles = files.filter((file) => file.type.startsWith("image/"));
 
     if (newFiles.length === 0) {
       toast.error("Please select valid image files");
       return;
     }
 
-    if (imageFiles.length + newFiles.length > 5) {
+    if (imageFiles.length + newFiles.length + existingImages.length > 5) {
       toast.error("Maximum 5 images allowed");
       return;
     }
 
     setImageFiles((prev) => [...prev, ...newFiles]);
-
     const previews = newFiles.map((file) => URL.createObjectURL(file));
     setImagePreviews((prev) => [...prev, ...previews]);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) handleFiles(Array.from(e.target.files));
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+    else if (e.type === "dragleave") setDragActive(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleFiles(Array.from(e.dataTransfer.files));
+    }
   };
 
   const handleRemoveNewImage = (index: number) => {
@@ -335,360 +365,252 @@ export function WorkshopForm({
 
   // ── Render ───────────────────────────────────────────────────────
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      {/* ── Basic Information ──────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Basic Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Title */}
+    <div className="max-w-[720px] w-full">
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* ── Section 1: Basic Info ──────────────────────────────────── */}
+        <SectionCard title="Basic Information" icon={<LayoutGrid className="size-5" />}>
           <div className="space-y-2">
-            <Label htmlFor="title">
-              Title <span className="text-destructive">*</span>
+            <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Workshop Title <span className="text-destructive">*</span>
             </Label>
             <Input
               id="title"
-              placeholder="e.g. Advanced Web Development Bootcamp"
+              placeholder="e.g. Master the Art of Minimalist UI Design"
               value={formData.title}
               onChange={(e) => updateField("title", e.target.value)}
+              className="h-12 rounded-xl bg-surface-2 border-border focus:ring-primary/20 text-lg font-semibold"
             />
-            {errors.title && (
-              <p className="text-xs text-destructive">{errors.title}</p>
-            )}
+            {errors.title && <p className="text-xs font-bold text-destructive">{errors.title}</p>}
           </div>
 
-          {/* Description */}
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+              Detailed Description
+            </Label>
             <Textarea
               id="description"
-              placeholder="Describe your workshop in detail..."
-              rows={4}
+              placeholder="What makes this workshop special? Dive into the details..."
+              rows={5}
               value={formData.description}
               onChange={(e) => updateField("description", e.target.value)}
+              className="rounded-2xl bg-surface-2 border-border resize-none p-4"
             />
           </div>
 
-          {/* Location & Price */}
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="location">Location</Label>
+              <Label htmlFor="location" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Location</Label>
               <Input
                 id="location"
-                placeholder="e.g. Dhaka, Bangladesh"
+                placeholder="Online or Physical Address"
                 value={formData.location}
                 onChange={(e) => updateField("location", e.target.value)}
+                className="h-11 rounded-xl bg-surface-2 border-border"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="price">Price (BDT)</Label>
-              <Input
-                id="price"
-                type="number"
-                min="0"
-                step="1"
-                placeholder="0"
-                value={formData.price ?? ""}
-                onChange={(e) =>
-                  updateField(
-                    "price",
-                    e.target.value ? Number(e.target.value) : 0,
-                  )
-                }
-              />
-              {errors.price && (
-                <p className="text-xs text-destructive">{errors.price}</p>
-              )}
+              <Label htmlFor="price" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Price (BDT)</Label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">৳</span>
+                <Input
+                  id="price"
+                  type="number"
+                  placeholder="0"
+                  value={formData.price ?? ""}
+                  onChange={(e) => updateField("price", e.target.value ? Number(e.target.value) : 0)}
+                  className="h-11 rounded-xl bg-surface-2 border-border pl-7 font-display font-bold"
+                />
+              </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </SectionCard>
 
-      {/* ── Schedule ────────────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Schedule</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+        {/* ── Section 2: Schedule ────────────────────────────────────── */}
+        <SectionCard title="Schedule" icon={<Calendar className="size-5" />}>
+          <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="startDate">
-                Start Date <span className="text-destructive">*</span>
-              </Label>
+              <Label htmlFor="startDate" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Start Date</Label>
               <Input
                 id="startDate"
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => updateField("startDate", e.target.value)}
+                className="h-11 rounded-xl bg-surface-2 border-border"
               />
-              {errors.startDate && (
-                <p className="text-xs text-destructive">{errors.startDate}</p>
-              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate">
-                End Date <span className="text-destructive">*</span>
-              </Label>
+              <Label htmlFor="endDate" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">End Date</Label>
               <Input
                 id="endDate"
                 type="date"
                 value={formData.endDate}
                 onChange={(e) => updateField("endDate", e.target.value)}
+                className="h-11 rounded-xl bg-surface-2 border-border"
               />
-              {errors.endDate && (
-                <p className="text-xs text-destructive">{errors.endDate}</p>
-              )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </SectionCard>
 
-      {/* ── Category & Level ────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Category & Level</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+        {/* ── Section 3: Classification ──────────────────────────────── */}
+        <SectionCard title="Classification" icon={<Tags className="size-5" />}>
+          <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label>
-                Category <span className="text-destructive">*</span>
-              </Label>
-              <Select
-                value={formData.category}
-                onValueChange={(val) => updateField("category", val)}
-              >
-                <SelectTrigger>
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</Label>
+              <Select value={formData.category} onValueChange={(val) => updateField("category", val)}>
+                <SelectTrigger className="h-11 rounded-xl bg-surface-2 border-border">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border-border bg-surface-1">
                   {categories.map((cat) => (
-                    <SelectItem key={cat._id} value={cat._id}>
-                      {cat.name}
-                    </SelectItem>
+                    <SelectItem key={cat._id} value={cat._id} className="rounded-lg">{cat.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {errors.category && (
-                <p className="text-xs text-destructive">{errors.category}</p>
-              )}
             </div>
             <div className="space-y-2">
-              <Label>
-                Level <span className="text-destructive">*</span>
-              </Label>
-              <Select
-                value={formData.level}
-                onValueChange={(val) => updateField("level", val)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select level" />
+              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Level</Label>
+              <Select value={formData.level} onValueChange={(val) => updateField("level", val)}>
+                <SelectTrigger className="h-11 rounded-xl bg-surface-2 border-border">
+                  <SelectValue placeholder="Select difficulty" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl border-border bg-surface-1">
                   {levels.map((lvl) => (
-                    <SelectItem key={lvl._id} value={lvl._id}>
-                      {lvl.name}
-                    </SelectItem>
+                    <SelectItem key={lvl._id} value={lvl._id} className="rounded-lg">{lvl.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {errors.level && (
-                <p className="text-xs text-destructive">{errors.level}</p>
-              )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </SectionCard>
 
-      {/* ── Capacity ────────────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Capacity</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-2">
+        {/* ── Section 4: Capacity ────────────────────────────────────── */}
+        <SectionCard title="Capacity & Age" icon={<Users className="size-5" />}>
+          <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="maxSeats">Max Seats</Label>
+              <Label htmlFor="maxSeats" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Maximum Seats</Label>
               <Input
                 id="maxSeats"
                 type="number"
-                min="1"
-                placeholder="e.g. 30"
+                placeholder="e.g. 50"
                 value={formData.maxSeats ?? ""}
-                onChange={(e) =>
-                  updateField(
-                    "maxSeats",
-                    e.target.value ? Number(e.target.value) : undefined,
-                  )
-                }
+                onChange={(e) => updateField("maxSeats", e.target.value ? Number(e.target.value) : undefined)}
+                className="h-11 rounded-xl bg-surface-2 border-border"
               />
-              {errors.maxSeats && (
-                <p className="text-xs text-destructive">{errors.maxSeats}</p>
-              )}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="minAge">Minimum Age</Label>
+              <Label htmlFor="minAge" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Minimum Age</Label>
               <Input
                 id="minAge"
                 type="number"
-                min="1"
                 placeholder="e.g. 18"
                 value={formData.minAge ?? ""}
-                onChange={(e) =>
-                  updateField(
-                    "minAge",
-                    e.target.value ? Number(e.target.value) : undefined,
-                  )
-                }
+                onChange={(e) => updateField("minAge", e.target.value ? Number(e.target.value) : undefined)}
+                className="h-11 rounded-xl bg-surface-2 border-border"
               />
-              {errors.minAge && (
-                <p className="text-xs text-destructive">{errors.minAge}</p>
-              )}
             </div>
           </div>
-        </CardContent>
-      </Card>
+        </SectionCard>
 
-      {/* ── Details Lists ───────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Workshop Details</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-5">
-          <ListFieldEditor
-            label="What You'll Learn"
-            items={formData.whatYouLearn ?? []}
-            onChange={(items) => updateField("whatYouLearn", items)}
-            placeholder="e.g. React fundamentals"
-          />
-          <Separator />
-          <ListFieldEditor
-            label="Prerequisites"
-            items={formData.prerequisites ?? []}
-            onChange={(items) => updateField("prerequisites", items)}
-            placeholder="e.g. Basic HTML & CSS knowledge"
-          />
-          <Separator />
-          <ListFieldEditor
-            label="Benefits"
-            items={formData.benefits ?? []}
-            onChange={(items) => updateField("benefits", items)}
-            placeholder="e.g. Certificate of completion"
-          />
-          <Separator />
-          <ListFieldEditor
-            label="Syllabus"
-            items={formData.syllabus ?? []}
-            onChange={(items) => updateField("syllabus", items)}
-            placeholder="e.g. Module 1: Introduction"
-          />
-        </CardContent>
-      </Card>
-
-      {/* ── Images ──────────────────────────────────────────────────── */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">
-            Images{" "}
-            <span className="ml-1 text-xs font-normal text-muted-foreground">
-              (max 5)
-            </span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {/* Existing images */}
-          {existingImages.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground">
-                Current Images
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {existingImages.map((url, idx) => (
-                  <div
-                    key={`existing-${idx}`}
-                    className="group relative h-24 w-24 overflow-hidden rounded-lg border"
-                  >
-                    <Image
-                      src={url}
-                      alt={`Workshop image ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveExistingImage(url)}
-                      className="absolute top-1 right-1 flex size-6 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity group-hover:opacity-100"
-                    >
-                      <Trash2 className="size-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* New image previews */}
-          {imagePreviews.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground">
-                New Images
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {imagePreviews.map((src, idx) => (
-                  <div
-                    key={`new-${idx}`}
-                    className="group relative h-24 w-24 overflow-hidden rounded-lg border"
-                  >
-                    <Image
-                      src={src}
-                      alt={`New image ${idx + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveNewImage(idx)}
-                      className="absolute top-1 right-1 flex size-6 items-center justify-center rounded-full bg-destructive text-white opacity-0 transition-opacity group-hover:opacity-100"
-                    >
-                      <Trash2 className="size-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Upload button */}
-          <div className="flex items-center gap-3">
-            <Label htmlFor="workshop-images" className="cursor-pointer">
-              <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-dashed transition-colors hover:border-primary/50 hover:bg-muted/50">
-                <Plus className="size-5 text-muted-foreground" />
-              </div>
-            </Label>
-            <Input
-              id="workshop-images"
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={handleImageChange}
+        {/* ── Section 5: Learning Content ────────────────────────────── */}
+        <SectionCard title="Learning Content" icon={<ClipboardList className="size-5" />}>
+          <div className="space-y-8">
+            <ListFieldEditor
+              label="What You'll Learn"
+              items={formData.whatYouLearn ?? []}
+              onChange={(items) => updateField("whatYouLearn", items)}
+              placeholder="Add a learning outcome..."
             />
-            <p className="text-xs text-muted-foreground">
-              Upload workshop cover images. JPG, PNG, WebP supported.
-            </p>
+            <Separator className="bg-border/50" />
+            <ListFieldEditor
+              label="Prerequisites"
+              items={formData.prerequisites ?? []}
+              onChange={(items) => updateField("prerequisites", items)}
+              placeholder="Add a prerequisite..."
+            />
+            <Separator className="bg-border/50" />
+            <ListFieldEditor
+              label="Benefits"
+              items={formData.benefits ?? []}
+              onChange={(items) => updateField("benefits", items)}
+              placeholder="Add a benefit..."
+            />
+            <Separator className="bg-border/50" />
+            <ListFieldEditor
+              label="Course Syllabus"
+              items={formData.syllabus ?? []}
+              onChange={(items) => updateField("syllabus", items)}
+              placeholder="Add a module or topic..."
+            />
           </div>
-        </CardContent>
-      </Card>
+        </SectionCard>
 
-      {/* ── Submit ──────────────────────────────────────────────────── */}
-      <div className="flex justify-end gap-3">
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="animate-spin" />}
-          {submitLabel}
-        </Button>
-      </div>
-    </form>
+        {/* ── Section 6: Media ───────────────────────────────────────── */}
+        <SectionCard title="Workshop Media" icon={<ImageIcon className="size-5" />}>
+          <div className="space-y-6">
+            <div
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+              className={cn(
+                "relative group flex flex-col items-center justify-center rounded-[20px] border-2 border-dashed p-10 transition-all cursor-pointer",
+                dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-surface-2"
+              )}
+            >
+              <input
+                id="workshop-images"
+                type="file"
+                accept="image/*"
+                multiple
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={handleImageChange}
+              />
+              <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+                <Plus className="size-7" />
+              </div>
+              <p className="text-sm font-bold text-foreground mb-1">Drag & drop images here</p>
+              <p className="text-xs text-muted-foreground">or <span className="text-primary font-bold">click to browse</span></p>
+              <p className="mt-4 text-[11px] text-muted-foreground uppercase font-bold tracking-widest">Max 5 images • JPG, PNG, WebP</p>
+            </div>
+
+            {(existingImages.length > 0 || imagePreviews.length > 0) && (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {existingImages.map((url, idx) => (
+                  <div key={`existing-${idx}`} className="group relative aspect-[16/9] overflow-hidden rounded-xl border border-border shadow-sm">
+                    <Image src={url} alt="Workshop" fill className="object-cover transition-transform group-hover:scale-110" unoptimized />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button type="button" onClick={() => handleRemoveExistingImage(url)} className="size-9 rounded-full bg-destructive text-white flex items-center justify-center hover:scale-110 transition-transform">
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
+                    {idx === 0 && <div className="absolute top-2 left-2 px-2 py-1 bg-primary text-white text-[9px] font-bold uppercase rounded-md shadow-sm">Cover</div>}
+                  </div>
+                ))}
+                {imagePreviews.map((src, idx) => (
+                  <div key={`new-${idx}`} className="group relative aspect-[16/9] overflow-hidden rounded-xl border border-border shadow-sm">
+                    <Image src={src} alt="New Image" fill className="object-cover transition-transform group-hover:scale-110" />
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <button type="button" onClick={() => handleRemoveNewImage(idx)} className="size-9 rounded-full bg-destructive text-white flex items-center justify-center hover:scale-110 transition-transform">
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
+                    {existingImages.length === 0 && idx === 0 && <div className="absolute top-2 left-2 px-2 py-1 bg-primary text-white text-[9px] font-bold uppercase rounded-md shadow-sm">Cover</div>}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </SectionCard>
+
+        {/* ── Submit ─────────────────────────────────────────────────── */}
+        <div className="flex items-center justify-end gap-4 pt-4">
+          <Button type="button" variant="ghost" className="rounded-xl font-bold text-muted-foreground" disabled={isSubmitting}>Cancel</Button>
+          <Button type="submit" disabled={isSubmitting} className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20">
+            {isSubmitting ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Check className="mr-2 size-4" />}
+            {submitLabel}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

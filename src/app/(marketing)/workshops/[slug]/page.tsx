@@ -611,7 +611,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
           </div>
 
           {/* Right Column: Sticky Sidebar - THE CONVERSION ENGINE */}
-          <aside className="lg:sticky lg:top-23 lg:self-start lg:max-h-[calc(100vh-100px)] lg:overflow-y-auto hidden-scrollbar">
+          <aside className="hidden lg:sticky lg:block lg:top-23 lg:self-start lg:max-h-[calc(100vh-100px)] lg:overflow-y-auto hidden-scrollbar">
             <div className="rounded-3xl border border-border bg-surface-1 p-7 shadow-2">
               {/* Price Block */}
               <div className="mb-6">
@@ -810,24 +810,27 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
         </div>
       </div>
 
-      {/* Mobile Fixed Enroll Bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background/95 p-4 backdrop-blur-md lg:hidden">
-        <div className="site-container flex items-center justify-between">
+      {/* Mobile Fixed Enroll Bar — visible only on mobile */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t border-border bg-background/95 backdrop-blur-md px-4 py-3">
+        <div className="flex items-center justify-between gap-4">
+          {/* Price */}
           <div>
-            <p className="font-display text-xl font-bold text-foreground">
-              {formatCurrency(workshop.price ?? 0)}
+            <p className="text-xs text-foreground-muted font-medium">Price</p>
+            <p className="font-display text-xl font-extrabold text-foreground">
+              {workshop.price ? formatCurrency(workshop.price) : "Free"}
             </p>
-            <p className="text-xs text-foreground-muted">per student</p>
           </div>
-          <EnrollButton
-            workshopId={workshop._id}
-            slug={slug}
-            price={workshop.price ?? 0}
-            seatsAvailable={seatsAvailable}
-            variant="default"
-            size="lg"
-            className="h-14 px-10 shadow-amber-glow"
-          />
+          {/* Enroll Button */}
+          <div className="flex-1 max-w-[200px]">
+            <EnrollButton
+              workshopId={workshop._id}
+              slug={slug}
+              price={workshop.price ?? 0}
+              seatsAvailable={seatsAvailable}
+              size="default"
+              className="w-full"
+            />
+          </div>
         </div>
       </div>
     </div>

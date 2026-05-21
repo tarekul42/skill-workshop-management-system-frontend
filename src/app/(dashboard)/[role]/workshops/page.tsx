@@ -5,15 +5,9 @@ import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+
 import {
   Plus,
-  MoreHorizontal,
   Eye,
   Pencil,
   Trash2,
@@ -40,12 +34,26 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import {
   PageHeader,
   StatusBadge,
   ConfirmDialog,
   TableSkeleton,
+  Breadcrumbs,
 } from "@/components/shared";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import {
@@ -76,6 +84,7 @@ export default function WorkshopsPage({ params }: PageProps) {
   // Search/Pagination state
   const [searchTerm, setSearchTerm] = useState("");
   const [inputValue, setInputValue] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
 
@@ -152,47 +161,65 @@ export default function WorkshopsPage({ params }: PageProps) {
   // ── Render ─────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-6">
-      <PageHeader
-        title="Workshop Management"
-        description="Manage all workshops"
-      >
-        <Button
-          onClick={() => router.push(`/${dashboardRole}/workshops/create`)}
+    <TooltipProvider>
+      <div className="space-y-6">
+        <Breadcrumbs />
+        <PageHeader
+          title="Workshop Management"
+          description="Create and manage your workshops across the platform."
         >
-          <Plus className="size-4" />
-          Create Workshop
-        </Button>
-      </PageHeader>
+          <Button
+            onClick={() => router.push(`/${dashboardRole}/workshops/create`)}
+            className="rounded-xl shadow-sm"
+          >
+            <Plus className="mr-2 size-4" />
+            Create Workshop
+          </Button>
+        </PageHeader>
 
-      {/* ── Search & Info ──────────────────────────────────────────── */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="relative max-w-sm flex-1">
-          <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by title..."
-            value={inputValue}
-            onChange={(e) => handleSearch(e.target.value)}
-            className="pl-8"
-          />
+        {/* ── Search & Filters ────────────────────────────────────────── */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-center">
+            <div className="relative w-full sm:w-[280px]">
+              <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search workshops..."
+                value={inputValue}
+                onChange={(e) => handleSearch(e.target.value)}
+                className="pl-9 h-11 rounded-xl bg-surface-1 border-border focus:ring-primary/20"
+              />
+            </div>
+            
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-[180px] h-11 rounded-xl bg-surface-1">
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="published">Published</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <p className="text-sm font-medium text-muted-foreground">
+            {total} <span className="font-normal">workshops found</span>
+          </p>
         </div>
-        <p className="text-sm text-muted-foreground">{total} workshops total</p>
-      </div>
 
       {/* ── Table ──────────────────────────────────────────────────── */}
       <div className="rounded-lg border">
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-20">Image</TableHead>
-              <TableHead>Title</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Level</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Seats</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="w-17.5">Actions</TableHead>
+          <TableHeader className="bg-surface-2">
+            <TableRow className="hover:bg-transparent border-b border-border">
+              <TableHead className="w-[80px] py-4">Image</TableHead>
+              <TableHead className="py-4">Workshop Details</TableHead>
+              <TableHead className="py-4">Category</TableHead>
+              <TableHead className="py-4">Level</TableHead>
+              <TableHead className="py-4 text-right">Price</TableHead>
+              <TableHead className="py-4">Capacity</TableHead>
+              <TableHead className="py-4">Status</TableHead>
+              <TableHead className="py-4">Created</TableHead>
+              <TableHead className="w-[120px] py-4 text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -213,92 +240,123 @@ export default function WorkshopsPage({ params }: PageProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              workshops.map((ws: IWorkshop) => {
-                const availableSeats =
-                  (ws.maxSeats ?? 0) - (ws.currentEnrollments || 0);
-                return (
-                  <TableRow key={ws._id}>
-                    <TableCell>
-                      <div className="relative size-12 overflow-hidden rounded-md border bg-muted">
-                        {ws.images && ws.images.length > 0 ? (
-                          <Image
-                            src={ws.images[0]}
-                            alt={ws.title}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="flex size-full items-center justify-center text-[10px] text-muted-foreground">
-                            No Image
+              workshops
+                .filter((ws: IWorkshop) => {
+                  if (statusFilter === "all") return true;
+                  const isPublished = ws.currentEnrollments > 0 || ws.price === 0;
+                  return statusFilter === "published" ? isPublished : !isPublished;
+                })
+                .map((ws: IWorkshop) => {
+                  const enrollmentRate = (ws.currentEnrollments / (ws.maxSeats || 1)) * 100;
+                  const isFull = (ws.currentEnrollments || 0) >= (ws.maxSeats || 0);
+
+                  return (
+                    <TableRow key={ws._id} className="group hover:bg-surface-2 transition-colors">
+                      <TableCell>
+                        <div className="relative h-10 w-13 shrink-0 overflow-hidden rounded-md border border-border bg-surface-3">
+                          {ws.images && ws.images.length > 0 ? (
+                            <Image
+                              src={ws.images[0]}
+                              alt={ws.title}
+                              fill
+                              className="object-cover transition-transform group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="flex size-full items-center justify-center text-[8px] font-bold uppercase tracking-tighter text-muted-foreground">
+                              No Img
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-display text-[15px] font-semibold text-foreground truncate max-w-[200px]">
+                            {ws.title}
+                          </span>
+                          <span className="text-[12px] font-medium text-muted-foreground">
+                            /{ws.slug || ws._id.slice(-6)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className="rounded-full border-accent-subtle bg-accent-subtle/10 text-accent font-bold text-[10px] px-2"
+                        >
+                          {getCategoryName(ws.category) || "Uncategorized"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className="rounded-full border-primary-subtle bg-primary-subtle/10 text-primary font-bold text-[10px] px-2"
+                        >
+                          {getLevelName(ws.level) || "General"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="font-display text-[16px] font-bold text-foreground">
+                          {ws.price != null && ws.price > 0 ? formatCurrency(ws.price) : "Free"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col gap-1.5 min-w-[100px]">
+                          <div className="flex items-center justify-between text-[11px] font-bold">
+                            <span className={isFull ? "text-destructive" : "text-foreground"}>
+                              {ws.currentEnrollments || 0}/{ws.maxSeats || "∞"}
+                            </span>
+                            {isFull && <span className="text-[9px] text-destructive uppercase">Full</span>}
                           </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <p className="truncate text-sm font-medium max-w-50">
-                        {ws.title}
-                      </p>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400"
-                      >
-                        {getCategoryName(ws.category) || "—"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant="outline"
-                        className="border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400"
-                      >
-                        {getLevelName(ws.level) || "—"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-sm font-medium">
-                        {ws.price != null ? formatCurrency(ws.price) : "Free"}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={`text-sm ${availableSeats <= 0 ? "text-red-600 font-medium" : "text-muted-foreground"}`}
-                      >
-                        {ws.maxSeats
-                          ? `${availableSeats} / ${ws.maxSeats}`
-                          : "—"}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <StatusBadge
-                        status={
-                          ws.currentEnrollments > 0 || ws.price === 0
-                            ? "Published"
-                            : "Draft"
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <span className="text-sm text-muted-foreground">
-                        {formatDate(ws.createdAt)}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <WorkshopActions
-                        workshop={ws}
-                        role={dashboardRole}
-                        onView={() => setViewWorkshop(ws)}
-                        onEdit={() =>
-                          router.push(
-                            `/${dashboardRole}/workshops/${ws._id}/edit`,
-                          )
-                        }
-                        onDelete={() => setDeleteTarget(ws)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                );
-              })
+                          {ws.maxSeats && (
+                            <div className="h-1.5 w-full rounded-full bg-surface-3 overflow-hidden">
+                              <div
+                                className={cn(
+                                  "h-full rounded-full transition-all duration-1000",
+                                  isFull ? "bg-destructive" : "bg-primary"
+                                )}
+                                style={{ width: `${Math.min(enrollmentRate, 100)}%` }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge
+                          status={
+                            ws.currentEnrollments > 0 || ws.price === 0
+                              ? "Published"
+                              : "Draft"
+                          }
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="text-xs font-medium text-muted-foreground cursor-default underline decoration-dotted underline-offset-4">
+                              {formatDate(ws.createdAt)}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p className="text-[10px] font-bold">Full Date: {new Date(ws.createdAt).toLocaleString()}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <WorkshopActions
+                          workshop={ws}
+                          role={dashboardRole}
+                          onView={() => setViewWorkshop(ws)}
+                          onEdit={() =>
+                            router.push(
+                              `/${dashboardRole}/workshops/${ws._id}/edit`,
+                            )
+                          }
+                          onDelete={() => setDeleteTarget(ws)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
             )}
           </TableBody>
         </Table>
@@ -491,14 +549,14 @@ export default function WorkshopsPage({ params }: PageProps) {
         variant="destructive"
         confirmLabel="Delete Workshop"
       />
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }
 
 // ─── Workshop Actions ─────────────────────────────────────────────────
 
 function WorkshopActions({
-  role,
   onView,
   onEdit,
   onDelete,
@@ -509,32 +567,55 @@ function WorkshopActions({
   onEdit: () => void;
   onDelete: () => void;
 }) {
-  // role is used by consumers; keep the prop but avoid lint warnings
-  void role;
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon-xs">
-          <MoreHorizontal className="size-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={onView}>
-          <Eye className="size-4" />
-          View
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={onEdit}>
-          <Pencil className="size-4" />
-          Edit
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onClick={onDelete}
-          className="text-red-600 focus:text-red-600"
-        >
-          <Trash2 className="size-4" />
-          Delete
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex items-center justify-center gap-1">
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onView}
+            className="size-8 rounded-lg hover:bg-primary/10 hover:text-primary transition-colors"
+          >
+            <Eye className="size-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <p className="text-[10px] font-bold">View Details</p>
+        </TooltipContent>
+      </Tooltip>
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onEdit}
+            className="size-8 rounded-lg hover:bg-success/10 hover:text-success transition-colors"
+          >
+            <Pencil className="size-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <p className="text-[10px] font-bold">Edit Workshop</p>
+        </TooltipContent>
+      </Tooltip>
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onDelete}
+            className="size-8 rounded-lg hover:bg-destructive/10 hover:text-destructive transition-colors"
+          >
+            <Trash2 className="size-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="top">
+          <p className="text-[10px] font-bold">Delete Workshop</p>
+        </TooltipContent>
+      </Tooltip>
+    </div>
   );
 }

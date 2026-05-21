@@ -102,7 +102,6 @@ export default function VerifyOTPPage() {
   }
 
   return (
-  return (
     <AnimatedPage className="w-full">
       <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
         <CardHeader className="items-center text-center pb-2">
@@ -119,117 +118,121 @@ export default function VerifyOTPPage() {
           </CardDescription>
         </CardHeader>
 
-      <CardContent>
-        <form onSubmit={handleVerify} className="space-y-8 pt-4">
-          {/* OTP Input */}
-          <div className="flex justify-center">
-            <OTPInput
-              value={otp}
-              onChange={(value) => {
-                setOtp(value);
-                if (value.length === 6) {
-                  // Auto submit
-                  const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
-                  handleVerify(syntheticEvent);
-                }
-              }}
-              maxLength={6}
-              pattern={REGEXP_ONLY_DIGITS}
-              containerClassName="flex gap-2"
-              render={({ slots }) => (
-                <div className="flex gap-2">
-                  {slots.slice(0, 3).map((slot, index) => (
-                    <OTPSlot key={index} slot={slot} />
-                  ))}
-                  <div className="w-2" /> {/* Wider gap for visual grouping 3|3 */}
-                  {slots.slice(3, 6).map((slot, index) => (
-                    <OTPSlot key={index + 3} slot={slot} />
-                  ))}
-                </div>
+        <CardContent>
+          <form onSubmit={handleVerify} className="space-y-8 pt-4">
+            {/* OTP Input */}
+            <div className="flex justify-center">
+              <OTPInput
+                value={otp}
+                onChange={(value) => {
+                  setOtp(value);
+                  if (value.length === 6) {
+                    // Auto submit
+                    const syntheticEvent = { preventDefault: () => {} } as React.FormEvent;
+                    handleVerify(syntheticEvent);
+                  }
+                }}
+                maxLength={6}
+                pattern={REGEXP_ONLY_DIGITS}
+                containerClassName="flex gap-2"
+                render={({ slots }) => (
+                  <div className="flex gap-2">
+                    {slots.slice(0, 3).map((slot, index) => (
+                      <OTPSlot key={index} slot={slot} />
+                    ))}
+                    <div className="w-2" /> {/* Wider gap for visual grouping 3|3 */}
+                    {slots.slice(3, 6).map((slot, index) => (
+                      <OTPSlot key={index + 3} slot={slot} />
+                    ))}
+                  </div>
+                )}
+              />
+            </div>
+
+            {error && (
+              <p className="text-center text-[14px] text-danger mt-4">{error}</p>
+            )}
+
+            <Button
+              type="submit"
+              className="w-full h-12 text-base font-semibold"
+              disabled={otp.length !== 6 || loading}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Verifying...
+                </>
+              ) : (
+                "Verify Email"
               )}
-            />
+            </Button>
+          </form>
+        </CardContent>
+
+        <CardFooter className="flex-col items-center gap-6 pb-2">
+          {/* Countdown & Resend */}
+          <div className="flex flex-col items-center gap-3">
+            {countdown > 0 ? (
+              <div className="flex items-center gap-3">
+                <div className="relative size-5">
+                  <svg className="size-5 -rotate-90" viewBox="0 0 24 24">
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      className="text-border"
+                    />
+                    <circle
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="3"
+                      strokeDasharray="62.8"
+                      strokeDashoffset={62.8 - (62.8 * countdown) / 30}
+                      className="text-primary transition-all duration-1000 linear"
+                    />
+                  </svg>
+                </div>
+                <span className="text-[13px] text-foreground-muted">
+                  Code expires in 0:{countdown.toString().padStart(2, "0")}
+                </span>
+              </div>
+            ) : (
+              <span className="text-[13px] text-foreground-muted">Code expired</span>
+            )}
+
+            <button
+              onClick={handleResend}
+              disabled={countdown > 0 || resendLoading}
+              className={`text-[13px] font-medium transition-colors ${
+                countdown > 0 || resendLoading
+                  ? "text-foreground-disabled cursor-not-allowed"
+                  : "text-primary hover:underline"
+              }`}
+            >
+              {resendLoading
+                ? "Sending..."
+                : countdown > 0
+                  ? `Resend code (0:${countdown.toString().padStart(2, "0")})`
+                  : "Resend code"}
+            </button>
           </div>
 
-          {error && (
-            <p className="text-center text-[14px] text-danger mt-4">{error}</p>
-          )}
-
-          <Button
-            type="submit"
-            className="w-full h-12 text-base font-semibold"
-            disabled={otp.length !== 6 || loading}
+          <Link
+            href="/register"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-foreground-muted transition-colors hover:text-foreground"
           >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 size-4 animate-spin" />
-                Verifying...
-              </>
-            ) : (
-              "Verify Email"
-            )}
-          </Button>
-        </form>
-      </CardContent>
-
-      <CardFooter className="flex-col items-center gap-6 pb-2">
-        {/* Countdown & Resend */}
-        <div className="flex flex-col items-center gap-3">
-          {countdown > 0 ? (
-            <div className="flex items-center gap-3">
-              <div className="relative size-5">
-                <svg className="size-5 -rotate-90" viewBox="0 0 24 24">
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    className="text-border"
-                  />
-                  <circle
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeDasharray="62.8"
-                    strokeDashoffset={62.8 - (62.8 * countdown) / 30}
-                    className="text-primary transition-all duration-1000 linear"
-                  />
-                </svg>
-              </div>
-              <span className="text-[13px] text-foreground-muted">
-                Code expires in 0:{countdown.toString().padStart(2, '0')}
-              </span>
-            </div>
-          ) : (
-            <span className="text-[13px] text-foreground-muted">Code expired</span>
-          )}
-
-          <button
-            onClick={handleResend}
-            disabled={countdown > 0 || resendLoading}
-            className={`text-[13px] font-medium transition-colors ${
-              countdown > 0 || resendLoading
-                ? "text-foreground-disabled cursor-not-allowed"
-                : "text-primary hover:underline"
-            }`}
-          >
-            {resendLoading ? "Sending..." : countdown > 0 ? `Resend code (0:${countdown.toString().padStart(2, '0')})` : "Resend code"}
-          </button>
-        </div>
-
-        <Link
-          href="/register"
-          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-foreground-muted transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-3.5" />
-          Back to registration
-        </Link>
-      </CardFooter>
-    </Card>
+            <ArrowLeft className="size-3.5" />
+            Back to registration
+          </Link>
+        </CardFooter>
+      </Card>
     </AnimatedPage>
   );
 }

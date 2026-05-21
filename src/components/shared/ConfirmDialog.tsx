@@ -1,6 +1,7 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Loader2, Trash, XCircle } from "lucide-react";
 
 import {
   Dialog,
@@ -11,6 +12,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 // ─── Props ──────────────────────────────────────────────────────────
 
@@ -24,7 +27,23 @@ interface ConfirmDialogProps {
   variant?: "default" | "destructive";
   confirmLabel?: string;
   cancelLabel?: string;
+  requireConfirmText?: string;
 }
+
+// ─── Icon config ─────────────────────────────────────────────────────
+
+const iconConfig = {
+  destructive: {
+    containerClass: "bg-danger-subtle",
+    Icon: Trash,
+    iconClass: "text-danger",
+  },
+  default: {
+    containerClass: "bg-warning-subtle",
+    Icon: XCircle,
+    iconClass: "text-warning",
+  },
+} as const;
 
 // ─── Component ──────────────────────────────────────────────────────
 
@@ -38,31 +57,75 @@ export function ConfirmDialog({
   variant = "default",
   confirmLabel = "Confirm",
   cancelLabel = "Cancel",
+  requireConfirmText,
 }: ConfirmDialogProps) {
+  const [confirmInput, setConfirmInput] = useState("");
   const isDestructive = variant === "destructive";
+  const config = iconConfig[variant];
+
+  useEffect(() => {
+    if (!open) setConfirmInput("");
+  }, [open]);
+
+  const isConfirmDisabled =
+    isLoading ||
+    (requireConfirmText !== undefined && confirmInput !== requireConfirmText);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+      <DialogContent className="max-w-[420px]">
+        <DialogHeader className="items-center text-center">
+          {/* Icon container */}
+          <div
+            className={cn(
+              "mx-auto mb-4 flex size-14 items-center justify-center rounded-full",
+              config.containerClass,
+            )}
+          >
+            <config.Icon className={cn("size-7", config.iconClass)} />
+          </div>
+          <DialogTitle className="font-display text-[22px] font-bold">
+            {title}
+          </DialogTitle>
+          <DialogDescription className="text-[15px] font-normal text-foreground-muted">
+            {description}
+          </DialogDescription>
         </DialogHeader>
 
-        <DialogFooter>
+        {requireConfirmText && (
+          <div className="mt-2 space-y-2">
+            <p className="text-sm text-foreground-muted text-center">
+              Type{" "}
+              <span className="font-mono font-bold text-foreground">
+                &apos;{requireConfirmText}&apos;
+              </span>{" "}
+              to confirm
+            </p>
+            <Input
+              value={confirmInput}
+              onChange={(e) => setConfirmInput(e.target.value)}
+              placeholder={`Type '${requireConfirmText}' to confirm`}
+              className="text-center"
+            />
+          </div>
+        )}
+
+        <DialogFooter className="mt-4 gap-2 sm:gap-2">
           <Button
-            variant="outline"
+            variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={isLoading}
+            className="flex-1"
           >
             {cancelLabel}
           </Button>
           <Button
             variant={isDestructive ? "destructive" : "default"}
             onClick={onConfirm}
-            disabled={isLoading}
+            disabled={isConfirmDisabled}
+            className="flex-1"
           >
-            {isLoading && <Loader2 className="animate-spin" />}
+            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
             {confirmLabel}
           </Button>
         </DialogFooter>
