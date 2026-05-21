@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   MoreHorizontal,
@@ -15,9 +14,7 @@ import {
   XCircle,
   CalendarDays,
   Users,
-  DollarSign,
   MapPin,
-  Clock,
   ArrowRight,
   ShieldCheck,
   CreditCard,
@@ -50,7 +47,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -185,7 +181,7 @@ function StudentEnrollmentDetailDialog({
              <Button variant="outline" className="flex-1 rounded-xl h-11 font-bold" onClick={() => onOpenChange(false)}>
                Close
              </Button>
-             <Link href={`/workshops/${(w as any).slug || w._id}`} className="flex-1">
+             <Link href={`/workshops/${w.slug || w._id}`} className="flex-1">
                <Button className="w-full rounded-xl h-11 font-bold shadow-raised hover:shadow-float transition-all">
                  <Eye className="size-4 mr-2" />
                  View Workshop
@@ -431,7 +427,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                           <TableCell className="px-6 py-4">
                             <div className="flex flex-col">
                               <Link
-                                href={`/workshops/${(enrollment.workshop as any).slug || enrollment.workshop._id}`}
+                                href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
                                 className="font-display text-[15px] font-bold text-foreground hover:text-primary transition-colors truncate max-w-64"
                               >
                                 {enrollment.workshop.title}
@@ -503,7 +499,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                               )}
                               
                               <Button variant="ghost" size="icon-xs" className="size-8 rounded-lg" asChild>
-                                <Link href={`/workshops/${(enrollment.workshop as any).slug || enrollment.workshop._id}`}>
+                                <Link href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}>
                                   <ArrowRight className="size-4" />
                                 </Link>
                               </Button>
@@ -808,7 +804,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                   <Button variant="outline" className="flex-1 rounded-xl" onClick={() => setViewEnrollment(null)}>
                     Dismiss
                   </Button>
-                   <Link href={`/workshops/${(viewEnrollment.workshop as any).slug || viewEnrollment.workshop?._id}`} className="flex-1">
+                   <Link href={`/workshops/${viewEnrollment.workshop.slug || viewEnrollment.workshop?._id}`} className="flex-1">
                     <Button className="w-full rounded-xl">
                       View Workshop
                     </Button>

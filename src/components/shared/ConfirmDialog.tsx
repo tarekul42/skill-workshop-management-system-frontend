@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Loader2, Trash, XCircle } from "lucide-react";
 
 import {
@@ -63,16 +63,17 @@ export function ConfirmDialog({
   const isDestructive = variant === "destructive";
   const config = iconConfig[variant];
 
-  useEffect(() => {
-    if (!open) setConfirmInput("");
-  }, [open]);
+  const handleOpenChange = (nextOpen: boolean) => {
+    if (!nextOpen) setConfirmInput("");
+    onOpenChange(nextOpen);
+  };
 
   const isConfirmDisabled =
     isLoading ||
     (requireConfirmText !== undefined && confirmInput !== requireConfirmText);
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-[420px]">
         <DialogHeader className="items-center text-center">
           {/* Icon container */}
@@ -113,7 +114,7 @@ export function ConfirmDialog({
         <DialogFooter className="mt-4 gap-2 sm:gap-2">
           <Button
             variant="ghost"
-            onClick={() => onOpenChange(false)}
+            onClick={() => handleOpenChange(false)}
             disabled={isLoading}
             className="flex-1"
           >

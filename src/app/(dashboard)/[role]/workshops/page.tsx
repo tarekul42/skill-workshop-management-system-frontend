@@ -56,6 +56,7 @@ import {
   Breadcrumbs,
 } from "@/components/shared";
 import { formatCurrency, formatDate } from "@/lib/formatters";
+import { cn } from "@/lib/utils";
 import {
   fetchWorkshops,
   deleteWorkshop,

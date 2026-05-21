@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
-import { OTPInput, REGEXP_ONLY_DIGITS } from "input-otp";
+import { OTPInput, REGEXP_ONLY_DIGITS, type SlotProps } from "input-otp";
 import { AnimatedPage } from "@/components/shared/AnimatedPage";
 import { StepIndicator } from "@/components/shared/StepIndicator";
 
@@ -238,7 +238,7 @@ export default function VerifyOTPPage() {
 }
 
 // Helper component for OTP slots
-function OTPSlot({ slot }: { slot: any }) {
+function OTPSlot({ slot }: { slot: SlotProps }) {
   return (
     <div
       className={`relative flex h-[64px] w-[52px] items-center justify-center rounded-xl border-[1.5px] text-center font-display text-[24px] font-bold transition-all ${

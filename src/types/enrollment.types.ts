@@ -6,8 +6,9 @@ export interface IEnrollment {
   workshop: {
     _id: string;
     title: string;
+    slug?: string;
     price?: number;
-    images: string[];
+    images?: string[];
     location?: string;
     startDate?: string;
   };

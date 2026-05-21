@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -16,9 +17,10 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { CategoryCardSkeleton } from "@/components/shared/LoadingSkeleton";
+import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared";
 import { fetchCategories } from "@/lib/api/services";
+import type { ICategory } from "@/types";
 
 // ─── Constants & Utils ───────────────────────────────────────────────
 
@@ -47,9 +49,17 @@ function getCategoryGradient(name: string) {
   return `linear-gradient(135deg, oklch(0.7 0.15 ${h1}), oklch(0.6 0.2 ${h2}))`;
 }
 
+function getPlaceholderWorkshopCount(name: string): number {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash + name.charCodeAt(i)) | 0;
+  }
+  return (Math.abs(hash) % 12) + 2;
+}
+
 // ─── Category Card Component ─────────────────────────────────────────
 
-function CategoryCard({ category }: { category: any }) {
+function CategoryCard({ category }: { category: ICategory }) {
   const mapping = categoryIconMap[category.name] ?? {
     icon: BookOpen,
     color: "var(--primary)",
@@ -71,10 +81,11 @@ function CategoryCard({ category }: { category: any }) {
       {/* Top 60%: Thumbnail */}
       <div className="relative aspect-4/3 w-full overflow-hidden">
         {category.thumbnail ? (
-          <img
+          <Image
             src={category.thumbnail}
             alt={category.name}
-            className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
           <div 
@@ -113,7 +124,7 @@ function CategoryCard({ category }: { category: any }) {
            </span>
            <div className="size-8 rounded-full bg-surface-2 border border-border flex items-center justify-center text-[11px] font-bold text-foreground-muted">
              {/* Placeholder for workshop count if available */}
-             {Math.floor(Math.random() * 12) + 2}
+             {getPlaceholderWorkshopCount(category.name)}
            </div>
         </div>
       </div>
@@ -199,10 +210,10 @@ export default function CategoriesPage() {
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
                <div className="max-w-xl text-center md:text-left">
                   <h2 className="text-display-sm sm:text-display-md font-bold text-white mb-4">
-                    Can't find what you're looking for?
+                    Can&apos;t find what you&apos;re looking for?
                   </h2>
                   <p className="text-white/70 text-lg">
-                    We're constantly adding new workshops. Tell us what you'd like to learn!
+                    We&apos;re constantly adding new workshops. Tell us what you&apos;d like to learn!
                   </p>
                </div>
                <Button size="lg" className="h-14 px-8 rounded-2xl bg-white text-foreground hover:bg-white/90 font-bold text-base shrink-0 shadow-spotlight">

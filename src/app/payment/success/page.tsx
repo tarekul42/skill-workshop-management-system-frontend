@@ -8,10 +8,7 @@ import {
   Check, 
   ArrowRight, 
   Download, 
-  LayoutDashboard, 
-  CalendarDays, 
-  MapPin, 
-  User
+  LayoutDashboard,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -79,10 +76,10 @@ function SuccessContent() {
       <SuccessIcon />
       
       <h1 className="font-display text-4xl font-black text-foreground tracking-tight">
-        You're enrolled! <span className="inline-block animate-bounce-subtle">🎉</span>
+        You&apos;re enrolled! <span className="inline-block animate-bounce-subtle">🎉</span>
       </h1>
       <p className="mt-3 text-lg text-foreground-muted max-w-sm mx-auto">
-        Your payment was successful and your seat is secured. We've sent a confirmation email to your inbox.
+        Your payment was successful and your seat is secured. We&apos;ve sent a confirmation email to your inbox.
       </p>
 
       {/* Summary Card */}

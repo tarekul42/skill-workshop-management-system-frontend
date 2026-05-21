@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  GraduationCap,
   Eye,
   EyeOff,
   Loader2,
@@ -12,7 +11,6 @@ import {
   Mail,
   Phone,
   Lock,
-  Check,
   AlertTriangle,
   BookOpen
 } from "lucide-react";

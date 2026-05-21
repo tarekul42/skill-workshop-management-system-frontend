@@ -71,7 +71,7 @@ export default function ForgotPasswordPage() {
                 Check your email
               </CardTitle>
               <CardDescription className="text-[14px] text-foreground-muted mt-2 max-w-sm">
-                If <span className="font-medium text-foreground">{email}</span> has an account, you'll receive instructions shortly.
+                If <span className="font-medium text-foreground">{email}</span> has an account, you&apos;ll receive instructions shortly.
               </CardDescription>
             </CardHeader>
 
@@ -83,7 +83,7 @@ export default function ForgotPasswordPage() {
             
             <CardFooter className="justify-center pb-2 pt-2">
               <p className="text-[12px] text-foreground-muted text-center max-w-xs">
-                Didn't receive it? Check spam or try again in 5 minutes
+                Didn&apos;t receive it? Check spam or try again in 5 minutes
               </p>
             </CardFooter>
           </>
@@ -100,7 +100,7 @@ export default function ForgotPasswordPage() {
                 Reset your password
               </CardTitle>
               <CardDescription className="text-[14px] text-foreground-muted mt-2 max-w-sm">
-                Enter your email and we'll send you reset instructions
+                Enter your email and we&apos;ll send you reset instructions
               </CardDescription>
             </CardHeader>
 

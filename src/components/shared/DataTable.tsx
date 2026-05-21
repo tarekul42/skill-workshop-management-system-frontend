@@ -108,6 +108,7 @@ export function DataTable<TData, TValue>({
 
   const tableData = useMemo(() => (isLoading ? [] : data), [isLoading, data]);
 
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns non-memoizable functions
   const table = useReactTable({
     data: tableData,
     columns,
@@ -273,7 +274,7 @@ export function DataTable<TData, TValue>({
                         {emptyMessage}
                       </p>
                       <p className="text-xs text-foreground-muted max-w-[200px]">
-                        Try adjusting your filters or search terms to find what you're looking for.
+                        Try adjusting your filters or search terms to find what you&apos;re looking for.
                       </p>
                     </div>
                   </TableCell>
@@ -338,7 +339,7 @@ export function DataTable<TData, TValue>({
                     return (
                       <Button
                         key={i}
-                        variant={isCurrent ? "primary" : "ghost"}
+                        variant={isCurrent ? "default" : "ghost"}
                         size="icon-xs"
                         className={cn(
                           "size-9 rounded-xl font-bold text-xs transition-all",

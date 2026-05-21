@@ -75,7 +75,7 @@ export function AuthSidebar() {
             className="flex flex-col gap-4"
           >
             <p className="text-lg font-medium italic text-primary-foreground/90">
-              "{testimonials[currentIdx].quote}"
+              {`"${testimonials[currentIdx].quote}"`}
             </p>
             <div>
               <p className="font-bold text-primary-foreground">{testimonials[currentIdx].author}</p>

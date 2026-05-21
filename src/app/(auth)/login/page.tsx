@@ -4,7 +4,6 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  GraduationCap,
   Eye,
   EyeOff,
   Loader2,
@@ -262,7 +261,7 @@ function LoginContent() {
         {/* Footer links */}
         <CardFooter className="flex-col gap-2 pt-0 pb-2">
           <p className="text-[14px] text-foreground-muted text-center flex items-center justify-center flex-wrap gap-x-1.5">
-            <span>Don't have an account?</span>
+            <span>Don&apos;t have an account?</span>
             <Link href="/register" className="text-primary hover:underline font-medium">
               Sign up as Student
             </Link>

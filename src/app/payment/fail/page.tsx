@@ -73,7 +73,7 @@ function FailContent() {
         Payment Failed
       </h1>
       <p className="mt-3 text-lg text-foreground-muted max-w-sm mx-auto">
-        We couldn't process your payment at this time. Don't worry, your account hasn't been charged.
+        We couldn&apos;t process your payment at this time. Don&apos;t worry, your account hasn&apos;t been charged.
       </p>
 
       {/* Error Message Card */}

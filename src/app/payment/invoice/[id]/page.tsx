@@ -8,15 +8,29 @@ import {
   ArrowLeft, 
   ShieldCheck, 
   Globe, 
-  Mail, 
-  Phone 
+  Mail,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { getInvoice } from "@/lib/api/services";
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import { StatusBadge } from "@/components/shared";
+
+interface InvoicePageData {
+  invoiceUrl?: string;
+  payment?: {
+    status?: string;
+    amount?: number;
+    createdAt?: string;
+    transactionId?: string;
+  };
+  enrollment?: {
+    studentCount?: number;
+    workshop?: { title?: string };
+    user?: { name?: string; email?: string; phone?: string };
+  };
+}
 
 // ═════════════════════════════════════════════════════════════════════
 // INVOICE PAGE
@@ -26,7 +40,7 @@ export default function InvoicePage() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<InvoicePageData | null>(null);
 
   useEffect(() => {
     async function loadInvoice() {
@@ -35,7 +49,7 @@ export default function InvoicePage() {
       try {
         const res = await getInvoice(id as string);
         setData(res);
-      } catch (err) {
+      } catch {
         setError("Failed to load invoice details.");
       } finally {
         setLoading(false);
@@ -68,7 +82,7 @@ export default function InvoicePage() {
           </div>
           <div className="space-y-2">
             <h1 className="text-2xl font-bold">Unable to find invoice</h1>
-            <p className="text-foreground-muted">We couldn't locate the invoice with the provided ID. Please check the transaction history in your dashboard.</p>
+            <p className="text-foreground-muted">We couldn&apos;t locate the invoice with the provided ID. Please check the transaction history in your dashboard.</p>
           </div>
           <Button asChild variant="outline" className="rounded-xl">
             <a href="/student/payments">
@@ -143,7 +157,7 @@ export default function InvoicePage() {
               </div>
               <div className="space-y-0.5">
                 <p className="text-[11px] font-bold text-white/60 uppercase tracking-widest">Date Issued</p>
-                <p className="font-bold">{formatDate(p.createdAt || new Date())}</p>
+                <p className="font-bold">{formatDate(p.createdAt ?? new Date().toISOString())}</p>
               </div>
            </div>
         </div>
@@ -194,13 +208,13 @@ export default function InvoicePage() {
                           <p className="text-[11px] text-foreground-muted mt-0.5">Workshop Registration Fee</p>
                        </td>
                        <td className="px-6 py-5 text-right font-medium text-sm">
-                          {formatCurrency(p.amount / (e.studentCount || 1))}
+                          {formatCurrency((p.amount ?? 0) / (e.studentCount || 1))}
                        </td>
                        <td className="px-6 py-5 text-right font-medium text-sm">
                           {e.studentCount || 1}
                        </td>
                        <td className="px-6 py-5 text-right font-bold text-sm">
-                          {formatCurrency(p.amount)}
+                          {formatCurrency(p.amount ?? 0)}
                        </td>
                     </tr>
                   </tbody>
@@ -213,7 +227,7 @@ export default function InvoicePage() {
              <div className="w-full sm:w-64 space-y-3">
                 <div className="flex justify-between text-sm font-medium">
                   <span className="text-foreground-muted">Subtotal</span>
-                  <span className="text-foreground">{formatCurrency(p.amount)}</span>
+                  <span className="text-foreground">{formatCurrency(p.amount ?? 0)}</span>
                 </div>
                 <div className="flex justify-between text-sm font-medium">
                   <span className="text-foreground-muted">Tax (0%)</span>
@@ -222,7 +236,7 @@ export default function InvoicePage() {
                 <Separator className="bg-border" />
                 <div className="flex justify-between items-center pt-1">
                   <span className="text-base font-bold text-foreground">Total Amount</span>
-                  <span className="text-2xl font-black text-primary font-display">{formatCurrency(p.amount)}</span>
+                  <span className="text-2xl font-black text-primary font-display">{formatCurrency(p.amount ?? 0)}</span>
                 </div>
              </div>
           </div>

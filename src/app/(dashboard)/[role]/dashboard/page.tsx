@@ -175,11 +175,9 @@ export default function DashboardPage({ params }: PageProps) {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [stats, setStats] = useState<StatCardProps[]>([]);
-  const [recentEnrollments, setRecentEnrollments] = useState<EnrollmentItem[]>(
-    [],
-  );
-  const [recentWorkshops, setRecentWorkshops] = useState<WorkshopItem[]>([]);
+  const [stats] = useState<StatCardProps[]>([]);
+  const [recentEnrollments] = useState<EnrollmentItem[]>([]);
+  const [recentWorkshops] = useState<WorkshopItem[]>([]);
   const [studentData, setStudentData] = useState<{
     stats: {
       enrolled: number;
@@ -230,7 +228,6 @@ export default function DashboardPage({ params }: PageProps) {
             enrollmentsRes,
             paymentsRes,
             auditLogsRes,
-            healthRes,
           ] = await Promise.allSettled([
             apiClient<{ totalUsers: number }>("/stats/users"),
             apiClient<{ totalWorkshop: number }>("/stats/workshops"),

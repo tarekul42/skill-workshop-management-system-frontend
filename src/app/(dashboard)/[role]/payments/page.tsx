@@ -41,7 +41,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -55,7 +55,6 @@ import {
   PageHeader,
   StatusBadge,
   EmptyState,
-  TableSkeleton,
   Breadcrumbs,
 } from "@/components/shared";
 import { formatCurrency, formatDate, truncate } from "@/lib/formatters";
@@ -100,8 +99,8 @@ function extractPayments(enrollments: IEnrollment[]): PaymentRow[] {
       studentName: e.user?.name || "—",
       workshopTitle: e.workshop?.title || "—",
       workshopId: e.workshop?._id || "",
-      workshopSlug: (e.workshop as any)?.slug || "",
-      workshopThumbnail: (e.workshop as any)?.images?.[0],
+      workshopSlug: e.workshop?.slug || "",
+      workshopThumbnail: e.workshop?.images?.[0],
       amount: e.payment!.amount,
       status: e.payment!.status,
       createdAt: e.createdAt,

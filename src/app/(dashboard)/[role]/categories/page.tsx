@@ -1,7 +1,17 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { Plus, Pencil, Trash2, ImageIcon, Loader2, Search, SlidersHorizontal, Image as ImageIcon2 } from "lucide-react";
+import React, { useState, useCallback } from "react";
+import Image from "next/image";
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  ImageIcon,
+  Loader2,
+  Search,
+  SlidersHorizontal,
+  Image as ImageIcon2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -28,7 +38,7 @@ import {
 import {
   PageHeader,
   ConfirmDialog,
-  CardSkeleton,
+  // CardSkeleton,
   EmptyState,
   Breadcrumbs,
 } from "@/components/shared";
@@ -84,9 +94,9 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     }
   }, []);
 
-  useEffect(() => {
-    fetchCategoriesData();
-  }, [fetchCategoriesData]);
+  // useEffect(() => {
+  //   fetchCategoriesData();
+  // }, [fetchCategoriesData]);
 
   // ── Form helpers ──────────────────────────────────────────────────
 
@@ -195,9 +205,10 @@ export default function CategoriesPage({ params: _params }: PageProps) {
 
   // ── Filter categories ─────────────────────────────────────────────
 
-  const filteredCategories = categories.filter(cat => 
-    cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    cat.description?.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCategories = categories.filter(
+    (cat) =>
+      cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      cat.description?.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   // ── Render ─────────────────────────────────────────────────────────
@@ -206,12 +217,15 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     <TooltipProvider>
       <div className="space-y-8">
         <div className="space-y-2">
-           <Breadcrumbs />
-           <PageHeader
+          <Breadcrumbs />
+          <PageHeader
             title="Category Management"
             description="Organize your curriculum by defining workshop categories and domains."
           >
-            <Button onClick={openCreateDialog} className="h-11 rounded-xl px-5 font-bold shadow-raised hover:shadow-float transition-all">
+            <Button
+              onClick={openCreateDialog}
+              className="h-11 rounded-xl px-5 font-bold shadow-raised hover:shadow-float transition-all"
+            >
               <Plus className="size-4 mr-2" />
               Create Category
             </Button>
@@ -220,40 +234,52 @@ export default function CategoriesPage({ params: _params }: PageProps) {
 
         {/* ── Toolbar ────────────────────────────────────────────────── */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-1 p-4 rounded-2xl border border-border shadow-sm">
-           <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-disabled" />
-              <Input
-                placeholder="Search categories..."
-                className="pl-10 h-11 rounded-xl bg-surface-2 border-transparent focus:border-primary/20 transition-all"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-           </div>
-           <div className="flex items-center gap-2 w-full sm:w-auto">
-              <Button variant="outline" className="flex-1 sm:flex-none h-11 rounded-xl border-dashed">
-                 <SlidersHorizontal className="size-4 mr-2 text-foreground-muted" />
-                 Filters
-              </Button>
-              <div className="hidden sm:block h-8 w-px bg-border mx-2" />
-              <p className="text-sm font-bold text-foreground shrink-0">
-                {filteredCategories.length} <span className="text-foreground-muted font-medium">Categories</span>
-              </p>
-           </div>
+          <div className="relative w-full sm:w-80">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-disabled" />
+            <Input
+              placeholder="Search categories..."
+              className="pl-10 h-11 rounded-xl bg-surface-2 border-transparent focus:border-primary/20 transition-all"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              className="flex-1 sm:flex-none h-11 rounded-xl border-dashed"
+            >
+              <SlidersHorizontal className="size-4 mr-2 text-foreground-muted" />
+              Filters
+            </Button>
+            <div className="hidden sm:block h-8 w-px bg-border mx-2" />
+            <p className="text-sm font-bold text-foreground shrink-0">
+              {filteredCategories.length}{" "}
+              <span className="text-foreground-muted font-medium">
+                Categories
+              </span>
+            </p>
+          </div>
         </div>
 
         {/* ── Category Grid ──────────────────────────────────────────── */}
         {loading ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-             {[...Array(8)].map((_, i) => (
-                <div key={i} className="aspect-video rounded-3xl bg-surface-2 animate-shimmer" />
-             ))}
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="aspect-video rounded-3xl bg-surface-2 animate-shimmer"
+              />
+            ))}
           </div>
         ) : categories.length === 0 ? (
           <EmptyState
             icon={ImageIcon}
             title="No categories yet"
             description="Create your first category to start organizing workshops into distinct learning paths."
-            action={{ label: "Create Your First Category", onClick: openCreateDialog }}
+            action={{
+              label: "Create Your First Category",
+              onClick: openCreateDialog,
+            }}
           />
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -270,10 +296,11 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                     {/* Thumbnail */}
                     <div className="relative aspect-video w-full bg-surface-2 overflow-hidden border-b border-border">
                       {cat.thumbnail ? (
-                        <img
+                        <Image
                           src={cat.thumbnail}
                           alt={cat.name}
-                          className="size-full object-cover transition-transform duration-500 group-hover:scale-110"
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       ) : (
                         <div className="flex h-full items-center justify-center bg-linear-to-br from-surface-2 to-surface-3">
@@ -311,17 +338,20 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                     </div>
                     <CardContent className="p-5">
                       <div className="min-w-0">
-                        <h3 className="truncate text-base font-bold text-foreground leading-tight">{cat.name}</h3>
+                        <h3 className="truncate text-base font-bold text-foreground leading-tight">
+                          {cat.name}
+                        </h3>
                         <p className="mt-1.5 text-[13px] text-foreground-subtle line-clamp-2 min-h-[36px]">
-                          {cat.description || "No description provided for this category."}
+                          {cat.description ||
+                            "No description provided for this category."}
                         </p>
                         <div className="mt-4 flex items-center justify-between pt-4 border-t border-border/50">
-                           <p className="text-[11px] font-mono font-bold text-foreground-disabled uppercase tracking-tighter">
-                             SLUG: {cat.slug}
-                           </p>
-                           <span className="text-[11px] font-bold text-primary px-2 py-0.5 rounded-full bg-primary/5 border border-primary/10">
-                             Active
-                           </span>
+                          <p className="text-[11px] font-mono font-bold text-foreground-disabled uppercase tracking-tighter">
+                            SLUG: {cat.slug}
+                          </p>
+                          <span className="text-[11px] font-bold text-primary px-2 py-0.5 rounded-full bg-primary/5 border border-primary/10">
+                            Active
+                          </span>
                         </div>
                       </div>
                     </CardContent>
@@ -345,9 +375,11 @@ export default function CategoriesPage({ params: _params }: PageProps) {
           <DialogContent className="max-w-md rounded-[32px] p-0 overflow-hidden border-none shadow-2xl">
             <DialogHeader className="p-8 pb-0">
               <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                 <Plus className="size-6 text-primary" />
+                <Plus className="size-6 text-primary" />
               </div>
-              <DialogTitle className="text-2xl font-bold">New Category</DialogTitle>
+              <DialogTitle className="text-2xl font-bold">
+                New Category
+              </DialogTitle>
               <DialogDescription className="text-foreground-subtle">
                 Define a new domain to organize your workshops.
               </DialogDescription>
@@ -374,13 +406,19 @@ export default function CategoriesPage({ params: _params }: PageProps) {
               >
                 Cancel
               </Button>
-              <Button onClick={handleCreate} disabled={saving} className="rounded-xl flex-1 h-12 font-bold shadow-raised">
+              <Button
+                onClick={handleCreate}
+                disabled={saving}
+                className="rounded-xl flex-1 h-12 font-bold shadow-raised"
+              >
                 {saving ? (
                   <>
                     <Loader2 className="animate-spin size-4 mr-2" />
                     Creating...
                   </>
-                ) : "Create Category"}
+                ) : (
+                  "Create Category"
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -399,11 +437,13 @@ export default function CategoriesPage({ params: _params }: PageProps) {
           <DialogContent className="max-w-md rounded-[32px] p-0 overflow-hidden border-none shadow-2xl">
             <DialogHeader className="p-8 pb-0">
               <div className="size-12 rounded-2xl bg-accent/10 flex items-center justify-center mb-4">
-                 <Pencil className="size-5 text-accent-foreground" />
+                <Pencil className="size-5 text-accent-foreground" />
               </div>
-              <DialogTitle className="text-2xl font-bold">Edit Category</DialogTitle>
+              <DialogTitle className="text-2xl font-bold">
+                Edit Category
+              </DialogTitle>
               <DialogDescription className="text-foreground-subtle">
-                Update the information for "{editTarget?.name}"
+                Update the information for &quot;{editTarget?.name}&quot;
               </DialogDescription>
             </DialogHeader>
             <div className="p-8 pt-6">
@@ -428,13 +468,19 @@ export default function CategoriesPage({ params: _params }: PageProps) {
               >
                 Cancel
               </Button>
-              <Button onClick={handleUpdate} disabled={saving} className="rounded-xl flex-1 h-12 font-bold shadow-raised">
+              <Button
+                onClick={handleUpdate}
+                disabled={saving}
+                className="rounded-xl flex-1 h-12 font-bold shadow-raised"
+              >
                 {saving ? (
                   <>
                     <Loader2 className="animate-spin size-4 mr-2" />
                     Saving...
                   </>
-                ) : "Save Changes"}
+                ) : (
+                  "Save Changes"
+                )}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -476,7 +522,9 @@ function CategoryForm({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="cat-name" className="text-[13px] font-bold ml-1">Category Name</Label>
+        <Label htmlFor="cat-name" className="text-[13px] font-bold ml-1">
+          Category Name
+        </Label>
         <Input
           id="cat-name"
           placeholder="e.g. Graphic Design"
@@ -486,7 +534,12 @@ function CategoryForm({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="cat-desc" className="text-[13px] font-bold ml-1 text-foreground-subtle">Short Description</Label>
+        <Label
+          htmlFor="cat-desc"
+          className="text-[13px] font-bold ml-1 text-foreground-subtle"
+        >
+          Short Description
+        </Label>
         <Textarea
           id="cat-desc"
           placeholder="What will students learn in this category?"
@@ -501,19 +554,31 @@ function CategoryForm({
         <div className="group relative aspect-video w-full rounded-2xl border-2 border-dashed border-border bg-surface-2 overflow-hidden flex flex-col items-center justify-center transition-colors hover:border-primary/30">
           {preview ? (
             <>
-              <img
+              <Image
                 src={preview}
                 alt="Preview"
-                className="size-full object-cover"
+                fill
+                unoptimized
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                 <Button variant="secondary" size="sm" className="rounded-lg font-bold" asChild>
-                    <label className="cursor-pointer">
-                      <Pencil className="size-3.5 mr-2" />
-                      Change Image
-                      <input type="file" className="hidden" accept="image/*" onChange={onFileChange} />
-                    </label>
-                 </Button>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="rounded-lg font-bold"
+                  asChild
+                >
+                  <label className="cursor-pointer">
+                    <Pencil className="size-3.5 mr-2" />
+                    Change Image
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={onFileChange}
+                    />
+                  </label>
+                </Button>
               </div>
             </>
           ) : (
@@ -521,10 +586,19 @@ function CategoryForm({
               <div className="size-12 rounded-full bg-surface-1 flex items-center justify-center mb-3">
                 <ImageIcon className="size-6 text-foreground-disabled" />
               </div>
-              <p className="text-sm font-bold text-foreground">Upload category thumbnail</p>
-              <p className="text-xs text-foreground-disabled mt-1">PNG, JPG or WebP up to 5MB</p>
+              <p className="text-sm font-bold text-foreground">
+                Upload category thumbnail
+              </p>
+              <p className="text-xs text-foreground-disabled mt-1">
+                PNG, JPG or WebP up to 5MB
+              </p>
               <label className="absolute inset-0 cursor-pointer">
-                <input type="file" className="hidden" accept="image/*" onChange={onFileChange} />
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={onFileChange}
+                />
               </label>
             </div>
           )}

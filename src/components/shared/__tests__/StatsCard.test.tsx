@@ -31,7 +31,7 @@ describe("StatsCard", () => {
       <StatsCard title="Total" value={0} icon={BookOpen} isLoading />,
     );
     // Skeleton elements have animate-pulse or similar
-    const skeletons = container.querySelectorAll(".animate-pulse, [class*='skeleton']");
+    // const skeletons = container.querySelectorAll(".animate-pulse, [class*='skeleton']");
     // At minimum the card renders without the title
     expect(screen.queryByText("Total")).not.toBeInTheDocument();
     expect(container.firstChild).toBeInTheDocument();
