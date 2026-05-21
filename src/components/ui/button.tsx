@@ -1,39 +1,37 @@
+"use client";
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { Slot } from "radix-ui";
+import { motion, AnimatePresence } from "framer-motion";
+import { Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-import { Loader2 } from "lucide-react";
-
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:scale-95 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex items-center justify-center whitespace-nowrap text-[15px] font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 disabled:pointer-events-none disabled:opacity-45 select-none active:scale-[0.98] tracking-[0.01em]",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        default:
+          "bg-primary text-primary-foreground rounded-[10px] px-5 py-2.5 shadow-[0_1px_3px_oklch(0_0_0/_0.12),_0_4px_12px_oklch(0.42_0.25_272/_0.30)] hover:bg-primary-hover hover:-translate-y-px hover:shadow-[0_2px_6px_oklch(0_0_0/_0.15),_0_8px_24px_oklch(0.42_0.25_272/_0.35)] active:translate-y-0 active:shadow-[0_1px_2px_oklch(0_0_0/_0.10)]",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border-[1.5px] border-border-strong bg-transparent text-foreground rounded-[10px] px-[19px] py-2 hover:bg-surface-2 hover:border-primary hover:text-primary hover:-translate-y-px active:translate-y-0",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "bg-accent text-accent-foreground rounded-[10px] px-5 py-2.5 shadow-amber-glow hover:bg-accent-hover hover:-translate-y-px active:translate-y-0",
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "bg-transparent text-foreground-subtle rounded-lg hover:bg-surface-2 hover:text-foreground",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-danger text-danger-foreground rounded-[10px] px-5 py-2.5 shadow-[0_4px_12px_oklch(0.52_0.24_22/_0.30)] hover:bg-danger-hover hover:-translate-y-px active:translate-y-0",
+        link: "text-primary underline-offset-4 hover:underline font-semibold",
       },
       size: {
-        default:
-          "h-8 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        xs: "h-6 gap-1 rounded-[min(var(--radius-md),10px)] px-2 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 gap-1 rounded-[min(var(--radius-md),12px)] px-2.5 text-[0.8rem] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
-        lg: "h-9 gap-1.5 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        icon: "size-8",
-        "icon-xs":
-          "size-6 rounded-[min(var(--radius-md),10px)] in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3",
-        "icon-sm":
-          "size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg",
-        "icon-lg": "size-9",
+        default: "h-[44px]",
+        sm: "h-9 rounded-md px-3 text-xs",
+        lg: "h-14 rounded-xl px-8 text-base",
+        icon: "h-9 w-9 rounded-lg p-0",
+        "icon-xs": "h-7 w-7 rounded-md p-0",
+        "icon-sm": "h-8 w-8 rounded-md p-0",
       },
     },
     defaultVariants: {
@@ -43,43 +41,65 @@ const buttonVariants = cva(
   },
 );
 
-function Button({
-  className,
-  variant = "default",
-  size = "default",
-  asChild = false,
-  loading = false,
-  loadingText,
-  children,
-  disabled,
-  ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-    loading?: boolean;
-    loadingText?: string;
-  }) {
-  const Comp = asChild ? Slot.Root : "button";
-
-  return (
-    <Comp
-      data-slot="button"
-      data-variant={variant}
-      data-size={size}
-      disabled={disabled || loading}
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    >
-      {loading ? (
-        <>
-          <Loader2 className="animate-spin" />
-          {loadingText || children}
-        </>
-      ) : (
-        children
-      )}
-    </Comp>
-  );
+export interface ButtonProps
+  extends
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  loading?: boolean;
 }
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
+    const Comp = asChild ? Slot.Root : "button";
+
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        disabled={props.disabled || loading}
+        {...props}
+      >
+        <AnimatePresence mode="wait">
+          {loading ? (
+            <motion.span
+              key="spinner"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              transition={{ duration: 0.15 }}
+              className="flex items-center justify-center"
+            >
+              <Loader2 className="h-5 w-5 animate-spin" />
+            </motion.span>
+          ) : (
+            <motion.span
+              key="label"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="flex items-center gap-2"
+            >
+              {children}
+            </motion.span>
+          )}
+        </AnimatePresence>
+      </Comp>
+    );
+  },
+);
+Button.displayName = "Button";
 
 export { Button, buttonVariants };

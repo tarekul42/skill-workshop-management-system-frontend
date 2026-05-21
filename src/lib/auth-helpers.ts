@@ -47,8 +47,6 @@ export function redirectToDashboard(role: string): string {
   return DASHBOARD_ROUTES[role as keyof typeof DASHBOARD_ROUTES] ?? "/login";
 }
 
-
-
 // ─── OTP Flow (sessionStorage) ─────────────────────────────────────
 
 const OTP_EMAIL_KEY = "skillworkshop_otp_email";

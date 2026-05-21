@@ -11,7 +11,8 @@ test.describe("Workshop Management", () => {
     await page.goto("/workshops");
     
     await expect(page.getByPlaceholder(/Search workshops/i)).toBeVisible();
-    // Check if some filter exists
-    await expect(page.getByText(/Categories/i)).toBeVisible();
+    await expect(
+      page.getByRole("banner").getByRole("link", { name: "Categories" }),
+    ).toBeVisible();
   });
 });

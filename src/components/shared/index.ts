@@ -1,4 +1,5 @@
 export { BackButton } from "./BackButton";
+export { Breadcrumbs } from "./Breadcrumbs";
 export { ConfirmDialog } from "./ConfirmDialog";
 export { DataTable } from "./DataTable";
 export { EmptyState } from "./EmptyState";

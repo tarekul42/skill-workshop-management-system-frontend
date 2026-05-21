@@ -4,29 +4,42 @@ test.describe("Authentication Flow", () => {
   test("should show login page with all elements", async ({ page }) => {
     await page.goto("/login");
 
-    await expect(page).toHaveTitle(/Sign In | Skill Workshop/);
-    await expect(page.locator("h1")).toContainText("Skill Workshop");
-    await expect(page.getByLabel(/Email/i)).toBeVisible();
-    await expect(page.getByLabel(/Password/i)).toBeVisible();
+    await expect(page).toHaveTitle(/Skill Workshop.*Authentication/);
+    await expect(page.getByText("Welcome back")).toBeVisible();
+    await expect(page.getByLabel("Email")).toBeVisible();
+    await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: /Sign In/i })).toBeVisible();
   });
 
   test("should show error on invalid credentials", async ({ page }) => {
+    await page.route("**/auth/login", async (route) => {
+      await route.fulfill({
+        status: 401,
+        contentType: "application/json",
+        body: JSON.stringify({
+          success: false,
+          message: "Invalid email or password",
+        }),
+      });
+    });
+
     await page.goto("/login");
 
-    await page.getByLabel(/Email/i).fill("wrong@example.com");
-    await page.getByLabel(/Password/i).fill("wrongpassword");
+    const email = page.locator('input[name="email"]');
+    const password = page.locator('input[name="password"]');
+
+    await email.click();
+    await email.pressSequentially("invalid@example.com");
+    await password.click();
+    await password.pressSequentially("wrongpassword");
     await page.getByRole("button", { name: /Sign In/i }).click();
 
-    // Since we don't have a backend running in this environment, 
-    // it might fail with a network error or a real error if the backend is mocked.
-    // We just check that the button shows loading state or an error appears.
-    await expect(page.getByRole("alert")).toBeVisible();
+    await expect(page.getByText(/Invalid email or password/i)).toBeVisible();
   });
 
   test("should navigate to registration page", async ({ page }) => {
     await page.goto("/login");
-    await page.getByRole("link", { name: /Sign up/i, exact: true }).click();
-    await expect(page).toHaveURL(/\/register/);
+    await page.getByRole("link", { name: "Sign up as Student" }).click();
+    await expect(page).toHaveURL(/\/register$/);
   });
 });

@@ -7,7 +7,10 @@ export const passwordSchema = z
   .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
   .regex(/[a-z]/, "Password must contain at least one lowercase letter")
   .regex(/[0-9]/, "Password must contain at least one number")
-  .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character");
+  .regex(
+    /[^A-Za-z0-9]/,
+    "Password must contain at least one special character",
+  );
 
 export interface PasswordCheck {
   id: string;
@@ -20,7 +23,11 @@ export const PASSWORD_CHECKS: PasswordCheck[] = [
   { id: "upper", label: "One uppercase letter", test: (p) => /[A-Z]/.test(p) },
   { id: "lower", label: "One lowercase letter", test: (p) => /[a-z]/.test(p) },
   { id: "number", label: "One number", test: (p) => /[0-9]/.test(p) },
-  { id: "special", label: "One special character", test: (p) => /[^A-Za-z0-9]/.test(p) },
+  {
+    id: "special",
+    label: "One special character",
+    test: (p) => /[^A-Za-z0-9]/.test(p),
+  },
 ];
 
 export function getPasswordStrength(password: string): number {

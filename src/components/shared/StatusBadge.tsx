@@ -3,22 +3,20 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-// ─── Props ──────────────────────────────────────────────────────────
-
 interface StatusBadgeProps {
   status: string;
+  /** Show a leading 6px colored dot (§1.3 Dot variant) */
+  dot?: boolean;
   className?: string;
 }
 
-// ─── Status Color Map ───────────────────────────────────────────────
-
 type StatusCategory =
-  | "pending"
+  | "warning"
   | "success"
   | "danger"
-  | "warning"
-  | "neutral"
-  | "info";
+  | "muted"
+  | "info"
+  | "default";
 
 function getStatusCategory(status: string): StatusCategory {
   const normalized = status.toUpperCase().replace(/[\s_-]/g, "");
@@ -28,7 +26,7 @@ function getStatusCategory(status: string): StatusCategory {
       normalized,
     )
   ) {
-    return "pending";
+    return "warning";
   }
 
   if (
@@ -41,7 +39,6 @@ function getStatusCategory(status: string): StatusCategory {
       "VERIFIED",
       "SUCCESS",
       "PUBLISHED",
-      "CONFIRMED",
     ].includes(normalized)
   ) {
     return "success";
@@ -56,47 +53,70 @@ function getStatusCategory(status: string): StatusCategory {
       "BLOCKED",
       "FAILED",
       "REJECTED",
-      "EXPIRED",
-      "SUSPENDED",
-      "DELETED",
     ].includes(normalized)
   ) {
     return "danger";
   }
 
-  if (["UNPAID", "DRAFT", "PARTIAL", "OVERDUE"].includes(normalized)) {
-    return "warning";
+  if (["DRAFT", "UNPAID", "PARTIAL"].includes(normalized)) {
+    return "muted";
   }
 
   if (["REFUNDED", "PROCESSING", "REFUND"].includes(normalized)) {
     return "info";
   }
 
-  return "neutral";
+  return "default";
 }
 
-const statusStyles: Record<StatusCategory, string> = {
-  pending:
-    "border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-400",
-  success:
-    "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400",
-  danger:
-    "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-400",
-  warning:
-    "border-orange-300 bg-orange-50 text-orange-700 dark:border-orange-700 dark:bg-orange-950/50 dark:text-orange-400",
-  neutral:
-    "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400",
-  info: "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-700 dark:bg-violet-950/50 dark:text-violet-400",
+/** §1.3 — Status Badge dot color map (matches category → foreground token) */
+const dotColorMap: Record<StatusCategory, string> = {
+  warning: "bg-warning",
+  success: "bg-success",
+  danger: "bg-danger",
+  muted: "bg-foreground-muted",
+  info: "bg-info",
+  default: "bg-foreground-subtle",
 };
 
-// ─── Component ──────────────────────────────────────────────────────
+const variantMap: Record<
+  StatusCategory,
+  "warning" | "success" | "danger" | "muted" | "info" | "secondary"
+> = {
+  warning: "warning",
+  success: "success",
+  danger: "danger",
+  muted: "muted",
+  info: "info",
+  default: "secondary",
+};
 
-export function StatusBadge({ status, className }: StatusBadgeProps) {
+export function StatusBadge({
+  status,
+  dot = false,
+  className,
+}: StatusBadgeProps) {
   const category = getStatusCategory(status);
 
   return (
-    <Badge variant="outline" className={cn(statusStyles[category], className)}>
-      {status}
+    <Badge
+      variant={variantMap[category]}
+      className={cn(
+        "font-bold uppercase tracking-wider text-[10px] px-2 py-0.5",
+        className,
+      )}
+    >
+      {/* §1.3 — Dot variant: prepend a 6px circle in the matching foreground color */}
+      {dot && (
+        <span
+          className={cn(
+            "inline-block size-1.5 shrink-0 rounded-full",
+            dotColorMap[category],
+          )}
+          aria-hidden="true"
+        />
+      )}
+      {status.replace(/_/g, " ")}
     </Badge>
   );
 }

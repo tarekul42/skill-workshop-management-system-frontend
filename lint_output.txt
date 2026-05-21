@@ -1,0 +1,43 @@
+
+> skill-workshop-management-system-frontend@0.1.0 lint
+> eslint
+
+
+/home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(auth)/AuthSidebar.tsx
+  78:15  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  78:48  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(auth)/forgot-password/page.tsx
+   74:100  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+   86:21   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+  103:40   error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(auth)/login/page.tsx
+    7:3   warning  'GraduationCap' is defined but never used                        @typescript-eslint/no-unused-vars
+  265:22  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(auth)/register/instructor/page.tsx
+    7:3   warning  'GraduationCap' is defined but never used  @typescript-eslint/no-unused-vars
+  252:16  error    'Separator' is not defined                 react/jsx-no-undef
+
+/home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(auth)/register/page.tsx
+   7:3  warning  'GraduationCap' is defined but never used  @typescript-eslint/no-unused-vars
+  15:3  warning  'Check' is defined but never used          @typescript-eslint/no-unused-vars
+
+/home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(auth)/reset-password/page.tsx
+   3:20  warning  'useMemo' is defined but never used      @typescript-eslint/no-unused-vars
+  11:3   warning  'CheckCircle' is defined but never used  @typescript-eslint/no-unused-vars
+  12:3   warning  'ShieldCheck' is defined but never used  @typescript-eslint/no-unused-vars
+  21:3   warning  'CardFooter' is defined but never used   @typescript-eslint/no-unused-vars
+
+/home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(auth)/verify-otp/page.tsx
+  105:2  error  Parsing error: Expression expected
+
+/home/user/programming/web-dev-projects/own-projects/my_projects/skill-workshop-management-system/skill-workshop-management-system-frontend/src/app/(dashboard)/[role]/dashboard/page.tsx
+  178:17  warning  'setStats' is assigned a value but never used              @typescript-eslint/no-unused-vars
+  179:29  warning  'setRecentEnrollments' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  182:27  warning  'setRecentWorkshops' is assigned a value but never used    @typescript-eslint/no-unused-vars
+  233:13  warning  'healthRes' is assigned a value but never used             @typescript-eslint/no-unused-vars
+
+✖ 20 problems (8 errors, 12 warnings)
+

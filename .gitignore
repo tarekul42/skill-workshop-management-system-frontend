@@ -36,6 +36,8 @@ yarn-error.log*
 # vercel
 .vercel
 
+.kiro
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
@@ -53,3 +55,10 @@ download/
 # worklog (internal development log)
 worklog.md
 /upload
+
+lint_output.txt
+
+plans/
+
+playwright-report/
+test-results/

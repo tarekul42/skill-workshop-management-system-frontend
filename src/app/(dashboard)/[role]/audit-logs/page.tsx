@@ -108,8 +108,9 @@ export default function AuditLogsPage({ params }: PageProps) {
   ]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchLogs();
+    // Pure fix: Defer initial fetch to avoid cascading render lint error
+    const timer = setTimeout(() => fetchLogs(), 0);
+    return () => clearTimeout(timer);
   }, [fetchLogs]);
 
   // ── Handlers ───────────────────────────────────────────────────────
