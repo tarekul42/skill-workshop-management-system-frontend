@@ -12,12 +12,12 @@ export default function Unauthorized() {
       <div className="relative mb-8">
         <div className="relative flex items-center justify-center">
           {/* Decorative rings */}
-          <div className="absolute size-56 rounded-full border-2 border-dashed border-amber-500/10 animate-[spin_20s_linear_infinite]" />
-          <div className="absolute size-40 rounded-full border border-amber-500/15 animate-[spin_15s_linear_infinite_reverse]" />
+          <div className="absolute size-56 rounded-full border-2 border-dashed border-warning/10 animate-[spin_20s_linear_infinite]" />
+          <div className="absolute size-40 rounded-full border border-warning/15 animate-[spin_15s_linear_infinite_reverse]" />
 
           {/* Central icon container */}
-          <div className="relative flex size-32 items-center justify-center rounded-full bg-amber-500/10">
-            <ShieldX className="size-14 text-amber-600/70 dark:text-amber-400/70" />
+          <div className="relative flex size-32 items-center justify-center rounded-full bg-warning-subtle">
+            <ShieldX className="size-14 text-warning/70" />
           </div>
         </div>
       </div>
@@ -25,7 +25,7 @@ export default function Unauthorized() {
       {/* Content */}
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold tracking-tight text-foreground">
-          4<span className="text-amber-600 dark:text-amber-400">03</span>
+          4<span className="text-warning">03</span>
         </h1>
         <h2 className="mt-4 text-xl font-semibold text-foreground">
           Access Denied

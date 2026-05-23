@@ -331,7 +331,7 @@ export default function HomePage() {
               variants={fadeInUp}
               className="mt-10 flex flex-wrap gap-3"
             >
-              <Button size="lg" asChild className="px-8 shadow-primary-glow">
+              <Button size="lg" asChild className="px-8">
                 <Link href="/workshops">Browse Workshops</Link>
               </Button>
               <Button
@@ -703,7 +703,7 @@ export default function HomePage() {
                   size="lg"
                   variant="secondary"
                   asChild
-                  className="h-14 rounded-2xl px-10 text-lg shadow-amber-glow"
+                  className="h-14 rounded-2xl px-10 text-lg"
                 >
                   <Link href="/register">Browse Workshops</Link>
                 </Button>

@@ -78,10 +78,10 @@ function checkPasswordStrength(password: string): {
   if (/\d/.test(password)) score++;
   if (/[^A-Za-z0-9]/.test(password)) score++;
 
-  if (score <= 1) return { score: 1, label: "Weak", color: "bg-red-500" };
-  if (score === 2) return { score: 2, label: "Fair", color: "bg-orange-500" };
-  if (score === 3) return { score: 3, label: "Good", color: "bg-amber-500" };
-  return { score: 4, label: "Strong", color: "bg-emerald-500" };
+  if (score <= 1) return { score: 1, label: "Weak", color: "bg-danger" };
+  if (score === 2) return { score: 2, label: "Fair", color: "bg-warning" };
+  if (score === 3) return { score: 3, label: "Good", color: "bg-info" };
+  return { score: 4, label: "Strong", color: "bg-success" };
 }
 
 function PasswordStrengthBar({ password }: { password: string }) {
@@ -323,7 +323,7 @@ export default function ProfilePage() {
               {user.isVerified && (
                 <Badge
                   variant="outline"
-                  className="border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400"
+                  className="border-success/30 bg-success-subtle text-success"
                 >
                   <Shield className="mr-1 size-3" />
                   Verified
@@ -699,7 +699,7 @@ export default function ProfilePage() {
                     {passwordData.confirmPassword &&
                       passwordData.newPassword ===
                         passwordData.confirmPassword && (
-                        <div className="flex items-center gap-1.5 text-xs text-emerald-600 dark:text-emerald-400">
+                        <div className="flex items-center gap-1.5 text-xs text-success">
                           <Check className="size-3" />
                           <span>Passwords match</span>
                         </div>
@@ -707,7 +707,7 @@ export default function ProfilePage() {
                     {passwordData.confirmPassword &&
                       passwordData.newPassword !==
                         passwordData.confirmPassword && (
-                        <div className="flex items-center gap-1.5 text-xs text-red-600 dark:text-red-400">
+                        <div className="flex items-center gap-1.5 text-xs text-danger">
                           <X className="size-3" />
                           <span>Passwords do not match</span>
                         </div>

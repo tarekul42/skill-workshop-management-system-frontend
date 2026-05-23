@@ -17,7 +17,7 @@ const badgeVariants = cva(
         secondary: "bg-surface-3 text-foreground",
         success: "bg-success-subtle text-success",
         danger: "bg-danger-subtle text-danger",
-        warning: "bg-warning-subtle text-warning-foreground",
+        warning: "bg-warning-subtle text-warning",
         info: "bg-info-subtle text-info",
         outline: "border-[1.5px] border-border-strong text-foreground",
         accent: "bg-accent-subtle text-accent-foreground",

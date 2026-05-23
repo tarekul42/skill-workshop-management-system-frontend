@@ -252,7 +252,7 @@ function SidebarNavContent({
                           className={cn(
                             "group/nav-item relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200",
                             isActive
-                              ? "bg-sidebar-active text-white shadow-lg shadow-primary/20"
+                              ? "bg-sidebar-active text-white shadow-md"
                               : "text-sidebar-text-muted hover:bg-sidebar-hover hover:text-white",
                           )}
                         >
@@ -262,7 +262,7 @@ function SidebarNavContent({
                                 "size-5 shrink-0 transition-transform group-hover/nav-item:scale-110",
                                 isActive
                                   ? "text-white"
-                                  : "text-sidebar-text-muted group-hover/nav-item:text-primary",
+                                  : "text-sidebar-text-muted group-hover/nav-item:text-accent",
                               )}
                             />
                           )}

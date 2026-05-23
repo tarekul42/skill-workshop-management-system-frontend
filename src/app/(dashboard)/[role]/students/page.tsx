@@ -175,12 +175,12 @@ export default function MyStudentsPage({ params }: PageProps) {
           const status = row.original.status;
           const colorClass =
             status === "COMPLETE"
-              ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400"
+              ? "border-success/30 bg-success-subtle text-success"
               : status === "PENDING"
-                ? "border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-400"
+                ? "border-warning/30 bg-warning-subtle text-warning"
                 : status === "CANCEL"
-                  ? "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-400"
-                  : "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400";
+                  ? "border-danger/30 bg-danger-subtle text-danger"
+                  : "border-border-strong bg-surface-3 text-foreground-muted";
 
           return (
             <span

@@ -230,7 +230,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
                         variant="ghost"
                         size="icon-xs"
                         onClick={() => setDeleteTarget(level)}
-                        className="text-muted-foreground hover:text-red-600"
+                        className="text-muted-foreground hover:text-danger"
                       >
                         <Trash2 className="size-4" />
                       </Button>

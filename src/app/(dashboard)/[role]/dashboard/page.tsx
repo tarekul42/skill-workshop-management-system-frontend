@@ -25,8 +25,16 @@ import {
   StaggerItem,
 } from "@/components/shared/AnimatedPage";
 import { StudentDashboard } from "@/components/dashboard/StudentDashboard";
-import { InstructorDashboard, type InstructorWorkshopItem, type InstructorEnrollmentItem } from "@/components/dashboard/InstructorDashboard";
-import { AdminDashboard, type AuditLogItem, type PlatformHealth } from "@/components/dashboard/AdminDashboard";
+import {
+  InstructorDashboard,
+  type InstructorWorkshopItem,
+  type InstructorEnrollmentItem,
+} from "@/components/dashboard/InstructorDashboard";
+import {
+  AdminDashboard,
+  type AuditLogItem,
+  type PlatformHealth,
+} from "@/components/dashboard/AdminDashboard";
 
 // ─── Props ──────────────────────────────────────────────────────────
 
@@ -96,17 +104,9 @@ function StatCard({ icon, label, value, change, iconBg }: StatCardProps) {
 function enrollmentStatusBadge(status?: string) {
   switch (status) {
     case "COMPLETE":
-      return (
-        <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-          Paid
-        </Badge>
-      );
+      return <Badge variant="success">Paid</Badge>;
     case "PENDING":
-      return (
-        <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-          Pending
-        </Badge>
-      );
+      return <Badge variant="warning">Pending</Badge>;
     case "FAILED":
       return <Badge variant="danger">Failed</Badge>;
     case "CANCEL":
@@ -256,8 +256,11 @@ export default function DashboardPage({ params }: PageProps) {
               ? (paymentsRes.value.totalRevenue?.[0]?.totalRevenue ?? 0)
               : 0;
 
-          const auditLogs = auditLogsRes.status === "fulfilled" ? (auditLogsRes.value.data ?? []) : [];
-          
+          const auditLogs =
+            auditLogsRes.status === "fulfilled"
+              ? (auditLogsRes.value.data ?? [])
+              : [];
+
           const health: PlatformHealth = {
             api: { status: "HEALTHY", latency: 45 },
             db: { status: "HEALTHY", latency: 12 },
@@ -327,7 +330,9 @@ export default function DashboardPage({ params }: PageProps) {
             )
             .slice(0, 5);
 
-          const publishedCount = instructorWorkshops.filter(w => w.status === "PUBLISHED" || w.status === "ACTIVE").length;
+          const publishedCount = instructorWorkshops.filter(
+            (w) => w.status === "PUBLISHED" || w.status === "ACTIVE",
+          ).length;
           const draftCount = totalWorkshops - publishedCount;
 
           setInstructorData({
@@ -338,7 +343,7 @@ export default function DashboardPage({ params }: PageProps) {
               publishedCount,
               draftCount,
             },
-            recentWorkshops: instructorWorkshops.slice(0, 5).map(w => ({
+            recentWorkshops: instructorWorkshops.slice(0, 5).map((w) => ({
               _id: w._id,
               title: w.title,
               slug: w.slug,
@@ -347,10 +352,13 @@ export default function DashboardPage({ params }: PageProps) {
               status: w.status,
               createdAt: w.createdAt,
             })),
-            recentEnrollments: recentInstructorEnrollments.map(e => ({
+            recentEnrollments: recentInstructorEnrollments.map((e) => ({
               _id: e._id,
-              studentName: "Student", 
-              workshopTitle: typeof e.workshop === "object" ? e.workshop.title : workshopMap.get(e.workshop as string) || "Workshop",
+              studentName: "Student",
+              workshopTitle:
+                typeof e.workshop === "object"
+                  ? e.workshop.title
+                  : workshopMap.get(e.workshop as string) || "Workshop",
               date: e.createdAt || "",
               status: e.status || "PENDING",
             })),
@@ -374,7 +382,10 @@ export default function DashboardPage({ params }: PageProps) {
 
           const totalEnrollments = enrollments.length;
           const completedCount = enrollments.filter(
-            (e) => e.status === "COMPLETE" || e.status === "PAID" || e.status === "ACTIVE",
+            (e) =>
+              e.status === "COMPLETE" ||
+              e.status === "PAID" ||
+              e.status === "ACTIVE",
           ).length;
           const totalSpent = enrollments.reduce(
             (sum, e) => sum + (e.payment?.amount ?? e.amount ?? 0),
@@ -431,7 +442,12 @@ export default function DashboardPage({ params }: PageProps) {
     );
   }
 
-  if ((role === "ADMIN" || role === "SUPER_ADMIN") && adminData && !loading && !error) {
+  if (
+    (role === "ADMIN" || role === "SUPER_ADMIN") &&
+    adminData &&
+    !loading &&
+    !error
+  ) {
     return (
       <AdminDashboard
         user={user}

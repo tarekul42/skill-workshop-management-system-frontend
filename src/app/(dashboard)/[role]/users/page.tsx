@@ -69,14 +69,10 @@ interface PageProps {
 // ─── Role badge colors ───────────────────────────────────────────────
 
 const roleColors: Record<UserRole, string> = {
-  SUPER_ADMIN:
-    "border-rose-300 bg-rose-50 text-rose-700 dark:border-rose-700 dark:bg-rose-950/50 dark:text-rose-400",
-  ADMIN:
-    "border-violet-300 bg-violet-50 text-violet-700 dark:border-violet-700 dark:bg-violet-950/50 dark:text-violet-400",
-  INSTRUCTOR:
-    "border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400",
-  STUDENT:
-    "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400",
+  SUPER_ADMIN: "border-danger/30 bg-danger-subtle text-danger",
+  ADMIN: "border-primary/30 bg-primary-subtle text-primary",
+  INSTRUCTOR: "border-accent/30 bg-accent-subtle text-accent-foreground",
+  STUDENT: "border-info/30 bg-info-subtle text-info",
 };
 
 // ─── Component ───────────────────────────────────────────────────────
@@ -619,7 +615,7 @@ function DropdownMenuWithActions({
             <DropdownMenuItem
               onClick={item.onClick}
               className={
-                item.destructive ? "text-red-600 focus:text-red-600" : ""
+                item.destructive ? "text-danger focus:text-danger" : ""
               }
             >
               <item.icon className="size-4" />

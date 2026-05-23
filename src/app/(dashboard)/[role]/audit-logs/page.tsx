@@ -38,12 +38,9 @@ interface PageProps {
 // ─── Action badge styles ─────────────────────────────────────────────
 
 const actionStyles: Record<AuditAction, string> = {
-  CREATE:
-    "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400",
-  UPDATE:
-    "border-sky-300 bg-sky-50 text-sky-700 dark:border-sky-700 dark:bg-sky-950/50 dark:text-sky-400",
-  DELETE:
-    "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-400",
+  CREATE: "border-success/30 bg-success-subtle text-success",
+  UPDATE: "border-info/30 bg-info-subtle text-info",
+  DELETE: "border-danger/30 bg-danger-subtle text-danger",
 };
 
 // ─── Known collections ───────────────────────────────────────────────

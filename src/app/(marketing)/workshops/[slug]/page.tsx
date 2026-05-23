@@ -699,7 +699,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   seatsAvailable={seatsAvailable}
                   variant="default"
                   size="lg"
-                  className="w-full h-13 rounded-xl text-base font-semibold shadow-amber-glow hover:shadow-amber-glow/80 hover:-translate-y-0.5 transition-all"
+                  className="w-full h-13 rounded-xl text-base font-semibold hover:-translate-y-0.5 transition-all"
                 />
               </div>
 
@@ -821,7 +821,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
             </p>
           </div>
           {/* Enroll Button */}
-          <div className="flex-1 max-w-[200px]">
+          <div className="flex-1 max-w-50">
             <EnrollButton
               workshopId={workshop._id}
               slug={slug}

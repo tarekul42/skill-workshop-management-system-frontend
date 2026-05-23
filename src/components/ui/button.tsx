@@ -14,15 +14,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground rounded-[10px] px-5 py-2.5 shadow-[0_1px_3px_oklch(0_0_0/_0.12),_0_4px_12px_oklch(0.42_0.25_272/_0.30)] hover:bg-primary-hover hover:-translate-y-px hover:shadow-[0_2px_6px_oklch(0_0_0/_0.15),_0_8px_24px_oklch(0.42_0.25_272/_0.35)] active:translate-y-0 active:shadow-[0_1px_2px_oklch(0_0_0/_0.10)]",
+          "bg-primary text-primary-foreground rounded-[10px] px-5 py-2.5 shadow-[0_1px_3px_oklch(0_0_0/_0.08),_0_2px_8px_oklch(0_0_0/_0.06)] hover:bg-primary-hover hover:-translate-y-px hover:shadow-[0_2px_6px_oklch(0_0_0/_0.10),_0_4px_16px_oklch(0_0_0/_0.08)] active:translate-y-0 active:shadow-[0_1px_2px_oklch(0_0_0/_0.06)]",
+
         outline:
           "border-[1.5px] border-border-strong bg-transparent text-foreground rounded-[10px] px-[19px] py-2 hover:bg-surface-2 hover:border-primary hover:text-primary hover:-translate-y-px active:translate-y-0",
         secondary:
-          "bg-accent text-accent-foreground rounded-[10px] px-5 py-2.5 shadow-amber-glow hover:bg-accent-hover hover:-translate-y-px active:translate-y-0",
+          "bg-accent text-accent-foreground rounded-[10px] px-5 py-2.5 shadow-[0_1px_3px_oklch(0_0_0/_0.08),_0_2px_8px_oklch(0_0_0/_0.06)] hover:bg-accent-hover hover:-translate-y-px hover:shadow-[0_2px_6px_oklch(0_0_0/_0.10),_0_4px_16px_oklch(0_0_0/_0.08)] active:translate-y-0",
+
         ghost:
           "bg-transparent text-foreground-subtle rounded-lg hover:bg-surface-2 hover:text-foreground",
         destructive:
-          "bg-danger text-danger-foreground rounded-[10px] px-5 py-2.5 shadow-[0_4px_12px_oklch(0.52_0.24_22/_0.30)] hover:bg-danger-hover hover:-translate-y-px active:translate-y-0",
+          "bg-danger text-danger-foreground rounded-[10px] px-5 py-2.5 shadow-[0_1px_3px_oklch(0_0_0/_0.08),_0_2px_8px_oklch(0_0_0/_0.06)] hover:bg-danger-hover hover:-translate-y-px hover:shadow-[0_2px_6px_oklch(0_0_0/_0.10),_0_4px_16px_oklch(0_0_0/_0.08)] active:translate-y-0",
         link: "text-primary underline-offset-4 hover:underline font-semibold",
       },
       size: {

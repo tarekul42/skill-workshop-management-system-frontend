@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { animate } from "framer-motion";
 import {
@@ -21,6 +21,7 @@ import {
   StaggerContainer,
   StaggerItem,
 } from "@/components/shared/AnimatedPage";
+import { StatusBadge } from "@/components/shared/StatusBadge";
 
 export interface DashboardEnrollmentItem {
   _id: string;
@@ -46,9 +47,17 @@ export interface StudentDashboardProps {
   recentEnrollments: DashboardEnrollmentItem[];
 }
 
-function AnimatedNumber({ value, isCurrency = false }: { value: number; isCurrency?: boolean }) {
-  const [displayValue, setDisplayValue] = useState(isCurrency ? formatCurrency(0) : "0");
-  
+function AnimatedNumber({
+  value,
+  isCurrency = false,
+}: {
+  value: number;
+  isCurrency?: boolean;
+}) {
+  const [displayValue, setDisplayValue] = useState(
+    isCurrency ? formatCurrency(0) : "0",
+  );
+
   useEffect(() => {
     const controls = animate(0, value, {
       duration: 1.2,
@@ -103,7 +112,11 @@ export function StudentDashboard({
             </p>
           </div>
           <div className="mt-4 md:mt-0 shrink-0">
-            <Button asChild size="lg" className="rounded-[10px] font-display shadow-sm group">
+            <Button
+              asChild
+              size="lg"
+              className="rounded-[10px] font-display shadow-sm group"
+            >
               <Link href="/workshops">
                 Browse Workshops
                 <ArrowRight className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
@@ -117,12 +130,12 @@ export function StudentDashboard({
       <StaggerContainer className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {/* Enrolled */}
         <StaggerItem>
-          <div className="rounded-[16px] border border-border bg-surface-1 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+          <div className="rounded-2xl border border-border bg-surface-1 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-start justify-between">
               <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Enrolled
               </p>
-              <div className="flex size-11 items-center justify-center rounded-[12px] bg-primary-subtle">
+              <div className="flex size-11 items-center justify-center rounded-xl bg-primary-subtle">
                 <BookOpen className="size-5 text-primary" />
               </div>
             </div>
@@ -134,12 +147,12 @@ export function StudentDashboard({
 
         {/* Completed */}
         <StaggerItem>
-          <div className="rounded-[16px] border border-border bg-surface-1 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+          <div className="rounded-2xl border border-border bg-surface-1 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-start justify-between">
               <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Completed
               </p>
-              <div className="flex size-11 items-center justify-center rounded-[12px] bg-success-subtle">
+              <div className="flex size-11 items-center justify-center rounded-xl bg-success-subtle">
                 <CheckCircle className="size-5 text-success" />
               </div>
             </div>
@@ -151,12 +164,12 @@ export function StudentDashboard({
 
         {/* Total Spent */}
         <StaggerItem>
-          <div className="rounded-[16px] border border-border bg-surface-1 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+          <div className="rounded-2xl border border-border bg-surface-1 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-start justify-between">
               <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Total Spent
               </p>
-              <div className="flex size-11 items-center justify-center rounded-[12px] bg-accent-subtle">
+              <div className="flex size-11 items-center justify-center rounded-xl bg-accent-subtle">
                 <Banknote className="size-5 text-accent-foreground" />
               </div>
             </div>
@@ -168,12 +181,12 @@ export function StudentDashboard({
 
         {/* Pending Payments */}
         <StaggerItem>
-          <div className="rounded-[16px] border border-border bg-surface-1 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
+          <div className="rounded-2xl border border-border bg-surface-1 p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
             <div className="flex items-start justify-between">
               <p className="font-body text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Pending Payments
               </p>
-              <div className="flex size-11 items-center justify-center rounded-[12px] bg-warning-subtle">
+              <div className="flex size-11 items-center justify-center rounded-xl bg-warning-subtle">
                 <Clock className="size-5 text-warning" />
               </div>
             </div>
@@ -190,7 +203,11 @@ export function StudentDashboard({
           <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">
             My Recent Enrollments
           </h2>
-          <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
+          <Button
+            variant="ghost"
+            asChild
+            className="text-muted-foreground hover:text-foreground"
+          >
             <Link href="/student/enrollments">
               View All <ArrowRight className="ml-1.5 size-4" />
             </Link>
@@ -201,13 +218,18 @@ export function StudentDashboard({
           <div className="space-y-3">
             {recentEnrollments.map((enrollment) => {
               const workshopTitle =
-                typeof enrollment.workshop === "object" && enrollment.workshop?.title
+                typeof enrollment.workshop === "object" &&
+                enrollment.workshop?.title
                   ? enrollment.workshop.title
                   : "Workshop";
               const workshopSlug =
-                typeof enrollment.workshop === "object" ? enrollment.workshop?.slug : null;
+                typeof enrollment.workshop === "object"
+                  ? enrollment.workshop?.slug
+                  : null;
 
-              const isPending = enrollment.status === "PENDING" || enrollment.payment?.status === "UNPAID";
+              const isPending =
+                enrollment.status === "PENDING" ||
+                enrollment.payment?.status === "UNPAID";
 
               return (
                 <div
@@ -216,7 +238,7 @@ export function StudentDashboard({
                 >
                   {/* Left content: Image & Info */}
                   <div className="flex flex-1 items-center gap-4">
-                    <div className="flex size-[60px] shrink-0 items-center justify-center rounded-[10px] bg-surface-3 overflow-hidden">
+                    <div className="flex size-15 shrink-0 items-center justify-center rounded-[10px] bg-surface-3 overflow-hidden">
                       <BookOpen className="size-6 text-muted-foreground/50" />
                     </div>
                     <div className="min-w-0">
@@ -227,7 +249,9 @@ export function StudentDashboard({
                         {workshopTitle}
                       </Link>
                       <p className="mt-1 font-body text-[13px] text-muted-foreground">
-                        {enrollment.createdAt ? `Enrolled ${formatDate(enrollment.createdAt)}` : "Recently enrolled"}
+                        {enrollment.createdAt
+                          ? `Enrolled ${formatDate(enrollment.createdAt)}`
+                          : "Recently enrolled"}
                       </p>
                     </div>
                   </div>
@@ -243,7 +267,7 @@ export function StudentDashboard({
                           Complete Payment &rarr;
                         </Link>
                       )}
-                      <StatusBadge status={enrollment.status} />
+                      <StatusBadge status={enrollment.status as string} />
                     </div>
                   </div>
                 </div>
@@ -261,7 +285,14 @@ export function StudentDashboard({
               xmlns="http://www.w3.org/2000/svg"
               className="mb-6 opacity-80"
             >
-              <rect x="20" y="20" width="80" height="80" rx="20" fill="var(--surface-2)" />
+              <rect
+                x="20"
+                y="20"
+                width="80"
+                height="80"
+                rx="20"
+                fill="var(--surface-2)"
+              />
               <path
                 d="M45 50h30M45 60h30M45 70h20"
                 stroke="var(--border-strong)"
@@ -285,7 +316,8 @@ export function StudentDashboard({
             </p>
             <Button asChild className="mt-6 rounded-[10px] font-display">
               <Link href="/workshops">
-                Browse available workshops <ArrowRight className="ml-2 size-4" />
+                Browse available workshops{" "}
+                <ArrowRight className="ml-2 size-4" />
               </Link>
             </Button>
           </div>
@@ -351,41 +383,5 @@ export function StudentDashboard({
         </div>
       </StaggerItem>
     </AnimatedPage>
-  );
-}
-
-// Custom StatusBadge matching the blueprint
-function StatusBadge({ status }: { status?: string }) {
-  if (!status) return null;
-  const s = status.toUpperCase();
-
-  if (s === "PENDING" || s === "PENDING_PAYMENT") {
-    return (
-      <div className="inline-flex h-6 items-center gap-1.5 rounded-[6px] bg-warning-subtle px-2.5 font-body text-[12px] font-semibold tracking-[0.02em] text-warning">
-        <span className="size-1.5 rounded-full bg-warning"></span>
-        {status}
-      </div>
-    );
-  }
-  if (s === "COMPLETE" || s === "PAID" || s === "ACTIVE") {
-    return (
-      <div className="inline-flex h-6 items-center gap-1.5 rounded-[6px] bg-success-subtle px-2.5 font-body text-[12px] font-semibold tracking-[0.02em] text-success">
-        <span className="size-1.5 rounded-full bg-success"></span>
-        {status}
-      </div>
-    );
-  }
-  if (s === "CANCEL" || s === "FAILED" || s === "BLOCKED") {
-    return (
-      <div className="inline-flex h-6 items-center gap-1.5 rounded-[6px] bg-danger-subtle px-2.5 font-body text-[12px] font-semibold tracking-[0.02em] text-danger">
-        <span className="size-1.5 rounded-full bg-danger"></span>
-        {status}
-    </div>
-    );
-  }
-  return (
-    <div className="inline-flex h-6 items-center gap-1.5 rounded-[6px] bg-surface-3 px-2.5 font-body text-[12px] font-semibold tracking-[0.02em] text-foreground-muted">
-      {status}
-    </div>
   );
 }

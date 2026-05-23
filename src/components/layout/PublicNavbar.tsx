@@ -227,11 +227,7 @@ export function PublicNavbar() {
                 <Link href="/login">Login</Link>
               </Button>
               {/* §1.5 — subtle pulsing glow to draw attention without being annoying */}
-              <Button
-                size="sm"
-                asChild
-                className="font-bold animate-glow-pulse"
-              >
+              <Button size="sm" asChild className="font-bold">
                 <Link href="/register">Get Started</Link>
               </Button>
             </div>
