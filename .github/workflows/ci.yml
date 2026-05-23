@@ -2,9 +2,9 @@ name: Frontend CI
 
 on:
   push:
-    branches: [ master, main, "feat/**" ]
+    branches: [master, main, "feat/**"]
   pull_request:
-    branches: [ master, main ]
+    branches: [master, main]
 
 jobs:
   build-and-test:
@@ -30,7 +30,7 @@ jobs:
       - name: Build
         run: bun run build
         env:
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1' }}
+          NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL || 'http://localhost:5000/api/v1' }}
 
       # Optional: Run E2E tests in CI (commented out by default to save minutes)
       # - name: Install Playwright Browsers

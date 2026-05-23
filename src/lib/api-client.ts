@@ -7,7 +7,8 @@ export function handleSessionExpired(): void {
   clearAccessToken();
   localStorage.removeItem("skillworkshop_user");
   document.cookie = "swms_role=;path=/;max-age=0;SameSite=Lax";
-  window.location.href = "/login";
+  // Use Next.js router for client-side navigation (preserves shared layout state)
+  window.location.assign("/login");
 }
 
 const CSRF_EXEMPT_PATHS = [
@@ -48,35 +49,62 @@ export function storeAccessToken(token: string): void {
 
 const SESSION_EXPIRED_MSG = "Session expired. Please log in again.";
 
+// Refresh mutex to prevent concurrent token refresh calls
+let isRefreshing = false;
+let refreshPromise: Promise<Response> | null = null;
+
 async function attemptTokenRefresh(
   fetchHeaders: Record<string, string>,
   url: string,
   fetchOptions: RequestInit,
 ): Promise<Response> {
-  try {
-    const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-    });
-
-    if (refreshRes.ok) {
-      const refreshData = await refreshRes.json();
-      if (refreshData?.data?.accessToken) {
-        setAccessToken(refreshData.data.accessToken);
-        fetchHeaders["Authorization"] =
-          `Bearer ${refreshData.data.accessToken}`;
-      }
-      return await fetch(url, fetchOptions);
+  // Mutex: if a refresh is already in progress, reuse that promise
+  if (isRefreshing && refreshPromise) {
+    await refreshPromise;
+    // After the in-flight refresh completes, update the token in headers
+    const currentToken = getAccessToken();
+    if (currentToken) {
+      fetchHeaders["Authorization"] = `Bearer ${currentToken}`;
     }
-
-    handleSessionExpired();
-    throw new Error(SESSION_EXPIRED_MSG);
-  } catch (err) {
-    if (err instanceof Error && err.message === SESSION_EXPIRED_MSG) throw err;
-    handleSessionExpired();
-    throw new Error(SESSION_EXPIRED_MSG);
+    return fetch(url, fetchOptions);
   }
+
+  isRefreshing = true;
+  refreshPromise = (async () => {
+    try {
+      const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+
+      if (refreshRes.ok) {
+        const refreshData = await refreshRes.json();
+        if (refreshData?.data?.accessToken) {
+          setAccessToken(refreshData.data.accessToken);
+        }
+        return refreshRes;
+      }
+
+      handleSessionExpired();
+      throw new Error(SESSION_EXPIRED_MSG);
+    } catch (err) {
+      if (err instanceof Error && err.message === SESSION_EXPIRED_MSG) throw err;
+      handleSessionExpired();
+      throw new Error(SESSION_EXPIRED_MSG);
+    } finally {
+      isRefreshing = false;
+      refreshPromise = null;
+    }
+  })();
+
+  await refreshPromise;
+  // Update headers with the refreshed token before retrying
+  const currentToken = getAccessToken();
+  if (currentToken) {
+    fetchHeaders["Authorization"] = `Bearer ${currentToken}`;
+  }
+  return fetch(url, fetchOptions);
 }
 
 // ─── Unified API client ───────────────────────────────────────────────

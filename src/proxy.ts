@@ -31,9 +31,14 @@ async function getRoleCookie(request: NextRequest): Promise<string | null> {
   if (!token) return null;
 
   try {
-    const secret = new TextEncoder().encode(
-      process.env.JWT_SECRET || "default_secret_for_development_only",
-    );
+
+    const JWT_SECRET = process.env.JWT_SECRET;
+    if (!JWT_SECRET) {
+      console.error("[MIDDLEWARE] JWT_SECRET environment variable is not set. Denying all requests.");
+      return null;
+    }
+
+    const secret = new TextEncoder().encode(JWT_SECRET);
     const { payload } = await jwtVerify(token, secret);
     return payload.role as string;
   } catch {
@@ -106,9 +111,9 @@ export async function proxy(request: NextRequest) {
 
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live;
+    script-src 'self' https://vercel.live;
     style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: data: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com https://vercel.live https://vercel.com;
+    img-src 'self' blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com https://vercel.live https://vercel.com;
     font-src 'self' data: https://fonts.gstatic.com;
     connect-src 'self' ${backendOrigin} https://lh3.googleusercontent.com https://vercel.live https://*.vercel.app;
     frame-src 'self' https://sandbox.sslcommerz.com https://vercel.live;
