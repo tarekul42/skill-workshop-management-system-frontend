@@ -31,10 +31,11 @@ async function getRoleCookie(request: NextRequest): Promise<string | null> {
   if (!token) return null;
 
   try {
-
     const JWT_SECRET = process.env.JWT_SECRET;
     if (!JWT_SECRET) {
-      console.error("[MIDDLEWARE] JWT_SECRET environment variable is not set. Denying all requests.");
+      console.error(
+        "[MIDDLEWARE] JWT_SECRET environment variable is not set. Denying all requests.",
+      );
       return null;
     }
 
@@ -71,9 +72,16 @@ function isAuthPage(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const roleCookie = await getRoleCookie(request);
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  const nonce = btoa(String.fromCharCode(...bytes));
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
 
   // Initialize response
-  let response = NextResponse.next();
+  let response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 
   // ── Protected dashboard routes ──────────────────────────────────────
   const expectedRole = getExpectedRole(pathname);
@@ -109,9 +117,11 @@ export async function proxy(request: NextRequest) {
     // If parsing fails, fall back to the raw value
   }
 
+  const isDev = process.env.NODE_ENV === "development";
+
   const cspHeader = `
     default-src 'self';
-    script-src 'self' https://vercel.live;
+    script-src 'self' https://vercel.live ${isDev ? "'unsafe-inline' 'unsafe-eval'" : "'nonce-${nonce}'"};
     style-src 'self' 'unsafe-inline';
     img-src 'self' blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com https://vercel.live https://vercel.com;
     font-src 'self' data: https://fonts.gstatic.com;
@@ -121,18 +131,19 @@ export async function proxy(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    ${process.env.NODE_ENV === "production" ? "upgrade-insecure-requests;" : ""}
+    ${!isDev ? "upgrade-insecure-requests;" : ""}
   `
     .replace(/\s{2,}/g, " ")
     .trim();
 
   response.headers.set("Content-Security-Policy", cspHeader);
+  response.headers.set("x-nonce", nonce);
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(
     "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+    "camera=(), microphone=(), geolocation=()",
   );
   response.headers.set(
     "Strict-Transport-Security",

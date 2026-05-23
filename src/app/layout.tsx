@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import "./globals.css";
 import QueryProviders from "../providers/QueryProvider";
 import { FRONTEND_URL } from "@/lib/constants";
+import { headers } from "next/headers";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -87,11 +88,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const nonce = (await headers()).get("x-nonce") ?? "";
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning nonce={nonce}>
       <body
         className={`${display.variable} ${body.variable} ${mono.variable} font-body antialiased`}
       >
