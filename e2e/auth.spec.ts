@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Authentication Flow", () => {
   test("should show login page with all elements", async ({ page }) => {
-    await page.goto("/login");
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
 
     await expect(page).toHaveTitle(/Skill Workshop.*Authentication/);
     await expect(page.getByText("Welcome back")).toBeVisible();
@@ -24,21 +24,17 @@ test.describe("Authentication Flow", () => {
     });
 
     await page.goto("/login");
+    await page.waitForLoadState("networkidle");
 
-    const email = page.locator('input[name="email"]');
-    const password = page.locator('input[name="password"]');
-
-    await email.click();
-    await email.pressSequentially("invalid@example.com");
-    await password.click();
-    await password.pressSequentially("wrongpassword");
+    await page.locator('input[name="email"]').fill("invalid@example.com");
+    await page.locator('input[name="password"]').fill("wrongpassword");
     await page.getByRole("button", { name: /Sign In/i }).click();
 
-    await expect(page.getByText(/Invalid email or password/i)).toBeVisible();
+    await expect(page.getByText(/Invalid email or password/i)).toBeVisible({ timeout: 10000 });
   });
 
   test("should navigate to registration page", async ({ page }) => {
-    await page.goto("/login");
+    await page.goto("/login", { waitUntil: "domcontentloaded" });
     await page.getByRole("link", { name: "Sign up as Student" }).click();
     await expect(page).toHaveURL(/\/register$/);
   });

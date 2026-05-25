@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { StepIndicator } from "../StepIndicator";
+import { StepIndicator } from "../step-indicator";
 
 describe("StepIndicator", () => {
   // ── Step labels ──────────────────────────────────────────────────

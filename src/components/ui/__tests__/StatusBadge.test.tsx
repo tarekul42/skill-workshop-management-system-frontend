@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { StatusBadge } from "../StatusBadge";
+import { StatusBadge } from "../status-badge";
 
 // Mock framer-motion
 vi.mock("framer-motion", () => ({
@@ -11,6 +11,12 @@ vi.mock("framer-motion", () => ({
     ),
     span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
       <span {...props}>{children}</span>
+    ),
+    button: ({
+      children,
+      ...props
+    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+      <button {...props}>{children}</button>
     ),
   },
   AnimatePresence: ({ children }: { children: React.ReactNode }) => (

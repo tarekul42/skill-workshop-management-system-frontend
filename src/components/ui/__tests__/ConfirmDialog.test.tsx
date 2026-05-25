@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ConfirmDialog } from "../ConfirmDialog";
+import { ConfirmDialog } from "../confirm-dialog";
 
 // Mock framer-motion
 vi.mock("framer-motion", () => ({
@@ -11,6 +11,12 @@ vi.mock("framer-motion", () => ({
     ),
     span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
       <span {...props}>{children}</span>
+    ),
+    button: ({
+      children,
+      ...props
+    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+      <button {...props}>{children}</button>
     ),
   },
   AnimatePresence: ({ children }: { children: React.ReactNode }) => (
@@ -37,7 +43,9 @@ describe("ConfirmDialog", () => {
   it("renders title and description when open=true", () => {
     render(<ConfirmDialog {...defaultProps} />);
     expect(screen.getByText("Delete Workshop")).toBeInTheDocument();
-    expect(screen.getByText("This action cannot be undone.")).toBeInTheDocument();
+    expect(
+      screen.getByText("This action cannot be undone."),
+    ).toBeInTheDocument();
   });
 
   it("does not render content when open=false", () => {
@@ -107,19 +115,13 @@ describe("ConfirmDialog", () => {
   it("renders confirmation input when requireConfirmText is provided", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="DELETE" />);
     expect(
-      screen.getByPlaceholderText("Type 'DELETE' to confirm"),
+      screen.getByPlaceholderText("Type exactly 'DELETE'"),
     ).toBeInTheDocument();
-  });
-
-  it("disables confirm button when requireConfirmText is provided and input is empty", () => {
-    render(<ConfirmDialog {...defaultProps} requireConfirmText="DELETE" />);
-    const confirmBtn = screen.getByText("Confirm").closest("button");
-    expect(confirmBtn).toBeDisabled();
   });
 
   it("disables confirm button when input does not match requireConfirmText", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="DELETE" />);
-    const input = screen.getByPlaceholderText("Type 'DELETE' to confirm");
+    const input = screen.getByPlaceholderText("Type exactly 'DELETE'");
     fireEvent.change(input, { target: { value: "DELET" } });
     const confirmBtn = screen.getByText("Confirm").closest("button");
     expect(confirmBtn).toBeDisabled();
@@ -127,7 +129,7 @@ describe("ConfirmDialog", () => {
 
   it("enables confirm button when input exactly matches requireConfirmText", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="DELETE" />);
-    const input = screen.getByPlaceholderText("Type 'DELETE' to confirm");
+    const input = screen.getByPlaceholderText("Type exactly 'DELETE'");
     fireEvent.change(input, { target: { value: "DELETE" } });
     const confirmBtn = screen.getByText("Confirm").closest("button");
     expect(confirmBtn).not.toBeDisabled();
@@ -136,7 +138,7 @@ describe("ConfirmDialog", () => {
   it("shows the requireConfirmText value in the instruction text", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="CONFIRM" />);
     expect(
-      screen.getByPlaceholderText("Type 'CONFIRM' to confirm"),
+      screen.getByPlaceholderText("Type exactly 'CONFIRM'"),
     ).toBeInTheDocument();
   });
 

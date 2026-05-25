@@ -24,7 +24,8 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
-import { PageHeader, TableSkeleton } from "@/components/shared";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
+import { PageHeader } from "@/components/layout/PageHeader";
 import { formatDateTime, truncate } from "@/lib/formatters";
 import { getAuditLogs } from "@/lib/api/services";
 import type { IAuditLog, AuditAction } from "@/types";

@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { EnrollButton } from "@/components/workshop/EnrollButton";
+import { EnrollButton } from "@/components/features/workshops/EnrollButton";
 import { BACKEND_API_URL } from "@/lib/constants";
 import {
   enrichWorkshop,
@@ -66,6 +66,7 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
               src={workshop.images[0]}
               alt={workshop.title}
               fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover transition-transform duration-500 group-hover:scale-104"
               unoptimized
             />
@@ -382,6 +383,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                       src={workshop.images[0]}
                       alt={workshop.title}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 66vw"
                       className="object-cover"
                       priority
                       unoptimized
@@ -400,6 +402,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                                 src={img}
                                 alt={`${workshop.title} ${idx + 1}`}
                                 fill
+                                sizes="64px"
                                 className="object-cover"
                                 unoptimized
                               />

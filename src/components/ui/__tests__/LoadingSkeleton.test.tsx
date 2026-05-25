@@ -5,7 +5,7 @@ import {
   TableSkeleton,
   WorkshopCardSkeleton,
   StatCardSkeleton,
-} from "../LoadingSkeleton";
+} from "../loading-skeleton";
 
 describe("LoadingSkeleton", () => {
   describe("TableSkeleton", () => {

@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatCardSkeleton } from "@/components/shared/LoadingSkeleton";
+import { StatCardSkeleton } from "@/components/ui/loading-skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -23,18 +23,18 @@ import {
   AnimatedPage,
   StaggerContainer,
   StaggerItem,
-} from "@/components/shared/AnimatedPage";
-import { StudentDashboard } from "@/components/dashboard/StudentDashboard";
+} from "@/components/ui/animated-page";
+import { StudentDashboard } from "@/components/features/dashboard/StudentDashboard";
 import {
   InstructorDashboard,
   type InstructorWorkshopItem,
   type InstructorEnrollmentItem,
-} from "@/components/dashboard/InstructorDashboard";
+} from "@/components/features/dashboard/InstructorDashboard";
 import {
   AdminDashboard,
   type AuditLogItem,
   type PlatformHealth,
-} from "@/components/dashboard/AdminDashboard";
+} from "@/components/features/dashboard/AdminDashboard";
 
 // ─── Props ──────────────────────────────────────────────────────────
 

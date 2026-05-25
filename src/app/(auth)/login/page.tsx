@@ -36,7 +36,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AnimatedPage } from "@/components/shared/AnimatedPage";
+import { AnimatedPage } from "@/components/ui/animated-page";
 import { saveUser, redirectToDashboard } from "@/lib/auth-helpers";
 import { setSecureAuthCookie } from "@/app/actions/auth";
 import { apiClient, storeAccessToken } from "@/lib/api-client";

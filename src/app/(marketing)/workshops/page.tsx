@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { WorkshopCardSkeleton } from "@/components/shared/LoadingSkeleton";
+import { WorkshopCardSkeleton } from "@/components/ui/loading-skeleton";
 import {
   fetchWorkshops,
   fetchCategories,
@@ -325,6 +325,7 @@ export default function WorkshopsPage() {
                             src={workshop.images[0]}
                             alt={workshop.title}
                             fill
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                             className="object-cover transition-transform duration-500 group-hover:scale-104"
                             unoptimized
                           />

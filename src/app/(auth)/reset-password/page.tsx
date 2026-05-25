@@ -20,8 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/api-client";
-import { AnimatedPage } from "@/components/shared/AnimatedPage";
-import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
+import { AnimatedPage } from "@/components/ui/animated-page";
+import { PasswordChecklist } from "@/components/ui/password-checklist";
 import { isPasswordValid } from "@/lib/validation/password";
 import { motion } from "framer-motion";
 

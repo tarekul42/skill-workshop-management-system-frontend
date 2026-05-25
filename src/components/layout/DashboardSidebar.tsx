@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { GraduationCap, ExternalLink, LogOut, Menu } from "lucide-react";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   Shield,
@@ -250,10 +251,10 @@ function SidebarNavContent({
                           href={item.href}
                           onClick={onNavigate}
                           className={cn(
-                            "group/nav-item relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-200",
+                            "group/nav-item relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-300",
                             isActive
-                              ? "bg-sidebar-active text-white shadow-md"
-                              : "text-sidebar-text-muted hover:bg-sidebar-hover hover:text-white",
+                              ? "bg-primary text-white shadow-3 translate-x-1"
+                              : "text-sidebar-text-muted hover:bg-sidebar-hover hover:text-white hover:translate-x-1",
                           )}
                         >
                           {IconComponent && (
@@ -267,6 +268,17 @@ function SidebarNavContent({
                             />
                           )}
                           <span>{item.label}</span>
+                          {isActive && (
+                            <motion.div
+                              layoutId="active-indicator"
+                              className="absolute left-[-4px] top-1/4 h-1/2 w-1 rounded-full bg-accent"
+                              transition={{
+                                type: "spring",
+                                stiffness: 300,
+                                damping: 30,
+                              }}
+                            />
+                          )}
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent side="right" className="lg:hidden">
@@ -301,39 +313,41 @@ export function DashboardSidebar({ role }: { role: string }) {
 
   return (
     <>
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r border-sidebar-border bg-sidebar-bg text-sidebar-text z-30">
-        <div className="flex h-20 items-center gap-3 px-6">
-          <GraduationCap className="size-8 text-primary" />
+      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r border-sidebar-border bg-sidebar-bg text-sidebar-text z-40 shadow-raised">
+        <div className="flex h-16 items-center gap-3 px-6 border-b border-sidebar-border/50">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-primary shadow-lg">
+            <GraduationCap className="size-5.5 text-white" />
+          </div>
           <Link
             href="/"
-            className="font-display text-xl font-extrabold tracking-tight"
+            className="font-display text-xl font-extrabold tracking-tight hover:opacity-80 transition-opacity"
           >
-            Skill<span className="text-primary">Workshop</span>
+            Skill<span className="text-accent">Workshop</span>
           </Link>
         </div>
 
         <SidebarNavContent sections={sections} pathname={pathname} />
 
-        <div className="mt-auto flex flex-col gap-2 p-4 border-t border-sidebar-border bg-black/20">
+        <div className="mt-auto flex flex-col gap-2 p-5 border-t border-sidebar-border/50 bg-black/40 backdrop-blur-md">
           <Button
             variant="ghost"
             size="sm"
             asChild
-            className="justify-start gap-3 rounded-xl text-sidebar-text-muted hover:bg-sidebar-hover hover:text-white transition-colors"
+            className="justify-start gap-3 rounded-xl text-sidebar-text-muted hover:bg-sidebar-hover hover:text-white transition-all group"
           >
             <Link href="/">
-              <ExternalLink className="size-4" />
-              <span>Back to Home</span>
+              <ExternalLink className="size-4 transition-transform group-hover:scale-110" />
+              <span className="font-semibold">Back to Home</span>
             </Link>
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={handleLogout}
-            className="justify-start gap-3 rounded-xl text-sidebar-text-muted hover:bg-danger-subtle hover:text-danger transition-colors"
+            className="justify-start gap-3 rounded-xl text-sidebar-text-muted hover:bg-danger-subtle hover:text-danger transition-all group"
           >
-            <LogOut className="size-4" />
-            <span>Logout</span>
+            <LogOut className="size-4 transition-transform group-hover:scale-110" />
+            <span className="font-bold">Logout</span>
           </Button>
         </div>
       </aside>

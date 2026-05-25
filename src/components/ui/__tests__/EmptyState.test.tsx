@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { EmptyState } from "../EmptyState";
+import { EmptyState } from "../empty-state";
 import { BookOpen } from "lucide-react";
 
 // Mock framer-motion
@@ -12,6 +12,12 @@ vi.mock("framer-motion", () => ({
     ),
     span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
       <span {...props}>{children}</span>
+    ),
+    button: ({
+      children,
+      ...props
+    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+      <button {...props}>{children}</button>
     ),
   },
   AnimatePresence: ({ children }: { children: React.ReactNode }) => (
@@ -35,10 +41,7 @@ describe("EmptyState", () => {
   // ── Description ──────────────────────────────────────────────────
   it("renders the description when provided", () => {
     render(
-      <EmptyState
-        title="Empty"
-        description="Try adjusting your filters"
-      />,
+      <EmptyState title="Empty" description="Try adjusting your filters" />,
     );
     expect(screen.getByText("Try adjusting your filters")).toBeInTheDocument();
   });
@@ -106,30 +109,25 @@ describe("EmptyState", () => {
 
   // ── Custom icon ──────────────────────────────────────────────────
   it("renders custom icon when icon prop is provided", () => {
-    const { container } = render(
-      <EmptyState title="Empty" icon={BookOpen} />,
-    );
+    const { container } = render(<EmptyState title="Empty" icon={BookOpen} />);
     // SVG should be present from the icon
     expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
   // ── Variants render different icons ──────────────────────────────
   it.each([
-    ["workshops", "workshops"],
-    ["enrollments", "enrollments"],
-    ["payments", "payments"],
-    ["users", "users"],
-    ["calendar", "calendar"],
-    ["default", "default"],
-  ] as const)(
-    "renders an icon for variant '%s'",
-    (variant) => {
-      const { container } = render(
-        <EmptyState title="Empty" variant={variant} />,
-      );
-      expect(container.querySelector("svg")).toBeInTheDocument();
-    },
-  );
+    "workshops",
+    "enrollments",
+    "payments",
+    "users",
+    "calendar",
+    "default",
+  ] as const)("renders an icon for variant '%s'", (variant) => {
+    const { container } = render(
+      <EmptyState title="Empty" variant={variant} />,
+    );
+    expect(container.querySelector("svg")).toBeInTheDocument();
+  });
 
   it("renders different SVG paths for different variants", () => {
     const { container: c1 } = render(

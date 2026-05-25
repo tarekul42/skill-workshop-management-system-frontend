@@ -32,9 +32,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { storeOTPEmail } from "@/lib/auth-helpers";
 import { apiClient } from "@/lib/api-client";
 import { isPasswordValid } from "@/lib/validation/password";
-import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
-import { AnimatedPage } from "@/components/shared/AnimatedPage";
-import { StepIndicator } from "@/components/shared/StepIndicator";
+import { PasswordChecklist } from "@/components/ui/password-checklist";
+import { AnimatedPage } from "@/components/ui/animated-page";
+import { StepIndicator } from "@/components/ui/step-indicator";
 
 export default function InstructorRegisterPage() {
   const router = useRouter();

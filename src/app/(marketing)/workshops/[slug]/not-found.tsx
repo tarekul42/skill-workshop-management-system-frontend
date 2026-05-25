@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Search, Home, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/shared/BackButton";
+import { BackButton } from "@/components/ui/back-button";
 
 export default function WorkshopNotFound() {
   return (

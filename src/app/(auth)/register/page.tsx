@@ -29,7 +29,7 @@ import { Separator } from "@/components/ui/separator";
 import { storeOTPEmail } from "@/lib/auth-helpers";
 import { apiClient } from "@/lib/api-client";
 import { BACKEND_API_URL } from "@/lib/constants";
-import { PasswordChecklist } from "@/components/shared/PasswordChecklist";
+import { PasswordChecklist } from "@/components/ui/password-checklist";
 
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -43,8 +43,8 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AnimatedPage } from "@/components/shared/AnimatedPage";
-import { StepIndicator } from "@/components/shared/StepIndicator";
+import { AnimatedPage } from "@/components/ui/animated-page";
+import { StepIndicator } from "@/components/ui/step-indicator";
 
 export default function RegisterPage() {
   const router = useRouter();

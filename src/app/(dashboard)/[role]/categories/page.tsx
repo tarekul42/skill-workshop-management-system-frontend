@@ -35,13 +35,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import {
-  PageHeader,
-  ConfirmDialog,
-  // CardSkeleton,
-  EmptyState,
-  Breadcrumbs,
-} from "@/components/shared";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { EmptyState } from "@/components/ui/empty-state";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import {
   fetchCategories,
   createCategory,
@@ -300,6 +297,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                           src={cat.thumbnail}
                           alt={cat.name}
                           fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       ) : (

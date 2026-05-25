@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { ErrorDisplay } from "@/components/shared/ErrorDisplay";
+import { ErrorDisplay } from "@/components/ui/error-display";
 
 export default function DashboardError({
   error,

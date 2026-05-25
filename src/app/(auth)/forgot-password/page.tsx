@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/api-client";
-import { AnimatedPage } from "@/components/shared/AnimatedPage";
+import { AnimatedPage } from "@/components/ui/animated-page";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -45,7 +45,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <AnimatedPage className="w-full">
-      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-3xl sm:p-4">
         {submitted ? (
           <>
             <CardHeader className="items-center text-center pb-4">
@@ -71,7 +71,8 @@ export default function ForgotPasswordPage() {
                 Check your email
               </CardTitle>
               <CardDescription className="text-[14px] text-foreground-muted mt-2 max-w-sm">
-                If <span className="font-medium text-foreground">{email}</span> has an account, you&apos;ll receive instructions shortly.
+                If <span className="font-medium text-foreground">{email}</span>{" "}
+                has an account, you&apos;ll receive instructions shortly.
               </CardDescription>
             </CardHeader>
 
@@ -80,7 +81,7 @@ export default function ForgotPasswordPage() {
                 <Link href="/login">Back to Sign In</Link>
               </Button>
             </CardContent>
-            
+
             <CardFooter className="justify-center pb-2 pt-2">
               <p className="text-[12px] text-foreground-muted text-center max-w-xs">
                 Didn&apos;t receive it? Check spam or try again in 5 minutes
@@ -93,7 +94,9 @@ export default function ForgotPasswordPage() {
               <div className="flex size-16 items-center justify-center rounded-full bg-warning-subtle mt-4">
                 <div className="relative">
                   <Lock className="size-8 text-warning" />
-                  <span className="absolute -top-1 -right-2 text-warning font-bold text-lg leading-none">?</span>
+                  <span className="absolute -top-1 -right-2 text-warning font-bold text-lg leading-none">
+                    ?
+                  </span>
                 </div>
               </div>
               <CardTitle className="font-display text-[28px] font-bold mt-4">
@@ -107,7 +110,12 @@ export default function ForgotPasswordPage() {
             <CardContent className="pt-4">
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid gap-1.5">
-                  <Label htmlFor="email" className="text-[13px] font-semibold text-foreground">Email</Label>
+                  <Label
+                    htmlFor="email"
+                    className="text-[13px] font-semibold text-foreground"
+                  >
+                    Email
+                  </Label>
                   <div className="relative">
                     <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground-muted" />
                     <Input

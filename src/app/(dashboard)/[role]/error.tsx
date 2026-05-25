@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { AlertTriangle, RotateCcw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BackButton } from "@/components/shared/BackButton";
+import { BackButton } from "@/components/ui/back-button";
 import Link from "next/link";
 
 export default function DashboardError({

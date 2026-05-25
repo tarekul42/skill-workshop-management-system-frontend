@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 export default function MarketingLayout({
   children,

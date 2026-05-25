@@ -44,12 +44,10 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
-import {
-  PageHeader,
-  StatusBadge,
-  ConfirmDialog,
-  TableSkeleton,
-} from "@/components/shared";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/utils/masking";
 import {

@@ -102,7 +102,7 @@ export function StatusBadge({
     <Badge
       variant={variantMap[category]}
       className={cn(
-        "font-bold uppercase tracking-wider text-[10px] px-2 py-0.5",
+        "font-extrabold uppercase tracking-[0.1em] text-[10px] px-2.5 py-1 rounded-lg shadow-sm border border-black/5 ring-1 ring-white/10 flex items-center gap-1.5 w-fit",
         className,
       )}
     >
@@ -110,13 +110,13 @@ export function StatusBadge({
       {dot && (
         <span
           className={cn(
-            "inline-block size-1.5 shrink-0 rounded-full",
+            "inline-block size-1.5 shrink-0 rounded-full shadow-[0_0_6px_rgba(0,0,0,0.1)]",
             dotColorMap[category],
           )}
           aria-hidden="true"
         />
       )}
-      {status.replace(/_/g, " ")}
+      <span className="leading-none">{status.replace(/_/g, " ")}</span>
     </Badge>
   );
 }

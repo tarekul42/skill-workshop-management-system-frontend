@@ -1,7 +1,7 @@
 import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { StatsCard } from "../StatsCard";
+import { StatsCard } from "../stats-card";
 import { BookOpen } from "lucide-react";
 
 vi.mock("framer-motion", () => ({

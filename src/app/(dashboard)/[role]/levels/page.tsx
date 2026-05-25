@@ -24,12 +24,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import {
-  PageHeader,
-  ConfirmDialog,
-  TableSkeleton,
-  EmptyState,
-} from "@/components/shared";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/formatters";
 import {
   fetchWorkshopLevels,

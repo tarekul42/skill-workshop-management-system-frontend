@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
-import { Slot } from "radix-ui";
+import { Slot } from "@radix-ui/react-slot";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2 } from "lucide-react";
 
@@ -45,7 +45,10 @@ const buttonVariants = cva(
 
 export interface ButtonProps
   extends
-    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    Omit<
+      React.ButtonHTMLAttributes<HTMLButtonElement>,
+      "onDrag" | "onDragStart" | "onDragEnd" | "onAnimationStart"
+    >,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean;
   loading?: boolean;
@@ -64,41 +67,45 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref,
   ) => {
-    const Comp = asChild ? Slot.Root : "button";
+    if (asChild) {
+      return (
+        <Slot
+          className={cn(buttonVariants({ variant, size, className }))}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </Slot>
+      );
+    }
 
     return (
-      <Comp
+      <motion.button
+        whileTap={{ scale: 0.97 }}
+        transition={{ type: "spring", stiffness: 400, damping: 15 }}
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         disabled={props.disabled || loading}
         {...props}
       >
         <AnimatePresence mode="wait">
-          {loading ? (
+          {loading && (
             <motion.span
               key="spinner"
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.8 }}
               transition={{ duration: 0.15 }}
-              className="flex items-center justify-center"
+              className="absolute inset-0 flex items-center justify-center"
             >
               <Loader2 className="h-5 w-5 animate-spin" />
             </motion.span>
-          ) : (
-            <motion.span
-              key="label"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="flex items-center gap-2"
-            >
-              {children}
-            </motion.span>
           )}
         </AnimatePresence>
-      </Comp>
+        <span className={cn("flex items-center gap-2", loading && "opacity-0")}>
+          {children}
+        </span>
+      </motion.button>
     );
   },
 );

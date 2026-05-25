@@ -6,8 +6,8 @@ import Link from "next/link";
 import { Mail, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { OTPInput, REGEXP_ONLY_DIGITS, type SlotProps } from "input-otp";
-import { AnimatedPage } from "@/components/shared/AnimatedPage";
-import { StepIndicator } from "@/components/shared/StepIndicator";
+import { AnimatedPage } from "@/components/ui/animated-page";
+import { StepIndicator } from "@/components/ui/step-indicator";
 
 import { Button } from "@/components/ui/button";
 import {

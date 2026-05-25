@@ -4,8 +4,10 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { PageHeader, BackButton, FormSkeleton } from "@/components/shared";
-import { WorkshopForm } from "@/components/workshops/WorkshopForm";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { BackButton } from "@/components/ui/back-button";
+import { FormSkeleton } from "@/components/ui/loading-skeleton";
+import { WorkshopForm } from "@/components/features/workshops/WorkshopForm";
 import {
   updateWorkshop,
   fetchWorkshopById,

@@ -34,8 +34,9 @@ import {
   AnimatedPage,
   StaggerContainer,
   StaggerItem,
-} from "@/components/shared/AnimatedPage";
+} from "@/components/ui/animated-page";
 import { Badge } from "@/components/ui/badge";
+import { motion } from "framer-motion";
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -123,7 +124,7 @@ export function AdminDashboard({
       </div>
 
       {/* ── Section 2: Stats Grid with Sparklines ──────────────────── */}
-      <StaggerContainer className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <StaggerContainer className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
         <StatCardWithSparkline
           label="Total Users"
           value={stats.totalUsers.toLocaleString()}
@@ -164,20 +165,20 @@ export function AdminDashboard({
         <div className="space-y-8">
           {/* Main Analytics Chart */}
           <StaggerItem>
-            <div className="rounded-3xl border border-border bg-surface-1 p-6 shadow-sm">
-              <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <h2 className="font-display text-xl font-bold text-foreground">
+            <div className="glass rounded-[32px] p-8 shadow-sm transition-all duration-300 hover:shadow-2">
+              <div className="mb-8 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+                <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
                   Performance Trends
                 </h2>
-                <div className="flex rounded-xl bg-surface-2 p-1">
+                <div className="flex rounded-xl bg-surface-2 p-1.5 border border-border/40 shadow-inner-sm">
                   {(["revenue", "enrollments", "users"] as const).map((tab) => (
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-1.5 text-xs font-bold capitalize transition-all rounded-lg ${
+                      className={`px-5 py-2 text-xs font-bold capitalize transition-all rounded-lg ${
                         activeTab === tab
-                          ? "bg-surface-1 text-primary shadow-sm"
-                          : "text-muted-foreground hover:text-foreground"
+                          ? "bg-surface-1 text-primary shadow-sm ring-1 ring-border/20"
+                          : "text-foreground-muted hover:text-foreground hover:bg-surface-1/50"
                       }`}
                     >
                       {tab}
@@ -240,49 +241,54 @@ export function AdminDashboard({
 
           {/* Audit Logs */}
           <StaggerItem>
-            <div className="rounded-3xl border border-border bg-surface-1 overflow-hidden shadow-sm">
-              <div className="p-6 border-b border-border flex items-center justify-between">
-                <h2 className="font-display text-xl font-bold text-foreground">
+            <div className="glass rounded-[32px] overflow-hidden shadow-sm transition-all duration-300 hover:shadow-2">
+              <div className="p-8 border-b border-border/50 flex items-center justify-between bg-surface-1/30">
+                <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
                   Recent Audit Logs
                 </h2>
-                <Badge variant="outline">Live Feed</Badge>
+                <Badge
+                  variant="outline"
+                  className="h-6 rounded-full px-3 text-[10px] font-bold uppercase tracking-widest bg-background/50"
+                >
+                  Live Feed
+                </Badge>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
-                  <thead className="bg-surface-2 border-b border-border">
+                  <thead className="bg-surface-2/60 border-b border-border/50">
                     <tr>
-                      <th className="px-6 py-3 font-body text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <th className="px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled">
                         Action
                       </th>
-                      <th className="px-6 py-3 font-body text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <th className="px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled">
                         User
                       </th>
-                      <th className="px-6 py-3 font-body text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                      <th className="px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled">
                         When
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-border">
+                  <tbody className="divide-y divide-border/30">
                     {auditLogs.length > 0 ? (
                       auditLogs.map((log) => (
                         <tr
                           key={log._id}
-                          className="hover:bg-surface-2 transition-colors"
+                          className="hover:bg-surface-2/40 transition-colors group"
                         >
-                          <td className="px-6 py-4">
+                          <td className="px-8 py-5">
                             <div className="flex flex-col">
-                              <span className="font-body text-sm font-semibold text-foreground capitalize">
+                              <span className="font-body text-sm font-bold text-foreground capitalize group-hover:text-primary transition-colors">
                                 {log.action.replace(/_/g, " ")}
                               </span>
-                              <span className="text-[11px] text-muted-foreground uppercase">
+                              <span className="text-[10px] font-bold text-foreground-disabled uppercase tracking-wide mt-0.5">
                                 {log.collection}
                               </span>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-foreground font-medium">
+                          <td className="px-8 py-5 text-sm text-foreground font-semibold">
                             {log.userEmail}
                           </td>
-                          <td className="px-6 py-4 text-[11px] text-muted-foreground">
+                          <td className="px-8 py-5 text-[11px] font-medium text-foreground-muted">
                             {formatDate(log.timestamp)}
                           </td>
                         </tr>
@@ -308,8 +314,8 @@ export function AdminDashboard({
         <div className="space-y-8">
           {/* User Distribution */}
           <StaggerItem>
-            <div className="rounded-3xl border border-border bg-surface-1 p-6 shadow-sm">
-              <h2 className="font-display text-xl font-bold text-foreground mb-6">
+            <div className="glass rounded-[32px] p-8 shadow-sm transition-all duration-300 hover:shadow-2">
+              <h2 className="font-display text-2xl font-bold text-foreground mb-8 tracking-tight">
                 User Distribution
               </h2>
               <div className="h-60 w-full">
@@ -317,9 +323,9 @@ export function AdminDashboard({
                   <PieChart>
                     <Pie
                       data={distribution.roles}
-                      innerRadius={60}
-                      outerRadius={80}
-                      paddingAngle={8}
+                      innerRadius={65}
+                      outerRadius={85}
+                      paddingAngle={10}
                       dataKey="value"
                       animationDuration={1500}
                     >
@@ -335,10 +341,11 @@ export function AdminDashboard({
                       contentStyle={{
                         backgroundColor: "var(--surface-2)",
                         border: "1px solid var(--border)",
-                        borderRadius: "10px",
+                        borderRadius: "12px",
+                        boxShadow: "var(--shadow-md)",
                       }}
                     />
-                    <Legend />
+                    <Legend iconType="circle" iconSize={8} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -347,26 +354,30 @@ export function AdminDashboard({
 
           {/* Workshop Distribution */}
           <StaggerItem>
-            <div className="rounded-3xl border border-border bg-surface-1 p-6 shadow-sm">
-              <h2 className="font-display text-xl font-bold text-foreground mb-6">
+            <div className="glass rounded-[32px] p-8 shadow-sm transition-all duration-300 hover:shadow-2">
+              <h2 className="font-display text-2xl font-bold text-foreground mb-8 tracking-tight">
                 Popular Categories
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {distribution.categories.map((cat) => (
-                  <div key={cat.name} className="space-y-1.5">
-                    <div className="flex items-center justify-between text-xs font-semibold">
+                  <div key={cat.name} className="space-y-2">
+                    <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider">
                       <span className="text-foreground">{cat.name}</span>
-                      <span className="text-muted-foreground">
+                      <span className="text-foreground-muted">
                         {cat.count} enrollments
                       </span>
                     </div>
-                    <div className="h-2 w-full rounded-full bg-surface-3">
-                      <div
-                        className="h-full rounded-full bg-primary"
-                        style={{
+                    <div className="h-2.5 w-full rounded-full bg-surface-3 overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        whileInView={{
                           width: `${(cat.count / Math.max(...distribution.categories.map((c) => c.count))) * 100}%`,
-                          transition:
-                            "width 1.5s cubic-bezier(0.16, 1, 0.3, 1)",
+                        }}
+                        viewport={{ once: true }}
+                        className="h-full rounded-full bg-primary"
+                        transition={{
+                          duration: 1.5,
+                          ease: [0.16, 1, 0.3, 1],
                         }}
                       />
                     </div>
@@ -378,34 +389,34 @@ export function AdminDashboard({
 
           {/* Platform Health */}
           <StaggerItem>
-            <div className="rounded-3xl border border-border bg-surface-1 p-6 shadow-sm">
-              <div className="mb-6 flex items-center justify-between">
-                <h2 className="font-display text-xl font-bold text-foreground">
+            <div className="glass rounded-[32px] p-8 shadow-sm transition-all duration-300 hover:shadow-2">
+              <div className="mb-8 flex items-center justify-between">
+                <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
                   Platform Health
                 </h2>
-                <div className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-success-subtle text-success text-[10px] font-bold uppercase tracking-wider">
-                  <div className="size-1.5 rounded-full bg-success animate-pulse" />
+                <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-success-subtle/50 text-success text-[10px] font-bold uppercase tracking-widest border border-success/10">
+                  <div className="size-1.5 rounded-full bg-success animate-pulse shadow-[0_0_8px_var(--success)]" />
                   Stable
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <HealthCard
                   name="API Server"
                   status={health.api.status}
                   latency={health.api.latency}
-                  icon={<Globe className="size-4" />}
+                  icon={<Globe className="size-4.5" />}
                 />
                 <HealthCard
                   name="Database"
                   status={health.db.status}
                   latency={health.db.latency}
-                  icon={<Database className="size-4" />}
+                  icon={<Database className="size-4.5" />}
                 />
                 <HealthCard
                   name="Core Service"
                   status={health.cache.status}
                   latency={health.cache.latency}
-                  icon={<ShieldCheck className="size-4" />}
+                  icon={<ShieldCheck className="size-4.5" />}
                 />
               </div>
             </div>
@@ -437,30 +448,30 @@ function StatCardWithSparkline({
 }: StatCardWithSparklineProps) {
   return (
     <StaggerItem>
-      <div className="relative overflow-hidden rounded-[20px] border border-border bg-surface-1 p-6 shadow-sm">
+      <div className="glass relative overflow-hidden rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:shadow-3 hover:-translate-y-1 group">
         <div className="relative z-10 flex flex-col justify-between h-full">
           <div
-            className={`flex size-10 items-center justify-center rounded-xl ${iconBg}`}
+            className={`flex size-12 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-110 group-hover:-rotate-3 ${iconBg}`}
           >
             {icon}
           </div>
-          <div className="mt-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          <div className="mt-5">
+            <p className="text-[11px] font-bold text-foreground-disabled uppercase tracking-[0.1em]">
               {label}
             </p>
-            <h3 className="mt-1 font-display text-2xl font-bold text-foreground">
+            <h3 className="mt-1 font-display text-[28px] font-extrabold text-foreground leading-none tracking-tight">
               {value}
             </h3>
           </div>
         </div>
-        <div className="absolute bottom-0 right-0 h-15 w-25 opacity-30">
+        <div className="absolute bottom-0 right-0 h-15 w-25 opacity-30 group-hover:opacity-50 transition-opacity">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
               <Line
                 type="monotone"
                 dataKey="value"
                 stroke={color}
-                strokeWidth={2}
+                strokeWidth={3}
                 dot={false}
                 animationDuration={2000}
               />

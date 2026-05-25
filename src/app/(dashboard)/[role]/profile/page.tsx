@@ -32,8 +32,10 @@ import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { AvatarImage } from "@/components/ui/avatar";
-import { PageHeader, StatusBadge, FormSkeleton } from "@/components/shared";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { FormSkeleton } from "@/components/ui/loading-skeleton";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 import { getMe, updateUser, changePassword } from "@/lib/api/services";
 import { formatDate, getInitials } from "@/lib/formatters";
