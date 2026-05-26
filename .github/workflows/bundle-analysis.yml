@@ -4,7 +4,10 @@ on:
   pull_request:
     branches: [master, main]
     paths:
-      - "frontend/**"
+      - "src/**"
+      - "package.json"
+      - "bun.lock"
+      - "next.config.ts"
 
 permissions:
   contents: read
@@ -25,11 +28,9 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        working-directory: frontend
         run: bun install --frozen-lockfile
 
       - name: Build with Bundle Analysis
-        working-directory: frontend
         run: bun run build
         env:
           ANALYZE: true
@@ -38,11 +39,9 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       - name: Report Bundle Size
-        working-directory: frontend
         run: |
           echo "## 📦 Bundle Size Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          # Parse .next/analyze output if available
           if [ -d ".next/analyze" ]; then
             echo "| Chunk | Size |" >> $GITHUB_STEP_SUMMARY
             echo "|-------|------|" >> $GITHUB_STEP_SUMMARY

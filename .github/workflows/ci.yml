@@ -9,6 +9,7 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
@@ -19,13 +20,19 @@ jobs:
           bun-version: latest
 
       - name: Install dependencies
-        run: bun install
+        run: bun install --frozen-lockfile
+
+      - name: Format Check
+        run: bun run format:check
 
       - name: Lint
         run: bun run lint
 
+      - name: Type Check
+        run: bun run typecheck
+
       - name: Run Unit Tests
-        run: bun run test run
+        run: bun run test -- --run
 
       - name: Build
         run: bun run build
@@ -33,9 +40,3 @@ jobs:
           NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
           NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-
-      # Optional: Run E2E tests in CI (commented out by default to save minutes)
-      # - name: Install Playwright Browsers
-      #   run: bunx playwright install --with-deps
-      # - name: Run E2E Tests
-      #   run: bun run test:e2e
