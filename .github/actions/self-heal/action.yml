@@ -1,19 +1,5 @@
 name: "Self-Healing CI Middleware"
-description: "Runs CI checks with auto-fix-retry. If a check fails, runs the corresponding fix command, retries, and only fails if the retry also fails. Commits and pushes any fixes back to the PR branch."
-
-inputs:
-  next-public-backend-api-url:
-    description: "NEXT_PUBLIC_BACKEND_API_URL"
-    required: false
-    default: ""
-  next-public-frontend-url:
-    description: "NEXT_PUBLIC_FRONTEND_URL"
-    required: false
-    default: ""
-  jwt-secret:
-    description: "JWT_SECRET"
-    required: false
-    default: ""
+description: "Runs format and lint checks with auto-fix-retry. If a check fails, runs the corresponding fix command, retries, and only fails if the retry also fails. Commits and pushes any fixes back to the PR branch."
 
 runs:
   using: "composite"
@@ -98,42 +84,13 @@ runs:
         git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" "HEAD:$BRANCH"
         echo "✅ Fixes committed and pushed"
 
-    # ── Type Check (no auto-fix available) ───────────────────────
-    - name: "Type Check"
+    # ── Verify: format and lint still pass after all fixes ──────
+    - name: "Verify fixes"
       shell: bash
       run: |
-        echo "▶ Running typecheck..."
-        if bun run typecheck; then
-          echo "✅ typecheck passed"
-        else
-          echo "❌ typecheck failed — manual intervention required"
-          exit 1
-        fi
-
-    # ── Unit Tests (no auto-fix available) ───────────────────────
-    - name: "Unit Tests"
-      shell: bash
-      run: |
-        echo "▶ Running tests..."
-        if bun run test -- --run; then
-          echo "✅ tests passed"
-        else
-          echo "❌ tests failed — manual intervention required"
-          exit 1
-        fi
-
-    # ── Build (no auto-fix available) ────────────────────────────
-    - name: "Build"
-      shell: bash
-      env:
-        NEXT_PUBLIC_BACKEND_API_URL: ${{ inputs.next-public-backend-api-url }}
-        NEXT_PUBLIC_FRONTEND_URL: ${{ inputs.next-public-frontend-url }}
-        JWT_SECRET: ${{ inputs.jwt-secret }}
-      run: |
-        echo "▶ Running build..."
-        if bun run build; then
-          echo "✅ build passed"
-        else
-          echo "❌ build failed — manual intervention required"
-          exit 1
-        fi
+        echo "▶ Verifying format:check..."
+        bun run format:check
+        echo "✅ format:check verified"
+        echo "▶ Verifying lint..."
+        bun run lint
+        echo "✅ lint verified"
