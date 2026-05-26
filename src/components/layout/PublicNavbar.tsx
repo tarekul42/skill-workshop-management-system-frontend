@@ -2,19 +2,13 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import {
-  Menu,
-  LayoutDashboard,
-  LogOut,
-  GraduationCap,
-  Bell,
-} from "lucide-react";
+import { Menu, LayoutDashboard, LogOut, GraduationCap, Bell } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ThemeToggle } from "@/components/shared/ThemeToggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,13 +17,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { getSavedUser, clearSavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie } from "@/app/actions/auth";
@@ -107,16 +95,16 @@ export function PublicNavbar() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "h-16 border-b border-border bg-background/92 shadow-overlay backdrop-blur-xl"
-          : "h-18 bg-transparent",
+          ? "border-border bg-background/92 shadow-overlay h-16 border-b backdrop-blur-xl"
+          : "h-18 bg-transparent"
       )}
     >
       <div className="site-container flex h-full items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex shrink-0 items-center gap-2 group">
+        <Link href="/" className="group flex shrink-0 items-center gap-2">
           <div className="relative">
-            <div className="absolute -inset-1 rounded-lg bg-primary/20 blur opacity-0 group-hover:opacity-100 transition duration-500" />
-            <GraduationCap className="relative size-7 text-primary transition-transform group-hover:scale-110 group-hover:-rotate-3" />
+            <div className="bg-primary/20 absolute -inset-1 rounded-lg opacity-0 blur transition duration-500 group-hover:opacity-100" />
+            <GraduationCap className="text-primary relative size-7 transition-transform group-hover:scale-110 group-hover:-rotate-3" />
           </div>
           <span className="font-display text-xl font-extrabold tracking-tight">
             <span className="text-foreground">Skill</span>
@@ -131,10 +119,8 @@ export function PublicNavbar() {
               key={link.href}
               href={link.href}
               className={cn(
-                "nav-underline relative text-sm font-medium transition-colors duration-150 hover:text-foreground",
-                isActive(link.href)
-                  ? "text-foreground"
-                  : "text-foreground-subtle",
+                "nav-underline hover:text-foreground relative text-sm font-medium transition-colors duration-150",
+                isActive(link.href) ? "text-foreground" : "text-foreground-subtle"
               )}
             >
               {link.label}
@@ -142,7 +128,7 @@ export function PublicNavbar() {
               {isActive(link.href) && (
                 <motion.span
                   layoutId="nav-active-underline"
-                  className="absolute -bottom-1.25 left-0 h-0.5 w-full rounded-full bg-primary"
+                  className="bg-primary absolute -bottom-1.25 left-0 h-0.5 w-full rounded-full"
                   transition={{ type: "spring", stiffness: 380, damping: 30 }}
                 />
               )}
@@ -156,59 +142,43 @@ export function PublicNavbar() {
 
           {user ? (
             <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-lg"
-              >
-                <Bell className="h-4 w-4 text-foreground-subtle" />
+              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
+                <Bell className="text-foreground-subtle h-4 w-4" />
               </Button>
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="ghost"
-                    className="flex items-center gap-2.5 p-1 pr-3 hover:bg-surface-2 rounded-full"
+                    className="hover:bg-surface-2 flex items-center gap-2.5 rounded-full p-1 pr-3"
                   >
-                    <Avatar className="h-8 w-8 border border-border">
-                      {user.picture && (
-                        <AvatarImage src={user.picture} alt={user.name} />
-                      )}
-                      <AvatarFallback className="text-xs font-bold bg-primary-subtle text-primary">
+                    <Avatar className="border-border h-8 w-8 border">
+                      {user.picture && <AvatarImage src={user.picture} alt={user.name} />}
+                      <AvatarFallback className="bg-primary-subtle text-primary text-xs font-bold">
                         {getInitials(user.name)}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="text-sm font-semibold">
-                      {user.name.split(" ")[0]}
-                    </span>
+                    <span className="text-sm font-semibold">{user.name.split(" ")[0]}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  className="w-56 p-2 rounded-xl"
-                >
-                  <DropdownMenuLabel className="font-normal p-3">
+                <DropdownMenuContent align="end" className="w-56 rounded-xl p-2">
+                  <DropdownMenuLabel className="p-3 font-normal">
                     <div className="flex flex-col gap-0.5">
                       <p className="text-sm font-bold">{user.name}</p>
-                      <p className="text-xs text-foreground-muted truncate">
-                        {user.email}
-                      </p>
+                      <p className="text-foreground-muted truncate text-xs">{user.email}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    asChild
-                    className="rounded-lg p-2.5 cursor-pointer"
-                  >
+                  <DropdownMenuItem asChild className="cursor-pointer rounded-lg p-2.5">
                     <Link href={dashboardRoute}>
-                      <LayoutDashboard className="mr-2 size-4 text-primary" />
+                      <LayoutDashboard className="text-primary mr-2 size-4" />
                       <span>Dashboard</span>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleLogout}
-                    className="rounded-lg p-2.5 text-danger focus:bg-danger-subtle focus:text-danger cursor-pointer"
+                    className="text-danger focus:bg-danger-subtle focus:text-danger cursor-pointer rounded-lg p-2.5"
                   >
                     <LogOut className="mr-2 size-4" />
                     <span>Logout</span>
@@ -218,20 +188,11 @@ export function PublicNavbar() {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                asChild
-                className="font-semibold"
-              >
+              <Button variant="ghost" size="sm" asChild className="font-semibold">
                 <Link href="/login">Login</Link>
               </Button>
               {/* §1.5 — subtle pulsing glow to draw attention without being annoying */}
-              <Button
-                size="sm"
-                asChild
-                className="font-bold animate-glow-pulse"
-              >
+              <Button size="sm" asChild className="font-bold">
                 <Link href="/register">Get Started</Link>
               </Button>
             </div>
@@ -246,23 +207,19 @@ export function PublicNavbar() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 rounded-lg hover:bg-surface-2"
+                className="hover:bg-surface-2 h-10 w-10 rounded-lg"
               >
                 <Menu className="size-6" />
               </Button>
             </SheetTrigger>
             <SheetContent
               side="right"
-              className="w-[85%] sm:w-95 p-0 border-l border-border bg-background"
+              className="border-border bg-background w-[85%] border-l p-0 sm:w-95"
             >
-              <SheetHeader className="p-6 border-b border-border">
+              <SheetHeader className="border-border border-b p-6">
                 <SheetTitle className="text-left">
-                  <Link
-                    href="/"
-                    className="flex items-center gap-2"
-                    onClick={() => setOpen(false)}
-                  >
-                    <GraduationCap className="size-6 text-primary" />
+                  <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
+                    <GraduationCap className="text-primary size-6" />
                     <span className="font-display text-lg font-extrabold">
                       Skill<span className="text-primary">Workshop</span>
                     </span>
@@ -270,7 +227,7 @@ export function PublicNavbar() {
                 </SheetTitle>
               </SheetHeader>
 
-              <div className="flex flex-col h-[calc(100vh-80px)]">
+              <div className="flex h-[calc(100vh-80px)] flex-col">
                 <nav className="flex flex-col gap-1 p-4">
                   {navLinks.map((link) => (
                     <Link
@@ -281,7 +238,7 @@ export function PublicNavbar() {
                         "flex items-center gap-3 rounded-xl px-4 py-3 text-base font-semibold transition-all",
                         isActive(link.href)
                           ? "bg-primary-subtle text-primary"
-                          : "text-foreground-subtle hover:bg-surface-2 hover:text-foreground",
+                          : "text-foreground-subtle hover:bg-surface-2 hover:text-foreground"
                       )}
                     >
                       {link.label}
@@ -289,33 +246,28 @@ export function PublicNavbar() {
                   ))}
                 </nav>
 
-                <div className="mt-auto p-6 border-t border-border bg-surface-1/50">
+                <div className="border-border bg-surface-1/50 mt-auto border-t p-6">
                   {user ? (
                     <div className="flex flex-col gap-4">
                       <div className="flex items-center gap-3 px-1">
                         <Avatar className="h-10 w-10">
-                          {user.picture && (
-                            <AvatarImage src={user.picture} alt={user.name} />
-                          )}
+                          {user.picture && <AvatarImage src={user.picture} alt={user.name} />}
                           <AvatarFallback className="bg-primary-subtle text-primary font-bold">
                             {getInitials(user.name)}
                           </AvatarFallback>
                         </Avatar>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-sm font-bold text-foreground truncate">
+                        <div className="flex min-w-0 flex-col">
+                          <span className="text-foreground truncate text-sm font-bold">
                             {user.name}
                           </span>
-                          <span className="text-xs text-foreground-muted truncate">
+                          <span className="text-foreground-muted truncate text-xs">
                             {user.email}
                           </span>
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-3">
                         <Button asChild variant="outline" className="h-11">
-                          <Link
-                            href={dashboardRoute}
-                            onClick={() => setOpen(false)}
-                          >
+                          <Link href={dashboardRoute} onClick={() => setOpen(false)}>
                             Dashboard
                           </Link>
                         </Button>
@@ -333,11 +285,7 @@ export function PublicNavbar() {
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-4">
-                      <Button
-                        variant="outline"
-                        asChild
-                        className="h-12 text-base font-bold"
-                      >
+                      <Button variant="outline" asChild className="h-12 text-base font-bold">
                         <Link href="/login" onClick={() => setOpen(false)}>
                           Login
                         </Link>

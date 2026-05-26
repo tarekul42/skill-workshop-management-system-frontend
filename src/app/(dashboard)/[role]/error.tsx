@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { AlertTriangle, RotateCcw, Home } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { BackButton } from "@/components/shared/BackButton";
+import { BackButton } from "@/components/ui/back-button";
 import Link from "next/link";
 
 export default function DashboardError({
@@ -23,42 +23,33 @@ export default function DashboardError({
       {/* Illustration */}
       <div className="relative mb-8">
         <div className="relative flex items-center justify-center">
-          <div className="absolute size-48 rounded-full border-2 border-dashed border-destructive/10 animate-[spin_20s_linear_infinite]" />
-          <div className="absolute size-32 rounded-full border border-destructive/15 animate-[spin_15s_linear_infinite_reverse]" />
-          <div className="relative flex size-24 items-center justify-center rounded-full bg-destructive/10">
-            <AlertTriangle className="size-10 text-destructive/70" />
+          <div className="border-destructive/10 absolute size-48 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed" />
+          <div className="border-destructive/15 absolute size-32 animate-[spin_15s_linear_infinite_reverse] rounded-full border" />
+          <div className="bg-destructive/10 relative flex size-24 items-center justify-center rounded-full">
+            <AlertTriangle className="text-destructive/70 size-10" />
           </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-md text-center">
-        <h1 className="text-5xl font-bold tracking-tight text-foreground">
+        <h1 className="text-foreground text-5xl font-bold tracking-tight">
           Dashboard <span className="text-destructive">Error</span>
         </h1>
-        <h2 className="mt-3 text-lg font-semibold text-foreground">
-          Something Went Wrong
-        </h2>
-        <p className="mt-3 text-muted-foreground leading-relaxed">
-          An error occurred while loading the dashboard. This could be due to a
-          network issue or a problem with your session. Please try again or
-          navigate back to the homepage.
+        <h2 className="text-foreground mt-3 text-lg font-semibold">Something Went Wrong</h2>
+        <p className="text-muted-foreground mt-3 leading-relaxed">
+          An error occurred while loading the dashboard. This could be due to a network issue or a
+          problem with your session. Please try again or navigate back to the homepage.
         </p>
 
         {/* Error detail card (development only) */}
         {error.message && (
           <Card className="mt-6 text-left">
             <CardContent className="p-4">
-              <p className="text-xs font-medium text-muted-foreground mb-1">
-                Error Details
-              </p>
-              <p className="text-sm text-destructive font-mono wrap-break-words">
-                {error.message}
-              </p>
+              <p className="text-muted-foreground mb-1 text-xs font-medium">Error Details</p>
+              <p className="text-destructive wrap-break-words font-mono text-sm">{error.message}</p>
               {error.digest && (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  Digest: {error.digest}
-                </p>
+                <p className="text-muted-foreground mt-2 text-xs">Digest: {error.digest}</p>
               )}
             </CardContent>
           </Card>

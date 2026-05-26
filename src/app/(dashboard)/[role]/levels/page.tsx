@@ -24,19 +24,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import {
-  PageHeader,
-  ConfirmDialog,
-  TableSkeleton,
-  EmptyState,
-} from "@/components/shared";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
+import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate } from "@/lib/formatters";
-import {
-  fetchWorkshopLevels,
-  createLevel,
-  updateLevel,
-  deleteLevel,
-} from "@/lib/api/services";
+import { fetchWorkshopLevels, createLevel, updateLevel, deleteLevel } from "@/lib/api/services";
 import type { ILevel } from "@/types";
 
 // ─── Page Props ──────────────────────────────────────────────────────
@@ -109,9 +102,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
       fetchLevels();
       toast.success("Level created successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to create level",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to create level");
     } finally {
       setSaving(false);
     }
@@ -130,9 +121,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
       fetchLevels();
       toast.success("Level updated successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to update level",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to update level");
     } finally {
       setSaving(false);
     }
@@ -147,9 +136,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
       fetchLevels();
       toast.success("Level deleted successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete level",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to delete level");
     } finally {
       setDeleting(false);
     }
@@ -159,10 +146,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="Workshop Levels"
-        description="Manage workshop difficulty levels"
-      >
+      <PageHeader title="Workshop Levels" description="Manage workshop difficulty levels">
         <Button onClick={openCreateDialog}>
           <Plus className="size-4" />
           Create Level
@@ -207,30 +191,24 @@ export default function LevelsPage({ params: _params }: PageProps) {
                     <span className="text-sm font-medium">{level.name}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       {formatDate(
                         level._id.includes("created")
                           ? new Date().toISOString()
-                          : new Date(
-                              parseInt(level._id.substring(0, 8), 16) * 1000,
-                            ).toISOString(),
+                          : new Date(parseInt(level._id.substring(0, 8), 16) * 1000).toISOString()
                       )}
                     </span>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => openEditDialog(level)}
-                      >
+                      <Button variant="ghost" size="icon-xs" onClick={() => openEditDialog(level)}>
                         <Pencil className="size-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon-xs"
                         onClick={() => setDeleteTarget(level)}
-                        className="text-muted-foreground hover:text-red-600"
+                        className="text-muted-foreground hover:text-danger"
                       >
                         <Trash2 className="size-4" />
                       </Button>
@@ -253,9 +231,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Create Level</DialogTitle>
-            <DialogDescription>
-              Add a new workshop difficulty level
-            </DialogDescription>
+            <DialogDescription>Add a new workshop difficulty level</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -272,11 +248,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setCreateOpen(false)}
-              disabled={saving}
-            >
+            <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={saving}>
               Cancel
             </Button>
             <Button onClick={handleCreate} disabled={saving}>
@@ -314,11 +286,7 @@ export default function LevelsPage({ params: _params }: PageProps) {
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => setEditTarget(null)}
-              disabled={saving}
-            >
+            <Button variant="outline" onClick={() => setEditTarget(null)} disabled={saving}>
               Cancel
             </Button>
             <Button onClick={handleUpdate} disabled={saving}>

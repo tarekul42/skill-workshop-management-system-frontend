@@ -56,14 +56,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
-import {
-  PageHeader,
-  StatusBadge,
-  EmptyState,
-  ConfirmDialog,
-  TableSkeleton,
-  Breadcrumbs,
-} from "@/components/shared";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { formatDate, formatCurrency } from "@/lib/formatters";
 import {
   getAllEnrollments,
@@ -82,7 +80,7 @@ interface PageProps {
 // ─── Payment Status Badge ────────────────────────────────────────────
 
 function PaymentStatusBadge({ status }: { status: string | undefined }) {
-  if (!status) return <span className="text-[12px] font-medium text-foreground-disabled">—</span>;
+  if (!status) return <span className="text-foreground-disabled text-[12px] font-medium">—</span>;
   return <StatusBadge status={status} dot />;
 }
 
@@ -105,49 +103,66 @@ function StudentEnrollmentDetailDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-3xl p-0 overflow-hidden border-none shadow-2xl">
-        <div className="relative h-32 bg-primary overflow-hidden">
-          <div className="absolute inset-0 bg-linear-to-br from-primary via-primary-hover to-accent opacity-90" />
-          <div className="absolute inset-0 opacity-20" style={{ backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)", backgroundSize: "16px 16px" }} />
-          <div className="absolute bottom-4 left-6 right-6 flex items-center justify-between">
-             <div className="flex items-center gap-3">
-               <div className="size-12 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/20">
-                 <BookOpenCheck className="size-6 text-white" />
-               </div>
-               <div>
-                 <p className="text-xs font-bold text-white/70 uppercase tracking-widest">Enrollment Details</p>
-                 <p className="text-lg font-bold text-white truncate max-w-48">ID: {enrollment._id.slice(-8).toUpperCase()}</p>
-               </div>
-             </div>
-             <StatusBadge status={enrollment.status} className="bg-white/20 text-white border-none" />
+      <DialogContent className="max-w-md overflow-hidden rounded-3xl border-none p-0 shadow-2xl">
+        <div className="bg-primary relative h-32 overflow-hidden">
+          <div className="from-primary via-primary-hover to-accent absolute inset-0 bg-linear-to-br opacity-90" />
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{
+              backgroundImage: "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
+              backgroundSize: "16px 16px",
+            }}
+          />
+          <div className="absolute right-6 bottom-4 left-6 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex size-12 items-center justify-center rounded-xl border border-white/20 bg-white/20 backdrop-blur-md">
+                <BookOpenCheck className="size-6 text-white" />
+              </div>
+              <div>
+                <p className="text-xs font-bold tracking-widest text-white/70 uppercase">
+                  Enrollment Details
+                </p>
+                <p className="max-w-48 truncate text-lg font-bold text-white">
+                  ID: {enrollment._id.slice(-8).toUpperCase()}
+                </p>
+              </div>
+            </div>
+            <StatusBadge
+              status={enrollment.status}
+              className="border-none bg-white/20 text-white"
+            />
           </div>
         </div>
 
-        <div className="p-7 space-y-6 bg-surface-1">
+        <div className="bg-surface-1 space-y-6 p-7">
           {/* Workshop Section */}
           <div className="space-y-3">
-            <h3 className="text-[11px] font-bold text-foreground-disabled uppercase tracking-widest">Workshop Information</h3>
-            <div className="rounded-2xl border border-border bg-surface-2 p-4 space-y-3">
-              <p className="font-display text-base font-bold text-foreground leading-tight">{w.title}</p>
-              <div className="grid grid-cols-2 gap-y-2.5 gap-x-4">
+            <h3 className="text-foreground-disabled text-[11px] font-bold tracking-widest uppercase">
+              Workshop Information
+            </h3>
+            <div className="border-border bg-surface-2 space-y-3 rounded-2xl border p-4">
+              <p className="font-display text-foreground text-base leading-tight font-bold">
+                {w.title}
+              </p>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2.5">
                 {w.location && (
-                  <div className="flex items-center gap-2 text-[13px] text-foreground-subtle">
-                    <MapPin className="size-3.5 text-primary" />
+                  <div className="text-foreground-subtle flex items-center gap-2 text-[13px]">
+                    <MapPin className="text-primary size-3.5" />
                     <span className="truncate">{w.location}</span>
                   </div>
                 )}
                 {w.startDate && (
-                  <div className="flex items-center gap-2 text-[13px] text-foreground-subtle">
-                    <CalendarDays className="size-3.5 text-primary" />
+                  <div className="text-foreground-subtle flex items-center gap-2 text-[13px]">
+                    <CalendarDays className="text-primary size-3.5" />
                     <span>{formatDate(w.startDate)}</span>
                   </div>
                 )}
-                <div className="flex items-center gap-2 text-[13px] text-foreground-subtle">
-                   <Users className="size-3.5 text-primary" />
-                   <span>{enrollment.studentCount} Student(s)</span>
+                <div className="text-foreground-subtle flex items-center gap-2 text-[13px]">
+                  <Users className="text-primary size-3.5" />
+                  <span>{enrollment.studentCount} Student(s)</span>
                 </div>
                 {w.price != null && (
-                  <div className="flex items-center gap-2 text-[13px] font-bold text-foreground">
+                  <div className="text-foreground flex items-center gap-2 text-[13px] font-bold">
                     <span className="text-primary">৳</span>
                     <span>{formatCurrency(w.price).replace(/BDT|৳/g, "").trim()}</span>
                   </div>
@@ -159,16 +174,22 @@ function StudentEnrollmentDetailDialog({
           {/* Payment Section */}
           {p && (
             <div className="space-y-3">
-              <h3 className="text-[11px] font-bold text-foreground-disabled uppercase tracking-widest">Payment Summary</h3>
-              <div className="rounded-2xl border border-border bg-surface-2 p-4 space-y-3">
+              <h3 className="text-foreground-disabled text-[11px] font-bold tracking-widest uppercase">
+                Payment Summary
+              </h3>
+              <div className="border-border bg-surface-2 space-y-3 rounded-2xl border p-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="size-8 rounded-lg bg-surface-1 border border-border flex items-center justify-center">
-                      <CreditCard className="size-4 text-foreground-muted" />
+                    <div className="bg-surface-1 border-border flex size-8 items-center justify-center rounded-lg border">
+                      <CreditCard className="text-foreground-muted size-4" />
                     </div>
                     <div>
-                      <p className="text-[13px] font-bold text-foreground">{formatCurrency(p.amount)}</p>
-                      <p className="text-[11px] text-foreground-muted uppercase font-mono tracking-tighter">TXN: {p.transactionId?.slice(-12) || "—"}</p>
+                      <p className="text-foreground text-[13px] font-bold">
+                        {formatCurrency(p.amount)}
+                      </p>
+                      <p className="text-foreground-muted font-mono text-[11px] tracking-tighter uppercase">
+                        TXN: {p.transactionId?.slice(-12) || "—"}
+                      </p>
                     </div>
                   </div>
                   <StatusBadge status={p.status} dot />
@@ -177,16 +198,20 @@ function StudentEnrollmentDetailDialog({
             </div>
           )}
 
-          <div className="pt-2 flex gap-3">
-             <Button variant="outline" className="flex-1 rounded-xl h-11 font-bold" onClick={() => onOpenChange(false)}>
-               Close
-             </Button>
-             <Link href={`/workshops/${w.slug || w._id}`} className="flex-1">
-               <Button className="w-full rounded-xl h-11 font-bold shadow-raised hover:shadow-float transition-all">
-                 <Eye className="size-4 mr-2" />
-                 View Workshop
-               </Button>
-             </Link>
+          <div className="flex gap-3 pt-2">
+            <Button
+              variant="outline"
+              className="h-11 flex-1 rounded-xl font-bold"
+              onClick={() => onOpenChange(false)}
+            >
+              Close
+            </Button>
+            <Link href={`/workshops/${w.slug || w._id}`} className="flex-1">
+              <Button className="shadow-raised hover:shadow-float h-11 w-full rounded-xl font-bold transition-all">
+                <Eye className="mr-2 size-4" />
+                View Workshop
+              </Button>
+            </Link>
           </div>
         </div>
       </DialogContent>
@@ -204,9 +229,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
   // ── Admin/Instructor state ───────────────────────────────────────
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
-  const [viewEnrollment, setViewEnrollment] = useState<IEnrollment | null>(
-    null,
-  );
+  const [viewEnrollment, setViewEnrollment] = useState<IEnrollment | null>(null);
   const [statusTarget, setStatusTarget] = useState<IEnrollment | null>(null);
   const [newStatus, setNewStatus] = useState<EnrollmentStatus>("PENDING");
   const [deleteTarget, setDeleteTarget] = useState<IEnrollment | null>(null);
@@ -216,8 +239,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
 
   // ── Student state ────────────────────────────────────────────────
   const queryClient = useQueryClient();
-  const [selectedEnrollment, setSelectedEnrollment] =
-    useState<IEnrollment | null>(null);
+  const [selectedEnrollment, setSelectedEnrollment] = useState<IEnrollment | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
 
@@ -237,8 +259,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
   });
 
   const cancelMutation = useMutation({
-    mutationFn: (enrollmentId: string) =>
-      updateEnrollmentStatus(enrollmentId, "CANCEL"),
+    mutationFn: (enrollmentId: string) => updateEnrollmentStatus(enrollmentId, "CANCEL"),
     onSuccess: () => {
       toast.success("Enrollment cancelled successfully");
       queryClient.invalidateQueries({ queryKey: ["my-enrollments"] });
@@ -253,9 +274,9 @@ export default function EnrollmentsPage({ params }: PageProps) {
   const filteredStudentEnrollments = useMemo(() => {
     if (!searchQuery) return studentEnrollments;
     const q = searchQuery.toLowerCase();
-    return studentEnrollments.filter(e => 
-      e.workshop.title.toLowerCase().includes(q) || 
-      e.workshop.location?.toLowerCase().includes(q)
+    return studentEnrollments.filter(
+      (e) =>
+        e.workshop.title.toLowerCase().includes(q) || e.workshop.location?.toLowerCase().includes(q)
     );
   }, [studentEnrollments, searchQuery]);
 
@@ -288,9 +309,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
       refetchEnrollments();
       toast.success("Enrollment status updated successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to update status",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to update status");
     } finally {
       setUpdating(false);
     }
@@ -305,9 +324,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
       refetchEnrollments();
       toast.success("Enrollment deleted successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete enrollment",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to delete enrollment");
     } finally {
       setDeleting(false);
     }
@@ -350,40 +367,46 @@ export default function EnrollmentsPage({ params }: PageProps) {
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-1 p-4 rounded-2xl border border-border">
-             <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                   <BookOpenCheck className="size-5 text-primary" />
-                </div>
-                <p className="text-sm font-bold text-foreground">
-                  {studentEnrollments.length} <span className="text-foreground-muted font-medium">Total Enrollments</span>
-                </p>
-             </div>
-             <div className="relative w-full sm:w-72">
-               <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-foreground-disabled" />
-               <Input
-                 placeholder="Search workshops..."
-                 className="pl-9 h-10 rounded-xl bg-surface-2 border-transparent focus:border-primary/20 transition-all"
-                 value={searchQuery}
-                 onChange={(e) => setSearchQuery(e.target.value)}
-               />
-             </div>
+          <div className="bg-surface-1 border-border flex flex-col items-center justify-between gap-4 rounded-2xl border p-4 sm:flex-row">
+            <div className="flex items-center gap-3">
+              <div className="bg-primary/10 flex size-10 items-center justify-center rounded-xl">
+                <BookOpenCheck className="text-primary size-5" />
+              </div>
+              <p className="text-foreground text-sm font-bold">
+                {studentEnrollments.length}{" "}
+                <span className="text-foreground-muted font-medium">Total Enrollments</span>
+              </p>
+            </div>
+            <div className="relative w-full sm:w-72">
+              <Search className="text-foreground-disabled absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+              <Input
+                placeholder="Search workshops..."
+                className="bg-surface-2 focus:border-primary/20 h-10 rounded-xl border-transparent pl-9 transition-all"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </div>
 
           {studentLoading ? (
-            <div className="rounded-3xl border border-border bg-surface-1 p-1 overflow-hidden">
-               <TableSkeleton rows={6} columns={6} />
+            <div className="border-border bg-surface-1 overflow-hidden rounded-3xl border p-1">
+              <TableSkeleton rows={6} columns={6} />
             </div>
           ) : studentError ? (
-            <div className="rounded-3xl border border-dashed border-danger/20 bg-danger/5 py-16 text-center">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-danger/10 mx-auto mb-4">
-                <XCircle className="size-7 text-danger" />
+            <div className="border-danger/20 bg-danger/5 rounded-3xl border border-dashed py-16 text-center">
+              <div className="bg-danger/10 mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl">
+                <XCircle className="text-danger size-7" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">Failed to load enrollments</h3>
-              <p className="text-sm text-foreground-muted mt-1 max-w-xs mx-auto">
-                {studentFetchError?.message || "There was a problem retrieving your enrollment data."}
+              <h3 className="text-foreground text-lg font-bold">Failed to load enrollments</h3>
+              <p className="text-foreground-muted mx-auto mt-1 max-w-xs text-sm">
+                {studentFetchError?.message ||
+                  "There was a problem retrieving your enrollment data."}
               </p>
-              <Button variant="outline" className="mt-6 rounded-xl" onClick={() => window.location.reload()}>
+              <Button
+                variant="outline"
+                className="mt-6 rounded-xl"
+                onClick={() => window.location.reload()}
+              >
                 Try Again
               </Button>
             </div>
@@ -400,42 +423,61 @@ export default function EnrollmentsPage({ params }: PageProps) {
               }}
             />
           ) : (
-            <div className="rounded-3xl border border-border bg-surface-1 overflow-hidden shadow-sm">
+            <div className="border-border bg-surface-1 overflow-hidden rounded-3xl border shadow-sm">
               <Table>
                 <TableHeader className="bg-surface-2/50">
-                  <TableRow className="hover:bg-transparent border-border">
-                    <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Workshop</TableHead>
-                    <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Status</TableHead>
-                    <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Seats</TableHead>
-                    <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Date</TableHead>
-                    <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Payment</TableHead>
-                    <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted text-right">Actions</TableHead>
+                  <TableRow className="border-border hover:bg-transparent">
+                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                      Workshop
+                    </TableHead>
+                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                      Status
+                    </TableHead>
+                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                      Seats
+                    </TableHead>
+                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                      Date
+                    </TableHead>
+                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                      Payment
+                    </TableHead>
+                    <TableHead className="text-foreground-muted px-6 py-4 text-right text-[11px] font-bold tracking-wider uppercase">
+                      Actions
+                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredStudentEnrollments.length === 0 ? (
                     <TableRow>
                       <TableCell colSpan={6} className="h-48 text-center">
-                        <p className="text-sm text-foreground-muted font-medium">No enrollments match your search.</p>
+                        <p className="text-foreground-muted text-sm font-medium">
+                          No enrollments match your search.
+                        </p>
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredStudentEnrollments.map((enrollment) => {
                       const canCancel = isCancelable(enrollment.status);
                       return (
-                        <TableRow key={enrollment._id} className="group border-border hover:bg-surface-2/40 transition-colors">
+                        <TableRow
+                          key={enrollment._id}
+                          className="group border-border hover:bg-surface-2/40 transition-colors"
+                        >
                           <TableCell className="px-6 py-4">
                             <div className="flex flex-col">
                               <Link
                                 href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
-                                className="font-display text-[15px] font-bold text-foreground hover:text-primary transition-colors truncate max-w-64"
+                                className="font-display text-foreground hover:text-primary max-w-64 truncate text-[15px] font-bold transition-colors"
                               >
                                 {enrollment.workshop.title}
                               </Link>
                               {enrollment.workshop.location && (
-                                <div className="flex items-center gap-1.5 mt-1 text-[12px] text-foreground-muted">
+                                <div className="text-foreground-muted mt-1 flex items-center gap-1.5 text-[12px]">
                                   <MapPin className="size-3" />
-                                  <span className="truncate max-w-48">{enrollment.workshop.location}</span>
+                                  <span className="max-w-48 truncate">
+                                    {enrollment.workshop.location}
+                                  </span>
                                 </div>
                               )}
                             </div>
@@ -444,36 +486,42 @@ export default function EnrollmentsPage({ params }: PageProps) {
                             <StatusBadge status={enrollment.status} dot />
                           </TableCell>
                           <TableCell className="px-6 py-4">
-                            <div className="flex items-center gap-2 text-sm text-foreground font-medium">
-                              <Users className="size-3.5 text-foreground-disabled" />
+                            <div className="text-foreground flex items-center gap-2 text-sm font-medium">
+                              <Users className="text-foreground-disabled size-3.5" />
                               {enrollment.studentCount}
                             </div>
                           </TableCell>
                           <TableCell className="px-6 py-4">
-                            <span className="text-[13px] text-foreground-muted">
+                            <span className="text-foreground-muted text-[13px]">
                               {formatDate(enrollment.createdAt)}
                             </span>
                           </TableCell>
                           <TableCell className="px-6 py-4">
                             {enrollment.payment ? (
                               <div className="flex flex-col gap-1">
-                                <StatusBadge status={enrollment.payment.status} dot className="scale-90 origin-left" />
-                                <span className="text-[11px] font-bold text-foreground-muted ml-1">
+                                <StatusBadge
+                                  status={enrollment.payment.status}
+                                  dot
+                                  className="origin-left scale-90"
+                                />
+                                <span className="text-foreground-muted ml-1 text-[11px] font-bold">
                                   {formatCurrency(enrollment.payment.amount)}
                                 </span>
                               </div>
                             ) : (
-                              <span className="text-xs text-foreground-disabled font-medium">—</span>
+                              <span className="text-foreground-disabled text-xs font-medium">
+                                —
+                              </span>
                             )}
                           </TableCell>
                           <TableCell className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Button
                                     variant="ghost"
                                     size="icon-xs"
-                                    className="size-8 rounded-lg hover:bg-primary/10 hover:text-primary"
+                                    className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg"
                                     onClick={() => handleViewDetails(enrollment)}
                                   >
                                     <Eye className="size-4" />
@@ -489,7 +537,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                                       variant="ghost"
                                       size="icon-xs"
                                       onClick={() => openCancelConfirm(enrollment)}
-                                      className="size-8 rounded-lg hover:bg-danger/10 hover:text-danger"
+                                      className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
                                     >
                                       <XCircle className="size-4" />
                                     </Button>
@@ -497,9 +545,16 @@ export default function EnrollmentsPage({ params }: PageProps) {
                                   <TooltipContent>Cancel Enrollment</TooltipContent>
                                 </Tooltip>
                               )}
-                              
-                              <Button variant="ghost" size="icon-xs" className="size-8 rounded-lg" asChild>
-                                <Link href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}>
+
+                              <Button
+                                variant="ghost"
+                                size="icon-xs"
+                                className="size-8 rounded-lg"
+                                asChild
+                              >
+                                <Link
+                                  href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
+                                >
                                   <ArrowRight className="size-4" />
                                 </Link>
                               </Button>
@@ -552,22 +607,22 @@ export default function EnrollmentsPage({ params }: PageProps) {
           />
         </div>
 
-        <div className="rounded-3xl border border-border bg-surface-1 overflow-hidden shadow-sm">
-           {/* Toolbar */}
-           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-surface-2/50 border-bottom border-border">
+        <div className="border-border bg-surface-1 overflow-hidden rounded-3xl border shadow-sm">
+          {/* Toolbar */}
+          <div className="bg-surface-2/50 border-bottom border-border flex flex-col items-center justify-between gap-4 p-5 sm:flex-row">
             <div className="flex items-center gap-3">
-                <div className="size-10 rounded-xl bg-surface-1 flex items-center justify-center border border-border">
-                   <Users className="size-5 text-foreground-muted" />
-                </div>
-                <p className="text-sm font-bold text-foreground">
-                  {total} <span className="text-foreground-muted font-medium">Total Records</span>
-                </p>
-             </div>
+              <div className="bg-surface-1 border-border flex size-10 items-center justify-center rounded-xl border">
+                <Users className="text-foreground-muted size-5" />
+              </div>
+              <p className="text-foreground text-sm font-bold">
+                {total} <span className="text-foreground-muted font-medium">Total Records</span>
+              </p>
+            </div>
             <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-disabled" />
+              <Search className="text-foreground-disabled absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
               <Input
                 placeholder="Search student or workshop..."
-                className="pl-10 h-11 rounded-xl bg-surface-1 border-border focus:ring-primary/20 transition-all"
+                className="bg-surface-1 border-border focus:ring-primary/20 h-11 rounded-xl pl-10 transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -577,14 +632,28 @@ export default function EnrollmentsPage({ params }: PageProps) {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-surface-2/30">
-                <TableRow className="hover:bg-transparent border-border">
-                  <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Student</TableHead>
-                  <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Workshop</TableHead>
-                  <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Status</TableHead>
-                  <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Qty</TableHead>
-                  <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Date</TableHead>
-                  <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">Payment</TableHead>
-                  <TableHead className="px-6 py-4 text-[11px] font-bold uppercase tracking-wider text-foreground-muted text-right">Actions</TableHead>
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Student
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Workshop
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Status
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Qty
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Date
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Payment
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-right text-[11px] font-bold tracking-wider uppercase">
+                    Actions
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -592,7 +661,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                   [...Array(5)].map((_, i) => (
                     <TableRow key={i} className="border-border">
                       <TableCell colSpan={7} className="p-6">
-                        <div className="h-8 bg-surface-2 rounded-lg animate-pulse" />
+                        <div className="bg-surface-2 h-8 animate-pulse rounded-lg" />
                       </TableCell>
                     </TableRow>
                   ))
@@ -608,24 +677,27 @@ export default function EnrollmentsPage({ params }: PageProps) {
                   </TableRow>
                 ) : (
                   enrollments.map((enrollment) => (
-                    <TableRow key={enrollment._id} className="group border-border hover:bg-surface-2/40 transition-colors">
+                    <TableRow
+                      key={enrollment._id}
+                      className="group border-border hover:bg-surface-2/40 transition-colors"
+                    >
                       <TableCell className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                           <div className="size-9 rounded-full bg-primary/10 flex items-center justify-center font-bold text-primary text-xs border border-primary/5">
-                             {enrollment.user?.name?.[0] || "?"}
-                           </div>
-                           <div>
-                            <p className="text-sm font-bold text-foreground">
+                          <div className="bg-primary/10 text-primary border-primary/5 flex size-9 items-center justify-center rounded-full border text-xs font-bold">
+                            {enrollment.user?.name?.[0] || "?"}
+                          </div>
+                          <div>
+                            <p className="text-foreground text-sm font-bold">
                               {enrollment.user?.name || "—"}
                             </p>
-                            <p className="text-[11px] text-foreground-muted font-medium">
+                            <p className="text-foreground-muted text-[11px] font-medium">
                               {enrollment.user?.email || ""}
                             </p>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-4">
-                        <p className="truncate text-sm font-medium text-foreground max-w-48">
+                        <p className="text-foreground max-w-48 truncate text-sm font-medium">
                           {enrollment.workshop?.title || "—"}
                         </p>
                       </TableCell>
@@ -633,10 +705,12 @@ export default function EnrollmentsPage({ params }: PageProps) {
                         <StatusBadge status={enrollment.status} dot />
                       </TableCell>
                       <TableCell className="px-6 py-4 text-center sm:text-left">
-                        <span className="text-sm font-bold text-foreground">{enrollment.studentCount}</span>
+                        <span className="text-foreground text-sm font-bold">
+                          {enrollment.studentCount}
+                        </span>
                       </TableCell>
                       <TableCell className="px-6 py-4">
-                        <span className="text-[13px] text-foreground-muted">
+                        <span className="text-foreground-muted text-[13px]">
                           {formatDate(enrollment.createdAt)}
                         </span>
                       </TableCell>
@@ -644,13 +718,13 @@ export default function EnrollmentsPage({ params }: PageProps) {
                         <PaymentStatusBadge status={enrollment.payment?.status} />
                       </TableCell>
                       <TableCell className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon-xs"
-                                className="size-8 rounded-lg hover:bg-primary/10"
+                                className="hover:bg-primary/10 size-8 rounded-lg"
                                 onClick={() => setViewEnrollment(enrollment)}
                               >
                                 <Eye className="size-4" />
@@ -661,10 +735,10 @@ export default function EnrollmentsPage({ params }: PageProps) {
 
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon-xs"
-                                className="size-8 rounded-lg hover:bg-accent/10"
+                                className="hover:bg-accent/10 size-8 rounded-lg"
                                 onClick={() => {
                                   setStatusTarget(enrollment);
                                   setNewStatus(enrollment.status);
@@ -678,10 +752,10 @@ export default function EnrollmentsPage({ params }: PageProps) {
 
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <Button 
-                                variant="ghost" 
+                              <Button
+                                variant="ghost"
                                 size="icon-xs"
-                                className="size-8 rounded-lg hover:bg-danger/10 hover:text-danger"
+                                className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
                                 onClick={() => setDeleteTarget(enrollment)}
                               >
                                 <Trash2 className="size-4" />
@@ -703,11 +777,19 @@ export default function EnrollmentsPage({ params }: PageProps) {
                                 <Eye className="mr-2 size-4" />
                                 Details
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => { setStatusTarget(enrollment); setNewStatus(enrollment.status); }}>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  setStatusTarget(enrollment);
+                                  setNewStatus(enrollment.status);
+                                }}
+                              >
                                 <Pencil className="mr-2 size-4" />
                                 Update Status
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => setDeleteTarget(enrollment)} className="text-danger">
+                              <DropdownMenuItem
+                                onClick={() => setDeleteTarget(enrollment)}
+                                className="text-danger"
+                              >
                                 <Trash2 className="mr-2 size-4" />
                                 Delete
                               </DropdownMenuItem>
@@ -723,15 +805,16 @@ export default function EnrollmentsPage({ params }: PageProps) {
           </div>
 
           {!adminLoading && totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-surface-2/20 border-t border-border">
-               <p className="text-sm font-medium text-foreground-muted">
-                Page <span className="text-foreground">{page}</span> of <span className="text-foreground">{totalPages}</span>
+            <div className="bg-surface-2/20 border-border flex flex-col items-center justify-between gap-4 border-t p-5 sm:flex-row">
+              <p className="text-foreground-muted text-sm font-medium">
+                Page <span className="text-foreground">{page}</span> of{" "}
+                <span className="text-foreground">{totalPages}</span>
               </p>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl h-9 px-4"
+                  className="h-9 rounded-xl px-4"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
                 >
@@ -741,7 +824,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl h-9 px-4"
+                  className="h-9 rounded-xl px-4"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
                 >
@@ -757,8 +840,8 @@ export default function EnrollmentsPage({ params }: PageProps) {
         <Dialog open={!!viewEnrollment} onOpenChange={() => setViewEnrollment(null)}>
           <DialogContent className="max-w-md rounded-3xl p-6">
             <DialogHeader className="mb-4">
-              <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                 <ShieldCheck className="size-6 text-primary" />
+              <div className="bg-primary/10 mb-4 flex size-12 items-center justify-center rounded-2xl">
+                <ShieldCheck className="text-primary size-6" />
               </div>
               <DialogTitle className="text-xl font-bold">Enrollment Overview</DialogTitle>
               <DialogDescription>
@@ -769,45 +852,74 @@ export default function EnrollmentsPage({ params }: PageProps) {
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">Student</p>
-                    <p className="text-sm font-bold text-foreground">{viewEnrollment.user?.name || "—"}</p>
-                    <p className="text-xs text-foreground-muted">{viewEnrollment.user?.email}</p>
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
+                      Student
+                    </p>
+                    <p className="text-foreground text-sm font-bold">
+                      {viewEnrollment.user?.name || "—"}
+                    </p>
+                    <p className="text-foreground-muted text-xs">{viewEnrollment.user?.email}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">Workshop</p>
-                    <p className="text-sm font-bold text-foreground">{viewEnrollment.workshop?.title || "—"}</p>
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
+                      Workshop
+                    </p>
+                    <p className="text-foreground text-sm font-bold">
+                      {viewEnrollment.workshop?.title || "—"}
+                    </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">Status</p>
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
+                      Status
+                    </p>
                     <StatusBadge status={viewEnrollment.status} dot />
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">Attendees</p>
-                    <p className="text-sm font-bold text-foreground">{viewEnrollment.studentCount}</p>
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
+                      Attendees
+                    </p>
+                    <p className="text-foreground text-sm font-bold">
+                      {viewEnrollment.studentCount}
+                    </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">Payment</p>
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
+                      Payment
+                    </p>
                     <PaymentStatusBadge status={viewEnrollment.payment?.status} />
                   </div>
                   {viewEnrollment.payment && (
                     <div className="space-y-1">
-                      <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">Amount</p>
-                      <p className="text-sm font-bold text-foreground">{formatCurrency(viewEnrollment.payment.amount)}</p>
+                      <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
+                        Amount
+                      </p>
+                      <p className="text-foreground text-sm font-bold">
+                        {formatCurrency(viewEnrollment.payment.amount)}
+                      </p>
                     </div>
                   )}
-                  <div className="space-y-1 col-span-2">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">Enrolled On</p>
-                    <p className="text-sm font-medium text-foreground">{formatDate(viewEnrollment.createdAt)}</p>
+                  <div className="col-span-2 space-y-1">
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
+                      Enrolled On
+                    </p>
+                    <p className="text-foreground text-sm font-medium">
+                      {formatDate(viewEnrollment.createdAt)}
+                    </p>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" className="flex-1 rounded-xl" onClick={() => setViewEnrollment(null)}>
+                  <Button
+                    variant="outline"
+                    className="flex-1 rounded-xl"
+                    onClick={() => setViewEnrollment(null)}
+                  >
                     Dismiss
                   </Button>
-                   <Link href={`/workshops/${viewEnrollment.workshop.slug || viewEnrollment.workshop?._id}`} className="flex-1">
-                    <Button className="w-full rounded-xl">
-                      View Workshop
-                    </Button>
+                  <Link
+                    href={`/workshops/${viewEnrollment.workshop.slug || viewEnrollment.workshop?._id}`}
+                    className="flex-1"
+                  >
+                    <Button className="w-full rounded-xl">View Workshop</Button>
                   </Link>
                 </div>
               </div>
@@ -819,8 +931,8 @@ export default function EnrollmentsPage({ params }: PageProps) {
         <Dialog open={!!statusTarget} onOpenChange={() => setStatusTarget(null)}>
           <DialogContent className="max-w-md rounded-3xl p-6">
             <DialogHeader className="mb-4">
-              <div className="size-12 rounded-2xl bg-accent/10 flex items-center justify-center mb-4">
-                 <Pencil className="size-5 text-accent-foreground" />
+              <div className="bg-accent/10 mb-4 flex size-12 items-center justify-center rounded-2xl">
+                <Pencil className="text-accent-foreground size-5" />
               </div>
               <DialogTitle className="text-xl font-bold">Update Registration Status</DialogTitle>
               <DialogDescription>
@@ -828,17 +940,24 @@ export default function EnrollmentsPage({ params }: PageProps) {
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-5">
-              <div className="rounded-2xl border border-border bg-surface-2 p-4 space-y-1">
-                 <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">Workshop</p>
-                 <p className="text-sm font-bold text-foreground">{statusTarget?.workshop?.title}</p>
+              <div className="border-border bg-surface-2 space-y-1 rounded-2xl border p-4">
+                <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
+                  Workshop
+                </p>
+                <p className="text-foreground text-sm font-bold">{statusTarget?.workshop?.title}</p>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="new-status" className="text-[13px] font-bold ml-1">Select New Status</Label>
+                <Label htmlFor="new-status" className="ml-1 text-[13px] font-bold">
+                  Select New Status
+                </Label>
                 <Select
                   value={newStatus}
                   onValueChange={(v) => setNewStatus(v as EnrollmentStatus)}
                 >
-                  <SelectTrigger id="new-status" className="h-12 rounded-xl bg-surface-1 border-border">
+                  <SelectTrigger
+                    id="new-status"
+                    className="bg-surface-1 border-border h-12 rounded-xl"
+                  >
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">

@@ -36,7 +36,7 @@ function GoogleCallbackContent() {
 
         if (!code) {
           setError(
-            "Google sign-in could not be completed. No authorization code was received. Please try signing in again.",
+            "Google sign-in could not be completed. No authorization code was received. Please try signing in again."
           );
           return;
         }
@@ -51,9 +51,7 @@ function GoogleCallbackContent() {
 
         if (!res.ok) {
           const errorData = await res.json().catch(() => null);
-          throw new Error(
-            errorData?.message || `Token exchange failed (HTTP ${res.status})`,
-          );
+          throw new Error(errorData?.message || `Token exchange failed (HTTP ${res.status})`);
         }
 
         const json = await res.json();
@@ -96,14 +94,12 @@ function GoogleCallbackContent() {
   if (error) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4">
-        <GraduationCap className="size-12 text-muted-foreground" />
+        <GraduationCap className="text-muted-foreground size-12" />
         <h2 className="text-xl font-semibold">Sign-in Failed</h2>
-        <p className="max-w-md text-center text-sm text-muted-foreground">
-          {error}
-        </p>
+        <p className="text-muted-foreground max-w-md text-center text-sm">{error}</p>
         <a
           href="/login"
-          className="mt-2 rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground hover:bg-primary/90"
+          className="bg-primary text-primary-foreground hover:bg-primary/90 mt-2 rounded-md px-4 py-2 text-sm"
         >
           Back to Login
         </a>
@@ -113,12 +109,10 @@ function GoogleCallbackContent() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4">
-      <GraduationCap className="size-12 text-primary" />
+      <GraduationCap className="text-primary size-12" />
       <h2 className="text-xl font-semibold">Completing sign-in...</h2>
-      <Loader2 className="size-6 animate-spin text-muted-foreground" />
-      <p className="text-sm text-muted-foreground">
-        Please wait while we set up your account.
-      </p>
+      <Loader2 className="text-muted-foreground size-6 animate-spin" />
+      <p className="text-muted-foreground text-sm">Please wait while we set up your account.</p>
     </div>
   );
 }
@@ -128,9 +122,9 @@ export default function GoogleCallbackPage() {
     <Suspense
       fallback={
         <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-4">
-          <GraduationCap className="size-12 text-primary" />
+          <GraduationCap className="text-primary size-12" />
           <h2 className="text-xl font-semibold">Loading...</h2>
-          <Loader2 className="size-6 animate-spin text-muted-foreground" />
+          <Loader2 className="text-muted-foreground size-6 animate-spin" />
         </div>
       }
     >

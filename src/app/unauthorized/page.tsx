@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ShieldX, Home, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BackButton } from "@/components/shared/BackButton";
+import { BackButton } from "@/components/ui/back-button";
 
 export default function Unauthorized() {
   return (
@@ -12,28 +12,25 @@ export default function Unauthorized() {
       <div className="relative mb-8">
         <div className="relative flex items-center justify-center">
           {/* Decorative rings */}
-          <div className="absolute size-56 rounded-full border-2 border-dashed border-amber-500/10 animate-[spin_20s_linear_infinite]" />
-          <div className="absolute size-40 rounded-full border border-amber-500/15 animate-[spin_15s_linear_infinite_reverse]" />
+          <div className="border-warning/10 absolute size-56 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed" />
+          <div className="border-warning/15 absolute size-40 animate-[spin_15s_linear_infinite_reverse] rounded-full border" />
 
           {/* Central icon container */}
-          <div className="relative flex size-32 items-center justify-center rounded-full bg-amber-500/10">
-            <ShieldX className="size-14 text-amber-600/70 dark:text-amber-400/70" />
+          <div className="bg-warning-subtle relative flex size-32 items-center justify-center rounded-full">
+            <ShieldX className="text-warning/70 size-14" />
           </div>
         </div>
       </div>
 
       {/* Content */}
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold tracking-tight text-foreground">
-          4<span className="text-amber-600 dark:text-amber-400">03</span>
+        <h1 className="text-foreground text-7xl font-bold tracking-tight">
+          4<span className="text-warning">03</span>
         </h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">
-          Access Denied
-        </h2>
-        <p className="mt-3 text-muted-foreground leading-relaxed">
-          You do not have permission to access this page. This area is
-          restricted to authorized users only. If you believe this is a mistake,
-          please contact your administrator.
+        <h2 className="text-foreground mt-4 text-xl font-semibold">Access Denied</h2>
+        <p className="text-muted-foreground mt-3 leading-relaxed">
+          You do not have permission to access this page. This area is restricted to authorized
+          users only. If you believe this is a mistake, please contact your administrator.
         </p>
       </div>
 

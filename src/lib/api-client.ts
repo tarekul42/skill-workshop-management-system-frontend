@@ -56,7 +56,7 @@ let refreshPromise: Promise<Response> | null = null;
 async function attemptTokenRefresh(
   fetchHeaders: Record<string, string>,
   url: string,
-  fetchOptions: RequestInit,
+  fetchOptions: RequestInit
 ): Promise<Response> {
   // Mutex: if a refresh is already in progress, reuse that promise
   if (isRefreshing && refreshPromise) {
@@ -150,23 +150,17 @@ export class ApiError extends Error {
 
 export async function apiRequest<T>(
   endpoint: string,
-  options: ApiClientOptions & { returnMeta: true },
+  options: ApiClientOptions & { returnMeta: true }
 ): Promise<PaginatedResult<T>>;
 export async function apiRequest<T>(
   endpoint: string,
-  options?: ApiClientOptions & { returnMeta?: false },
+  options?: ApiClientOptions & { returnMeta?: false }
 ): Promise<T>;
 export async function apiRequest<T>(
   endpoint: string,
-  options: ApiClientOptions = {},
+  options: ApiClientOptions = {}
 ): Promise<T | PaginatedResult<T>> {
-  const {
-    method = "GET",
-    body,
-    headers = {},
-    skipCsrf = false,
-    returnMeta = false,
-  } = options;
+  const { method = "GET", body, headers = {}, skipCsrf = false, returnMeta = false } = options;
 
   const url = `${BACKEND_API_URL}${endpoint}`;
   const isFormData = body instanceof FormData;
@@ -215,10 +209,7 @@ export async function apiRequest<T>(
     response = await fetch(url, fetchOptions);
   } catch (err) {
     console.error("Network error during API request:", err);
-    throw new ApiError(
-      0,
-      "Network error. Please check your internet connection.",
-    );
+    throw new ApiError(0, "Network error. Please check your internet connection.");
   }
 
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
@@ -233,10 +224,7 @@ export async function apiRequest<T>(
 
     // Log critical errors
     if (status >= 500) {
-      console.error(
-        `[API Server Error] ${method} ${endpoint}:`,
-        json || status,
-      );
+      console.error(`[API Server Error] ${method} ${endpoint}:`, json || status);
     }
 
     throw new ApiError(status, message, json?.data);
@@ -256,21 +244,21 @@ export async function apiRequest<T>(
 
 export async function apiClient<T>(
   endpoint: string,
-  options: Omit<ApiClientOptions, "returnMeta"> = {},
+  options: Omit<ApiClientOptions, "returnMeta"> = {}
 ): Promise<T> {
   return apiRequest<T>(endpoint, { ...options, returnMeta: false });
 }
 
 export async function apiClientPaginated<T>(
   endpoint: string,
-  options: Omit<ApiClientOptions, "returnMeta"> = {},
+  options: Omit<ApiClientOptions, "returnMeta"> = {}
 ): Promise<PaginatedResult<T>> {
   return apiRequest<T>(endpoint, { ...options, returnMeta: true });
 }
 
 export async function apiClientFormData<T>(
   endpoint: string,
-  options: Omit<ApiClientOptions, "returnMeta"> & { body: FormData },
+  options: Omit<ApiClientOptions, "returnMeta"> & { body: FormData }
 ): Promise<T> {
   return apiRequest<T>(endpoint, { ...options, returnMeta: false });
 }

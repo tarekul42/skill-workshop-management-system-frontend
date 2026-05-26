@@ -4,8 +4,9 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { PageHeader, BackButton } from "@/components/shared";
-import { WorkshopForm } from "@/components/workshops/WorkshopForm";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { BackButton } from "@/components/ui/back-button";
+import { WorkshopForm } from "@/components/features/workshops/WorkshopForm";
 import { createWorkshop } from "@/lib/api/services";
 
 interface PageProps {
@@ -24,9 +25,7 @@ export default function CreateWorkshopPage({ params }: PageProps) {
       toast.success("Workshop created successfully!");
       router.push(`/${role}/workshops`);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to create workshop",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to create workshop");
     } finally {
       setIsSubmitting(false);
     }

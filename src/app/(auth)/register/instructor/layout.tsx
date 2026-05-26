@@ -8,10 +8,6 @@ export const metadata: Metadata = {
     "Join Skill Workshop as an instructor. Share your expertise, create workshops, and earn by teaching skills you are passionate about.",
 };
 
-export default function InstructorRegisterLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function InstructorRegisterLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

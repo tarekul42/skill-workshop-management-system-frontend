@@ -4,12 +4,10 @@ import React, { useState, useEffect, useMemo } from "react";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Users } from "lucide-react";
 
-import {
-  PageHeader,
-  DataTable,
-  EmptyState,
-  TableSkeleton,
-} from "@/components/shared";
+import { PageHeader } from "@/components/layout/PageHeader";
+import { DataTable } from "@/components/ui/data-table";
+import { EmptyState } from "@/components/ui/empty-state";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
 
 import { getAllEnrollments, fetchWorkshops } from "@/lib/api/services";
 import { formatDateTime } from "@/lib/formatters";
@@ -60,31 +58,24 @@ export default function MyStudentsPage({ params }: PageProps) {
         ]);
 
         const enrollments =
-          enrollmentsRes.status === "fulfilled"
-            ? (enrollmentsRes.value.data ?? [])
-            : [];
+          enrollmentsRes.status === "fulfilled" ? (enrollmentsRes.value.data ?? []) : [];
 
         const workshops =
-          workshopsRes.status === "fulfilled"
-            ? (workshopsRes.value.data ?? [])
-            : [];
+          workshopsRes.status === "fulfilled" ? (workshopsRes.value.data ?? []) : [];
 
         // For instructor: find workshops created by this instructor
         // createdBy can be a string (ObjectId) or an object { _id, name, email }
         const myWorkshopIds = new Set(
           workshops
             .filter((w) => {
-              if (typeof w.createdBy === "string")
-                return w.createdBy === userId;
+              if (typeof w.createdBy === "string") return w.createdBy === userId;
               return w.createdBy?._id === userId;
             })
-            .map((w) => w._id),
+            .map((w) => w._id)
         );
 
         // Filter enrollments belonging to the instructor's workshops
-        const myEnrollments = enrollments.filter((e) =>
-          myWorkshopIds.has(e.workshop?._id),
-        );
+        const myEnrollments = enrollments.filter((e) => myWorkshopIds.has(e.workshop?._id));
 
         // Build student rows
         const studentMap = new Map<string, StudentRow>();
@@ -108,9 +99,7 @@ export default function MyStudentsPage({ params }: PageProps) {
 
         setStudents(Array.from(studentMap.values()));
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load students",
-        );
+        setError(err instanceof Error ? err.message : "Failed to load students");
       } finally {
         setLoading(false);
       }
@@ -128,42 +117,34 @@ export default function MyStudentsPage({ params }: PageProps) {
         cell: ({ row }) => (
           <div>
             <p className="font-medium">{row.original.studentName}</p>
-            <p className="text-xs text-muted-foreground">
-              {row.original.studentEmail}
-            </p>
+            <p className="text-muted-foreground text-xs">{row.original.studentEmail}</p>
           </div>
         ),
       },
       {
         accessorKey: "studentPhone",
         header: "Phone",
-        cell: ({ row }) => (
-          <span className="text-sm">{row.original.studentPhone ?? "—"}</span>
-        ),
+        cell: ({ row }) => <span className="text-sm">{row.original.studentPhone ?? "—"}</span>,
       },
       {
         accessorKey: "workshopTitle",
         header: "Workshop",
         cell: ({ row }) => (
-          <span className="max-w-50 truncate block text-sm">
-            {row.original.workshopTitle}
-          </span>
+          <span className="block max-w-50 truncate text-sm">{row.original.workshopTitle}</span>
         ),
       },
       {
         accessorKey: "studentCount",
         header: "Seats",
         cell: ({ row }) => (
-          <span className="text-sm text-center block">
-            {row.original.studentCount}
-          </span>
+          <span className="block text-center text-sm">{row.original.studentCount}</span>
         ),
       },
       {
         accessorKey: "enrollmentDate",
         header: "Enrolled On",
         cell: ({ row }) => (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             {formatDateTime(row.original.enrollmentDate)}
           </span>
         ),
@@ -175,12 +156,12 @@ export default function MyStudentsPage({ params }: PageProps) {
           const status = row.original.status;
           const colorClass =
             status === "COMPLETE"
-              ? "border-emerald-300 bg-emerald-50 text-emerald-700 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400"
+              ? "border-success/30 bg-success-subtle text-success"
               : status === "PENDING"
-                ? "border-amber-300 bg-amber-50 text-amber-700 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-400"
+                ? "border-warning/30 bg-warning-subtle text-warning"
                 : status === "CANCEL"
-                  ? "border-red-300 bg-red-50 text-red-700 dark:border-red-700 dark:bg-red-950/50 dark:text-red-400"
-                  : "border-gray-300 bg-gray-50 text-gray-700 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-400";
+                  ? "border-danger/30 bg-danger-subtle text-danger"
+                  : "border-border-strong bg-surface-3 text-foreground-muted";
 
           return (
             <span
@@ -192,15 +173,12 @@ export default function MyStudentsPage({ params }: PageProps) {
         },
       },
     ],
-    [],
+    []
   );
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="My Students"
-        description="Students enrolled in your workshops"
-      />
+      <PageHeader title="My Students" description="Students enrolled in your workshops" />
 
       {loading && <TableSkeleton rows={5} columns={6} />}
 
@@ -223,9 +201,7 @@ export default function MyStudentsPage({ params }: PageProps) {
         />
       )}
 
-      {!loading && error && (
-        <EmptyState title="Failed to load students" description={error} />
-      )}
+      {!loading && error && <EmptyState title="Failed to load students" description={error} />}
     </div>
   );
 }

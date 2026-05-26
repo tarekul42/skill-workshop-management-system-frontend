@@ -3,16 +3,7 @@
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import {
-  Eye,
-  EyeOff,
-  Loader2,
-  Mail,
-  Lock,
-  X,
-  AlertTriangle,
-  BookOpen
-} from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Lock, X, AlertTriangle, BookOpen } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
@@ -36,7 +27,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { AnimatedPage } from "@/components/shared/AnimatedPage";
+import { AnimatedPage } from "@/components/ui/animated-page";
 import { saveUser, redirectToDashboard } from "@/lib/auth-helpers";
 import { setSecureAuthCookie } from "@/app/actions/auth";
 import { apiClient, storeAccessToken } from "@/lib/api-client";
@@ -105,15 +96,15 @@ function LoginContent() {
 
   return (
     <AnimatedPage className="w-full">
-      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-3xl sm:p-4">
         {/* Logo & Header */}
-        <CardHeader className="items-center text-center pb-0">
+        <CardHeader className="items-center pb-0 text-center">
           <Link href="/" className="mb-8 flex items-center justify-center gap-2">
-            <BookOpen className="size-9 text-primary" />
+            <BookOpen className="text-primary size-9" />
             <span className="font-display text-2xl font-bold">Skill Workshop</span>
           </Link>
           <CardTitle className="font-display text-[28px] font-bold">Welcome back</CardTitle>
-          <CardDescription className="text-[14px] text-foreground-muted mt-1 mb-7">
+          <CardDescription className="text-foreground-muted mt-1 mb-7 text-[14px]">
             Sign in to continue your learning journey
           </CardDescription>
         </CardHeader>
@@ -122,11 +113,11 @@ function LoginContent() {
           {/* Google */}
           <Button
             variant="outline"
-            className="w-full h-11 rounded-[10px] border-[1.5px] border-border bg-background hover:bg-surface-2 hover:border-border-strong text-[15px] font-medium transition-colors"
+            className="border-border bg-background hover:bg-surface-2 hover:border-border-strong h-11 w-full rounded-[10px] border-[1.5px] text-[15px] font-medium transition-colors"
             asChild
           >
             <a href={`${BACKEND_API_URL}/auth/google?redirect=google/callback`}>
-              <svg className="size-5 mr-2" viewBox="0 0 24 24" aria-hidden="true">
+              <svg className="mr-2 size-5" viewBox="0 0 24 24" aria-hidden="true">
                 <path
                   d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"
                   fill="#4285F4"
@@ -150,8 +141,8 @@ function LoginContent() {
 
           {/* Divider */}
           <div className="relative flex items-center justify-center py-2">
-            <Separator className="absolute w-full border-border" />
-            <span className="relative bg-surface-1 px-4 text-[12px] text-foreground-muted">
+            <Separator className="border-border absolute w-full" />
+            <span className="bg-surface-1 text-foreground-muted relative px-4 text-[12px]">
               or sign in with email
             </span>
           </div>
@@ -163,15 +154,13 @@ function LoginContent() {
                 name="email"
                 render={({ field }) => (
                   <FormItem className="grid gap-1.5">
-                    <FormLabel className="text-[13px] font-semibold text-foreground">Email</FormLabel>
+                    <FormLabel className="text-foreground text-[13px] font-semibold">
+                      Email
+                    </FormLabel>
                     <div className="relative">
-                      <Mail className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground-muted" />
+                      <Mail className="text-foreground-muted pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                       <FormControl>
-                        <Input
-                          placeholder="name@example.com"
-                          className="pl-9 h-11"
-                          {...field}
-                        />
+                        <Input placeholder="name@example.com" className="h-11 pl-9" {...field} />
                       </FormControl>
                     </div>
                     <FormMessage />
@@ -185,40 +174,36 @@ function LoginContent() {
                 render={({ field }) => (
                   <FormItem className="grid gap-1.5">
                     <div className="flex items-center justify-between">
-                      <FormLabel className="text-[13px] font-semibold text-foreground">Password</FormLabel>
+                      <FormLabel className="text-foreground text-[13px] font-semibold">
+                        Password
+                      </FormLabel>
                       <Link
                         href="/forgot-password"
-                        className="text-[13px] font-medium text-primary hover:underline"
+                        className="text-primary text-[13px] font-medium hover:underline"
                       >
                         Forgot password?
                       </Link>
                     </div>
                     <div className="relative">
-                      <Lock className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-foreground-muted" />
+                      <Lock className="text-foreground-muted pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                       <FormControl>
                         <Input
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter your password"
-                          className="pl-9 pr-10 h-11"
+                          className="h-11 pr-10 pl-9"
                           {...field}
                         />
                       </FormControl>
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors"
+                        className="text-foreground-muted hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2 transition-colors"
                         aria-label={
-                          showPassword
-                            ? "Hide password visibility"
-                            : "Show password visibility"
+                          showPassword ? "Hide password visibility" : "Show password visibility"
                         }
                         tabIndex={-1}
                       >
-                        {showPassword ? (
-                          <EyeOff className="size-4" />
-                        ) : (
-                          <Eye className="size-4" />
-                        )}
+                        {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                       </button>
                     </div>
                     <FormMessage />
@@ -229,15 +214,15 @@ function LoginContent() {
               {/* Error message */}
               {error && (
                 <div
-                  className="flex items-start gap-2 rounded-lg border-l-[3px] border-l-danger bg-danger-subtle px-4 py-3 relative"
+                  className="border-l-danger bg-danger-subtle relative flex items-start gap-2 rounded-lg border-l-[3px] px-4 py-3"
                   role="alert"
                 >
-                  <AlertTriangle className="size-4 shrink-0 text-danger mt-0.5" />
-                  <p className="flex-1 text-[14px] text-danger pr-4">{error}</p>
+                  <AlertTriangle className="text-danger mt-0.5 size-4 shrink-0" />
+                  <p className="text-danger flex-1 pr-4 text-[14px]">{error}</p>
                   <button
                     type="button"
                     onClick={() => setError("")}
-                    className="absolute right-2 top-2 shrink-0 text-danger/70 hover:text-danger"
+                    className="text-danger/70 hover:text-danger absolute top-2 right-2 shrink-0"
                     aria-label="Dismiss error"
                   >
                     <X className="size-4" />
@@ -246,7 +231,11 @@ function LoginContent() {
               )}
 
               {/* Submit */}
-              <Button type="submit" className="w-full h-12 text-base font-semibold mt-1" disabled={loading}>
+              <Button
+                type="submit"
+                className="mt-1 h-12 w-full text-base font-semibold"
+                disabled={loading}
+              >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
@@ -262,16 +251,13 @@ function LoginContent() {
 
         {/* Footer links */}
         <CardFooter className="flex-col gap-2 pt-0 pb-2">
-          <p className="text-[14px] text-foreground-muted text-center flex items-center justify-center flex-wrap gap-x-1.5">
+          <p className="text-foreground-muted flex flex-wrap items-center justify-center gap-x-1.5 text-center text-[14px]">
             <span>Don&apos;t have an account?</span>
-            <Link href="/register" className="text-primary hover:underline font-medium">
+            <Link href="/register" className="text-primary font-medium hover:underline">
               Sign up as Student
             </Link>
             <span className="text-foreground-muted">·</span>
-            <Link
-              href="/register/instructor"
-              className="text-primary hover:underline font-medium"
-            >
+            <Link href="/register/instructor" className="text-primary font-medium hover:underline">
               Sign up as Instructor
             </Link>
           </p>

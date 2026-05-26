@@ -8,10 +8,6 @@ export const metadata: Metadata = {
     "Create your free Skill Workshop account. Sign up as a student to enroll in workshops, or as an instructor to share your expertise.",
 };
 
-export default function RegisterLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RegisterLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

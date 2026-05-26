@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { TableSkeleton } from "@/components/shared/LoadingSkeleton";
+import { TableSkeleton } from "@/components/ui/loading-skeleton";
 
 export default function UsersLoading() {
   return (
@@ -12,8 +12,8 @@ export default function UsersLoading() {
         <Skeleton className="h-10 w-32 rounded-lg" />
       </div>
 
-      <div className="rounded-xl border bg-card">
-        <div className="p-4 border-b">
+      <div className="bg-card rounded-xl border">
+        <div className="border-b p-4">
           <Skeleton className="h-10 w-full max-w-sm rounded-lg" />
         </div>
         <div className="p-4">

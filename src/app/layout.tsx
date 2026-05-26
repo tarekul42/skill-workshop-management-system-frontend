@@ -11,21 +11,21 @@ const display = Bricolage_Grotesque({
   subsets: ["latin"],
   variable: "--font-display",
   weight: ["400", "500", "600", "700", "800"],
-  display: "swap",
+  display: "optional",
 });
 
 const body = DM_Sans({
   subsets: ["latin"],
   variable: "--font-body",
   weight: ["300", "400", "500", "600"],
-  display: "swap",
+  display: "optional",
 });
 
 const mono = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
   weight: ["400", "500"],
-  display: "swap",
+  display: "optional",
 });
 
 export const viewport: Viewport = {
@@ -72,8 +72,11 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Skill Workshop Management System",
-    description:
-      "Master new skills with expert-led workshops across Bangladesh.",
+    description: "Master new skills with expert-led workshops across Bangladesh.",
+  },
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
   },
   robots: {
     index: true,
@@ -88,9 +91,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const nonce = (await headers()).get("x-nonce") ?? "";
 
   return (

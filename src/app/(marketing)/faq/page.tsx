@@ -199,10 +199,8 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
   if (faqList.length === 0) {
     return (
       <div className="py-12 text-center">
-        <HelpCircle className="mx-auto mb-3 size-10 text-muted-foreground/40" />
-        <p className="text-muted-foreground">
-          No questions found for this category.
-        </p>
+        <HelpCircle className="text-muted-foreground/40 mx-auto mb-3 size-10" />
+        <p className="text-muted-foreground">No questions found for this category.</p>
       </div>
     );
   }
@@ -211,10 +209,10 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
     <Accordion type="single" collapsible className="w-full">
       {faqList.map((faq) => (
         <AccordionItem key={faq.id} value={faq.id}>
-          <AccordionTrigger className="px-6 py-4 text-left text-sm font-medium leading-relaxed hover:no-underline sm:text-base">
+          <AccordionTrigger className="px-6 py-4 text-left text-sm leading-relaxed font-medium hover:no-underline sm:text-base">
             {faq.question}
           </AccordionTrigger>
-          <AccordionContent className="px-6 pb-6 text-sm leading-relaxed text-muted-foreground">
+          <AccordionContent className="text-muted-foreground px-6 pb-6 text-sm leading-relaxed">
             {faq.answer}
           </AccordionContent>
         </AccordionItem>
@@ -226,23 +224,17 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
 // ─── FAQ Page ─────────────────────────────────────────────────────────────
 
 export default function FAQPage() {
-  const [activeCategory, setActiveCategory] = useState<FAQCategory | "all">(
-    "all",
-  );
+  const [activeCategory, setActiveCategory] = useState<FAQCategory | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredFAQs = useMemo(() => {
     let results =
-      activeCategory === "all"
-        ? faqs
-        : faqs.filter((f) => f.category === activeCategory);
+      activeCategory === "all" ? faqs : faqs.filter((f) => f.category === activeCategory);
 
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase().trim();
       results = results.filter(
-        (f) =>
-          f.question.toLowerCase().includes(query) ||
-          f.answer.toLowerCase().includes(query),
+        (f) => f.question.toLowerCase().includes(query) || f.answer.toLowerCase().includes(query)
       );
     }
 
@@ -256,9 +248,8 @@ export default function FAQPage() {
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
           Frequently Asked Questions
         </h1>
-        <p className="mt-3 max-w-2xl text-muted-foreground">
-          Find answers to common questions about our workshops, enrollment,
-          payments, and more.
+        <p className="text-muted-foreground mt-3 max-w-2xl">
+          Find answers to common questions about our workshops, enrollment, payments, and more.
         </p>
       </div>
 
@@ -268,7 +259,7 @@ export default function FAQPage() {
         <aside className="space-y-6">
           {/* Search */}
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
             <Input
               placeholder="Search questions..."
               value={searchQuery}
@@ -279,7 +270,7 @@ export default function FAQPage() {
 
           {/* Category Cards */}
           <div className="space-y-2">
-            <p className="px-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="text-muted-foreground px-1 text-xs font-semibold tracking-wider uppercase">
               Categories
             </p>
             <nav className="space-y-1">
@@ -298,11 +289,9 @@ export default function FAQPage() {
                   >
                     <Icon className="size-4 shrink-0" />
                     <div className="min-w-0 flex-1">
-                      <span className="block truncate font-medium">
-                        {cat.label}
-                      </span>
+                      <span className="block truncate font-medium">{cat.label}</span>
                       {!isActive && (
-                        <span className="block truncate text-xs text-muted-foreground/70">
+                        <span className="text-muted-foreground/70 block truncate text-xs">
                           {cat.description}
                         </span>
                       )}
@@ -323,14 +312,13 @@ export default function FAQPage() {
           </div>
 
           {/* CTA Card */}
-          <div className="rounded-xl border bg-muted/40 p-6">
-            <div className="mb-3 flex size-10 items-center justify-center rounded-lg bg-primary/10">
-              <Headphones className="size-5 text-primary" />
+          <div className="bg-muted/40 rounded-xl border p-6">
+            <div className="bg-primary/10 mb-3 flex size-10 items-center justify-center rounded-lg">
+              <Headphones className="text-primary size-5" />
             </div>
             <h3 className="text-sm font-semibold">Still have questions?</h3>
-            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-              Can&apos;t find the answer you&apos;re looking for? Our support
-              team is here to help.
+            <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
+              Can&apos;t find the answer you&apos;re looking for? Our support team is here to help.
             </p>
             <Button asChild size="sm" className="mt-4 w-full">
               <Link href="/contact">
@@ -345,17 +333,14 @@ export default function FAQPage() {
         <div>
           {/* Active filter indicator */}
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              Showing{" "}
-              <span className="font-medium text-foreground">
-                {filteredFAQs.length}
-              </span>{" "}
+            <p className="text-muted-foreground text-sm">
+              Showing <span className="text-foreground font-medium">{filteredFAQs.length}</span>{" "}
               question{filteredFAQs.length !== 1 ? "s" : ""}
               {activeCategory !== "all" && (
                 <>
                   {" "}
                   in{" "}
-                  <span className="font-medium text-foreground">
+                  <span className="text-foreground font-medium">
                     {categories.find((c) => c.value === activeCategory)?.label}
                   </span>
                 </>
@@ -364,9 +349,7 @@ export default function FAQPage() {
                 <>
                   {" "}
                   matching &ldquo;
-                  <span className="font-medium text-foreground">
-                    {searchQuery}
-                  </span>
+                  <span className="text-foreground font-medium">{searchQuery}</span>
                   &rdquo;
                 </>
               )}
@@ -377,7 +360,7 @@ export default function FAQPage() {
                   setActiveCategory("all");
                   setSearchQuery("");
                 }}
-                className="text-xs font-medium text-primary hover:underline"
+                className="text-primary text-xs font-medium hover:underline"
               >
                 Clear filters
               </button>
@@ -385,7 +368,7 @@ export default function FAQPage() {
           </div>
 
           {/* FAQ Accordion */}
-          <div className="rounded-xl border bg-card">
+          <div className="bg-card rounded-xl border">
             <FAQAccordion faqs={filteredFAQs} />
           </div>
         </div>

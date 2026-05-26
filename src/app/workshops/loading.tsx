@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { WorkshopCardSkeleton } from "@/components/shared/LoadingSkeleton";
+import { WorkshopCardSkeleton } from "@/components/ui/loading-skeleton";
 
 export default function PublicWorkshopsLoading() {
   return (

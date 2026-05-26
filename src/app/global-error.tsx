@@ -23,48 +23,41 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 py-16">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <div className="bg-background flex min-h-screen flex-col items-center justify-center px-4 py-16">
           {/* Illustration */}
           <div className="relative mb-8">
             <div className="relative flex items-center justify-center">
-              <div className="absolute size-56 rounded-full border-2 border-dashed border-destructive/10 animate-[spin_20s_linear_infinite]" />
-              <div className="absolute size-40 rounded-full border border-destructive/15 animate-[spin_15s_linear_infinite_reverse]" />
-              <div className="relative flex size-32 items-center justify-center rounded-full bg-destructive/10">
-                <AlertTriangle className="size-14 text-destructive/70" />
+              <div className="border-destructive/10 absolute size-56 animate-[spin_20s_linear_infinite] rounded-full border-2 border-dashed" />
+              <div className="border-destructive/15 absolute size-40 animate-[spin_15s_linear_infinite_reverse] rounded-full border" />
+              <div className="bg-destructive/10 relative flex size-32 items-center justify-center rounded-full">
+                <AlertTriangle className="text-destructive/70 size-14" />
               </div>
             </div>
           </div>
 
           {/* Content */}
           <div className="max-w-md text-center">
-            <h1 className="text-7xl font-bold tracking-tight text-foreground">
+            <h1 className="text-foreground text-7xl font-bold tracking-tight">
               5<span className="text-destructive">00</span>
             </h1>
-            <h2 className="mt-4 text-xl font-semibold text-foreground">
-              Application Error
-            </h2>
-            <p className="mt-3 text-muted-foreground leading-relaxed">
-              A critical error occurred in the application. This has been
-              reported to our team. Please try refreshing the page or restarting
-              your browser.
+            <h2 className="text-foreground mt-4 text-xl font-semibold">Application Error</h2>
+            <p className="text-muted-foreground mt-3 leading-relaxed">
+              A critical error occurred in the application. This has been reported to our team.
+              Please try refreshing the page or restarting your browser.
             </p>
 
             {/* Error detail card (development only) */}
             {error.message && process.env.NODE_ENV === "development" && (
-              <div className="mt-6 rounded-xl border bg-card p-4 text-left">
-                <p className="mb-1 text-xs font-medium text-muted-foreground">
+              <div className="bg-card mt-6 rounded-xl border p-4 text-left">
+                <p className="text-muted-foreground mb-1 text-xs font-medium">
                   Error Details (Development Only)
                 </p>
-                <p className="wrap-break-words font-mono text-sm text-destructive">
+                <p className="wrap-break-words text-destructive font-mono text-sm">
                   {error.message}
                 </p>
                 {error.digest && (
-                  <p className="mt-2 text-xs text-muted-foreground">
-                    Digest: {error.digest}
-                  </p>
+                  <p className="text-muted-foreground mt-2 text-xs">Digest: {error.digest}</p>
                 )}
               </div>
             )}
@@ -74,7 +67,7 @@ export default function GlobalError({
           <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
             <button
               onClick={() => reset()}
-              className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-6 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              className="bg-primary text-primary-foreground ring-offset-background hover:bg-primary/90 focus-visible:ring-ring inline-flex h-10 items-center justify-center rounded-md px-6 text-sm font-medium transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <RotateCcw className="mr-2 size-4" />
               Try Again

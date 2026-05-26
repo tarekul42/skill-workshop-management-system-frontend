@@ -12,10 +12,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function UnauthorizedLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function UnauthorizedLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

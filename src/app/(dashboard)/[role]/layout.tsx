@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { Breadcrumbs } from "@/components/shared/Breadcrumbs";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 
 import { notFound } from "next/navigation";
 

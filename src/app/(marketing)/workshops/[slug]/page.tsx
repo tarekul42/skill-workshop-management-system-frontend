@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { EnrollButton } from "@/components/workshop/EnrollButton";
+import { EnrollButton } from "@/components/features/workshops/EnrollButton";
 import { BACKEND_API_URL } from "@/lib/constants";
 import {
   enrichWorkshop,
@@ -40,9 +40,7 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-function getLevelBadgeVariant(
-  level: string,
-): "default" | "secondary" | "danger" {
+function getLevelBadgeVariant(level: string): "default" | "secondary" | "danger" {
   switch (level) {
     case "Beginner":
       return "default";
@@ -58,7 +56,7 @@ function getLevelBadgeVariant(
 function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
   return (
     <div className="group block h-full">
-      <div className="flex h-full flex-col overflow-hidden rounded-[20px] border border-border bg-surface-1 shadow-raised transition-all duration-300 hover:shadow-float hover:-translate-y-0.75">
+      <div className="border-border bg-surface-1 shadow-raised hover:shadow-float flex h-full flex-col overflow-hidden rounded-[20px] border transition-all duration-300 hover:-translate-y-0.75">
         {/* Image Container */}
         <div className="relative h-45 shrink-0 overflow-hidden">
           {workshop.images && workshop.images.length > 0 ? (
@@ -66,23 +64,24 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
               src={workshop.images[0]}
               alt={workshop.title}
               fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover transition-transform duration-500 group-hover:scale-104"
               unoptimized
             />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-surface-3">
-              <BookOpen className="size-10 text-foreground-disabled" />
+            <div className="bg-surface-3 flex h-full w-full items-center justify-center">
+              <BookOpen className="text-foreground-disabled size-10" />
             </div>
           )}
           {/* Top-Left badges */}
-          <div className="absolute left-3 top-3 flex flex-col gap-2">
+          <div className="absolute top-3 left-3 flex flex-col gap-2">
             <Badge variant={getLevelBadgeVariant(getLevelName(workshop.level))}>
               {getLevelName(workshop.level)}
             </Badge>
           </div>
           {/* Top-Right Price pill */}
-          <div className="absolute right-3 top-3">
-            <div className="rounded-lg bg-background/90 px-3 py-1.5 font-display text-sm font-bold text-foreground backdrop-blur-md">
+          <div className="absolute top-3 right-3">
+            <div className="bg-background/90 font-display text-foreground rounded-lg px-3 py-1.5 text-sm font-bold backdrop-blur-md">
               {formatCurrency(workshop.price ?? 0)}
             </div>
           </div>
@@ -92,44 +91,42 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
         <div className="flex flex-1 flex-col p-5">
           {/* Category dot + name */}
           <div className="mb-2 flex items-center gap-2">
-            <div className="size-2 rounded-full bg-primary" />
-            <span className="text-[12px] font-semibold uppercase tracking-[0.02em] text-primary">
+            <div className="bg-primary size-2 rounded-full" />
+            <span className="text-primary text-[12px] font-semibold tracking-[0.02em] uppercase">
               {getCategoryName(workshop.category)}
             </span>
           </div>
 
           {/* Title */}
           <Link href={`/workshops/${workshop.slug}`}>
-            <h3 className="font-display text-lg font-bold text-foreground line-clamp-2 transition-colors group-hover:text-primary">
+            <h3 className="font-display text-foreground group-hover:text-primary line-clamp-2 text-lg font-bold transition-colors">
               {workshop.title}
             </h3>
           </Link>
 
           {/* Meta row */}
-          <div className="mt-4 mb-auto flex flex-wrap items-center gap-4 text-xs text-foreground-subtle">
+          <div className="text-foreground-subtle mt-4 mb-auto flex flex-wrap items-center gap-4 text-xs">
             {workshop.location && (
               <div className="flex items-center gap-1.5">
-                <MapPin className="size-3.5 text-primary" />
+                <MapPin className="text-primary size-3.5" />
                 <span>{workshop.location}</span>
               </div>
             )}
             {workshop.startDate && (
               <div className="flex items-center gap-1.5">
-                <Calendar className="size-3.5 text-primary" />
+                <Calendar className="text-primary size-3.5" />
                 <span>{formatDate(workshop.startDate)}</span>
               </div>
             )}
             {workshop.startDate && workshop.endDate && (
               <div className="flex items-center gap-1.5">
-                <Clock className="size-3.5 text-primary" />
-                <span>
-                  {computeDuration(workshop.startDate, workshop.endDate)}
-                </span>
+                <Clock className="text-primary size-3.5" />
+                <span>{computeDuration(workshop.startDate, workshop.endDate)}</span>
               </div>
             )}
           </div>
 
-          <div className="my-4 border-t border-border" />
+          <div className="border-border my-4 border-t" />
 
           {/* Footer */}
           <div className="flex items-center justify-between">
@@ -152,7 +149,7 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
                       : "text-danger";
                 return (
                   <>
-                    <div className="mb-1 h-1.5 w-full rounded-full bg-border">
+                    <div className="bg-border mb-1 h-1.5 w-full rounded-full">
                       <div
                         className={`h-full rounded-full ${bgClass}`}
                         style={{
@@ -161,9 +158,7 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
                       />
                     </div>
                     <p className={`text-[12px] font-semibold ${textClass}`}>
-                      {workshop.maxSeats
-                        ? workshop.maxSeats - workshop.currentEnrollments
-                        : "∞"}{" "}
+                      {workshop.maxSeats ? workshop.maxSeats - workshop.currentEnrollments : "∞"}{" "}
                       seats left
                     </p>
                   </>
@@ -172,7 +167,7 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
             </div>
             <Link
               href={`/workshops/${workshop.slug}`}
-              className="text-sm font-semibold text-primary transition-colors group-hover:underline ml-4"
+              className="text-primary ml-4 text-sm font-semibold transition-colors group-hover:underline"
             >
               Enroll Now →
             </Link>
@@ -183,9 +178,7 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
   );
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
   try {
@@ -245,19 +238,18 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
   let allWorkshops: IWorkshop[] = [];
 
   try {
-    const [workshopRes, categoriesRes, levelsRes, similarRes] =
-      await Promise.allSettled([
-        fetch(`${BACKEND_API_URL}/workshop/${slug}`, {
-          next: { revalidate: 60 },
-        }),
-        fetch(`${BACKEND_API_URL}/category`, { next: { revalidate: 60 } }),
-        fetch(`${BACKEND_API_URL}/workshop/levels`, {
-          next: { revalidate: 60 },
-        }),
-        fetch(`${BACKEND_API_URL}/workshop?limit=4`, {
-          next: { revalidate: 60 },
-        }),
-      ]);
+    const [workshopRes, categoriesRes, levelsRes, similarRes] = await Promise.allSettled([
+      fetch(`${BACKEND_API_URL}/workshop/${slug}`, {
+        next: { revalidate: 60 },
+      }),
+      fetch(`${BACKEND_API_URL}/category`, { next: { revalidate: 60 } }),
+      fetch(`${BACKEND_API_URL}/workshop/levels`, {
+        next: { revalidate: 60 },
+      }),
+      fetch(`${BACKEND_API_URL}/workshop?limit=4`, {
+        next: { revalidate: 60 },
+      }),
+    ]);
 
     if (workshopRes.status === "fulfilled") {
       const json = await workshopRes.value.json();
@@ -304,12 +296,9 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
   const similarWorkshops = allWorkshops
     .filter((w) => {
-      const wCatId =
-        typeof w.category === "string" ? w.category : w.category?._id;
+      const wCatId = typeof w.category === "string" ? w.category : w.category?._id;
       const wsCatId =
-        typeof workshop.category === "string"
-          ? workshop.category
-          : workshop.category?._id;
+        typeof workshop.category === "string" ? workshop.category : workshop.category?._id;
       return w._id !== workshop._id && wCatId === wsCatId;
     })
     .slice(0, 3);
@@ -321,11 +310,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
       : [
           ...similarWorkshops,
           ...allWorkshops
-            .filter(
-              (w) =>
-                w._id !== workshop._id &&
-                !similarWorkshops.some((s) => s._id === w._id),
-            )
+            .filter((w) => w._id !== workshop._id && !similarWorkshops.some((s) => s._id === w._id))
             .slice(0, 3 - similarWorkshops.length),
         ];
 
@@ -334,24 +319,18 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
   return (
     <div className="bg-background min-h-screen">
       {/* Breadcrumb Bar */}
-      <div className="w-full border-b border-border bg-background py-4">
+      <div className="border-border bg-background w-full border-b py-4">
         <div className="site-container">
           <nav aria-label="Breadcrumb">
-            <ol className="flex items-center gap-2 text-[13px] font-medium text-foreground-muted">
+            <ol className="text-foreground-muted flex items-center gap-2 text-[13px] font-medium">
               <li>
-                <Link
-                  href="/"
-                  className="hover:text-foreground transition-colors"
-                >
+                <Link href="/" className="hover:text-foreground transition-colors">
                   Home
                 </Link>
               </li>
               <li className="text-foreground-muted/50">/</li>
               <li>
-                <Link
-                  href="/workshops"
-                  className="hover:text-foreground transition-colors"
-                >
+                <Link href="/workshops" className="hover:text-foreground transition-colors">
                   Workshops
                 </Link>
               </li>
@@ -382,93 +361,85 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                       src={workshop.images[0]}
                       alt={workshop.title}
                       fill
+                      sizes="(max-width: 1024px) 100vw, 66vw"
                       className="object-cover"
                       priority
                       unoptimized
                     />
                     {/* Thumbnails strip at bottom if >1 image */}
                     {workshop.images.length > 1 && (
-                      <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 rounded-lg bg-background/90 p-2 backdrop-blur-md">
-                        {workshop.images
-                          .slice(0, 5)
-                          .map((img: string, idx: number) => (
-                            <div
-                              key={idx}
-                              className="relative size-16 cursor-pointer overflow-hidden rounded-lg opacity-60 transition-opacity hover:opacity-100"
-                            >
-                              <Image
-                                src={img}
-                                alt={`${workshop.title} ${idx + 1}`}
-                                fill
-                                className="object-cover"
-                                unoptimized
-                              />
-                            </div>
-                          ))}
+                      <div className="bg-background/90 absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 rounded-lg p-2 backdrop-blur-md">
+                        {workshop.images.slice(0, 5).map((img: string, idx: number) => (
+                          <div
+                            key={idx}
+                            className="relative size-16 cursor-pointer overflow-hidden rounded-lg opacity-60 transition-opacity hover:opacity-100"
+                          >
+                            <Image
+                              src={img}
+                              alt={`${workshop.title} ${idx + 1}`}
+                              fill
+                              sizes="64px"
+                              className="object-cover"
+                              unoptimized
+                            />
+                          </div>
+                        ))}
                       </div>
                     )}
                   </>
                 ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-surface-3">
-                    <BookOpen className="size-16 text-primary/40" />
+                  <div className="bg-surface-3 flex h-full w-full items-center justify-center">
+                    <BookOpen className="text-primary/40 size-16" />
                   </div>
                 )}
               </div>
 
               {/* Badges Row */}
               <div className="mb-3 flex flex-wrap gap-2">
-                <Badge
-                  variant={getLevelBadgeVariant(getLevelName(workshop.level))}
-                >
+                <Badge variant={getLevelBadgeVariant(getLevelName(workshop.level))}>
                   {getLevelName(workshop.level)}
                 </Badge>
-                <Badge variant="outline">
-                  {getCategoryName(workshop.category)}
-                </Badge>
+                <Badge variant="outline">{getCategoryName(workshop.category)}</Badge>
               </div>
 
               {/* H1 Title */}
-              <h1 className="font-display text-[40px] leading-[1.1] font-bold tracking-[-0.02em] text-foreground sm:text-5xl my-4">
+              <h1 className="font-display text-foreground my-4 text-[40px] leading-[1.1] font-bold tracking-[-0.02em] sm:text-5xl">
                 {workshop.title}
               </h1>
 
               {/* Meta Pills Row */}
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 {workshop.location && (
-                  <div className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-3.5 py-2 text-sm">
-                    <MapPin className="size-4 text-primary" />
+                  <div className="border-border bg-surface-2 flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm">
+                    <MapPin className="text-primary size-4" />
                     <span className="text-foreground">{workshop.location}</span>
                   </div>
                 )}
                 {workshop.startDate && (
-                  <div className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-3.5 py-2 text-sm">
-                    <Calendar className="size-4 text-primary" />
-                    <span className="text-foreground">
-                      {formatDate(workshop.startDate)}
-                    </span>
+                  <div className="border-border bg-surface-2 flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm">
+                    <Calendar className="text-primary size-4" />
+                    <span className="text-foreground">{formatDate(workshop.startDate)}</span>
                   </div>
                 )}
                 {workshop.startDate && workshop.endDate && (
-                  <div className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-3.5 py-2 text-sm">
-                    <Clock className="size-4 text-primary" />
+                  <div className="border-border bg-surface-2 flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm">
+                    <Clock className="text-primary size-4" />
                     <span className="text-foreground">
                       {computeDuration(workshop.startDate, workshop.endDate)}
                     </span>
                   </div>
                 )}
-                <div className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-3.5 py-2 text-sm">
-                  <Users className="size-4 text-primary" />
-                  <span className="text-foreground">
-                    {workshop.maxSeats ?? "∞"} seats total
-                  </span>
+                <div className="border-border bg-surface-2 flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm">
+                  <Users className="text-primary size-4" />
+                  <span className="text-foreground">{workshop.maxSeats ?? "∞"} seats total</span>
                 </div>
-                <div className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-3.5 py-2 text-sm">
-                  <span className="font-semibold text-foreground">
+                <div className="border-border bg-surface-2 flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm">
+                  <span className="text-foreground font-semibold">
                     {getLevelName(workshop.level)}
                   </span>
                 </div>
-                <div className="flex items-center gap-1.5 rounded-lg border border-border bg-surface-2 px-3.5 py-2 text-sm">
-                  <span className="font-semibold text-foreground">
+                <div className="border-border bg-surface-2 flex items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm">
+                  <span className="text-foreground font-semibold">
                     {formatCurrency(workshop.price ?? 0)}
                   </span>
                 </div>
@@ -477,27 +448,25 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
             {/* About This Workshop */}
             <section>
-              <h2 className="font-display text-2xl font-bold text-foreground mb-4">
+              <h2 className="font-display text-foreground mb-4 text-2xl font-bold">
                 About This Workshop
               </h2>
               <Separator className="mb-4" />
-              <div className="text-foreground leading-relaxed">
-                {workshop.description}
-              </div>
+              <div className="text-foreground leading-relaxed">{workshop.description}</div>
             </section>
 
             {/* What You'll Learn */}
             {workshop.whatYouLearn?.length > 0 && (
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground mb-4">
+                <h2 className="font-display text-foreground mb-4 text-2xl font-bold">
                   What You&apos;ll Learn
                 </h2>
                 <Separator className="mb-4" />
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {workshop.whatYouLearn.map((item, i) => (
                     <div key={i} className="flex items-start gap-2.5">
-                      <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-success-subtle">
-                        <CheckCircle className="size-3 text-success" />
+                      <div className="bg-success-subtle flex size-5 shrink-0 items-center justify-center rounded-full">
+                        <CheckCircle className="text-success size-3" />
                       </div>
                       <span className="text-foreground">{item}</span>
                     </div>
@@ -509,14 +478,14 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
             {/* Prerequisites */}
             {workshop.prerequisites?.length > 0 && (
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground mb-4">
+                <h2 className="font-display text-foreground mb-4 text-2xl font-bold">
                   Prerequisites
                 </h2>
                 <Separator className="mb-4" />
                 <div className="space-y-2">
                   {workshop.prerequisites.map((item, i) => (
                     <div key={i} className="flex items-start gap-2.5">
-                      <div className="size-1.5 shrink-0 rounded-full bg-foreground-muted mt-2" />
+                      <div className="bg-foreground-muted mt-2 size-1.5 shrink-0 rounded-full" />
                       <span className="text-foreground-subtle">{item}</span>
                     </div>
                   ))}
@@ -527,15 +496,13 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
             {/* Benefits */}
             {workshop.benefits?.length > 0 && (
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground mb-4">
-                  Benefits
-                </h2>
+                <h2 className="font-display text-foreground mb-4 text-2xl font-bold">Benefits</h2>
                 <Separator className="mb-4" />
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                   {workshop.benefits.map((item, i) => (
                     <div key={i} className="flex items-start gap-2.5">
-                      <div className="flex size-5 shrink-0 items-center justify-center rounded-full bg-accent-subtle">
-                        <Star className="size-3 text-accent-foreground" />
+                      <div className="bg-accent-subtle flex size-5 shrink-0 items-center justify-center rounded-full">
+                        <Star className="text-accent-foreground size-3" />
                       </div>
                       <span className="text-foreground">{item}</span>
                     </div>
@@ -547,17 +514,15 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
             {/* Syllabus */}
             {workshop.syllabus?.length > 0 && (
               <section>
-                <h2 className="font-display text-2xl font-bold text-foreground mb-4">
-                  Syllabus
-                </h2>
+                <h2 className="font-display text-foreground mb-4 text-2xl font-bold">Syllabus</h2>
                 <Separator className="mb-4" />
                 <div className="space-y-4">
                   {workshop.syllabus.map((item, i) => (
                     <div
                       key={i}
-                      className="flex items-start gap-3.5 border-t border-border pt-4 first:border-0 first:pt-0"
+                      className="border-border flex items-start gap-3.5 border-t pt-4 first:border-0 first:pt-0"
                     >
-                      <span className="font-display text-lg font-bold text-primary min-w-7">
+                      <span className="font-display text-primary min-w-7 text-lg font-bold">
                         {i + 1}
                       </span>
                       <span className="text-foreground">{item}</span>
@@ -569,41 +534,35 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
             {/* Instructor Card */}
             <section>
-              <h2 className="font-display text-2xl font-bold text-foreground mb-4">
+              <h2 className="font-display text-foreground mb-4 text-2xl font-bold">
                 Your Instructor
               </h2>
               <Separator className="mb-4" />
-              <div className="rounded-2xl border border-border bg-surface-1 p-7">
+              <div className="border-border bg-surface-1 rounded-2xl border p-7">
                 <div className="flex items-start gap-5">
                   <Avatar className="size-20">
                     {typeof workshop.createdBy === "object" &&
                       "picture" in workshop.createdBy &&
                       (workshop.createdBy as { picture?: string }).picture && (
                         <AvatarImage
-                          src={
-                            (workshop.createdBy as { picture?: string })
-                              .picture as string
-                          }
+                          src={(workshop.createdBy as { picture?: string }).picture as string}
                           alt={getCreatorName(workshop.createdBy)}
                         />
                       )}
-                    <AvatarFallback className="text-lg font-bold bg-primary text-primary-foreground">
+                    <AvatarFallback className="bg-primary text-primary-foreground text-lg font-bold">
                       {getInitials(getCreatorName(workshop.createdBy) || "IN")}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-display text-xl font-bold text-foreground">
+                    <h3 className="font-display text-foreground text-xl font-bold">
                       {getCreatorName(workshop.createdBy)}
                     </h3>
-                    <p className="text-sm font-medium text-primary mt-1">
-                      Expert Instructor
-                    </p>
-                    {typeof workshop.createdBy === "object" &&
-                      workshop.createdBy.bio && (
-                        <p className="text-sm text-foreground-subtle leading-relaxed mt-3 line-clamp-4">
-                          {workshop.createdBy.bio}
-                        </p>
-                      )}
+                    <p className="text-primary mt-1 text-sm font-medium">Expert Instructor</p>
+                    {typeof workshop.createdBy === "object" && workshop.createdBy.bio && (
+                      <p className="text-foreground-subtle mt-3 line-clamp-4 text-sm leading-relaxed">
+                        {workshop.createdBy.bio}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -611,15 +570,15 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
           </div>
 
           {/* Right Column: Sticky Sidebar - THE CONVERSION ENGINE */}
-          <aside className="hidden lg:sticky lg:block lg:top-23 lg:self-start lg:max-h-[calc(100vh-100px)] lg:overflow-y-auto hidden-scrollbar">
-            <div className="rounded-3xl border border-border bg-surface-1 p-7 shadow-2">
+          <aside className="hidden-scrollbar hidden lg:sticky lg:top-23 lg:block lg:max-h-[calc(100vh-100px)] lg:self-start lg:overflow-y-auto">
+            <div className="border-border bg-surface-1 shadow-2 rounded-3xl border p-7">
               {/* Price Block */}
               <div className="mb-6">
-                <p className="text-[13px] font-semibold tracking-wider text-foreground-muted uppercase mb-1">
+                <p className="text-foreground-muted mb-1 text-[13px] font-semibold tracking-wider uppercase">
                   Price
                 </p>
                 <div className="flex items-baseline gap-1.5">
-                  <span className="text-5xl font-extrabold tracking-[-0.03em] text-foreground font-display">
+                  <span className="text-foreground font-display text-5xl font-extrabold tracking-[-0.03em]">
                     {workshop.price
                       ? formatCurrency(workshop.price)
                           .replace(/BDT|\$/g, "")
@@ -627,21 +586,17 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                       : "Free"}
                   </span>
                   {workshop.price && (
-                    <span className="text-base font-semibold text-foreground-subtle">
-                      ৳
-                    </span>
+                    <span className="text-foreground-subtle text-base font-semibold">৳</span>
                   )}
                 </div>
-                <p className="text-[13px] text-foreground-muted mt-1">
-                  per student
-                </p>
+                <p className="text-foreground-muted mt-1 text-[13px]">per student</p>
               </div>
 
               <Separator className="mb-6" />
 
               {/* Seats Block */}
               <div className="mb-6">
-                <p className="mb-3 text-[13px] font-semibold tracking-[0.04em] uppercase text-foreground-muted">
+                <p className="text-foreground-muted mb-3 text-[13px] font-semibold tracking-[0.04em] uppercase">
                   Seats Available
                 </p>
                 {(() => {
@@ -656,7 +611,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                         : "bg-danger";
                   return (
                     <>
-                      <div className="h-2 w-full overflow-hidden rounded-full bg-border">
+                      <div className="bg-border h-2 w-full overflow-hidden rounded-full">
                         <div
                           className={`h-full rounded-full transition-all ${bgClass}`}
                           style={{
@@ -670,17 +625,13 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                             <span className="text-foreground">
                               {seatsAvailable} of {workshop.maxSeats}
                             </span>{" "}
-                            <span className="text-foreground-muted">
-                              seats remaining
-                            </span>
+                            <span className="text-foreground-muted">seats remaining</span>
                           </>
                         ) : (
-                          <span className="font-bold text-danger">
-                            WORKSHOP FULL
-                          </span>
+                          <span className="text-danger font-bold">WORKSHOP FULL</span>
                         )}
                         {seatsAvailable > 0 && seatsAvailable <= 5 && (
-                          <span className="ml-2 text-danger font-medium animate-pulse">
+                          <span className="text-danger ml-2 animate-pulse font-medium">
                             ⚠ Almost full!
                           </span>
                         )}
@@ -699,24 +650,22 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   seatsAvailable={seatsAvailable}
                   variant="default"
                   size="lg"
-                  className="w-full h-13 rounded-xl text-base font-semibold shadow-amber-glow hover:shadow-amber-glow/80 hover:-translate-y-0.5 transition-all"
+                  className="h-13 w-full rounded-xl text-base font-semibold transition-all hover:-translate-y-0.5"
                 />
               </div>
 
               {/* Trust Signals */}
               <div className="mb-6 space-y-2.5 pt-2">
-                <div className="flex items-center gap-2 text-[13px] text-foreground-subtle">
-                  <Shield className="size-4 text-primary" />
+                <div className="text-foreground-subtle flex items-center gap-2 text-[13px]">
+                  <Shield className="text-primary size-4" />
                   <span>Secure payment via SSLCommerz</span>
                 </div>
-                <div className="flex items-center gap-2 text-[13px] text-foreground-subtle">
+                <div className="text-foreground-subtle flex items-center gap-2 text-[13px]">
                   <span className="text-success text-base leading-none">↩</span>
                   <span>7-day money-back guarantee</span>
                 </div>
-                <div className="flex items-center gap-2 text-[13px] text-foreground-subtle">
-                  <span className="text-primary text-base leading-none">
-                    📧
-                  </span>
+                <div className="text-foreground-subtle flex items-center gap-2 text-[13px]">
+                  <span className="text-primary text-base leading-none">📧</span>
                   <span>Instant confirmation email</span>
                 </div>
               </div>
@@ -725,21 +674,19 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
               {/* Dates Block */}
               <div className="mb-6 space-y-3">
-                <div className="flex justify-between items-center">
-                  <p className="text-[13px] font-semibold tracking-[0.04em] uppercase text-foreground-muted">
+                <div className="flex items-center justify-between">
+                  <p className="text-foreground-muted text-[13px] font-semibold tracking-[0.04em] uppercase">
                     Starts
                   </p>
-                  <p className="font-bold text-foreground text-sm">
-                    {workshop.startDate
-                      ? formatDate(workshop.startDate)
-                      : "TBA"}
+                  <p className="text-foreground text-sm font-bold">
+                    {workshop.startDate ? formatDate(workshop.startDate) : "TBA"}
                   </p>
                 </div>
-                <div className="flex justify-between items-center">
-                  <p className="text-[13px] font-semibold tracking-[0.04em] uppercase text-foreground-muted">
+                <div className="flex items-center justify-between">
+                  <p className="text-foreground-muted text-[13px] font-semibold tracking-[0.04em] uppercase">
                     Ends
                   </p>
-                  <p className="font-medium text-foreground text-sm">
+                  <p className="text-foreground text-sm font-medium">
                     {workshop.endDate ? formatDate(workshop.endDate) : "TBA"}
                   </p>
                 </div>
@@ -749,7 +696,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
 
               {/* Share Section */}
               <div>
-                <p className="mb-3 text-xs font-bold tracking-[0.04em] uppercase text-foreground-muted">
+                <p className="text-foreground-muted mb-3 text-xs font-bold tracking-[0.04em] uppercase">
                   Share this workshop
                 </p>
                 <div className="flex gap-2">
@@ -788,7 +735,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
         {/* Similar Workshops */}
         {finalSimilar.length > 0 && (
           <section className="mb-8">
-            <h2 className="font-display text-2xl font-bold text-foreground mb-6">
+            <h2 className="font-display text-foreground mb-6 text-2xl font-bold">
               You Might Also Like
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -811,17 +758,17 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
       </div>
 
       {/* Mobile Fixed Enroll Bar — visible only on mobile */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 lg:hidden border-t border-border bg-background/95 backdrop-blur-md px-4 py-3">
+      <div className="border-border bg-background/95 fixed right-0 bottom-0 left-0 z-50 border-t px-4 py-3 backdrop-blur-md lg:hidden">
         <div className="flex items-center justify-between gap-4">
           {/* Price */}
           <div>
-            <p className="text-xs text-foreground-muted font-medium">Price</p>
-            <p className="font-display text-xl font-extrabold text-foreground">
+            <p className="text-foreground-muted text-xs font-medium">Price</p>
+            <p className="font-display text-foreground text-xl font-extrabold">
               {workshop.price ? formatCurrency(workshop.price) : "Free"}
             </p>
           </div>
           {/* Enroll Button */}
-          <div className="flex-1 max-w-[200px]">
+          <div className="max-w-50 flex-1">
             <EnrollButton
               workshopId={workshop._id}
               slug={slug}

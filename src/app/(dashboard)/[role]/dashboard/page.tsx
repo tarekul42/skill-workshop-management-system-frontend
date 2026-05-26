@@ -12,21 +12,25 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { StatCardSkeleton } from "@/components/shared/LoadingSkeleton";
+import { StatCardSkeleton } from "@/components/ui/loading-skeleton";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getSavedUser } from "@/lib/auth-helpers";
 import { apiClient, apiClientPaginated } from "@/lib/api-client";
 import { formatDate } from "@/lib/formatters";
+import { AnimatedPage, StaggerContainer, StaggerItem } from "@/components/ui/animated-page";
+import { StudentDashboard } from "@/components/features/dashboard/StudentDashboard";
 import {
-  AnimatedPage,
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/shared/AnimatedPage";
-import { StudentDashboard } from "@/components/dashboard/StudentDashboard";
-import { InstructorDashboard, type InstructorWorkshopItem, type InstructorEnrollmentItem } from "@/components/dashboard/InstructorDashboard";
-import { AdminDashboard, type AuditLogItem, type PlatformHealth } from "@/components/dashboard/AdminDashboard";
+  InstructorDashboard,
+  type InstructorWorkshopItem,
+  type InstructorEnrollmentItem,
+} from "@/components/features/dashboard/InstructorDashboard";
+import {
+  AdminDashboard,
+  type AuditLogItem,
+  type PlatformHealth,
+} from "@/components/features/dashboard/AdminDashboard";
 
 // ─── Props ──────────────────────────────────────────────────────────
 
@@ -41,9 +45,7 @@ interface EnrollmentItem {
   status?: string;
   payment?: { amount?: number; status?: string };
   amount?: number;
-  workshop?:
-    | string
-    | { _id: string; title: string; slug?: string; images?: string[] };
+  workshop?: string | { _id: string; title: string; slug?: string; images?: string[] };
   createdAt?: string;
   studentCount?: number;
 }
@@ -73,9 +75,7 @@ function StatCard({ icon, label, value, change, iconBg }: StatCardProps) {
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium text-muted-foreground">
-            {label}
-          </CardTitle>
+          <CardTitle className="text-muted-foreground text-sm font-medium">{label}</CardTitle>
           <div
             className={`flex size-9 items-center justify-center rounded-lg ${iconBg ?? "bg-muted"}`}
           >
@@ -85,7 +85,7 @@ function StatCard({ icon, label, value, change, iconBg }: StatCardProps) {
       </CardHeader>
       <CardContent>
         <p className="text-2xl font-bold">{value}</p>
-        <p className="mt-1 text-xs text-muted-foreground">{change}</p>
+        <p className="text-muted-foreground mt-1 text-xs">{change}</p>
       </CardContent>
     </Card>
   );
@@ -96,17 +96,9 @@ function StatCard({ icon, label, value, change, iconBg }: StatCardProps) {
 function enrollmentStatusBadge(status?: string) {
   switch (status) {
     case "COMPLETE":
-      return (
-        <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
-          Paid
-        </Badge>
-      );
+      return <Badge variant="success">Paid</Badge>;
     case "PENDING":
-      return (
-        <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
-          Pending
-        </Badge>
-      );
+      return <Badge variant="warning">Pending</Badge>;
     case "FAILED":
       return <Badge variant="danger">Failed</Badge>;
     case "CANCEL":
@@ -134,25 +126,23 @@ function ActivityItem({
   href?: string;
 }) {
   const content = (
-    <div className="flex items-center gap-3 rounded-lg border p-3 transition-colors hover:bg-muted/50">
-      <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted">
+    <div className="hover:bg-muted/50 flex items-center gap-3 rounded-lg border p-3 transition-colors">
+      <div className="bg-muted flex size-9 shrink-0 items-center justify-center rounded-full">
         {icon}
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium truncate">{title}</p>
-        <div className="flex items-center gap-2 mt-0.5">
-          <p className="text-xs text-muted-foreground truncate">{subtitle}</p>
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-medium">{title}</p>
+        <div className="mt-0.5 flex items-center gap-2">
+          <p className="text-muted-foreground truncate text-xs">{subtitle}</p>
           {badge}
         </div>
       </div>
       {date && (
-        <span className="hidden text-xs text-muted-foreground sm:block shrink-0">
+        <span className="text-muted-foreground hidden shrink-0 text-xs sm:block">
           {formatDate(date)}
         </span>
       )}
-      {href && (
-        <ExternalLink className="size-3.5 text-muted-foreground shrink-0" />
-      )}
+      {href && <ExternalLink className="text-muted-foreground size-3.5 shrink-0" />}
     </div>
   );
 
@@ -222,42 +212,29 @@ export default function DashboardPage({ params }: PageProps) {
 
       try {
         if (role === "SUPER_ADMIN" || role === "ADMIN") {
-          const [
-            usersRes,
-            workshopsRes,
-            enrollmentsRes,
-            paymentsRes,
-            auditLogsRes,
-          ] = await Promise.allSettled([
-            apiClient<{ totalUsers: number }>("/stats/users"),
-            apiClient<{ totalWorkshop: number }>("/stats/workshops"),
-            apiClient<{ totalEnrollment: number }>("/stats/enrollment"),
-            apiClient<{ totalRevenue: { _id: null; totalRevenue: number }[] }>(
-              "/stats/payment",
-            ),
-            apiClientPaginated<AuditLogItem[]>("/audit-log?page=1&limit=10"),
-            apiClient<unknown>("/health/health-check"),
-          ]);
+          const [usersRes, workshopsRes, enrollmentsRes, paymentsRes, auditLogsRes] =
+            await Promise.allSettled([
+              apiClient<{ totalUsers: number }>("/stats/users"),
+              apiClient<{ totalWorkshop: number }>("/stats/workshops"),
+              apiClient<{ totalEnrollment: number }>("/stats/enrollment"),
+              apiClient<{ totalRevenue: { _id: null; totalRevenue: number }[] }>("/stats/payment"),
+              apiClientPaginated<AuditLogItem[]>("/audit-log?page=1&limit=10"),
+              apiClient<unknown>("/health/health-check"),
+            ]);
 
-          const totalUsers =
-            usersRes.status === "fulfilled"
-              ? (usersRes.value.totalUsers ?? 0)
-              : 0;
+          const totalUsers = usersRes.status === "fulfilled" ? (usersRes.value.totalUsers ?? 0) : 0;
           const totalWorkshops =
-            workshopsRes.status === "fulfilled"
-              ? (workshopsRes.value.totalWorkshop ?? 0)
-              : 0;
+            workshopsRes.status === "fulfilled" ? (workshopsRes.value.totalWorkshop ?? 0) : 0;
           const totalEnrollments =
-            enrollmentsRes.status === "fulfilled"
-              ? (enrollmentsRes.value.totalEnrollment ?? 0)
-              : 0;
+            enrollmentsRes.status === "fulfilled" ? (enrollmentsRes.value.totalEnrollment ?? 0) : 0;
           const totalRevenue =
             paymentsRes.status === "fulfilled"
               ? (paymentsRes.value.totalRevenue?.[0]?.totalRevenue ?? 0)
               : 0;
 
-          const auditLogs = auditLogsRes.status === "fulfilled" ? (auditLogsRes.value.data ?? []) : [];
-          
+          const auditLogs =
+            auditLogsRes.status === "fulfilled" ? (auditLogsRes.value.data ?? []) : [];
+
           const health: PlatformHealth = {
             api: { status: "HEALTHY", latency: 45 },
             db: { status: "HEALTHY", latency: 12 },
@@ -290,26 +267,20 @@ export default function DashboardPage({ params }: PageProps) {
         } else if (role === "INSTRUCTOR") {
           const [workshopsRes, enrollmentsRes] = await Promise.allSettled([
             apiClientPaginated<WorkshopItem[]>("/workshop?page=1&limit=100"),
-            apiClientPaginated<EnrollmentItem[]>(
-              "/enrollment?page=1&limit=100",
-            ),
+            apiClientPaginated<EnrollmentItem[]>("/enrollment?page=1&limit=100"),
           ]);
 
           const instructorWorkshops =
-            workshopsRes.status === "fulfilled"
-              ? (workshopsRes.value.data ?? [])
-              : [];
+            workshopsRes.status === "fulfilled" ? (workshopsRes.value.data ?? []) : [];
           const totalWorkshops = instructorWorkshops.length;
 
           const allEnrollments =
-            enrollmentsRes.status === "fulfilled"
-              ? (enrollmentsRes.value.data ?? [])
-              : [];
+            enrollmentsRes.status === "fulfilled" ? (enrollmentsRes.value.data ?? []) : [];
 
           const totalStudents = allEnrollments.length;
           const totalRevenue = allEnrollments.reduce(
             (sum, e) => sum + (e.payment?.amount ?? e.amount ?? 0),
-            0,
+            0
           );
 
           const workshopMap = new Map<string, string>();
@@ -321,13 +292,13 @@ export default function DashboardPage({ params }: PageProps) {
             .filter(
               (e) =>
                 e.workshop &&
-                workshopMap.has(
-                  typeof e.workshop === "string" ? e.workshop : e.workshop._id,
-                ),
+                workshopMap.has(typeof e.workshop === "string" ? e.workshop : e.workshop._id)
             )
             .slice(0, 5);
 
-          const publishedCount = instructorWorkshops.filter(w => w.status === "PUBLISHED" || w.status === "ACTIVE").length;
+          const publishedCount = instructorWorkshops.filter(
+            (w) => w.status === "PUBLISHED" || w.status === "ACTIVE"
+          ).length;
           const draftCount = totalWorkshops - publishedCount;
 
           setInstructorData({
@@ -338,7 +309,7 @@ export default function DashboardPage({ params }: PageProps) {
               publishedCount,
               draftCount,
             },
-            recentWorkshops: instructorWorkshops.slice(0, 5).map(w => ({
+            recentWorkshops: instructorWorkshops.slice(0, 5).map((w) => ({
               _id: w._id,
               title: w.title,
               slug: w.slug,
@@ -347,10 +318,13 @@ export default function DashboardPage({ params }: PageProps) {
               status: w.status,
               createdAt: w.createdAt,
             })),
-            recentEnrollments: recentInstructorEnrollments.map(e => ({
+            recentEnrollments: recentInstructorEnrollments.map((e) => ({
               _id: e._id,
-              studentName: "Student", 
-              workshopTitle: typeof e.workshop === "object" ? e.workshop.title : workshopMap.get(e.workshop as string) || "Workshop",
+              studentName: "Student",
+              workshopTitle:
+                typeof e.workshop === "object"
+                  ? e.workshop.title
+                  : workshopMap.get(e.workshop as string) || "Workshop",
               date: e.createdAt || "",
               status: e.status || "PENDING",
             })),
@@ -374,14 +348,14 @@ export default function DashboardPage({ params }: PageProps) {
 
           const totalEnrollments = enrollments.length;
           const completedCount = enrollments.filter(
-            (e) => e.status === "COMPLETE" || e.status === "PAID" || e.status === "ACTIVE",
+            (e) => e.status === "COMPLETE" || e.status === "PAID" || e.status === "ACTIVE"
           ).length;
           const totalSpent = enrollments.reduce(
             (sum, e) => sum + (e.payment?.amount ?? e.amount ?? 0),
-            0,
+            0
           );
           const pendingPayments = enrollments.filter(
-            (e) => e.status === "PENDING" || e.payment?.status === "UNPAID",
+            (e) => e.status === "PENDING" || e.payment?.status === "UNPAID"
           ).length;
 
           setStudentData({
@@ -447,9 +421,7 @@ export default function DashboardPage({ params }: PageProps) {
     <AnimatedPage className="space-y-6">
       {/* ── Greeting ───────────────────────────────────────────────── */}
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          Welcome back, {user?.name ?? "User"}!
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">Welcome back, {user?.name ?? "User"}!</h1>
         <p className="text-muted-foreground">
           {role === "STUDENT"
             ? "Track your workshop enrollments and progress."
@@ -466,11 +438,11 @@ export default function DashboardPage({ params }: PageProps) {
         <StatCardSkeleton count={4} />
       ) : error ? (
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-12 text-center">
-          <div className="flex size-12 items-center justify-center rounded-full bg-muted mb-3">
-            <Activity className="size-5 text-muted-foreground" />
+          <div className="bg-muted mb-3 flex size-12 items-center justify-center rounded-full">
+            <Activity className="text-muted-foreground size-5" />
           </div>
-          <p className="text-sm font-medium text-destructive">{error}</p>
-          <p className="text-xs text-muted-foreground mt-1">
+          <p className="text-destructive text-sm font-medium">{error}</p>
+          <p className="text-muted-foreground mt-1 text-xs">
             Please try again later or contact support.
           </p>
         </div>
@@ -496,11 +468,9 @@ export default function DashboardPage({ params }: PageProps) {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <div className="flex items-center gap-2">
-                <ClipboardList className="size-4 text-muted-foreground" />
+                <ClipboardList className="text-muted-foreground size-4" />
                 <CardTitle className="text-base">
-                  {role === "STUDENT"
-                    ? "My Recent Enrollments"
-                    : "Recent Student Enrollments"}
+                  {role === "STUDENT" ? "My Recent Enrollments" : "Recent Student Enrollments"}
                 </CardTitle>
               </div>
               <Button variant="ghost" size="sm" asChild>
@@ -513,28 +483,21 @@ export default function DashboardPage({ params }: PageProps) {
               <div className="space-y-2">
                 {recentEnrollments.map((enrollment) => {
                   const workshopTitle =
-                    typeof enrollment.workshop === "object" &&
-                    enrollment.workshop?.title
+                    typeof enrollment.workshop === "object" && enrollment.workshop?.title
                       ? enrollment.workshop.title
                       : "Workshop";
                   const workshopSlug =
-                    typeof enrollment.workshop === "object"
-                      ? enrollment.workshop?.slug
-                      : null;
+                    typeof enrollment.workshop === "object" ? enrollment.workshop?.slug : null;
 
                   return (
                     <ActivityItem
                       key={enrollment._id}
-                      icon={
-                        <BookOpen className="size-4 text-muted-foreground" />
-                      }
+                      icon={<BookOpen className="text-muted-foreground size-4" />}
                       title={workshopTitle}
                       subtitle={`Students: ${enrollment.studentCount ?? 1}`}
                       badge={enrollmentStatusBadge(enrollment.status)}
                       date={enrollment.createdAt}
-                      href={
-                        workshopSlug ? `/workshops/${workshopSlug}` : undefined
-                      }
+                      href={workshopSlug ? `/workshops/${workshopSlug}` : undefined}
                     />
                   );
                 })}
@@ -548,18 +511,14 @@ export default function DashboardPage({ params }: PageProps) {
       {!loading &&
         !error &&
         recentWorkshops.length > 0 &&
-        (role === "SUPER_ADMIN" ||
-          role === "ADMIN" ||
-          role === "INSTRUCTOR") && (
+        (role === "SUPER_ADMIN" || role === "ADMIN" || role === "INSTRUCTOR") && (
           <StaggerItem>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Calendar className="size-4 text-muted-foreground" />
+                  <Calendar className="text-muted-foreground size-4" />
                   <CardTitle className="text-base">
-                    {role === "INSTRUCTOR"
-                      ? "My Workshops"
-                      : "Recent Workshops"}
+                    {role === "INSTRUCTOR" ? "My Workshops" : "Recent Workshops"}
                   </CardTitle>
                 </div>
                 <Button variant="ghost" size="sm" asChild>
@@ -573,9 +532,7 @@ export default function DashboardPage({ params }: PageProps) {
                   {recentWorkshops.map((workshop) => (
                     <ActivityItem
                       key={workshop._id}
-                      icon={
-                        <BookOpen className="size-4 text-muted-foreground" />
-                      }
+                      icon={<BookOpen className="text-muted-foreground size-4" />}
                       title={workshop.title}
                       subtitle={
                         workshop.maxSeats
@@ -583,11 +540,7 @@ export default function DashboardPage({ params }: PageProps) {
                           : "No seat limit"
                       }
                       date={workshop.createdAt}
-                      href={
-                        workshop.slug
-                          ? `/workshops/${workshop.slug}`
-                          : undefined
-                      }
+                      href={workshop.slug ? `/workshops/${workshop.slug}` : undefined}
                     />
                   ))}
                 </div>
@@ -597,46 +550,40 @@ export default function DashboardPage({ params }: PageProps) {
         )}
 
       {/* ── Empty State (no activity) ──────────────────────────────── */}
-      {!loading &&
-        !error &&
-        recentEnrollments.length === 0 &&
-        recentWorkshops.length === 0 && (
-          <StaggerItem>
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Activity className="size-4 text-muted-foreground" />
-                  <CardTitle>Recent Activity</CardTitle>
+      {!loading && !error && recentEnrollments.length === 0 && recentWorkshops.length === 0 && (
+        <StaggerItem>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Activity className="text-muted-foreground size-4" />
+                <CardTitle>Recent Activity</CardTitle>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col items-center justify-center py-8 text-center">
+                <div className="bg-muted mb-3 flex size-12 items-center justify-center rounded-full">
+                  <ClipboardList className="text-muted-foreground size-5" />
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col items-center justify-center py-8 text-center">
-                  <div className="flex size-12 items-center justify-center rounded-full bg-muted mb-3">
-                    <ClipboardList className="size-5 text-muted-foreground" />
-                  </div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    {role === "STUDENT"
-                      ? "No enrollments yet"
-                      : "No recent activity"}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {role === "STUDENT"
-                      ? "Browse workshops and enroll to get started!"
-                      : "Activity will appear here as you use the platform."}
-                  </p>
-                  {role === "STUDENT" && (
-                    <Button size="sm" className="mt-4" asChild>
-                      <Link href="/workshops">
-                        Browse Workshops{" "}
-                        <ArrowRight className="ml-1 size-3.5" />
-                      </Link>
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </StaggerItem>
-        )}
+                <p className="text-muted-foreground text-sm font-medium">
+                  {role === "STUDENT" ? "No enrollments yet" : "No recent activity"}
+                </p>
+                <p className="text-muted-foreground mt-1 text-xs">
+                  {role === "STUDENT"
+                    ? "Browse workshops and enroll to get started!"
+                    : "Activity will appear here as you use the platform."}
+                </p>
+                {role === "STUDENT" && (
+                  <Button size="sm" className="mt-4" asChild>
+                    <Link href="/workshops">
+                      Browse Workshops <ArrowRight className="ml-1 size-3.5" />
+                    </Link>
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </StaggerItem>
+      )}
     </AnimatedPage>
   );
 }

@@ -1,9 +1,4 @@
-export type PaymentStatus =
-  | "PAID"
-  | "UNPAID"
-  | "CANCELLED"
-  | "FAILED"
-  | "REFUNDED";
+export type PaymentStatus = "PAID" | "UNPAID" | "CANCELLED" | "FAILED" | "REFUNDED";
 
 export interface IPayment {
   _id: string;

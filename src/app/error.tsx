@@ -25,15 +25,15 @@ export default function Error({
         transition={{ duration: 0.5 }}
         className="mb-8"
       >
-        <div className="absolute -inset-4 rounded-full bg-destructive/10 blur-2xl" />
-        <AlertTriangle className="relative size-24 text-destructive" />
+        <div className="bg-destructive/10 absolute -inset-4 rounded-full blur-2xl" />
+        <AlertTriangle className="text-destructive relative size-24" />
       </motion.div>
 
       <motion.h1
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="mb-4 text-3xl font-bold tracking-tight text-foreground sm:text-4xl"
+        className="text-foreground mb-4 text-3xl font-bold tracking-tight sm:text-4xl"
       >
         Something went wrong!
       </motion.h1>
@@ -42,7 +42,7 @@ export default function Error({
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
-        className="mb-8 max-w-md text-muted-foreground"
+        className="text-muted-foreground mb-8 max-w-md"
       >
         {error.message ||
           "An unexpected error occurred. We have been notified and are working on it."}
@@ -70,9 +70,9 @@ export default function Error({
       </motion.div>
 
       {/* Decorative background blurs */}
-      <div className="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
-        <div className="absolute left-[15%] top-[25%] size-80 rounded-full bg-destructive/5 blur-[100px]" />
-        <div className="absolute right-[15%] bottom-[25%] size-80 rounded-full bg-primary/5 blur-[100px]" />
+      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+        <div className="bg-destructive/5 absolute top-[25%] left-[15%] size-80 rounded-full blur-[100px]" />
+        <div className="bg-primary/5 absolute right-[15%] bottom-[25%] size-80 rounded-full blur-[100px]" />
       </div>
     </div>
   );

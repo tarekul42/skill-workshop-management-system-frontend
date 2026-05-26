@@ -7,7 +7,6 @@ import { Menu, Bell, User, Settings, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,11 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { getSavedUser, getUserRole, clearSavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie } from "@/app/actions/auth";
@@ -47,10 +42,7 @@ const roleLabels: Record<string, string> = {
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const router = useRouter();
   const [mounted, setMounted] = React.useState(false);
-  const user = React.useMemo(
-    () => (mounted ? getSavedUser() : null),
-    [mounted],
-  );
+  const user = React.useMemo(() => (mounted ? getSavedUser() : null), [mounted]);
   const role = React.useMemo(() => (mounted ? getUserRole() : null), [mounted]);
 
   React.useEffect(() => {
@@ -75,23 +67,30 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const roleLabel = role ? (roleLabels[role] ?? role) : "";
 
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur supports-backdrop-filter:bg-background/60 lg:pl-72">
+    <header className="border-border/60 bg-background/80 supports-backdrop-filter:bg-background/60 sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-5 backdrop-blur-xl">
       {/* ── Mobile menu button ─────────────────────────────────────── */}
       <Button
         variant="ghost"
         size="icon"
-        className="lg:hidden"
+        className="hover:bg-surface-2 rounded-xl lg:hidden"
         onClick={onMenuClick}
         aria-label="Toggle sidebar menu"
       >
         <Menu className="size-5" />
       </Button>
 
-      {/* ── Spacer ─────────────────────────────────────────────────── */}
+      {/* ── Search/Quick Action Placeholder ────────────────────────── */}
+      <div className="text-foreground-disabled hover:text-foreground-muted hidden cursor-pointer items-center gap-2 text-sm font-medium transition-colors lg:flex">
+        <span className="bg-surface-3 border-border rounded-md border px-2 py-0.5 text-[10px]">
+          ⌘ K
+        </span>
+        <span>Search or jump to...</span>
+      </div>
+
       <div className="flex-1" />
 
       {/* ── Right side actions ─────────────────────────────────────── */}
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-3">
         {/* Notification bell */}
         <Tooltip>
           <TooltipTrigger asChild>
@@ -99,14 +98,16 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
               variant="ghost"
               size="icon"
               aria-label="Notifications"
-              className="relative"
+              className="hover:bg-surface-2 relative rounded-xl"
             >
-              <Bell className="size-4" />
-              {/* Notification dot placeholder */}
-              <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-primary" />
+              <Bell className="size-4.5" />
+              {/* Notification dot */}
+              <span className="bg-accent ring-background absolute top-2 right-2 size-2 rounded-full ring-2" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>Notifications</TooltipContent>
+          <TooltipContent className="shadow-3 border-border rounded-lg">
+            Notifications
+          </TooltipContent>
         </Tooltip>
 
         {/* User dropdown */}
@@ -114,48 +115,43 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="flex items-center gap-2 px-2 hover:bg-muted"
+              className="hover:bg-surface-2 flex items-center gap-2.5 rounded-full p-1.5 pr-3 transition-all"
             >
-              <Avatar size="sm">
-                <AvatarFallback className="text-xs font-medium">
+              <Avatar className="ring-primary/5 size-8.5 ring-2 transition-all">
+                <AvatarFallback className="bg-primary-subtle text-primary text-xs font-bold">
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <div className="hidden flex-col items-start sm:flex">
-                <span className="text-sm font-medium leading-none">
-                  {displayName}
-                </span>
+              <div className="hidden flex-col items-start text-left sm:flex">
+                <span className="text-sm leading-tight font-bold">{displayName.split(" ")[0]}</span>
                 {roleLabel && (
-                  <Badge
-                    variant="secondary"
-                    className="mt-1 text-[10px] px-1.5 py-0"
-                  >
+                  <span className="text-foreground-disabled mt-0.5 text-[10px] leading-none font-bold tracking-wider uppercase">
                     {roleLabel}
-                  </Badge>
+                  </span>
                 )}
               </div>
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col gap-1">
-                <p className="text-sm font-medium">{displayName}</p>
-                <p className="text-xs text-muted-foreground">
-                  {user?.email ?? ""}
-                </p>
+          <DropdownMenuContent
+            align="end"
+            className="shadow-4 border-border/50 w-56 rounded-xl p-2"
+          >
+            <DropdownMenuLabel className="p-3 font-normal">
+              <div className="flex flex-col gap-0.5">
+                <p className="text-sm leading-tight font-bold">{displayName}</p>
+                <p className="text-foreground-muted truncate text-[11px]">{user?.email ?? ""}</p>
               </div>
             </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link
-                href={`/${role?.toLowerCase()}/profile`}
-                className="cursor-pointer"
-              >
-                <User className="size-4" />
-                Profile
+            <DropdownMenuSeparator className="bg-border/40" />
+            <DropdownMenuItem asChild className="cursor-pointer rounded-lg p-2.5">
+              <Link href={`/${role?.toLowerCase()}/profile`} className="flex items-center gap-3">
+                <div className="bg-surface-2 text-primary flex size-8 items-center justify-center rounded-lg">
+                  <User className="size-4" />
+                </div>
+                <span className="font-semibold">My Profile</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
+            <DropdownMenuItem asChild className="cursor-pointer rounded-lg p-2.5">
               <Link
                 href={
                   role === "SUPER_ADMIN"
@@ -164,20 +160,23 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                       ? "/admin/settings"
                       : `/${role?.toLowerCase()}/profile`
                 }
-                className="cursor-pointer"
+                className="flex items-center gap-3"
               >
-                <Settings className="size-4" />
-                Settings
+                <div className="bg-surface-2 text-primary flex size-8 items-center justify-center rounded-lg">
+                  <Settings className="size-4" />
+                </div>
+                <span className="font-semibold">Settings</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-border/40" />
             <DropdownMenuItem
-              variant="destructive"
               onClick={handleLogout}
-              className="cursor-pointer"
+              className="text-danger focus:bg-danger-subtle focus:text-danger group cursor-pointer rounded-lg p-2.5"
             >
-              <LogOut className="size-4" />
-              Logout
+              <div className="bg-danger-subtle/50 text-danger group-focus:bg-danger flex size-8 items-center justify-center rounded-lg transition-colors group-focus:text-white">
+                <LogOut className="size-4" />
+              </div>
+              <span className="font-bold">Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

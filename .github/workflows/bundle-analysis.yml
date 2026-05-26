@@ -1,0 +1,52 @@
+name: Bundle Analysis
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "frontend/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  analyze:
+    name: Analyze Bundle Size
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@4bc047ad489e2bf5d77ba4c6e6ab11e8e9fc24e4 # v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: bun install --frozen-lockfile
+
+      - name: Build with Bundle Analysis
+        working-directory: frontend
+        run: bun run build
+        env:
+          ANALYZE: true
+          NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
+          NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+      - name: Report Bundle Size
+        working-directory: frontend
+        run: |
+          echo "## 📦 Bundle Size Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          # Parse .next/analyze output if available
+          if [ -d ".next/analyze" ]; then
+            echo "| Chunk | Size |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|------|" >> $GITHUB_STEP_SUMMARY
+            find .next/analyze -name "*.html" -exec echo "| {} | check report |" >> $GITHUB_STEP_SUMMARY \;
+          else
+            echo "Bundle analysis not available (install @next/bundle-analyzer)" >> $GITHUB_STEP_SUMMARY
+          fi
