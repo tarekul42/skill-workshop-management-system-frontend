@@ -6,6 +6,7 @@ import "./globals.css";
 import QueryProviders from "../providers/QueryProvider";
 import { FRONTEND_URL } from "@/lib/constants";
 import { headers } from "next/headers";
+import { cookies } from "next/headers";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -92,7 +93,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const nonce = (await headers()).get("x-nonce") ?? "";
+  const nonce = (await cookies()).get("__csp_nonce")?.value ?? "";
 
   return (
     <html lang="en" suppressHydrationWarning nonce={nonce}>

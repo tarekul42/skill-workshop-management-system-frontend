@@ -110,25 +110,32 @@ export async function proxy(request: NextRequest) {
 
   const isDev = process.env.NODE_ENV === "development";
 
-  const cspHeader = `
-    default-src 'self';
-    script-src 'self' https://vercel.live ${isDev ? "'unsafe-inline' 'unsafe-eval'" : "'nonce-${nonce}'"};
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com https://vercel.live https://vercel.com;
-    font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' ${backendOrigin} https://lh3.googleusercontent.com https://vercel.live https://*.vercel.app;
-    frame-src 'self' https://sandbox.sslcommerz.com https://vercel.live;
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    frame-ancestors 'none';
-    ${!isDev ? "upgrade-insecure-requests;" : ""}
-  `
-    .replace(/\s{2,}/g, " ")
-    .trim();
+  const cspHeader = [
+    "default-src 'self'",
+    `script-src 'self' https://vercel.live${isDev ? " 'unsafe-inline' 'unsafe-eval" : ` 'nonce-${nonce}'`}`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com https://vercel.live https://vercel.com",
+    "font-src 'self' data: https://fonts.gstatic.com",
+    `connect-src 'self' ${backendOrigin} https://lh3.googleusercontent.com https://vercel.live https://*.vercel.app`,
+    "frame-src 'self' https://sandbox.sslcommerz.com https://vercel.live",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    !isDev ? "upgrade-insecure-requests" : null,
+  ].filter(Boolean).join("; ");
 
   response.headers.set("Content-Security-Policy", cspHeader);
   response.headers.set("x-nonce", nonce);
+  // Also set a cookie so the layout can read the nonce reliably
+  // (headers() in server components may not see middleware-modified request headers)
+  response.cookies.set("__csp_nonce", nonce, {
+    httpOnly: false,
+    secure: !isDev,
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60,
+  });
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
