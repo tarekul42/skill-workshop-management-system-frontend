@@ -32,3 +32,7 @@ jobs:
 
       - name: Self-Healing CI Middleware
         uses: ./.github/actions/self-heal
+        with:
+          next-public-backend-api-url: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
+          next-public-frontend-url: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL }}
+          jwt-secret: ${{ secrets.JWT_SECRET }}

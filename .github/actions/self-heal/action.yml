@@ -1,6 +1,20 @@
 name: "Self-Healing CI Middleware"
 description: "Runs CI checks with auto-fix-retry. If a check fails, runs the corresponding fix command, retries, and only fails if the retry also fails. Commits and pushes any fixes back to the PR branch."
 
+inputs:
+  next-public-backend-api-url:
+    description: "NEXT_PUBLIC_BACKEND_API_URL"
+    required: false
+    default: ""
+  next-public-frontend-url:
+    description: "NEXT_PUBLIC_FRONTEND_URL"
+    required: false
+    default: ""
+  jwt-secret:
+    description: "JWT_SECRET"
+    required: false
+    default: ""
+
 runs:
   using: "composite"
   steps:
@@ -112,9 +126,9 @@ runs:
     - name: "Build"
       shell: bash
       env:
-        NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
-        NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL }}
-        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        NEXT_PUBLIC_BACKEND_API_URL: ${{ inputs.next-public-backend-api-url }}
+        NEXT_PUBLIC_FRONTEND_URL: ${{ inputs.next-public-frontend-url }}
+        JWT_SECRET: ${{ inputs.jwt-secret }}
       run: |
         echo "▶ Running build..."
         if bun run build; then
