@@ -58,31 +58,24 @@ export default function MyStudentsPage({ params }: PageProps) {
         ]);
 
         const enrollments =
-          enrollmentsRes.status === "fulfilled"
-            ? (enrollmentsRes.value.data ?? [])
-            : [];
+          enrollmentsRes.status === "fulfilled" ? (enrollmentsRes.value.data ?? []) : [];
 
         const workshops =
-          workshopsRes.status === "fulfilled"
-            ? (workshopsRes.value.data ?? [])
-            : [];
+          workshopsRes.status === "fulfilled" ? (workshopsRes.value.data ?? []) : [];
 
         // For instructor: find workshops created by this instructor
         // createdBy can be a string (ObjectId) or an object { _id, name, email }
         const myWorkshopIds = new Set(
           workshops
             .filter((w) => {
-              if (typeof w.createdBy === "string")
-                return w.createdBy === userId;
+              if (typeof w.createdBy === "string") return w.createdBy === userId;
               return w.createdBy?._id === userId;
             })
-            .map((w) => w._id),
+            .map((w) => w._id)
         );
 
         // Filter enrollments belonging to the instructor's workshops
-        const myEnrollments = enrollments.filter((e) =>
-          myWorkshopIds.has(e.workshop?._id),
-        );
+        const myEnrollments = enrollments.filter((e) => myWorkshopIds.has(e.workshop?._id));
 
         // Build student rows
         const studentMap = new Map<string, StudentRow>();
@@ -106,9 +99,7 @@ export default function MyStudentsPage({ params }: PageProps) {
 
         setStudents(Array.from(studentMap.values()));
       } catch (err) {
-        setError(
-          err instanceof Error ? err.message : "Failed to load students",
-        );
+        setError(err instanceof Error ? err.message : "Failed to load students");
       } finally {
         setLoading(false);
       }
@@ -126,42 +117,34 @@ export default function MyStudentsPage({ params }: PageProps) {
         cell: ({ row }) => (
           <div>
             <p className="font-medium">{row.original.studentName}</p>
-            <p className="text-xs text-muted-foreground">
-              {row.original.studentEmail}
-            </p>
+            <p className="text-muted-foreground text-xs">{row.original.studentEmail}</p>
           </div>
         ),
       },
       {
         accessorKey: "studentPhone",
         header: "Phone",
-        cell: ({ row }) => (
-          <span className="text-sm">{row.original.studentPhone ?? "—"}</span>
-        ),
+        cell: ({ row }) => <span className="text-sm">{row.original.studentPhone ?? "—"}</span>,
       },
       {
         accessorKey: "workshopTitle",
         header: "Workshop",
         cell: ({ row }) => (
-          <span className="max-w-50 truncate block text-sm">
-            {row.original.workshopTitle}
-          </span>
+          <span className="block max-w-50 truncate text-sm">{row.original.workshopTitle}</span>
         ),
       },
       {
         accessorKey: "studentCount",
         header: "Seats",
         cell: ({ row }) => (
-          <span className="text-sm text-center block">
-            {row.original.studentCount}
-          </span>
+          <span className="block text-center text-sm">{row.original.studentCount}</span>
         ),
       },
       {
         accessorKey: "enrollmentDate",
         header: "Enrolled On",
         cell: ({ row }) => (
-          <span className="text-sm text-muted-foreground">
+          <span className="text-muted-foreground text-sm">
             {formatDateTime(row.original.enrollmentDate)}
           </span>
         ),
@@ -190,15 +173,12 @@ export default function MyStudentsPage({ params }: PageProps) {
         },
       },
     ],
-    [],
+    []
   );
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="My Students"
-        description="Students enrolled in your workshops"
-      />
+      <PageHeader title="My Students" description="Students enrolled in your workshops" />
 
       {loading && <TableSkeleton rows={5} columns={6} />}
 
@@ -221,9 +201,7 @@ export default function MyStudentsPage({ params }: PageProps) {
         />
       )}
 
-      {!loading && error && (
-        <EmptyState title="Failed to load students" description={error} />
-      )}
+      {!loading && error && <EmptyState title="Failed to load students" description={error} />}
     </div>
   );
 }

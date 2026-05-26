@@ -1,11 +1,7 @@
 import React from "react";
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import {
-  TableSkeleton,
-  WorkshopCardSkeleton,
-  StatCardSkeleton,
-} from "../loading-skeleton";
+import { TableSkeleton, WorkshopCardSkeleton, StatCardSkeleton } from "../loading-skeleton";
 
 describe("LoadingSkeleton", () => {
   describe("TableSkeleton", () => {
@@ -65,9 +61,7 @@ describe("LoadingSkeleton", () => {
     });
 
     it("renders compact variant cards", () => {
-      const { container } = render(
-        <WorkshopCardSkeleton count={2} variant="compact" />,
-      );
+      const { container } = render(<WorkshopCardSkeleton count={2} variant="compact" />);
       // Compact cards have h-40 image placeholder
       const imagePlaceholders = container.querySelectorAll(".h-40");
       expect(imagePlaceholders.length).toBe(2);

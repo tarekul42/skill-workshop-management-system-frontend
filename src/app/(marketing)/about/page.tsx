@@ -1,12 +1,7 @@
 import Link from "next/link";
 import { Users, Star, Globe, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { getInitials } from "@/lib/formatters";
@@ -63,18 +58,18 @@ export default function AboutPage() {
   return (
     <>
       {/* ── Hero ──────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-linear-to-br from-primary/10 via-primary/5 to-background">
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-100 w-150 -translate-x-1/2 rounded-full bg-primary/5 blur-3xl" />
+      <section className="from-primary/10 via-primary/5 to-background relative overflow-hidden bg-linear-to-br">
+        <div className="bg-primary/5 pointer-events-none absolute -top-24 left-1/2 h-100 w-150 -translate-x-1/2 rounded-full blur-3xl" />
 
-        <div className="site-container relative pb-16 pt-24 sm:pt-32">
+        <div className="site-container relative pt-24 pb-16 sm:pt-32">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+            <h1 className="text-foreground text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
               About <span className="text-primary">Skill Workshop</span>
             </h1>
-            <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground">
-              We are on a mission to empower individuals across Bangladesh with
-              practical, industry-ready skills through expert-led workshops that
-              inspire confidence and unlock new career opportunities.
+            <p className="text-muted-foreground mx-auto mt-6 max-w-2xl text-lg">
+              We are on a mission to empower individuals across Bangladesh with practical,
+              industry-ready skills through expert-led workshops that inspire confidence and unlock
+              new career opportunities.
             </p>
           </div>
         </div>
@@ -83,26 +78,24 @@ export default function AboutPage() {
       {/* ── Our Story ─────────────────────────────────────────────── */}
       <section className="site-container py-20">
         <div className="mx-auto max-w-3xl">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          <h2 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
             Our Story
           </h2>
           <div className="mt-6 space-y-4">
-            <p className="leading-relaxed text-muted-foreground">
-              Skill Workshop was founded in 2023 with a simple but powerful
-              vision: to make high-quality skill education accessible to
-              everyone in Bangladesh. What started as a small series of coding
-              bootcamps in Dhaka quickly grew into a thriving community of
-              learners, instructors, and industry professionals united by a
-              shared passion for growth.
+            <p className="text-muted-foreground leading-relaxed">
+              Skill Workshop was founded in 2023 with a simple but powerful vision: to make
+              high-quality skill education accessible to everyone in Bangladesh. What started as a
+              small series of coding bootcamps in Dhaka quickly grew into a thriving community of
+              learners, instructors, and industry professionals united by a shared passion for
+              growth.
             </p>
-            <p className="leading-relaxed text-muted-foreground">
-              Today, we operate workshops in multiple cities across the country,
-              covering everything from web development and digital marketing to
-              graphic design and data science. Our graduates have gone on to
-              land roles at top tech companies, launch their own businesses, and
-              contribute meaningfully to Bangladesh&apos;s rapidly evolving
-              digital economy. We are proud of every milestone, but we are even
-              more excited about the journey ahead.
+            <p className="text-muted-foreground leading-relaxed">
+              Today, we operate workshops in multiple cities across the country, covering everything
+              from web development and digital marketing to graphic design and data science. Our
+              graduates have gone on to land roles at top tech companies, launch their own
+              businesses, and contribute meaningfully to Bangladesh&apos;s rapidly evolving digital
+              economy. We are proud of every milestone, but we are even more excited about the
+              journey ahead.
             </p>
           </div>
         </div>
@@ -112,15 +105,14 @@ export default function AboutPage() {
       <section className="bg-muted/40">
         <div className="site-container py-20">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            <h2 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
               Our Mission
             </h2>
-            <p className="mx-auto mt-6 max-w-2xl leading-relaxed text-muted-foreground">
-              We aim to democratize skill education in Bangladesh by providing
-              affordable, hands-on workshops led by industry experts. Whether
-              you are a student, a working professional, or an aspiring
-              entrepreneur, we are here to help you build the skills that matter
-              — no matter where you are starting from.
+            <p className="text-muted-foreground mx-auto mt-6 max-w-2xl leading-relaxed">
+              We aim to democratize skill education in Bangladesh by providing affordable, hands-on
+              workshops led by industry experts. Whether you are a student, a working professional,
+              or an aspiring entrepreneur, we are here to help you build the skills that matter — no
+              matter where you are starting from.
             </p>
           </div>
 
@@ -128,15 +120,11 @@ export default function AboutPage() {
             {coreValues.map((value) => (
               <Card key={value.title}>
                 <CardContent className="flex flex-col items-center text-center">
-                  <div className="flex size-14 items-center justify-center rounded-xl bg-primary/10">
-                    <value.icon className="size-7 text-primary" />
+                  <div className="bg-primary/10 flex size-14 items-center justify-center rounded-xl">
+                    <value.icon className="text-primary size-7" />
                   </div>
-                  <CardTitle className="mt-4 font-semibold">
-                    {value.title}
-                  </CardTitle>
-                  <CardDescription className="mt-2">
-                    {value.description}
-                  </CardDescription>
+                  <CardTitle className="mt-4 font-semibold">{value.title}</CardTitle>
+                  <CardDescription className="mt-2">{value.description}</CardDescription>
                 </CardContent>
               </Card>
             ))}
@@ -147,12 +135,10 @@ export default function AboutPage() {
       {/* ── Our Team ──────────────────────────────────────────────── */}
       <section className="site-container py-20">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          <h2 className="text-foreground text-2xl font-bold tracking-tight sm:text-3xl">
             Meet Our Team
           </h2>
-          <p className="mt-2 text-muted-foreground">
-            The passionate people behind Skill Workshop
-          </p>
+          <p className="text-muted-foreground mt-2">The passionate people behind Skill Workshop</p>
         </div>
 
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -160,13 +146,11 @@ export default function AboutPage() {
             <Card key={member.name}>
               <CardContent className="flex flex-col items-center text-center">
                 <Avatar className="size-16">
-                  <AvatarFallback className="bg-primary text-base font-semibold text-primary-foreground">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-base font-semibold">
                     {getInitials(member.name)}
                   </AvatarFallback>
                 </Avatar>
-                <CardTitle className="mt-4 font-semibold">
-                  {member.name}
-                </CardTitle>
+                <CardTitle className="mt-4 font-semibold">{member.name}</CardTitle>
                 <Badge variant="secondary" className="mt-1">
                   {member.role}
                 </Badge>
@@ -181,18 +165,18 @@ export default function AboutPage() {
       <section className="bg-primary">
         <div className="site-container py-20">
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-2xl font-bold tracking-tight text-primary-foreground sm:text-3xl">
+            <h2 className="text-primary-foreground text-2xl font-bold tracking-tight sm:text-3xl">
               Join Our Growing Community
             </h2>
-            <p className="mt-4 text-primary-foreground/80">
-              Start your learning journey today and become part of a network
-              that&apos;s transforming careers across Bangladesh.
+            <p className="text-primary-foreground/80 mt-4">
+              Start your learning journey today and become part of a network that&apos;s
+              transforming careers across Bangladesh.
             </p>
             <Button
               asChild
               variant="secondary"
               size="lg"
-              className="mt-8 bg-background text-foreground hover:bg-background/90"
+              className="bg-background text-foreground hover:bg-background/90 mt-8"
             >
               <Link href="/workshops">
                 Browse Workshops

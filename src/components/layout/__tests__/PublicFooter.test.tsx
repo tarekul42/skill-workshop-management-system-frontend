@@ -87,7 +87,7 @@ describe("PublicFooter", () => {
       render(<PublicFooter />);
       const link = screen.getByRole("link", { name: label });
       expect(link).toBeInTheDocument();
-    },
+    }
   );
 
   it("renders the Platform section heading", () => {

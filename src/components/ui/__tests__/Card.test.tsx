@@ -18,14 +18,22 @@ describe("Card", () => {
   });
 
   it("applies interactive classes when interactive prop is true", () => {
-    render(<Card interactive data-testid="interactive-card">Interactive</Card>);
+    render(
+      <Card interactive data-testid="interactive-card">
+        Interactive
+      </Card>
+    );
     const card = screen.getByTestId("interactive-card");
     expect(card).toHaveClass("cursor-pointer");
     expect(card).toHaveClass("hover:shadow-3");
   });
 
   it("applies small size classes", () => {
-    render(<Card size="sm" data-testid="small-card">Small</Card>);
+    render(
+      <Card size="sm" data-testid="small-card">
+        Small
+      </Card>
+    );
     expect(screen.getByTestId("small-card")).toHaveClass("rounded-xl");
   });
 });

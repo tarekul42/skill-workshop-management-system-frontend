@@ -12,16 +12,11 @@ vi.mock("framer-motion", () => ({
     span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
       <span {...props}>{children}</span>
     ),
-    button: ({
-      children,
-      ...props
-    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
       <button {...props}>{children}</button>
     ),
   },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 describe("StatusBadge", () => {
@@ -43,7 +38,7 @@ describe("StatusBadge", () => {
     (status) => {
       const { container } = render(<StatusBadge status={status} />);
       expect(container.firstChild).toHaveClass("bg-success-subtle");
-    },
+    }
   );
 
   it("renders COMPLETED with success variant", () => {
@@ -57,7 +52,7 @@ describe("StatusBadge", () => {
     (status) => {
       const { container } = render(<StatusBadge status={status} />);
       expect(container.firstChild).toHaveClass("bg-danger-subtle");
-    },
+    }
   );
 
   // ── Muted set ────────────────────────────────────────────────────
@@ -67,13 +62,10 @@ describe("StatusBadge", () => {
   });
 
   // ── Info set ─────────────────────────────────────────────────────
-  it.each(["REFUNDED", "PROCESSING"])(
-    "renders %s with info variant",
-    (status) => {
-      const { container } = render(<StatusBadge status={status} />);
-      expect(container.firstChild).toHaveClass("bg-info-subtle");
-    },
-  );
+  it.each(["REFUNDED", "PROCESSING"])("renders %s with info variant", (status) => {
+    const { container } = render(<StatusBadge status={status} />);
+    expect(container.firstChild).toHaveClass("bg-info-subtle");
+  });
 
   // ── Default/secondary ────────────────────────────────────────────
   it("renders unknown status with secondary (default) variant", () => {

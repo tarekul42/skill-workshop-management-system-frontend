@@ -25,9 +25,7 @@ export default function CreateWorkshopPage({ params }: PageProps) {
       toast.success("Workshop created successfully!");
       router.push(`/${role}/workshops`);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to create workshop",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to create workshop");
     } finally {
       setIsSubmitting(false);
     }

@@ -15,11 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { getSavedUser, getUserRole, clearSavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie } from "@/app/actions/auth";
@@ -46,10 +42,7 @@ const roleLabels: Record<string, string> = {
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const router = useRouter();
   const [mounted, setMounted] = React.useState(false);
-  const user = React.useMemo(
-    () => (mounted ? getSavedUser() : null),
-    [mounted],
-  );
+  const user = React.useMemo(() => (mounted ? getSavedUser() : null), [mounted]);
   const role = React.useMemo(() => (mounted ? getUserRole() : null), [mounted]);
 
   React.useEffect(() => {
@@ -74,12 +67,12 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const roleLabel = role ? (roleLabels[role] ?? role) : "";
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center gap-4 border-b border-border/60 bg-background/80 px-5 backdrop-blur-xl supports-backdrop-filter:bg-background/60">
+    <header className="border-border/60 bg-background/80 supports-backdrop-filter:bg-background/60 sticky top-0 z-30 flex h-16 items-center gap-4 border-b px-5 backdrop-blur-xl">
       {/* ── Mobile menu button ─────────────────────────────────────── */}
       <Button
         variant="ghost"
         size="icon"
-        className="lg:hidden rounded-xl hover:bg-surface-2"
+        className="hover:bg-surface-2 rounded-xl lg:hidden"
         onClick={onMenuClick}
         aria-label="Toggle sidebar menu"
       >
@@ -87,8 +80,8 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
       </Button>
 
       {/* ── Search/Quick Action Placeholder ────────────────────────── */}
-      <div className="hidden lg:flex items-center gap-2 text-sm font-medium text-foreground-disabled hover:text-foreground-muted transition-colors cursor-pointer">
-        <span className="bg-surface-3 px-2 py-0.5 rounded-md text-[10px] border border-border">
+      <div className="text-foreground-disabled hover:text-foreground-muted hidden cursor-pointer items-center gap-2 text-sm font-medium transition-colors lg:flex">
+        <span className="bg-surface-3 border-border rounded-md border px-2 py-0.5 text-[10px]">
           ⌘ K
         </span>
         <span>Search or jump to...</span>
@@ -105,14 +98,14 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
               variant="ghost"
               size="icon"
               aria-label="Notifications"
-              className="relative rounded-xl hover:bg-surface-2"
+              className="hover:bg-surface-2 relative rounded-xl"
             >
               <Bell className="size-4.5" />
               {/* Notification dot */}
-              <span className="absolute top-2 right-2 size-2 rounded-full bg-accent ring-2 ring-background" />
+              <span className="bg-accent ring-background absolute top-2 right-2 size-2 rounded-full ring-2" />
             </Button>
           </TooltipTrigger>
-          <TooltipContent className="rounded-lg shadow-3 border-border">
+          <TooltipContent className="shadow-3 border-border rounded-lg">
             Notifications
           </TooltipContent>
         </Tooltip>
@@ -122,19 +115,17 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
-              className="flex items-center gap-2.5 p-1.5 pr-3 hover:bg-surface-2 rounded-full transition-all"
+              className="hover:bg-surface-2 flex items-center gap-2.5 rounded-full p-1.5 pr-3 transition-all"
             >
-              <Avatar className="size-8.5 ring-2 ring-primary/5 transition-all">
-                <AvatarFallback className="text-xs font-bold bg-primary-subtle text-primary">
+              <Avatar className="ring-primary/5 size-8.5 ring-2 transition-all">
+                <AvatarFallback className="bg-primary-subtle text-primary text-xs font-bold">
                   {initials}
                 </AvatarFallback>
               </Avatar>
-              <div className="hidden flex-col items-start sm:flex text-left">
-                <span className="text-sm font-bold leading-tight">
-                  {displayName.split(" ")[0]}
-                </span>
+              <div className="hidden flex-col items-start text-left sm:flex">
+                <span className="text-sm leading-tight font-bold">{displayName.split(" ")[0]}</span>
                 {roleLabel && (
-                  <span className="text-[10px] font-bold text-foreground-disabled uppercase tracking-wider leading-none mt-0.5">
+                  <span className="text-foreground-disabled mt-0.5 text-[10px] leading-none font-bold tracking-wider uppercase">
                     {roleLabel}
                   </span>
                 )}
@@ -143,35 +134,24 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-56 p-2 rounded-xl shadow-4 border-border/50"
+            className="shadow-4 border-border/50 w-56 rounded-xl p-2"
           >
-            <DropdownMenuLabel className="font-normal p-3">
+            <DropdownMenuLabel className="p-3 font-normal">
               <div className="flex flex-col gap-0.5">
-                <p className="text-sm font-bold leading-tight">{displayName}</p>
-                <p className="text-[11px] text-foreground-muted truncate">
-                  {user?.email ?? ""}
-                </p>
+                <p className="text-sm leading-tight font-bold">{displayName}</p>
+                <p className="text-foreground-muted truncate text-[11px]">{user?.email ?? ""}</p>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator className="bg-border/40" />
-            <DropdownMenuItem
-              asChild
-              className="rounded-lg p-2.5 cursor-pointer"
-            >
-              <Link
-                href={`/${role?.toLowerCase()}/profile`}
-                className="flex items-center gap-3"
-              >
-                <div className="size-8 flex items-center justify-center rounded-lg bg-surface-2 text-primary">
+            <DropdownMenuItem asChild className="cursor-pointer rounded-lg p-2.5">
+              <Link href={`/${role?.toLowerCase()}/profile`} className="flex items-center gap-3">
+                <div className="bg-surface-2 text-primary flex size-8 items-center justify-center rounded-lg">
                   <User className="size-4" />
                 </div>
                 <span className="font-semibold">My Profile</span>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              asChild
-              className="rounded-lg p-2.5 cursor-pointer"
-            >
+            <DropdownMenuItem asChild className="cursor-pointer rounded-lg p-2.5">
               <Link
                 href={
                   role === "SUPER_ADMIN"
@@ -182,7 +162,7 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
                 }
                 className="flex items-center gap-3"
               >
-                <div className="size-8 flex items-center justify-center rounded-lg bg-surface-2 text-primary">
+                <div className="bg-surface-2 text-primary flex size-8 items-center justify-center rounded-lg">
                   <Settings className="size-4" />
                 </div>
                 <span className="font-semibold">Settings</span>
@@ -191,9 +171,9 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
             <DropdownMenuSeparator className="bg-border/40" />
             <DropdownMenuItem
               onClick={handleLogout}
-              className="rounded-lg p-2.5 text-danger focus:bg-danger-subtle focus:text-danger cursor-pointer group"
+              className="text-danger focus:bg-danger-subtle focus:text-danger group cursor-pointer rounded-lg p-2.5"
             >
-              <div className="size-8 flex items-center justify-center rounded-lg bg-danger-subtle/50 text-danger transition-colors group-focus:bg-danger group-focus:text-white">
+              <div className="bg-danger-subtle/50 text-danger group-focus:bg-danger flex size-8 items-center justify-center rounded-lg transition-colors group-focus:text-white">
                 <LogOut className="size-4" />
               </div>
               <span className="font-bold">Log out</span>

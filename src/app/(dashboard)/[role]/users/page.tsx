@@ -50,12 +50,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { maskEmail, maskPhone } from "@/lib/utils/masking";
-import {
-  getAllUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
-} from "@/lib/api/services";
+import { getAllUsers, getUserById, updateUser, deleteUser } from "@/lib/api/services";
 import type { IUser, UserRole, IsActive, PaginatedResponse } from "@/types";
 
 // ─── Page Props ──────────────────────────────────────────────────────
@@ -108,8 +103,7 @@ export default function UsersPage({ params }: PageProps) {
 
   // 1. Update Role
   const updateRoleMutation = useMutation({
-    mutationFn: ({ id, role }: { id: string; role: UserRole }) =>
-      updateUser(id, { role }),
+    mutationFn: ({ id, role }: { id: string; role: UserRole }) => updateUser(id, { role }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setEditUser(null);
@@ -129,10 +123,7 @@ export default function UsersPage({ params }: PageProps) {
       await queryClient.cancelQueries({ queryKey: ["users"] });
 
       // Snapshot the previous value
-      const previousUsers = queryClient.getQueryData([
-        "users",
-        { page, limit, searchTerm },
-      ]);
+      const previousUsers = queryClient.getQueryData(["users", { page, limit, searchTerm }]);
 
       // Optimistically update to the new value
       queryClient.setQueryData(
@@ -141,11 +132,9 @@ export default function UsersPage({ params }: PageProps) {
           if (!old) return old;
           return {
             ...old,
-            data: old.data.map((user) =>
-              user._id === id ? { ...user, isActive } : user,
-            ),
+            data: old.data.map((user) => (user._id === id ? { ...user, isActive } : user)),
           };
-        },
+        }
       );
 
       return { previousUsers };
@@ -153,21 +142,16 @@ export default function UsersPage({ params }: PageProps) {
     onError: (err, __, context) => {
       // Rollback to the previous value on error
       if (context?.previousUsers) {
-        queryClient.setQueryData(
-          ["users", { page, limit, searchTerm }],
-          context.previousUsers,
-        );
+        queryClient.setQueryData(["users", { page, limit, searchTerm }], context.previousUsers);
       }
-      toast.error(
-        err instanceof Error ? err.message : "Failed to update user status",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to update user status");
     },
     onSuccess: (_, variables) => {
       setToggleTarget(null);
       toast.success(
         variables.isActive === "BLOCKED"
           ? "User blocked successfully"
-          : "User activated successfully",
+          : "User activated successfully"
       );
     },
     onSettled: () => {
@@ -209,9 +193,7 @@ export default function UsersPage({ params }: PageProps) {
       const user = await getUserById(userId);
       setViewUser(user);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to load user details",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to load user details");
     }
   };
 
@@ -227,8 +209,7 @@ export default function UsersPage({ params }: PageProps) {
 
   const handleToggleActive = () => {
     if (!toggleTarget) return;
-    const newStatus: IsActive =
-      toggleTarget.isActive === "ACTIVE" ? "BLOCKED" : "ACTIVE";
+    const newStatus: IsActive = toggleTarget.isActive === "ACTIVE" ? "BLOCKED" : "ACTIVE";
     toggleStatusMutation.mutate({ id: toggleTarget._id, isActive: newStatus });
   };
 
@@ -241,15 +222,12 @@ export default function UsersPage({ params }: PageProps) {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="User Management"
-        description="Manage all registered users"
-      />
+      <PageHeader title="User Management" description="Manage all registered users" />
 
       {/* ── Search & Info ──────────────────────────────────────────── */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-sm flex-1">
-          <Search className="absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="text-muted-foreground absolute top-1/2 left-2.5 size-4 -translate-y-1/2" />
           <Input
             placeholder="Search by name or email..."
             value={inputValue}
@@ -257,7 +235,7 @@ export default function UsersPage({ params }: PageProps) {
             className="pl-8"
           />
         </div>
-        <p className="text-sm text-muted-foreground">{total} users total</p>
+        <p className="text-muted-foreground text-sm">{total} users total</p>
       </div>
 
       {/* ── Table ──────────────────────────────────────────────────── */}
@@ -283,10 +261,8 @@ export default function UsersPage({ params }: PageProps) {
             ) : users.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-48 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    {searchTerm
-                      ? "No users match your search."
-                      : "No users found."}
+                  <p className="text-muted-foreground text-sm">
+                    {searchTerm ? "No users match your search." : "No users found."}
                   </p>
                 </TableCell>
               </TableRow>
@@ -296,29 +272,21 @@ export default function UsersPage({ params }: PageProps) {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar className="size-8">
-                        <AvatarFallback className="text-xs bg-muted">
+                        <AvatarFallback className="bg-muted text-xs">
                           {getInitials(user.name)}
                         </AvatarFallback>
                       </Avatar>
 
                       <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">
-                          {user.name}
-                        </p>
-                        <p
-                          className="truncate text-xs text-muted-foreground"
-                          title={user.email}
-                        >
+                        <p className="truncate text-sm font-medium">{user.name}</p>
+                        <p className="text-muted-foreground truncate text-xs" title={user.email}>
                           {maskEmail(user.email)}
                         </p>
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span
-                      className="text-sm text-muted-foreground"
-                      title={user.phone}
-                    >
+                    <span className="text-muted-foreground text-sm" title={user.phone}>
                       {user.phone ? maskPhone(user.phone) : "—"}
                     </span>
                   </TableCell>
@@ -331,7 +299,7 @@ export default function UsersPage({ params }: PageProps) {
                     <StatusBadge status={user.isActive} />
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       {formatDate(user.createdAt)}
                     </span>
                   </TableCell>
@@ -354,7 +322,7 @@ export default function UsersPage({ params }: PageProps) {
       {/* ── Server Pagination ──────────────────────────────────────── */}
       {!isLoading && totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Page {page} of {totalPages}
           </p>
           <div className="flex items-center gap-1">
@@ -385,24 +353,19 @@ export default function UsersPage({ params }: PageProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>User Details</DialogTitle>
-            <DialogDescription>
-              Viewing user profile information
-            </DialogDescription>
+            <DialogDescription>Viewing user profile information</DialogDescription>
           </DialogHeader>
           {viewUser && (
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="size-14">
-                  <AvatarFallback className="text-lg bg-muted">
+                  <AvatarFallback className="bg-muted text-lg">
                     {getInitials(viewUser.name)}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <p className="font-semibold">{viewUser.name}</p>
-                  <p
-                    className="text-sm text-muted-foreground"
-                    title={viewUser.email}
-                  >
+                  <p className="text-muted-foreground text-sm" title={viewUser.email}>
                     {maskEmail(viewUser.email)}
                   </p>
                 </div>
@@ -420,10 +383,7 @@ export default function UsersPage({ params }: PageProps) {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Role</p>
-                  <Badge
-                    variant="outline"
-                    className={roleColors[viewUser.role]}
-                  >
+                  <Badge variant="outline" className={roleColors[viewUser.role]}>
                     {viewUser.role.replace("_", " ")}
                   </Badge>
                 </div>
@@ -433,15 +393,11 @@ export default function UsersPage({ params }: PageProps) {
                 </div>
                 <div>
                   <p className="text-muted-foreground">Verified</p>
-                  <p className="font-medium">
-                    {viewUser.isVerified ? "Yes" : "No"}
-                  </p>
+                  <p className="font-medium">{viewUser.isVerified ? "Yes" : "No"}</p>
                 </div>
                 <div>
                   <p className="text-muted-foreground">Joined</p>
-                  <p className="font-medium">
-                    {formatDate(viewUser.createdAt)}
-                  </p>
+                  <p className="font-medium">{formatDate(viewUser.createdAt)}</p>
                 </div>
               </div>
               {viewUser.address && (
@@ -460,9 +416,7 @@ export default function UsersPage({ params }: PageProps) {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit User Role</DialogTitle>
-            <DialogDescription>
-              Change role for {editUser?.name}
-            </DialogDescription>
+            <DialogDescription>Change role for {editUser?.name}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
@@ -473,10 +427,7 @@ export default function UsersPage({ params }: PageProps) {
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-role">Role</Label>
-              <Select
-                value={editRole}
-                onValueChange={(v) => setEditRole(v as UserRole)}
-              >
+              <Select value={editRole} onValueChange={(v) => setEditRole(v as UserRole)}>
                 <SelectTrigger id="edit-role">
                   <SelectValue />
                 </SelectTrigger>
@@ -497,10 +448,7 @@ export default function UsersPage({ params }: PageProps) {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleEditRoleSave}
-              disabled={updateRoleMutation.isPending}
-            >
+            <Button onClick={handleEditRoleSave} disabled={updateRoleMutation.isPending}>
               {updateRoleMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
           </DialogFooter>
@@ -511,9 +459,7 @@ export default function UsersPage({ params }: PageProps) {
       <ConfirmDialog
         open={!!toggleTarget}
         onOpenChange={() => setToggleTarget(null)}
-        title={
-          toggleTarget?.isActive === "ACTIVE" ? "Block User" : "Activate User"
-        }
+        title={toggleTarget?.isActive === "ACTIVE" ? "Block User" : "Activate User"}
         description={
           toggleTarget?.isActive === "ACTIVE"
             ? `Are you sure you want to block "${toggleTarget?.name}"? They will lose access to the platform.`
@@ -521,12 +467,8 @@ export default function UsersPage({ params }: PageProps) {
         }
         onConfirm={handleToggleActive}
         isLoading={toggleStatusMutation.isPending}
-        variant={
-          toggleTarget?.isActive === "ACTIVE" ? "destructive" : "default"
-        }
-        confirmLabel={
-          toggleTarget?.isActive === "ACTIVE" ? "Block User" : "Activate User"
-        }
+        variant={toggleTarget?.isActive === "ACTIVE" ? "destructive" : "default"}
+        confirmLabel={toggleTarget?.isActive === "ACTIVE" ? "Block User" : "Activate User"}
       />
 
       {/* ── Delete Confirm ─────────────────────────────────────────── */}
@@ -612,9 +554,7 @@ function DropdownMenuWithActions({
             {idx > 0 && item.destructive && <DropdownMenuSeparator />}
             <DropdownMenuItem
               onClick={item.onClick}
-              className={
-                item.destructive ? "text-danger focus:text-danger" : ""
-              }
+              className={item.destructive ? "text-danger focus:text-danger" : ""}
             >
               <item.icon className="size-4" />
               {item.label}

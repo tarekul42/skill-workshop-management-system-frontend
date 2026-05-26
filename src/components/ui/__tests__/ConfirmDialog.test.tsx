@@ -12,16 +12,11 @@ vi.mock("framer-motion", () => ({
     span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
       <span {...props}>{children}</span>
     ),
-    button: ({
-      children,
-      ...props
-    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
       <button {...props}>{children}</button>
     ),
   },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Mock next/navigation
@@ -43,9 +38,7 @@ describe("ConfirmDialog", () => {
   it("renders title and description when open=true", () => {
     render(<ConfirmDialog {...defaultProps} />);
     expect(screen.getByText("Delete Workshop")).toBeInTheDocument();
-    expect(
-      screen.getByText("This action cannot be undone."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("This action cannot be undone.")).toBeInTheDocument();
   });
 
   it("does not render content when open=false", () => {
@@ -114,9 +107,7 @@ describe("ConfirmDialog", () => {
   // ── requireConfirmText ───────────────────────────────────────────
   it("renders confirmation input when requireConfirmText is provided", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="DELETE" />);
-    expect(
-      screen.getByPlaceholderText("Type exactly 'DELETE'"),
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Type exactly 'DELETE'")).toBeInTheDocument();
   });
 
   it("disables confirm button when input does not match requireConfirmText", () => {
@@ -137,9 +128,7 @@ describe("ConfirmDialog", () => {
 
   it("shows the requireConfirmText value in the instruction text", () => {
     render(<ConfirmDialog {...defaultProps} requireConfirmText="CONFIRM" />);
-    expect(
-      screen.getByPlaceholderText("Type exactly 'CONFIRM'"),
-    ).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Type exactly 'CONFIRM'")).toBeInTheDocument();
   });
 
   it("does not render confirmation input when requireConfirmText is not provided", () => {

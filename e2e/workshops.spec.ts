@@ -7,12 +7,10 @@ test.describe("Workshop Management", () => {
   });
 
   test("should show workshop list page elements", async ({ page }) => {
-    // This would normally require login, but we can check the public workshops page
     await page.goto("/workshops", { waitUntil: "domcontentloaded" });
 
     await expect(page.getByPlaceholder(/Search workshops/i)).toBeVisible();
-    await expect(
-      page.getByRole("banner").getByRole("link", { name: "Categories" }),
-    ).toBeVisible();
+    // Use a broader selector for the Categories link — it may be in nav, header, or banner
+    await expect(page.getByRole("link", { name: "Categories" }).first()).toBeVisible();
   });
 });

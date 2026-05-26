@@ -19,17 +19,14 @@ export default function Error({
 
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center p-4 text-center">
-      <div className="mb-6 flex size-16 items-center justify-center rounded-full bg-destructive/10">
-        <AlertCircle className="size-8 text-destructive" />
+      <div className="bg-destructive/10 mb-6 flex size-16 items-center justify-center rounded-full">
+        <AlertCircle className="text-destructive size-8" />
       </div>
 
-      <h2 className="mb-2 text-2xl font-bold tracking-tight">
-        Something went wrong!
-      </h2>
-      <p className="mb-8 max-w-md text-muted-foreground">
-        We encountered an error while trying to load the workshop details.
-        Please try refreshing the page or contact support if the problem
-        persists.
+      <h2 className="mb-2 text-2xl font-bold tracking-tight">Something went wrong!</h2>
+      <p className="text-muted-foreground mb-8 max-w-md">
+        We encountered an error while trying to load the workshop details. Please try refreshing the
+        page or contact support if the problem persists.
       </p>
 
       <div className="flex flex-wrap items-center justify-center gap-3">
@@ -46,11 +43,11 @@ export default function Error({
       </div>
 
       {process.env.NODE_ENV === "development" && (
-        <div className="mt-12 max-w-2xl overflow-hidden rounded-lg border bg-muted p-4 text-left">
-          <p className="mb-2 font-mono text-xs font-semibold uppercase text-muted-foreground">
+        <div className="bg-muted mt-12 max-w-2xl overflow-hidden rounded-lg border p-4 text-left">
+          <p className="text-muted-foreground mb-2 font-mono text-xs font-semibold uppercase">
             Error Details
           </p>
-          <pre className="overflow-x-auto font-mono text-sm text-destructive">
+          <pre className="text-destructive overflow-x-auto font-mono text-sm">
             {error.message}
             {"\n"}
             {error.stack}

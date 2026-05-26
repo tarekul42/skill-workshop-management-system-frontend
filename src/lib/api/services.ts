@@ -1,8 +1,4 @@
-import {
-  apiClient,
-  apiClientFormData,
-  apiClientPaginated,
-} from "@/lib/api-client";
+import { apiClient, apiClientFormData, apiClientPaginated } from "@/lib/api-client";
 
 import type {
   EnrollmentStats,
@@ -75,10 +71,7 @@ export interface PaymentInitResponse {
  * Log in with email and password.
  * Returns tokens and the authenticated user object.
  */
-export async function login(
-  email: string,
-  password: string,
-): Promise<LoginResponse> {
+export async function login(email: string, password: string): Promise<LoginResponse> {
   return apiClient<LoginResponse>("/auth/login", {
     method: "POST",
     body: { email, password },
@@ -104,10 +97,7 @@ export async function logout(): Promise<void> {
 /**
  * Change the authenticated user's password.
  */
-export async function changePassword(
-  currentPassword: string,
-  newPassword: string,
-): Promise<void> {
+export async function changePassword(currentPassword: string, newPassword: string): Promise<void> {
   return apiClient<void>("/auth/change-password", {
     method: "POST",
     body: { oldPassword: currentPassword, newPassword },
@@ -127,10 +117,7 @@ export async function forgotPassword(email: string): Promise<void> {
 /**
  * Reset password using the token received via email.
  */
-export async function resetPassword(
-  token: string,
-  newPassword: string,
-): Promise<void> {
+export async function resetPassword(token: string, newPassword: string): Promise<void> {
   return apiClient<void>("/auth/reset-password", {
     method: "POST",
     body: { token, newPassword },
@@ -155,7 +142,7 @@ export async function registerUser(
         phone?: string;
         age?: number;
         address?: string;
-      },
+      }
 ): Promise<IUser> {
   if (data instanceof FormData) {
     return apiClientFormData<IUser>("/user/register", {
@@ -179,9 +166,7 @@ export async function getMe(): Promise<IUser> {
 /**
  * Get all users (admin). Returns paginated results.
  */
-export async function getAllUsers(
-  params?: FetchUsersParams,
-): Promise<PaginatedData<IUser[]>> {
+export async function getAllUsers(params?: FetchUsersParams): Promise<PaginatedData<IUser[]>> {
   const searchParams = new URLSearchParams();
   if (params?.page) searchParams.set("page", String(params.page));
   if (params?.limit) searchParams.set("limit", String(params.limit));
@@ -206,12 +191,7 @@ export async function getUserById(id: string): Promise<IUser> {
  */
 export async function updateUser(
   id: string,
-  data: Partial<
-    Pick<
-      IUser,
-      "name" | "email" | "phone" | "age" | "address" | "isActive" | "role"
-    >
-  >,
+  data: Partial<Pick<IUser, "name" | "email" | "phone" | "age" | "address" | "isActive" | "role">>
 ): Promise<IUser> {
   return apiClient<IUser>(`/user/${id}`, {
     method: "PATCH",
@@ -235,7 +215,7 @@ export async function deleteUser(id: string): Promise<void> {
  * Uses raw `fetch` because the response includes `meta` alongside `data`.
  */
 export async function fetchWorkshops(
-  params?: FetchWorkshopsParams,
+  params?: FetchWorkshopsParams
 ): Promise<PaginatedData<IWorkshop[]>> {
   const searchParams = new URLSearchParams();
 
@@ -257,9 +237,7 @@ export async function fetchWorkshops(
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchWorkshopBySlug(slug: string): Promise<IWorkshop> {
-  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(
-    `/workshop/${slug}`,
-  );
+  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(`/workshop/${slug}`);
   return (data as { data: IWorkshop }).data ?? (data as IWorkshop);
 }
 
@@ -285,10 +263,7 @@ export async function createWorkshop(formData: FormData): Promise<IWorkshop> {
  * Same fields as create, plus an optional `deleteImages[]` field
  * containing image URLs that should be removed.
  */
-export async function updateWorkshop(
-  id: string,
-  formData: FormData,
-): Promise<IWorkshop> {
+export async function updateWorkshop(id: string, formData: FormData): Promise<IWorkshop> {
   return apiClientFormData<IWorkshop>(`/workshop/${id}`, {
     method: "PATCH",
     body: formData,
@@ -309,9 +284,7 @@ export async function deleteWorkshop(id: string): Promise<void> {
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchWorkshopLevels(): Promise<ILevel[]> {
-  const data = await apiClient<{ data: ILevel[] } | ILevel[]>(
-    "/workshop/levels",
-  );
+  const data = await apiClient<{ data: ILevel[] } | ILevel[]>("/workshop/levels");
   return (data as { data: ILevel[] }).data ?? (data as ILevel[]);
 }
 
@@ -320,9 +293,7 @@ export async function fetchWorkshopLevels(): Promise<ILevel[]> {
  * Uses raw `fetch` (handles double-nested response from detail endpoint).
  */
 export async function fetchWorkshopById(id: string): Promise<IWorkshop> {
-  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(
-    `/workshop/${id}`,
-  );
+  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(`/workshop/${id}`);
   return (data as { data: IWorkshop }).data ?? (data as IWorkshop);
 }
 
@@ -332,9 +303,7 @@ export async function fetchWorkshopById(id: string): Promise<IWorkshop> {
  * Safely extract the category name from a workshop field that may be
  * a plain ObjectId string or a populated ICategory object.
  */
-export function getCategoryName(
-  category: string | ICategory | undefined,
-): string {
+export function getCategoryName(category: string | ICategory | undefined): string {
   if (!category || typeof category === "string") return "";
   return category.name ?? "";
 }
@@ -352,9 +321,7 @@ export function getLevelName(level: string | ILevel | undefined): string {
  * Safely extract the category _id from a workshop field that may be
  * a plain ObjectId string or a populated ICategory object.
  */
-export function getCategoryId(
-  category: string | ICategory | undefined,
-): string {
+export function getCategoryId(category: string | ICategory | undefined): string {
   if (!category) return "";
   return typeof category === "string" ? category : (category._id ?? "");
 }
@@ -373,7 +340,7 @@ export function getLevelId(level: string | ILevel | undefined): string {
  * may be a plain ObjectId string or a populated user object.
  */
 export function getCreatorName(
-  createdBy: string | { _id: string; name: string; email: string } | undefined,
+  createdBy: string | { _id: string; name: string; email: string } | undefined
 ): string {
   if (!createdBy || typeof createdBy === "string") return "";
   return createdBy.name ?? "";
@@ -386,19 +353,17 @@ export function getCreatorName(
 export function enrichWorkshop(
   workshop: IWorkshop,
   categories: ICategory[],
-  levels: ILevel[],
+  levels: ILevel[]
 ): IWorkshop {
   return {
     ...workshop,
     category:
       typeof workshop.category === "string"
-        ? ((categories.find((c) => c._id === workshop.category) as ICategory) ??
-          workshop.category)
+        ? ((categories.find((c) => c._id === workshop.category) as ICategory) ?? workshop.category)
         : workshop.category,
     level:
       typeof workshop.level === "string"
-        ? ((levels.find((l) => l._id === workshop.level) as ILevel) ??
-          workshop.level)
+        ? ((levels.find((l) => l._id === workshop.level) as ILevel) ?? workshop.level)
         : workshop.level,
   };
 }
@@ -409,7 +374,7 @@ export function enrichWorkshop(
 export function enrichWorkshops(
   workshops: IWorkshop[],
   categories: ICategory[],
-  levels: ILevel[],
+  levels: ILevel[]
 ): IWorkshop[] {
   return workshops.map((w) => enrichWorkshop(w, categories, levels));
 }
@@ -483,10 +448,7 @@ export async function createCategory(formData: FormData): Promise<ICategory> {
  * Update an existing category by ID (multipart/form-data).
  * Fields: name, description?, file (thumbnail image)
  */
-export async function updateCategory(
-  id: string,
-  formData: FormData,
-): Promise<ICategory> {
+export async function updateCategory(id: string, formData: FormData): Promise<ICategory> {
   return apiClientFormData<ICategory>(`/category/${id}`, {
     method: "PATCH",
     body: formData,
@@ -509,7 +471,7 @@ export async function deleteCategory(id: string): Promise<void> {
  */
 export async function createEnrollment(
   workshop: string,
-  studentCount: number,
+  studentCount: number
 ): Promise<IEnrollment> {
   return apiClient<IEnrollment>("/enrollment", {
     method: "POST",
@@ -521,7 +483,7 @@ export async function createEnrollment(
  * Fetch all enrollments (admin). Returns paginated results.
  */
 export async function getAllEnrollments(
-  params?: PaginationParams,
+  params?: PaginationParams
 ): Promise<PaginatedData<IEnrollment[]>> {
   const searchParams = new URLSearchParams();
   if (params?.page) searchParams.set("page", String(params.page));
@@ -552,7 +514,7 @@ export async function getEnrollmentById(id: string): Promise<IEnrollment> {
  */
 export async function updateEnrollmentStatus(
   enrollmentId: string,
-  status: EnrollmentStatus,
+  status: EnrollmentStatus
 ): Promise<IEnrollment> {
   return apiClient<IEnrollment>(`/enrollment/${enrollmentId}/status`, {
     method: "PATCH",
@@ -575,13 +537,10 @@ export async function deleteEnrollment(enrollmentId: string): Promise<void> {
  * Initiate a payment for an enrollment.
  * Returns the payment gateway URL and transaction ID.
  */
-export async function initPayment(
-  enrollmentId: string,
-): Promise<PaymentInitResponse> {
-  return apiClient<PaymentInitResponse>(
-    `/payment/init-payment/${enrollmentId}`,
-    { method: "POST" },
-  );
+export async function initPayment(enrollmentId: string): Promise<PaymentInitResponse> {
+  return apiClient<PaymentInitResponse>(`/payment/init-payment/${enrollmentId}`, {
+    method: "POST",
+  });
 }
 
 /**
@@ -597,10 +556,7 @@ export async function validatePayment(val_id: string): Promise<IPayment> {
 /**
  * Refund a payment.
  */
-export async function refundPayment(
-  paymentId: string,
-  reason: string,
-): Promise<IPayment> {
+export async function refundPayment(paymentId: string, reason: string): Promise<IPayment> {
   return apiClient<IPayment>("/payment/refund", {
     method: "POST",
     body: { paymentId, reason },
@@ -610,9 +566,7 @@ export async function refundPayment(
 /**
  * Get the invoice URL / data for a payment.
  */
-export async function getInvoice(
-  paymentId: string,
-): Promise<{ invoiceUrl: string }> {
+export async function getInvoice(paymentId: string): Promise<{ invoiceUrl: string }> {
   return apiClient<{ invoiceUrl: string }>(`/payment/invoice/${paymentId}`);
 }
 
@@ -680,14 +634,13 @@ export async function getWorkshopStats(): Promise<WorkshopStats> {
  * Fetch audit logs with optional filters (admin). Returns paginated results.
  */
 export async function getAuditLogs(
-  params?: FetchAuditLogsParams,
+  params?: FetchAuditLogsParams
 ): Promise<PaginatedData<IAuditLog[]>> {
   const searchParams = new URLSearchParams();
 
   if (params?.page) searchParams.set("page", String(params.page));
   if (params?.limit) searchParams.set("limit", String(params.limit));
-  if (params?.collectionName)
-    searchParams.set("collectionName", params.collectionName);
+  if (params?.collectionName) searchParams.set("collectionName", params.collectionName);
   if (params?.action) searchParams.set("action", params.action);
   if (params?.performedBy) searchParams.set("performedBy", params.performedBy);
   if (params?.documentId) searchParams.set("documentId", params.documentId);

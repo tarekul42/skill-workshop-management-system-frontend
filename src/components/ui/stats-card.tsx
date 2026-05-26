@@ -30,10 +30,10 @@ interface StatsCardProps {
 const iconVariantClasses: Record<IconVariant, { container: string; icon: string }> = {
   primary: { container: "bg-primary-subtle", icon: "text-primary" },
   success: { container: "bg-success-subtle", icon: "text-success" },
-  accent:  { container: "bg-accent-subtle",  icon: "text-accent-foreground" },
+  accent: { container: "bg-accent-subtle", icon: "text-accent-foreground" },
   warning: { container: "bg-warning-subtle", icon: "text-warning" },
-  info:    { container: "bg-info-subtle",    icon: "text-info" },
-  danger:  { container: "bg-danger-subtle",  icon: "text-danger" },
+  info: { container: "bg-info-subtle", icon: "text-info" },
+  danger: { container: "bg-danger-subtle", icon: "text-danger" },
 };
 
 // ─── Skeleton ───────────────────────────────────────────────────────
@@ -89,13 +89,13 @@ export function StatsCard({
     <Card className={cn("", className)}>
       <CardHeader>
         <div className="flex items-start justify-between">
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
             {title}
           </p>
           <div
             className={cn(
               "flex size-11 items-center justify-center rounded-[12px]",
-              variantClasses.container,
+              variantClasses.container
             )}
           >
             <Icon className={cn("size-5", variantClasses.icon)} />
@@ -103,14 +103,14 @@ export function StatsCard({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="font-display text-4xl font-extrabold text-foreground">
+        <div className="font-display text-foreground text-4xl font-extrabold">
           {typeof value === "number" ? <AnimatedCounter value={value} /> : value}
         </div>
         {trend && (
           <span
             className={cn(
               "mt-1 inline-flex items-center gap-1 text-sm font-semibold",
-              trend.isPositive ? "text-success" : "text-danger",
+              trend.isPositive ? "text-success" : "text-danger"
             )}
           >
             {trend.isPositive ? "↑" : "↓"}
@@ -118,9 +118,7 @@ export function StatsCard({
             {trend.value} this month
           </span>
         )}
-        {description && (
-          <p className="mt-1 text-xs text-muted-foreground">{description}</p>
-        )}
+        {description && <p className="text-muted-foreground mt-1 text-xs">{description}</p>}
       </CardContent>
     </Card>
   );

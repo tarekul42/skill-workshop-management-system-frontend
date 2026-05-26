@@ -6,7 +6,7 @@ export function BackButton() {
   return (
     <button
       onClick={() => typeof window !== "undefined" && window.history.back()}
-      className="mt-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      className="text-muted-foreground hover:text-foreground mt-6 inline-flex items-center gap-1.5 text-sm transition-colors"
       aria-label="Go back to previous page"
     >
       <ArrowLeft className="size-3.5" />

@@ -1,3 +1,4 @@
+/// <reference types="vitest/globals" />
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { Input } from "../input";

@@ -10,19 +10,17 @@ export function PasswordChecklist({ password }: PasswordChecklistProps) {
   if (password.length === 0) return null;
 
   return (
-    <ul className="grid gap-2 mt-2">
+    <ul className="mt-2 grid gap-2">
       {PASSWORD_CHECKS.map((check) => {
         const isValid = check.test(password);
         return (
           <li key={check.id} className="flex items-center gap-2 text-[13px]">
             {isValid ? (
-              <CheckCircle2 className="size-4 text-success shrink-0" />
+              <CheckCircle2 className="text-success size-4 shrink-0" />
             ) : (
-              <Circle className="size-4 text-foreground-disabled shrink-0" />
+              <Circle className="text-foreground-disabled size-4 shrink-0" />
             )}
-            <span
-              className={isValid ? "text-success font-medium" : "text-foreground-subtle"}
-            >
+            <span className={isValid ? "text-success font-medium" : "text-foreground-subtle"}>
               {check.label}
             </span>
           </li>

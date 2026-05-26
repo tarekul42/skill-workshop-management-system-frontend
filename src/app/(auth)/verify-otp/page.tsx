@@ -69,15 +69,13 @@ export default function VerifyOTPPage() {
         router.push("/login");
       } catch (err: unknown) {
         const message =
-          err instanceof Error
-            ? err.message
-            : "Verification failed. Please try again.";
+          err instanceof Error ? err.message : "Verification failed. Please try again.";
         setError(message);
       } finally {
         setLoading(false);
       }
     },
-    [otp, email, router],
+    [otp, email, router]
   );
 
   const handleResend = useCallback(async () => {
@@ -89,8 +87,7 @@ export default function VerifyOTPPage() {
       toast.success("New OTP sent!");
       setCountdown(30);
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Failed to resend OTP.";
+      const message = err instanceof Error ? err.message : "Failed to resend OTP.";
       toast.error(message);
     } finally {
       setResendLoading(false);
@@ -104,17 +101,16 @@ export default function VerifyOTPPage() {
   return (
     <AnimatedPage className="w-full">
       <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
-        <CardHeader className="items-center text-center pb-2">
+        <CardHeader className="items-center pb-2 text-center">
           <StepIndicator currentStep={2} />
-          <div className="flex size-16 items-center justify-center rounded-full bg-primary-subtle mt-4">
-            <Mail className="size-8 text-primary" />
+          <div className="bg-primary-subtle mt-4 flex size-16 items-center justify-center rounded-full">
+            <Mail className="text-primary size-8" />
           </div>
-          <CardTitle className="font-display text-[28px] font-bold mt-4">
+          <CardTitle className="font-display mt-4 text-[28px] font-bold">
             Check your inbox
           </CardTitle>
-          <CardDescription className="text-[14px] text-foreground-muted mt-2">
-            We sent a 6-digit code to{" "}
-            <span className="font-medium text-primary">{email}</span>
+          <CardDescription className="text-foreground-muted mt-2 text-[14px]">
+            We sent a 6-digit code to <span className="text-primary font-medium">{email}</span>
           </CardDescription>
         </CardHeader>
 
@@ -149,13 +145,11 @@ export default function VerifyOTPPage() {
               />
             </div>
 
-            {error && (
-              <p className="text-center text-[14px] text-danger mt-4">{error}</p>
-            )}
+            {error && <p className="text-danger mt-4 text-center text-[14px]">{error}</p>}
 
             <Button
               type="submit"
-              className="w-full h-12 text-base font-semibold"
+              className="h-12 w-full text-base font-semibold"
               disabled={otp.length !== 6 || loading}
             >
               {loading ? (
@@ -195,16 +189,16 @@ export default function VerifyOTPPage() {
                       strokeWidth="3"
                       strokeDasharray="62.8"
                       strokeDashoffset={62.8 - (62.8 * countdown) / 30}
-                      className="text-primary transition-all duration-1000 linear"
+                      className="text-primary linear transition-all duration-1000"
                     />
                   </svg>
                 </div>
-                <span className="text-[13px] text-foreground-muted">
+                <span className="text-foreground-muted text-[13px]">
                   Code expires in 0:{countdown.toString().padStart(2, "0")}
                 </span>
               </div>
             ) : (
-              <span className="text-[13px] text-foreground-muted">Code expired</span>
+              <span className="text-foreground-muted text-[13px]">Code expired</span>
             )}
 
             <button
@@ -226,7 +220,7 @@ export default function VerifyOTPPage() {
 
           <Link
             href="/register"
-            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-foreground-muted transition-colors hover:text-foreground"
+            className="text-foreground-muted hover:text-foreground inline-flex items-center gap-1.5 text-[13px] font-medium transition-colors"
           >
             <ArrowLeft className="size-3.5" />
             Back to registration
@@ -241,18 +235,18 @@ export default function VerifyOTPPage() {
 function OTPSlot({ slot }: { slot: SlotProps }) {
   return (
     <div
-      className={`relative flex h-[64px] w-[52px] items-center justify-center rounded-xl border-[1.5px] text-center font-display text-[24px] font-bold transition-all ${
+      className={`font-display relative flex h-[64px] w-[52px] items-center justify-center rounded-xl border-[1.5px] text-center text-[24px] font-bold transition-all ${
         slot.isActive
-          ? "border-primary ring-[3px] ring-primary/20 z-10"
+          ? "border-primary ring-primary/20 z-10 ring-[3px]"
           : slot.char
-          ? "border-primary bg-primary-subtle text-foreground"
-          : "border-border bg-background"
+            ? "border-primary bg-primary-subtle text-foreground"
+            : "border-border bg-background"
       }`}
     >
       {slot.char}
       {slot.hasFakeCaret && (
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-6 w-[1.5px] animate-pulse bg-primary" />
+          <div className="bg-primary h-6 w-[1.5px] animate-pulse" />
         </div>
       )}
     </div>

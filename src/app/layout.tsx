@@ -72,8 +72,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Skill Workshop Management System",
-    description:
-      "Master new skills with expert-led workshops across Bangladesh.",
+    description: "Master new skills with expert-led workshops across Bangladesh.",
   },
   icons: {
     icon: "/favicon.svg",
@@ -92,9 +91,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
-  children,
-}: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const nonce = (await headers()).get("x-nonce") ?? "";
 
   return (

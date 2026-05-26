@@ -93,10 +93,7 @@ export default function InstructorRegisterPage() {
       storeOTPEmail(email.trim());
       router.push("/verify-otp");
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Registration failed. Please try again.";
+      const message = err instanceof Error ? err.message : "Registration failed. Please try again.";
       setError(message);
     } finally {
       setLoading(false);
@@ -106,108 +103,105 @@ export default function InstructorRegisterPage() {
   return (
     <AnimatedPage className="w-full">
       <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
-        <CardHeader className="text-center pb-2">
+        <CardHeader className="pb-2 text-center">
           <Link href="/" className="mb-6 flex items-center justify-center gap-2">
-            <BookOpen className="size-9 text-primary" />
+            <BookOpen className="text-primary size-9" />
             <span className="font-display text-2xl font-bold">Skill Workshop</span>
           </Link>
           <StepIndicator currentStep={1} />
-          <CardTitle className="font-display text-[28px] font-bold mt-2">Register as Instructor</CardTitle>
-          <CardDescription className="text-[14px] text-foreground-muted mt-1 mb-5">Share your expertise with students</CardDescription>
+          <CardTitle className="font-display mt-2 text-[28px] font-bold">
+            Register as Instructor
+          </CardTitle>
+          <CardDescription className="text-foreground-muted mt-1 mb-5 text-[14px]">
+            Share your expertise with students
+          </CardDescription>
         </CardHeader>
 
-      <CardContent>
-        <form onSubmit={handleSubmit} className="grid gap-4">
-          {/* Full Name */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="name">
-              <User className="size-3.5" />
-              Full Name
-            </Label>
-            <Input
-              id="name"
-              type="text"
-              required
-              placeholder="Enter your full name"
-              minLength={2}
-              maxLength={50}
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-
-          {/* Email */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="email">
-              <Mail className="size-3.5" />
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              required
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-
-          {/* Phone (recommended) */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="phone">
-              <Phone className="size-3.5" />
-              Phone{" "}
-              <span className="text-muted-foreground font-normal">
-                (recommended)
-              </span>
-            </Label>
-            <Input
-              id="phone"
-              type="tel"
-              placeholder="+8801XXXXXXXXX"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
-              disabled={loading}
-            />
-            <p className="text-xs text-muted-foreground">Bangladesh format</p>
-          </div>
-
-          {/* Password */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="password">
-              <Lock className="size-3.5" />
-              Password
-            </Label>
-            <div className="relative">
+        <CardContent>
+          <form onSubmit={handleSubmit} className="grid gap-4">
+            {/* Full Name */}
+            <div className="grid gap-1.5">
+              <Label htmlFor="name">
+                <User className="size-3.5" />
+                Full Name
+              </Label>
               <Input
-                id="password"
-                type={showPassword ? "text" : "password"}
+                id="name"
+                type="text"
                 required
-                placeholder="Create a password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your full name"
+                minLength={2}
+                maxLength={50}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 disabled={loading}
-                className="pr-9"
               />
-              <button
-                type="button"
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                onClick={() => setShowPassword(!showPassword)}
-                tabIndex={-1}
-                aria-label={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? (
-                  <EyeOff className="size-4" />
-                ) : (
-                  <Eye className="size-4" />
-                )}
-              </button>
             </div>
 
-            <PasswordChecklist password={password} />
-          </div>
+            {/* Email */}
+            <div className="grid gap-1.5">
+              <Label htmlFor="email">
+                <Mail className="size-3.5" />
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                required
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+
+            {/* Phone (recommended) */}
+            <div className="grid gap-1.5">
+              <Label htmlFor="phone">
+                <Phone className="size-3.5" />
+                Phone <span className="text-muted-foreground font-normal">(recommended)</span>
+              </Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="+8801XXXXXXXXX"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                disabled={loading}
+              />
+              <p className="text-muted-foreground text-xs">Bangladesh format</p>
+            </div>
+
+            {/* Password */}
+            <div className="grid gap-1.5">
+              <Label htmlFor="password">
+                <Lock className="size-3.5" />
+                Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  placeholder="Create a password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  disabled={loading}
+                  className="pr-9"
+                />
+                <button
+                  type="button"
+                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                  tabIndex={-1}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                </button>
+              </div>
+
+              <PasswordChecklist password={password} />
+            </div>
 
             {/* Confirm Password */}
             <div className="grid gap-1.5">
@@ -229,105 +223,89 @@ export default function InstructorRegisterPage() {
                 />
                 <button
                   type="button"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 transition-colors"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   tabIndex={-1}
-                  aria-label={
-                    showConfirmPassword ? "Hide password" : "Show password"
-                  }
+                  aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                 >
-                  {showConfirmPassword ? (
-                    <EyeOff className="size-4" />
-                  ) : (
-                    <Eye className="size-4" />
-                  )}
+                  {showConfirmPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
                 </button>
               </div>
               {confirmPassword.length > 0 && !passwordsMatch && (
-                <p className="text-xs text-danger mt-1">Passwords do not match</p>
+                <p className="text-danger mt-1 text-xs">Passwords do not match</p>
               )}
             </div>
-            
-            <div className="relative flex items-center justify-center py-2 mt-2">
-              <Separator className="absolute w-full border-border" />
-              <span className="relative bg-surface-1 px-4 text-[12px] font-semibold text-foreground">
+
+            <div className="relative mt-2 flex items-center justify-center py-2">
+              <Separator className="border-border absolute w-full" />
+              <span className="bg-surface-1 text-foreground relative px-4 text-[12px] font-semibold">
                 Instructor Profile
               </span>
             </div>
 
-          {/* Expertise */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="expertise">
-              <BookOpen className="size-3.5" />
-              Expertise / Specialization
-            </Label>
-            <Input
-              id="expertise"
-              type="text"
-              required
-              placeholder="e.g., Web Development, Digital Marketing"
-              value={expertise}
-              onChange={(e) => setExpertise(e.target.value)}
-              disabled={loading}
-            />
-          </div>
-
-          {/* Bio */}
-          <div className="grid gap-1.5">
-            <Label htmlFor="bio">
-              <PenLine className="size-3.5" />
-              Short Bio
-            </Label>
-            <Textarea
-              id="bio"
-              required
-              placeholder="Tell us about your experience and teaching background"
-              maxLength={300}
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-              disabled={loading}
-              className="min-h-20 resize-y"
-            />
-            <p className="text-xs text-muted-foreground text-right">
-              {bio.length}/300
-            </p>
-          </div>
-
-          {/* Error */}
-          {error && (
-            <div
-              className="flex items-start gap-2 rounded-lg border-l-[3px] border-l-danger bg-danger-subtle px-4 py-3 mt-2"
-              role="alert"
-            >
-              <AlertTriangle className="size-4 shrink-0 text-danger mt-0.5" />
-              <p className="flex-1 text-[14px] text-danger">{error}</p>
+            {/* Expertise */}
+            <div className="grid gap-1.5">
+              <Label htmlFor="expertise">
+                <BookOpen className="size-3.5" />
+                Expertise / Specialization
+              </Label>
+              <Input
+                id="expertise"
+                type="text"
+                required
+                placeholder="e.g., Web Development, Digital Marketing"
+                value={expertise}
+                onChange={(e) => setExpertise(e.target.value)}
+                disabled={loading}
+              />
             </div>
-          )}
 
-          {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full"
-            size="lg"
-            disabled={!formValid || loading}
-          >
-            {loading && <Loader2 className="animate-spin" />}
-            Submit Application
-          </Button>
-        </form>
-      </CardContent>
+            {/* Bio */}
+            <div className="grid gap-1.5">
+              <Label htmlFor="bio">
+                <PenLine className="size-3.5" />
+                Short Bio
+              </Label>
+              <Textarea
+                id="bio"
+                required
+                placeholder="Tell us about your experience and teaching background"
+                maxLength={300}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                disabled={loading}
+                className="min-h-20 resize-y"
+              />
+              <p className="text-muted-foreground text-right text-xs">{bio.length}/300</p>
+            </div>
+
+            {/* Error */}
+            {error && (
+              <div
+                className="border-l-danger bg-danger-subtle mt-2 flex items-start gap-2 rounded-lg border-l-[3px] px-4 py-3"
+                role="alert"
+              >
+                <AlertTriangle className="text-danger mt-0.5 size-4 shrink-0" />
+                <p className="text-danger flex-1 text-[14px]">{error}</p>
+              </div>
+            )}
+
+            {/* Submit */}
+            <Button type="submit" className="w-full" size="lg" disabled={!formValid || loading}>
+              {loading && <Loader2 className="animate-spin" />}
+              Submit Application
+            </Button>
+          </form>
+        </CardContent>
 
         <CardFooter className="flex-col gap-2 pt-2 pb-2">
-          <p className="text-[14px] text-foreground-muted text-center flex items-center justify-center flex-wrap gap-x-1.5">
+          <p className="text-foreground-muted flex flex-wrap items-center justify-center gap-x-1.5 text-center text-[14px]">
             <span>Already have an account?</span>
-            <Link href="/login" className="text-primary hover:underline font-medium">
+            <Link href="/login" className="text-primary font-medium hover:underline">
               Sign in
             </Link>
             <span className="text-foreground-muted">·</span>
-            <Link
-              href="/register"
-              className="text-primary hover:underline font-medium"
-            >
+            <Link href="/register" className="text-primary font-medium hover:underline">
               Register as Student
             </Link>
           </p>

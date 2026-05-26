@@ -34,21 +34,20 @@ const socialLinks = [
 
 export function PublicFooter() {
   return (
-    <footer className="mt-auto border-t border-white/5 bg-sidebar-bg text-sidebar-text">
+    <footer className="bg-sidebar-bg text-sidebar-text mt-auto border-t border-white/5">
       <div className="site-container py-16">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {/* Column 1: Brand */}
           <div className="space-y-6">
-            <Link href="/" className="inline-flex items-center gap-2 group">
-              <GraduationCap className="size-8 text-primary transition-transform group-hover:scale-110" />
+            <Link href="/" className="group inline-flex items-center gap-2">
+              <GraduationCap className="text-primary size-8 transition-transform group-hover:scale-110" />
               <span className="font-display text-2xl font-extrabold tracking-tight">
                 Skill<span className="text-primary">Workshop</span>
               </span>
             </Link>
-            <p className="text-sm leading-relaxed text-sidebar-text-muted max-w-xs">
-              Empowering the next generation of Bangladeshi professionals
-              through high-impact, hands-on skill training led by industry
-              experts.
+            <p className="text-sidebar-text-muted max-w-xs text-sm leading-relaxed">
+              Empowering the next generation of Bangladeshi professionals through high-impact,
+              hands-on skill training led by industry experts.
             </p>
             <div className="flex items-center gap-3">
               {socialLinks.map((social) => (
@@ -56,7 +55,7 @@ export function PublicFooter() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="flex size-10 items-center justify-center rounded-xl bg-sidebar-hover text-sidebar-text-muted transition-all hover:bg-primary hover:text-white"
+                  className="bg-sidebar-hover text-sidebar-text-muted hover:bg-primary flex size-10 items-center justify-center rounded-xl transition-all hover:text-white"
                 >
                   <social.icon className="size-5" />
                 </a>
@@ -66,15 +65,13 @@ export function PublicFooter() {
 
           {/* Column 2: Platform */}
           <div>
-            <h3 className="mb-6 font-display text-lg font-bold text-white">
-              Platform
-            </h3>
+            <h3 className="font-display mb-6 text-lg font-bold text-white">Platform</h3>
             <ul className="space-y-4">
               {platformLinks.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-sidebar-text-muted transition-colors hover:text-primary"
+                    className="text-sidebar-text-muted hover:text-primary text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -85,15 +82,13 @@ export function PublicFooter() {
 
           {/* Column 3: Instructors */}
           <div>
-            <h3 className="mb-6 font-display text-lg font-bold text-white">
-              For Instructors
-            </h3>
+            <h3 className="font-display mb-6 text-lg font-bold text-white">For Instructors</h3>
             <ul className="space-y-4">
               {instructorLinks.map((link) => (
                 <li key={link.label}>
                   <Link
                     href={link.href}
-                    className="text-sm text-sidebar-text-muted transition-colors hover:text-primary"
+                    className="text-sidebar-text-muted hover:text-primary text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -104,53 +99,49 @@ export function PublicFooter() {
 
           {/* Column 4: Contact */}
           <div>
-            <h3 className="mb-6 font-display text-lg font-bold text-white">
-              Contact Info
-            </h3>
+            <h3 className="font-display mb-6 text-lg font-bold text-white">Contact Info</h3>
             <ul className="space-y-5">
               <li className="flex items-start gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-hover">
-                  <Mail className="size-5 text-primary" />
+                <div className="bg-sidebar-hover flex size-10 shrink-0 items-center justify-center rounded-xl">
+                  <Mail className="text-primary size-5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">
+                  <span className="text-sidebar-text-muted text-xs font-bold tracking-wider uppercase">
                     Email Us
                   </span>
                   <a
                     href="mailto:info@skillworkshop.com"
-                    className="text-sm font-medium transition-colors hover:text-primary"
+                    className="hover:text-primary text-sm font-medium transition-colors"
                   >
                     info@skillworkshop.com
                   </a>
                 </div>
               </li>
               <li className="flex items-start gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-hover">
-                  <Phone className="size-5 text-primary" />
+                <div className="bg-sidebar-hover flex size-10 shrink-0 items-center justify-center rounded-xl">
+                  <Phone className="text-primary size-5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">
+                  <span className="text-sidebar-text-muted text-xs font-bold tracking-wider uppercase">
                     Call Us
                   </span>
                   <a
                     href="tel:+8801234567890"
-                    className="text-sm font-medium transition-colors hover:text-primary"
+                    className="hover:text-primary text-sm font-medium transition-colors"
                   >
                     +880 1234-567890
                   </a>
                 </div>
               </li>
               <li className="flex items-start gap-4">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sidebar-hover">
-                  <MapPin className="size-5 text-primary" />
+                <div className="bg-sidebar-hover flex size-10 shrink-0 items-center justify-center rounded-xl">
+                  <MapPin className="text-primary size-5" />
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-xs font-bold uppercase tracking-wider text-sidebar-text-muted">
+                  <span className="text-sidebar-text-muted text-xs font-bold tracking-wider uppercase">
                     Office
                   </span>
-                  <span className="text-sm font-medium text-sidebar-text">
-                    Dhaka, Bangladesh
-                  </span>
+                  <span className="text-sidebar-text text-sm font-medium">Dhaka, Bangladesh</span>
                 </div>
               </li>
             </ul>
@@ -158,21 +149,20 @@ export function PublicFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-20 border-t border-white/5 pt-10 flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
-          <p className="text-sm text-sidebar-text-muted">
-            &copy; {new Date().getFullYear()} Skill Workshop. All rights
-            reserved.
+        <div className="mt-20 flex flex-col gap-6 border-t border-white/5 pt-10 md:flex-row md:items-center md:justify-between">
+          <p className="text-sidebar-text-muted text-sm">
+            &copy; {new Date().getFullYear()} Skill Workshop. All rights reserved.
           </p>
           <div className="flex items-center gap-8">
             <Link
               href="/privacy"
-              className="text-xs font-medium text-sidebar-text-muted hover:text-primary transition-colors"
+              className="text-sidebar-text-muted hover:text-primary text-xs font-medium transition-colors"
             >
               Privacy Policy
             </Link>
             <Link
               href="/terms"
-              className="text-xs font-medium text-sidebar-text-muted hover:text-primary transition-colors"
+              className="text-sidebar-text-muted hover:text-primary text-xs font-medium transition-colors"
             >
               Terms of Service
             </Link>

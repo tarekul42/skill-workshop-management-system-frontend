@@ -8,10 +8,6 @@ export const metadata: Metadata = {
     "Verify your email address to activate your Skill Workshop account. Enter the 6-digit code sent to your email.",
 };
 
-export default function VerifyOtpLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function VerifyOtpLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

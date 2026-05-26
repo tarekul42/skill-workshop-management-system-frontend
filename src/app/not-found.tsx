@@ -14,15 +14,15 @@ export default function NotFound() {
         transition={{ duration: 0.5, ease: "easeOut" }}
         className="relative mb-8"
       >
-        <div className="absolute -inset-4 rounded-full bg-primary/10 blur-2xl" />
-        <AlertCircle className="relative size-24 text-primary" />
+        <div className="bg-primary/10 absolute -inset-4 rounded-full blur-2xl" />
+        <AlertCircle className="text-primary relative size-24" />
       </motion.div>
 
       <motion.h1
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.5 }}
-        className="mb-2 text-6xl font-extrabold tracking-tight text-foreground sm:text-7xl"
+        className="text-foreground mb-2 text-6xl font-extrabold tracking-tight sm:text-7xl"
       >
         404
       </motion.h1>
@@ -31,7 +31,7 @@ export default function NotFound() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.5 }}
-        className="mb-4 text-2xl font-semibold text-foreground"
+        className="text-foreground mb-4 text-2xl font-semibold"
       >
         Oops! Page Not Found
       </motion.h2>
@@ -40,10 +40,10 @@ export default function NotFound() {
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.4, duration: 0.5 }}
-        className="mb-8 max-w-md text-muted-foreground"
+        className="text-muted-foreground mb-8 max-w-md"
       >
-        The page you are looking for might have been removed, had its name
-        changed, or is temporarily unavailable.
+        The page you are looking for might have been removed, had its name changed, or is
+        temporarily unavailable.
       </motion.p>
 
       <motion.div
@@ -68,8 +68,8 @@ export default function NotFound() {
 
       {/* Decorative elements */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute left-[10%] top-[20%] size-72 rounded-full bg-primary/5 blur-3xl" />
-        <div className="absolute right-[10%] bottom-[20%] size-72 rounded-full bg-primary/5 blur-3xl" />
+        <div className="bg-primary/5 absolute top-[20%] left-[10%] size-72 rounded-full blur-3xl" />
+        <div className="bg-primary/5 absolute right-[10%] bottom-[20%] size-72 rounded-full blur-3xl" />
       </div>
     </div>
   );

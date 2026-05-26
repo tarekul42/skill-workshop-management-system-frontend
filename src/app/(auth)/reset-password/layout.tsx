@@ -8,10 +8,6 @@ export const metadata: Metadata = {
     "Set a new password for your Skill Workshop account using the verification code sent to your email.",
 };
 
-export default function ResetPasswordLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function ResetPasswordLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

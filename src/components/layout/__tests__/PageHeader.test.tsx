@@ -18,7 +18,7 @@ describe("PageHeader", () => {
     render(
       <PageHeader title="Title">
         <button>Add User</button>
-      </PageHeader>,
+      </PageHeader>
     );
     expect(screen.getByText("Add User")).toBeInTheDocument();
   });

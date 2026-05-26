@@ -4,7 +4,19 @@ import React, { useState, useCallback } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { Loader2, Plus, Trash2, X, LayoutGrid, Calendar, Tags, Users, ClipboardList, Image as ImageIcon, Check } from "lucide-react";
+import {
+  Loader2,
+  Plus,
+  Trash2,
+  X,
+  LayoutGrid,
+  Calendar,
+  Tags,
+  Users,
+  ClipboardList,
+  Image as ImageIcon,
+  Check,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Input } from "@/components/ui/input";
@@ -86,7 +98,7 @@ function ListFieldEditor({
     (index: number) => {
       onChange(items.filter((_, i) => i !== index));
     },
-    [items, onChange],
+    [items, onChange]
   );
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -98,7 +110,9 @@ function ListFieldEditor({
 
   return (
     <div className="space-y-3">
-      <Label className="text-[13px] font-bold text-foreground uppercase tracking-wider">{label}</Label>
+      <Label className="text-foreground text-[13px] font-bold tracking-wider uppercase">
+        {label}
+      </Label>
 
       <div className="flex gap-2">
         <Input
@@ -106,13 +120,13 @@ function ListFieldEditor({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          className="h-11 rounded-xl bg-surface-2 border-border focus:ring-primary/20"
+          className="bg-surface-2 border-border focus:ring-primary/20 h-11 rounded-xl"
         />
         <Button
           type="button"
           onClick={handleAdd}
           disabled={!inputValue.trim()}
-          className="h-11 w-11 rounded-xl shrink-0"
+          className="h-11 w-11 shrink-0 rounded-xl"
         >
           <Plus className="size-5" />
         </Button>
@@ -123,9 +137,9 @@ function ListFieldEditor({
           {items.map((item, index) => (
             <div
               key={index}
-              className="flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-3 py-2 transition-all hover:border-primary/30"
+              className="border-border bg-surface-2 hover:border-primary/30 flex items-center gap-2 rounded-lg border px-3 py-2 transition-all"
             >
-              <span className="text-sm font-medium text-foreground">{item}</span>
+              <span className="text-foreground text-sm font-medium">{item}</span>
               <button
                 type="button"
                 onClick={() => handleRemove(index)}
@@ -143,14 +157,24 @@ function ListFieldEditor({
 
 // ─── Section Card Component ───────────────────────────────────────
 
-function SectionCard({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) {
+function SectionCard({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="rounded-[24px] border border-border bg-surface-1 p-7 shadow-sm transition-all hover:shadow-md">
+    <div className="border-border bg-surface-1 rounded-[24px] border p-7 shadow-sm transition-all hover:shadow-md">
       <div className="mb-6 flex items-center gap-3">
-        <div className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+        <div className="bg-primary/10 text-primary flex size-10 items-center justify-center rounded-xl">
           {icon}
         </div>
-        <h2 className="font-display text-[18px] font-bold text-foreground tracking-tight">{title}</h2>
+        <h2 className="font-display text-foreground text-[18px] font-bold tracking-tight">
+          {title}
+        </h2>
       </div>
       <div className="space-y-5">{children}</div>
     </div>
@@ -210,9 +234,7 @@ export function WorkshopForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
-  const [existingImages, setExistingImages] = useState<string[]>(
-    initialData?.images ?? [],
-  );
+  const [existingImages, setExistingImages] = useState<string[]>(initialData?.images ?? []);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [dragActive, setDragActive] = useState(false);
 
@@ -341,10 +363,8 @@ export function WorkshopForm({
       payloadData.whatYouLearn = formData.whatYouLearn;
     if (formData.prerequisites && formData.prerequisites.length > 0)
       payloadData.prerequisites = formData.prerequisites;
-    if (formData.benefits && formData.benefits.length > 0)
-      payloadData.benefits = formData.benefits;
-    if (formData.syllabus && formData.syllabus.length > 0)
-      payloadData.syllabus = formData.syllabus;
+    if (formData.benefits && formData.benefits.length > 0) payloadData.benefits = formData.benefits;
+    if (formData.syllabus && formData.syllabus.length > 0) payloadData.syllabus = formData.syllabus;
 
     if (imagesToDelete.length > 0) {
       payloadData.deleteImages = imagesToDelete;
@@ -365,12 +385,15 @@ export function WorkshopForm({
 
   // ── Render ───────────────────────────────────────────────────────
   return (
-    <div className="max-w-[720px] w-full">
+    <div className="w-full max-w-[720px]">
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* ── Section 1: Basic Info ──────────────────────────────────── */}
         <SectionCard title="Basic Information" icon={<LayoutGrid className="size-5" />}>
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="title"
+              className="text-muted-foreground text-xs font-bold tracking-wider uppercase"
+            >
               Workshop Title <span className="text-destructive">*</span>
             </Label>
             <Input
@@ -378,13 +401,16 @@ export function WorkshopForm({
               placeholder="e.g. Master the Art of Minimalist UI Design"
               value={formData.title}
               onChange={(e) => updateField("title", e.target.value)}
-              className="h-12 rounded-xl bg-surface-2 border-border focus:ring-primary/20 text-lg font-semibold"
+              className="bg-surface-2 border-border focus:ring-primary/20 h-12 rounded-xl text-lg font-semibold"
             />
-            {errors.title && <p className="text-xs font-bold text-destructive">{errors.title}</p>}
+            {errors.title && <p className="text-destructive text-xs font-bold">{errors.title}</p>}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
+            <Label
+              htmlFor="description"
+              className="text-muted-foreground text-xs font-bold tracking-wider uppercase"
+            >
               Detailed Description
             </Label>
             <Textarea
@@ -393,32 +419,46 @@ export function WorkshopForm({
               rows={5}
               value={formData.description}
               onChange={(e) => updateField("description", e.target.value)}
-              className="rounded-2xl bg-surface-2 border-border resize-none p-4"
+              className="bg-surface-2 border-border resize-none rounded-2xl p-4"
             />
           </div>
 
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="location" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Location</Label>
+              <Label
+                htmlFor="location"
+                className="text-muted-foreground text-xs font-bold tracking-wider uppercase"
+              >
+                Location
+              </Label>
               <Input
                 id="location"
                 placeholder="Online or Physical Address"
                 value={formData.location}
                 onChange={(e) => updateField("location", e.target.value)}
-                className="h-11 rounded-xl bg-surface-2 border-border"
+                className="bg-surface-2 border-border h-11 rounded-xl"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="price" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Price (BDT)</Label>
+              <Label
+                htmlFor="price"
+                className="text-muted-foreground text-xs font-bold tracking-wider uppercase"
+              >
+                Price (BDT)
+              </Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-bold text-sm">৳</span>
+                <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2 text-sm font-bold">
+                  ৳
+                </span>
                 <Input
                   id="price"
                   type="number"
                   placeholder="0"
                   value={formData.price ?? ""}
-                  onChange={(e) => updateField("price", e.target.value ? Number(e.target.value) : 0)}
-                  className="h-11 rounded-xl bg-surface-2 border-border pl-7 font-display font-bold"
+                  onChange={(e) =>
+                    updateField("price", e.target.value ? Number(e.target.value) : 0)
+                  }
+                  className="bg-surface-2 border-border font-display h-11 rounded-xl pl-7 font-bold"
                 />
               </div>
             </div>
@@ -429,23 +469,33 @@ export function WorkshopForm({
         <SectionCard title="Schedule" icon={<Calendar className="size-5" />}>
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="startDate" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Start Date</Label>
+              <Label
+                htmlFor="startDate"
+                className="text-muted-foreground text-xs font-bold tracking-wider uppercase"
+              >
+                Start Date
+              </Label>
               <Input
                 id="startDate"
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => updateField("startDate", e.target.value)}
-                className="h-11 rounded-xl bg-surface-2 border-border"
+                className="bg-surface-2 border-border h-11 rounded-xl"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="endDate" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">End Date</Label>
+              <Label
+                htmlFor="endDate"
+                className="text-muted-foreground text-xs font-bold tracking-wider uppercase"
+              >
+                End Date
+              </Label>
               <Input
                 id="endDate"
                 type="date"
                 value={formData.endDate}
                 onChange={(e) => updateField("endDate", e.target.value)}
-                className="h-11 rounded-xl bg-surface-2 border-border"
+                className="bg-surface-2 border-border h-11 rounded-xl"
               />
             </div>
           </div>
@@ -455,27 +505,38 @@ export function WorkshopForm({
         <SectionCard title="Classification" icon={<Tags className="size-5" />}>
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</Label>
-              <Select value={formData.category} onValueChange={(val) => updateField("category", val)}>
-                <SelectTrigger className="h-11 rounded-xl bg-surface-2 border-border">
+              <Label className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                Category
+              </Label>
+              <Select
+                value={formData.category}
+                onValueChange={(val) => updateField("category", val)}
+              >
+                <SelectTrigger className="bg-surface-2 border-border h-11 rounded-xl">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-border bg-surface-1">
+                <SelectContent className="border-border bg-surface-1 rounded-xl">
                   {categories.map((cat) => (
-                    <SelectItem key={cat._id} value={cat._id} className="rounded-lg">{cat.name}</SelectItem>
+                    <SelectItem key={cat._id} value={cat._id} className="rounded-lg">
+                      {cat.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
-              <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Level</Label>
+              <Label className="text-muted-foreground text-xs font-bold tracking-wider uppercase">
+                Level
+              </Label>
               <Select value={formData.level} onValueChange={(val) => updateField("level", val)}>
-                <SelectTrigger className="h-11 rounded-xl bg-surface-2 border-border">
+                <SelectTrigger className="bg-surface-2 border-border h-11 rounded-xl">
                   <SelectValue placeholder="Select difficulty" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl border-border bg-surface-1">
+                <SelectContent className="border-border bg-surface-1 rounded-xl">
                   {levels.map((lvl) => (
-                    <SelectItem key={lvl._id} value={lvl._id} className="rounded-lg">{lvl.name}</SelectItem>
+                    <SelectItem key={lvl._id} value={lvl._id} className="rounded-lg">
+                      {lvl.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -487,25 +548,39 @@ export function WorkshopForm({
         <SectionCard title="Capacity & Age" icon={<Users className="size-5" />}>
           <div className="grid gap-5 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="maxSeats" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Maximum Seats</Label>
+              <Label
+                htmlFor="maxSeats"
+                className="text-muted-foreground text-xs font-bold tracking-wider uppercase"
+              >
+                Maximum Seats
+              </Label>
               <Input
                 id="maxSeats"
                 type="number"
                 placeholder="e.g. 50"
                 value={formData.maxSeats ?? ""}
-                onChange={(e) => updateField("maxSeats", e.target.value ? Number(e.target.value) : undefined)}
-                className="h-11 rounded-xl bg-surface-2 border-border"
+                onChange={(e) =>
+                  updateField("maxSeats", e.target.value ? Number(e.target.value) : undefined)
+                }
+                className="bg-surface-2 border-border h-11 rounded-xl"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="minAge" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Minimum Age</Label>
+              <Label
+                htmlFor="minAge"
+                className="text-muted-foreground text-xs font-bold tracking-wider uppercase"
+              >
+                Minimum Age
+              </Label>
               <Input
                 id="minAge"
                 type="number"
                 placeholder="e.g. 18"
                 value={formData.minAge ?? ""}
-                onChange={(e) => updateField("minAge", e.target.value ? Number(e.target.value) : undefined)}
-                className="h-11 rounded-xl bg-surface-2 border-border"
+                onChange={(e) =>
+                  updateField("minAge", e.target.value ? Number(e.target.value) : undefined)
+                }
+                className="bg-surface-2 border-border h-11 rounded-xl"
               />
             </div>
           </div>
@@ -553,8 +628,10 @@ export function WorkshopForm({
               onDragOver={handleDrag}
               onDrop={handleDrop}
               className={cn(
-                "relative group flex flex-col items-center justify-center rounded-[20px] border-2 border-dashed p-10 transition-all cursor-pointer",
-                dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary/50 hover:bg-surface-2"
+                "group relative flex cursor-pointer flex-col items-center justify-center rounded-[20px] border-2 border-dashed p-10 transition-all",
+                dragActive
+                  ? "border-primary bg-primary/5"
+                  : "border-border hover:border-primary/50 hover:bg-surface-2"
               )}
             >
               <input
@@ -562,39 +639,76 @@ export function WorkshopForm({
                 type="file"
                 accept="image/*"
                 multiple
-                className="absolute inset-0 opacity-0 cursor-pointer"
+                className="absolute inset-0 cursor-pointer opacity-0"
                 onChange={handleImageChange}
               />
-              <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary mb-4">
+              <div className="bg-primary/10 text-primary mb-4 flex size-14 items-center justify-center rounded-full">
                 <Plus className="size-7" />
               </div>
-              <p className="text-sm font-bold text-foreground mb-1">Drag & drop images here</p>
-              <p className="text-xs text-muted-foreground">or <span className="text-primary font-bold">click to browse</span></p>
-              <p className="mt-4 text-[11px] text-muted-foreground uppercase font-bold tracking-widest">Max 5 images • JPG, PNG, WebP</p>
+              <p className="text-foreground mb-1 text-sm font-bold">Drag & drop images here</p>
+              <p className="text-muted-foreground text-xs">
+                or <span className="text-primary font-bold">click to browse</span>
+              </p>
+              <p className="text-muted-foreground mt-4 text-[11px] font-bold tracking-widest uppercase">
+                Max 5 images • JPG, PNG, WebP
+              </p>
             </div>
 
             {(existingImages.length > 0 || imagePreviews.length > 0) && (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
                 {existingImages.map((url, idx) => (
-                  <div key={`existing-${idx}`} className="group relative aspect-[16/9] overflow-hidden rounded-xl border border-border shadow-sm">
-                    <Image src={url} alt="Workshop" fill className="object-cover transition-transform group-hover:scale-110" unoptimized />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                      <button type="button" onClick={() => handleRemoveExistingImage(url)} className="size-9 rounded-full bg-destructive text-white flex items-center justify-center hover:scale-110 transition-transform">
+                  <div
+                    key={`existing-${idx}`}
+                    className="group border-border relative aspect-[16/9] overflow-hidden rounded-xl border shadow-sm"
+                  >
+                    <Image
+                      src={url}
+                      alt="Workshop"
+                      fill
+                      className="object-cover transition-transform group-hover:scale-110"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExistingImage(url)}
+                        className="bg-destructive flex size-9 items-center justify-center rounded-full text-white transition-transform hover:scale-110"
+                      >
                         <Trash2 className="size-4" />
                       </button>
                     </div>
-                    {idx === 0 && <div className="absolute top-2 left-2 px-2 py-1 bg-primary text-white text-[9px] font-bold uppercase rounded-md shadow-sm">Cover</div>}
+                    {idx === 0 && (
+                      <div className="bg-primary absolute top-2 left-2 rounded-md px-2 py-1 text-[9px] font-bold text-white uppercase shadow-sm">
+                        Cover
+                      </div>
+                    )}
                   </div>
                 ))}
                 {imagePreviews.map((src, idx) => (
-                  <div key={`new-${idx}`} className="group relative aspect-[16/9] overflow-hidden rounded-xl border border-border shadow-sm">
-                    <Image src={src} alt="New Image" fill className="object-cover transition-transform group-hover:scale-110" />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                      <button type="button" onClick={() => handleRemoveNewImage(idx)} className="size-9 rounded-full bg-destructive text-white flex items-center justify-center hover:scale-110 transition-transform">
+                  <div
+                    key={`new-${idx}`}
+                    className="group border-border relative aspect-[16/9] overflow-hidden rounded-xl border shadow-sm"
+                  >
+                    <Image
+                      src={src}
+                      alt="New Image"
+                      fill
+                      className="object-cover transition-transform group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveNewImage(idx)}
+                        className="bg-destructive flex size-9 items-center justify-center rounded-full text-white transition-transform hover:scale-110"
+                      >
                         <Trash2 className="size-4" />
                       </button>
                     </div>
-                    {existingImages.length === 0 && idx === 0 && <div className="absolute top-2 left-2 px-2 py-1 bg-primary text-white text-[9px] font-bold uppercase rounded-md shadow-sm">Cover</div>}
+                    {existingImages.length === 0 && idx === 0 && (
+                      <div className="bg-primary absolute top-2 left-2 rounded-md px-2 py-1 text-[9px] font-bold text-white uppercase shadow-sm">
+                        Cover
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -604,9 +718,24 @@ export function WorkshopForm({
 
         {/* ── Submit ─────────────────────────────────────────────────── */}
         <div className="flex items-center justify-end gap-4 pt-4">
-          <Button type="button" variant="ghost" className="rounded-xl font-bold text-muted-foreground" disabled={isSubmitting}>Cancel</Button>
-          <Button type="submit" disabled={isSubmitting} className="h-12 px-8 rounded-xl font-bold shadow-lg shadow-primary/20">
-            {isSubmitting ? <Loader2 className="mr-2 size-4 animate-spin" /> : <Check className="mr-2 size-4" />}
+          <Button
+            type="button"
+            variant="ghost"
+            className="text-muted-foreground rounded-xl font-bold"
+            disabled={isSubmitting}
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="shadow-primary/20 h-12 rounded-xl px-8 font-bold shadow-lg"
+          >
+            {isSubmitting ? (
+              <Loader2 className="mr-2 size-4 animate-spin" />
+            ) : (
+              <Check className="mr-2 size-4" />
+            )}
             {submitLabel}
           </Button>
         </div>

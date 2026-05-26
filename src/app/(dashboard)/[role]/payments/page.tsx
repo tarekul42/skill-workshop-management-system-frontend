@@ -49,24 +49,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { formatCurrency, formatDate, truncate } from "@/lib/formatters";
-import {
-  getAllEnrollments,
-  getMyEnrollments,
-  refundPayment,
-  getInvoice,
-} from "@/lib/api/services";
+import { getAllEnrollments, getMyEnrollments, refundPayment, getInvoice } from "@/lib/api/services";
 import type { IEnrollment } from "@/types";
 
 // ─── Page Props ──────────────────────────────────────────────────────
@@ -124,9 +114,9 @@ function PaymentCard({
   const isUnpaid = payment.status.toUpperCase() === "UNPAID";
 
   return (
-    <div className="group relative flex flex-col sm:flex-row gap-4 p-5 rounded-2xl border border-border bg-surface-1 transition-all duration-300 hover:shadow-float hover:-translate-y-0.5">
+    <div className="group border-border bg-surface-1 hover:shadow-float relative flex flex-col gap-4 rounded-2xl border p-5 transition-all duration-300 hover:-translate-y-0.5 sm:flex-row">
       {/* Thumbnail */}
-      <div className="relative h-14 w-18 shrink-0 overflow-hidden rounded-xl border border-border bg-surface-2">
+      <div className="border-border bg-surface-2 relative h-14 w-18 shrink-0 overflow-hidden rounded-xl border">
         {payment.workshopThumbnail ? (
           <Image
             src={payment.workshopThumbnail}
@@ -138,34 +128,32 @@ function PaymentCard({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <BookOpen className="size-5 text-foreground-disabled" />
+            <BookOpen className="text-foreground-disabled size-5" />
           </div>
         )}
       </div>
 
       {/* Content */}
-      <div className="flex-1 min-w-0">
+      <div className="min-w-0 flex-1">
         <Link
           href={`/workshops/${payment.workshopSlug || payment.workshopId}`}
-          className="block font-display text-[15px] font-bold text-foreground hover:text-primary transition-colors truncate"
+          className="font-display text-foreground hover:text-primary block truncate text-[15px] font-bold transition-colors"
         >
           {payment.workshopTitle}
         </Link>
         <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1">
-          <span className="font-mono text-[12px] text-foreground-muted">
+          <span className="text-foreground-muted font-mono text-[12px]">
             TXN: {payment.transactionId}
           </span>
-          <span className="size-1 rounded-full bg-border" />
-          <span className="text-[13px] text-foreground-muted">
-            {formatDate(payment.createdAt)}
-          </span>
+          <span className="bg-border size-1 rounded-full" />
+          <span className="text-foreground-muted text-[13px]">{formatDate(payment.createdAt)}</span>
         </div>
       </div>
 
       {/* Right Column */}
-      <div className="flex flex-col items-start sm:items-end justify-between gap-3">
+      <div className="flex flex-col items-start justify-between gap-3 sm:items-end">
         <div className="flex flex-col items-start sm:items-end">
-          <span className="font-display text-xl font-bold text-foreground">
+          <span className="font-display text-foreground text-xl font-bold">
             {formatCurrency(payment.amount)}
           </span>
           <StatusBadge status={payment.status} className="mt-1" dot />
@@ -176,7 +164,7 @@ function PaymentCard({
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 px-3 text-[13px] font-semibold text-primary hover:bg-primary/5 rounded-lg"
+              className="text-primary hover:bg-primary/5 h-8 rounded-lg px-3 text-[13px] font-semibold"
               onClick={() => onDownload(payment.paymentId)}
             >
               <Download className="mr-2 size-3.5" />
@@ -186,7 +174,7 @@ function PaymentCard({
           {isUnpaid && (
             <Link
               href={`/workshops/${payment.workshopSlug || payment.workshopId}`}
-              className="flex items-center text-[13px] font-bold text-warning hover:underline"
+              className="text-warning flex items-center text-[13px] font-bold hover:underline"
             >
               Complete Payment
               <ArrowRight className="ml-1.5 size-3.5" />
@@ -240,37 +228,28 @@ export default function PaymentsPage({ params }: PageProps) {
 
   const allStudentPayments = useMemo(
     () => extractPayments(studentEnrollments),
-    [studentEnrollments],
+    [studentEnrollments]
   );
 
   const filteredPayments = useMemo(() => {
     let result = allStudentPayments;
     if (activeTab !== "all") {
-      result = result.filter(
-        (p) => p.status.toUpperCase() === activeTab.toUpperCase(),
-      );
+      result = result.filter((p) => p.status.toUpperCase() === activeTab.toUpperCase());
     }
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       result = result.filter(
         (p) =>
-          p.workshopTitle.toLowerCase().includes(q) ||
-          p.transactionId.toLowerCase().includes(q),
+          p.workshopTitle.toLowerCase().includes(q) || p.transactionId.toLowerCase().includes(q)
       );
     }
     return result;
   }, [allStudentPayments, activeTab, searchQuery]);
 
   const countAll = allStudentPayments.length;
-  const countPaid = allStudentPayments.filter(
-    (p) => p.status.toUpperCase() === "PAID",
-  ).length;
-  const countUnpaid = allStudentPayments.filter(
-    (p) => p.status.toUpperCase() === "UNPAID",
-  ).length;
-  const countFailed = allStudentPayments.filter(
-    (p) => p.status.toUpperCase() === "FAILED",
-  ).length;
+  const countPaid = allStudentPayments.filter((p) => p.status.toUpperCase() === "PAID").length;
+  const countUnpaid = allStudentPayments.filter((p) => p.status.toUpperCase() === "UNPAID").length;
+  const countFailed = allStudentPayments.filter((p) => p.status.toUpperCase() === "FAILED").length;
 
   async function handleDownloadInvoice(paymentId: string) {
     try {
@@ -331,9 +310,7 @@ export default function PaymentsPage({ params }: PageProps) {
       fetchData();
       toast.success("Payment refunded successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to refund payment",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to refund payment");
     } finally {
       setRefunding(false);
     }
@@ -368,50 +345,41 @@ export default function PaymentsPage({ params }: PageProps) {
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-1 p-4 rounded-2xl border border-border">
-            <Tabs
-              value={activeTab}
-              onValueChange={setActiveTab}
-              className="w-full sm:w-auto"
-            >
+          <div className="bg-surface-1 border-border flex flex-col items-center justify-between gap-4 rounded-2xl border p-4 sm:flex-row">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full sm:w-auto">
               <TabsList className="bg-surface-2 h-10 p-1">
                 <TabsTrigger
                   value="all"
-                  className="rounded-lg px-4 text-xs font-bold uppercase tracking-wider"
+                  className="rounded-lg px-4 text-xs font-bold tracking-wider uppercase"
                 >
-                  All{" "}
-                  <span className="ml-2 text-foreground-disabled">
-                    {countAll}
-                  </span>
+                  All <span className="text-foreground-disabled ml-2">{countAll}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="PAID"
-                  className="rounded-lg px-4 text-xs font-bold uppercase tracking-wider"
+                  className="rounded-lg px-4 text-xs font-bold tracking-wider uppercase"
                 >
-                  Paid <span className="ml-2 text-success/60">{countPaid}</span>
+                  Paid <span className="text-success/60 ml-2">{countPaid}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="UNPAID"
-                  className="rounded-lg px-4 text-xs font-bold uppercase tracking-wider"
+                  className="rounded-lg px-4 text-xs font-bold tracking-wider uppercase"
                 >
-                  Unpaid{" "}
-                  <span className="ml-2 text-warning/60">{countUnpaid}</span>
+                  Unpaid <span className="text-warning/60 ml-2">{countUnpaid}</span>
                 </TabsTrigger>
                 <TabsTrigger
                   value="FAILED"
-                  className="rounded-lg px-4 text-xs font-bold uppercase tracking-wider"
+                  className="rounded-lg px-4 text-xs font-bold tracking-wider uppercase"
                 >
-                  Failed{" "}
-                  <span className="ml-2 text-danger/60">{countFailed}</span>
+                  Failed <span className="text-danger/60 ml-2">{countFailed}</span>
                 </TabsTrigger>
               </TabsList>
             </Tabs>
 
             <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-foreground-disabled" />
+              <Search className="text-foreground-disabled absolute top-1/2 left-3 size-4 -translate-y-1/2" />
               <Input
                 placeholder="Search payments..."
-                className="pl-9 h-10 rounded-xl bg-surface-2 border-transparent focus:border-primary/20 transition-all"
+                className="bg-surface-2 focus:border-primary/20 h-10 rounded-xl border-transparent pl-9 transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -423,27 +391,21 @@ export default function PaymentsPage({ params }: PageProps) {
               {[...Array(4)].map((_, i) => (
                 <div
                   key={i}
-                  className="h-32 rounded-2xl bg-surface-1 animate-pulse border border-border"
+                  className="bg-surface-1 border-border h-32 animate-pulse rounded-2xl border"
                 />
               ))}
             </div>
           ) : studentError ? (
-            <div className="rounded-3xl border border-dashed border-danger/20 bg-danger/5 py-16 text-center">
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-danger/10 mx-auto mb-4">
-                <XCircle className="size-7 text-danger" />
+            <div className="border-danger/20 bg-danger/5 rounded-3xl border border-dashed py-16 text-center">
+              <div className="bg-danger/10 mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl">
+                <XCircle className="text-danger size-7" />
               </div>
-              <h3 className="text-lg font-bold text-foreground">
-                Failed to load payments
-              </h3>
-              <p className="text-sm text-foreground-muted mt-1 max-w-xs mx-auto">
+              <h3 className="text-foreground text-lg font-bold">Failed to load payments</h3>
+              <p className="text-foreground-muted mx-auto mt-1 max-w-xs text-sm">
                 {studentFetchError?.message ||
                   "Something went wrong while retrieving your history."}
               </p>
-              <Button
-                variant="outline"
-                className="mt-6"
-                onClick={() => window.location.reload()}
-              >
+              <Button variant="outline" className="mt-6" onClick={() => window.location.reload()}>
                 Try Again
               </Button>
             </div>
@@ -456,7 +418,7 @@ export default function PaymentsPage({ params }: PageProps) {
           ) : (
             <div className="grid gap-4">
               {filteredPayments.length === 0 ? (
-                <div className="py-20 text-center rounded-3xl border border-dashed border-border bg-surface-1/50">
+                <div className="border-border bg-surface-1/50 rounded-3xl border border-dashed py-20 text-center">
                   <p className="text-foreground-muted font-medium">
                     No transactions match your filters.
                   </p>
@@ -492,45 +454,43 @@ export default function PaymentsPage({ params }: PageProps) {
           />
         </div>
 
-        <div className="rounded-3xl border border-border bg-surface-1 overflow-hidden shadow-sm">
+        <div className="border-border bg-surface-1 overflow-hidden rounded-3xl border shadow-sm">
           {/* Toolbar */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-surface-2/50 border-bottom border-border">
+          <div className="bg-surface-2/50 border-bottom border-border flex flex-col items-center justify-between gap-4 p-5 sm:flex-row">
             <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-disabled" />
+              <Search className="text-foreground-disabled absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
               <Input
                 placeholder="Search student or TXN..."
-                className="pl-10 h-11 rounded-xl bg-surface-1 border-border focus:ring-primary/20 transition-all"
+                className="bg-surface-1 border-border focus:ring-primary/20 h-11 rounded-xl pl-10 transition-all"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-3 w-full sm:w-auto">
-              <p className="text-sm font-medium text-foreground-muted">
-                {payments.length} results
-              </p>
+            <div className="flex w-full items-center gap-3 sm:w-auto">
+              <p className="text-foreground-muted text-sm font-medium">{payments.length} results</p>
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-surface-2/30">
-                <TableRow className="hover:bg-transparent border-border">
-                  <TableHead className="h-12 px-6 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
                     Transaction ID
                   </TableHead>
-                  <TableHead className="h-12 px-6 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">
+                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
                     Student & Workshop
                   </TableHead>
-                  <TableHead className="h-12 px-6 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">
+                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
                     Amount
                   </TableHead>
-                  <TableHead className="h-12 px-6 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">
+                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
                     Status
                   </TableHead>
-                  <TableHead className="h-12 px-6 text-[11px] font-bold uppercase tracking-wider text-foreground-muted">
+                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
                     Date
                   </TableHead>
-                  <TableHead className="h-12 px-6 text-[11px] font-bold uppercase tracking-wider text-foreground-muted text-right">
+                  <TableHead className="text-foreground-muted h-12 px-6 text-right text-[11px] font-bold tracking-wider uppercase">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -540,7 +500,7 @@ export default function PaymentsPage({ params }: PageProps) {
                   [...Array(5)].map((_, i) => (
                     <TableRow key={i} className="border-border">
                       <TableCell colSpan={6} className="p-6">
-                        <div className="h-6 bg-surface-2 rounded-lg animate-pulse" />
+                        <div className="bg-surface-2 h-6 animate-pulse rounded-lg" />
                       </TableCell>
                     </TableRow>
                   ))
@@ -561,22 +521,20 @@ export default function PaymentsPage({ params }: PageProps) {
                       className="group border-border hover:bg-surface-2/40 transition-colors"
                     >
                       <TableCell className="px-6 py-4">
-                        <span className="font-mono text-xs font-medium text-foreground">
+                        <span className="text-foreground font-mono text-xs font-medium">
                           {truncate(payment.transactionId, 16)}
                         </span>
                       </TableCell>
                       <TableCell className="px-6 py-4">
                         <div>
-                          <p className="text-sm font-bold text-foreground">
-                            {payment.studentName}
-                          </p>
-                          <p className="text-xs text-foreground-muted mt-0.5 truncate max-w-48">
+                          <p className="text-foreground text-sm font-bold">{payment.studentName}</p>
+                          <p className="text-foreground-muted mt-0.5 max-w-48 truncate text-xs">
                             {payment.workshopTitle}
                           </p>
                         </div>
                       </TableCell>
                       <TableCell className="px-6 py-4">
-                        <span className="font-display text-sm font-bold text-foreground">
+                        <span className="font-display text-foreground text-sm font-bold">
                           {formatCurrency(payment.amount)}
                         </span>
                       </TableCell>
@@ -584,21 +542,19 @@ export default function PaymentsPage({ params }: PageProps) {
                         <StatusBadge status={payment.status} dot />
                       </TableCell>
                       <TableCell className="px-6 py-4">
-                        <span className="text-sm text-foreground-muted">
+                        <span className="text-foreground-muted text-sm">
                           {formatDate(payment.createdAt)}
                         </span>
                       </TableCell>
                       <TableCell className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button
                                 variant="ghost"
                                 size="icon-xs"
-                                className="size-8 rounded-lg hover:bg-primary/10 hover:text-primary"
-                                onClick={() =>
-                                  handleViewInvoice(payment.paymentId)
-                                }
+                                className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg"
+                                onClick={() => handleViewInvoice(payment.paymentId)}
                               >
                                 <Eye className="size-4" />
                               </Button>
@@ -612,7 +568,7 @@ export default function PaymentsPage({ params }: PageProps) {
                                 <Button
                                   variant="ghost"
                                   size="icon-xs"
-                                  className="size-8 rounded-lg hover:bg-danger/10 hover:text-danger"
+                                  className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
                                   onClick={() => {
                                     setRefundTarget(payment);
                                     setRefundReason("");
@@ -635,9 +591,7 @@ export default function PaymentsPage({ params }: PageProps) {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-40">
                               <DropdownMenuItem
-                                onClick={() =>
-                                  handleViewInvoice(payment.paymentId)
-                                }
+                                onClick={() => handleViewInvoice(payment.paymentId)}
                               >
                                 <FileText className="mr-2 size-4" />
                                 View Invoice
@@ -667,8 +621,8 @@ export default function PaymentsPage({ params }: PageProps) {
 
           {/* Pagination */}
           {!loading && totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 bg-surface-2/20 border-t border-border">
-              <p className="text-sm font-medium text-foreground-muted">
+            <div className="bg-surface-2/20 border-border flex flex-col items-center justify-between gap-4 border-t p-5 sm:flex-row">
+              <p className="text-foreground-muted text-sm font-medium">
                 Showing Page <span className="text-foreground">{page}</span> of{" "}
                 <span className="text-foreground">{totalPages}</span>
               </p>
@@ -676,7 +630,7 @@ export default function PaymentsPage({ params }: PageProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl h-9 px-4"
+                  className="h-9 rounded-xl px-4"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
                 >
@@ -686,7 +640,7 @@ export default function PaymentsPage({ params }: PageProps) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="rounded-xl h-9 px-4"
+                  className="h-9 rounded-xl px-4"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
                 >
@@ -699,56 +653,45 @@ export default function PaymentsPage({ params }: PageProps) {
         </div>
 
         {/* ── Refund Dialog ──────────────────────────────────────────── */}
-        <Dialog
-          open={!!refundTarget}
-          onOpenChange={() => setRefundTarget(null)}
-        >
+        <Dialog open={!!refundTarget} onOpenChange={() => setRefundTarget(null)}>
           <DialogContent className="max-w-md rounded-3xl">
             <DialogHeader>
-              <div className="size-12 rounded-2xl bg-danger/10 flex items-center justify-center mb-4">
-                <RotateCcw className="size-6 text-danger" />
+              <div className="bg-danger/10 mb-4 flex size-12 items-center justify-center rounded-2xl">
+                <RotateCcw className="text-danger size-6" />
               </div>
-              <DialogTitle className="text-xl font-bold">
-                Refund Payment
-              </DialogTitle>
+              <DialogTitle className="text-xl font-bold">Refund Payment</DialogTitle>
               <DialogDescription className="text-foreground-muted pt-1">
-                You are about to issue a full refund for this transaction. This
-                action is permanent.
+                You are about to issue a full refund for this transaction. This action is permanent.
               </DialogDescription>
             </DialogHeader>
             {refundTarget && (
               <div className="space-y-5 py-2">
-                <div className="grid grid-cols-2 gap-4 p-4 rounded-2xl bg-surface-2 border border-border">
+                <div className="bg-surface-2 border-border grid grid-cols-2 gap-4 rounded-2xl border p-4">
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
                       Student
                     </p>
-                    <p className="text-sm font-bold truncate">
-                      {refundTarget.studentName}
-                    </p>
+                    <p className="truncate text-sm font-bold">{refundTarget.studentName}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
                       Amount
                     </p>
-                    <p className="text-sm font-bold text-foreground">
+                    <p className="text-foreground text-sm font-bold">
                       {formatCurrency(refundTarget.amount)}
                     </p>
                   </div>
-                  <div className="space-y-1 col-span-2">
-                    <p className="text-[11px] font-bold uppercase tracking-wider text-foreground-disabled">
+                  <div className="col-span-2 space-y-1">
+                    <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">
                       Transaction ID
                     </p>
-                    <p className="font-mono text-xs text-foreground truncate">
+                    <p className="text-foreground truncate font-mono text-xs">
                       {refundTarget.transactionId}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="refund-reason"
-                    className="text-sm font-bold ml-1"
-                  >
+                  <Label htmlFor="refund-reason" className="ml-1 text-sm font-bold">
                     Reason for Refund
                   </Label>
                   <Textarea
@@ -756,12 +699,12 @@ export default function PaymentsPage({ params }: PageProps) {
                     placeholder="e.g., Workshop cancelled, technical issues..."
                     value={refundReason}
                     onChange={(e) => setRefundReason(e.target.value)}
-                    className="min-h-24 rounded-2xl bg-surface-1 border-border focus:ring-danger/20"
+                    className="bg-surface-1 border-border focus:ring-danger/20 min-h-24 rounded-2xl"
                   />
                 </div>
               </div>
             )}
-            <DialogFooter className="gap-2 sm:gap-0 mt-2">
+            <DialogFooter className="mt-2 gap-2 sm:gap-0">
               <Button
                 variant="ghost"
                 onClick={() => setRefundTarget(null)}
@@ -792,63 +735,44 @@ export default function PaymentsPage({ params }: PageProps) {
         >
           <DialogContent className="max-w-md rounded-3xl">
             <DialogHeader>
-              <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                <FileText className="size-6 text-primary" />
+              <div className="bg-primary/10 mb-4 flex size-12 items-center justify-center rounded-2xl">
+                <FileText className="text-primary size-6" />
               </div>
-              <DialogTitle className="text-xl font-bold">
-                Transaction Invoice
-              </DialogTitle>
+              <DialogTitle className="text-xl font-bold">Transaction Invoice</DialogTitle>
               <DialogDescription>
                 View or print the official invoice for this transaction.
               </DialogDescription>
             </DialogHeader>
             {loadingInvoice ? (
-              <div className="flex flex-col items-center justify-center py-10 space-y-4">
-                <div className="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                <p className="text-sm font-medium text-foreground-muted animate-pulse">
+              <div className="flex flex-col items-center justify-center space-y-4 py-10">
+                <div className="border-primary size-8 animate-spin rounded-full border-2 border-t-transparent" />
+                <p className="text-foreground-muted animate-pulse text-sm font-medium">
                   Generating invoice...
                 </p>
               </div>
             ) : invoiceUrl ? (
               <div className="space-y-5 py-2">
-                <div className="p-4 rounded-2xl bg-surface-2 border border-border flex items-center justify-between">
+                <div className="bg-surface-2 border-border flex items-center justify-between rounded-2xl border p-4">
                   <div className="flex items-center gap-3">
-                    <div className="size-10 rounded-xl bg-surface-1 flex items-center justify-center border border-border">
-                      <Printer className="size-5 text-foreground-muted" />
+                    <div className="bg-surface-1 border-border flex size-10 items-center justify-center rounded-xl border">
+                      <Printer className="text-foreground-muted size-5" />
                     </div>
                     <div>
-                      <p className="text-sm font-bold text-foreground">
-                        Invoice Document
-                      </p>
-                      <p className="text-xs text-foreground-muted">
-                        PDF format (0.4 MB)
-                      </p>
+                      <p className="text-foreground text-sm font-bold">Invoice Document</p>
+                      <p className="text-foreground-muted text-xs">PDF format (0.4 MB)</p>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    asChild
-                    className="rounded-xl"
-                  >
-                    <a
-                      href={invoiceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
+                  <Button variant="ghost" size="icon" asChild className="rounded-xl">
+                    <a href={invoiceUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="size-5" />
                     </a>
                   </Button>
                 </div>
                 <Button
                   asChild
-                  className="w-full h-12 rounded-2xl text-base font-bold shadow-raised hover:shadow-float transition-all"
+                  className="shadow-raised hover:shadow-float h-12 w-full rounded-2xl text-base font-bold transition-all"
                 >
-                  <a
-                    href={invoiceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                  <a href={invoiceUrl} target="_blank" rel="noopener noreferrer">
                     <Download className="mr-2 size-5" />
                     Download PDF
                   </a>
@@ -856,10 +780,10 @@ export default function PaymentsPage({ params }: PageProps) {
               </div>
             ) : (
               <div className="flex flex-col items-center justify-center py-12 text-center">
-                <div className="size-14 rounded-full bg-surface-2 flex items-center justify-center mb-4">
-                  <XCircle className="size-7 text-foreground-disabled" />
+                <div className="bg-surface-2 mb-4 flex size-14 items-center justify-center rounded-full">
+                  <XCircle className="text-foreground-disabled size-7" />
                 </div>
-                <p className="text-sm font-medium text-foreground-muted max-w-xs">
+                <p className="text-foreground-muted max-w-xs text-sm font-medium">
                   Invoice is currently unavailable for this transaction.
                 </p>
                 <Button

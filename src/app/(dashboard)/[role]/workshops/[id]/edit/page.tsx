@@ -39,9 +39,7 @@ export default function EditWorkshopPage({ params }: PageProps) {
       ]);
       setWorkshop(enrichWorkshop(ws, cats, lvls));
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to load workshop",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to load workshop");
     } finally {
       setLoading(false);
     }
@@ -59,9 +57,7 @@ export default function EditWorkshopPage({ params }: PageProps) {
       toast.success("Workshop updated successfully!");
       router.push(`/${role}/workshops`);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to update workshop",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to update workshop");
     } finally {
       setIsSubmitting(false);
     }

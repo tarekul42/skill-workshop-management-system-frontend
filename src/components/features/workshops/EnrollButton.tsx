@@ -2,13 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import {
-  Loader2,
-  CheckCircle,
-  GraduationCap,
-  AlertCircle,
-  RefreshCw,
-} from "lucide-react";
+import { Loader2, CheckCircle, GraduationCap, AlertCircle, RefreshCw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -26,13 +20,7 @@ interface EnrollButtonProps {
   className?: string;
 }
 
-type EnrollState =
-  | "idle"
-  | "checking"
-  | "enrolled"
-  | "enrolling"
-  | "payment"
-  | "error";
+type EnrollState = "idle" | "checking" | "enrolled" | "enrolling" | "payment" | "error";
 
 export function EnrollButton({
   workshopId,
@@ -56,13 +44,10 @@ export function EnrollButton({
     try {
       const { getMyEnrollments } = await import("@/lib/api/services");
       const enrollments = await getMyEnrollments();
-      const existing = enrollments.find(
-        (e: { workshop: string | { _id: string } }) => {
-          const wId =
-            typeof e.workshop === "string" ? e.workshop : e.workshop?._id;
-          return wId === workshopId;
-        },
-      );
+      const existing = enrollments.find((e: { workshop: string | { _id: string } }) => {
+        const wId = typeof e.workshop === "string" ? e.workshop : e.workshop?._id;
+        return wId === workshopId;
+      });
       if (existing) {
         const status = (existing as { status?: string }).status;
         if (status === "COMPLETE" || status === "PENDING") {
@@ -120,10 +105,7 @@ export function EnrollButton({
         setState("enrolled");
       }
     } catch (err: unknown) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Failed to enroll. Please try again.";
+      const message = err instanceof Error ? err.message : "Failed to enroll. Please try again.";
       setErrorMessage(message);
       setState("error");
     }
@@ -140,14 +122,14 @@ export function EnrollButton({
           size={size}
           disabled
           className={cn(
-            "w-full bg-success/20 text-success-foreground border border-success-subtle hover:bg-success/20 opacity-100",
-            className,
+            "bg-success/20 text-success-foreground border-success-subtle hover:bg-success/20 w-full border opacity-100",
+            className
           )}
         >
-          <CheckCircle className="mr-2 size-4 text-success" />
+          <CheckCircle className="text-success mr-2 size-4" />
           Already Enrolled
         </Button>
-        <p className="text-center text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-center text-xs">
           You&apos;re enrolled in this workshop.
         </p>
       </div>
@@ -161,10 +143,7 @@ export function EnrollButton({
         variant="default"
         size={size}
         disabled
-        className={cn(
-          "w-full bg-accent text-accent-foreground opacity-90",
-          className,
-        )}
+        className={cn("bg-accent text-accent-foreground w-full opacity-90", className)}
       >
         <Loader2 className="mr-2 size-4 animate-spin" />
         Redirecting to Payment...
@@ -179,13 +158,10 @@ export function EnrollButton({
         variant="outline"
         size={size}
         disabled
-        className={cn(
-          "w-full relative overflow-hidden text-transparent border-border",
-          className,
-        )}
+        className={cn("border-border relative w-full overflow-hidden text-transparent", className)}
       >
         Checking
-        <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent via-primary/10 to-transparent" />
+        <div className="via-primary/10 absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-linear-to-r from-transparent to-transparent" />
       </Button>
     );
   }
@@ -197,10 +173,7 @@ export function EnrollButton({
         variant="default"
         size={size}
         disabled
-        className={cn(
-          "w-full bg-accent text-accent-foreground opacity-90",
-          className,
-        )}
+        className={cn("bg-accent text-accent-foreground w-full opacity-90", className)}
       >
         <Loader2 className="mr-2 size-4 animate-spin" />
         Processing...
@@ -217,16 +190,13 @@ export function EnrollButton({
           size={size}
           disabled={isDisabled}
           onClick={handleEnroll}
-          className={cn(
-            "w-full bg-danger text-danger-foreground hover:bg-danger/90",
-            className,
-          )}
+          className={cn("bg-danger text-danger-foreground hover:bg-danger/90 w-full", className)}
         >
           <RefreshCw className="mr-2 size-4" />
           Retry ↺
         </Button>
         {errorMessage && (
-          <p className="flex items-center gap-1 text-center text-xs text-danger">
+          <p className="text-danger flex items-center gap-1 text-center text-xs">
             <AlertCircle className="size-3 shrink-0" />
             {errorMessage}
           </p>
@@ -244,10 +214,7 @@ export function EnrollButton({
         size={size}
         disabled={isDisabled}
         onClick={handleEnroll}
-        className={cn(
-          "w-full bg-accent text-accent-foreground hover:bg-accent/90",
-          className,
-        )}
+        className={cn("bg-accent text-accent-foreground hover:bg-accent/90 w-full", className)}
       >
         {seatsAvailable <= 0 ? (
           "Workshop is Full"
@@ -259,7 +226,7 @@ export function EnrollButton({
         )}
       </Button>
       {!isLoggedIn && (
-        <p className="text-center text-xs text-foreground-muted">
+        <p className="text-foreground-muted text-center text-xs">
           You&apos;ll be redirected to login first
         </p>
       )}

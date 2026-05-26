@@ -24,18 +24,8 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { clearSavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie } from "@/app/actions/auth";
@@ -139,9 +129,7 @@ const sidebarConfig: Record<string, NavSection[]> = {
     },
     {
       title: "Reports",
-      items: [
-        { label: "Audit Logs", href: "/admin/audit-logs", icon: "FileText" },
-      ],
+      items: [{ label: "Audit Logs", href: "/admin/audit-logs", icon: "FileText" }],
     },
   ],
   INSTRUCTOR: [
@@ -236,7 +224,7 @@ function SidebarNavContent({
       <ul className="flex flex-col gap-8">
         {sections.map((section) => (
           <li key={section.title} className="flex flex-col gap-2">
-            <p className="px-3 text-[10px] font-bold uppercase tracking-[0.2em] text-sidebar-text-muted">
+            <p className="text-sidebar-text-muted px-3 text-[10px] font-bold tracking-[0.2em] uppercase">
               {section.title}
             </p>
             <ul className="flex flex-col gap-1">
@@ -253,8 +241,8 @@ function SidebarNavContent({
                           className={cn(
                             "group/nav-item relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-300",
                             isActive
-                              ? "bg-primary text-white shadow-3 translate-x-1"
-                              : "text-sidebar-text-muted hover:bg-sidebar-hover hover:text-white hover:translate-x-1",
+                              ? "bg-primary shadow-3 translate-x-1 text-white"
+                              : "text-sidebar-text-muted hover:bg-sidebar-hover hover:translate-x-1 hover:text-white"
                           )}
                         >
                           {IconComponent && (
@@ -263,7 +251,7 @@ function SidebarNavContent({
                                 "size-5 shrink-0 transition-transform group-hover/nav-item:scale-110",
                                 isActive
                                   ? "text-white"
-                                  : "text-sidebar-text-muted group-hover/nav-item:text-accent",
+                                  : "text-sidebar-text-muted group-hover/nav-item:text-accent"
                               )}
                             />
                           )}
@@ -271,7 +259,7 @@ function SidebarNavContent({
                           {isActive && (
                             <motion.div
                               layoutId="active-indicator"
-                              className="absolute left-[-4px] top-1/4 h-1/2 w-1 rounded-full bg-accent"
+                              className="bg-accent absolute top-1/4 left-[-4px] h-1/2 w-1 rounded-full"
                               transition={{
                                 type: "spring",
                                 stiffness: 300,
@@ -313,14 +301,14 @@ export function DashboardSidebar({ role }: { role: string }) {
 
   return (
     <>
-      <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0 border-r border-sidebar-border bg-sidebar-bg text-sidebar-text z-40 shadow-raised">
-        <div className="flex h-16 items-center gap-3 px-6 border-b border-sidebar-border/50">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-primary shadow-lg">
+      <aside className="border-sidebar-border bg-sidebar-bg text-sidebar-text shadow-raised z-40 hidden border-r lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
+        <div className="border-sidebar-border/50 flex h-16 items-center gap-3 border-b px-6">
+          <div className="bg-primary flex size-9 items-center justify-center rounded-xl shadow-lg">
             <GraduationCap className="size-5.5 text-white" />
           </div>
           <Link
             href="/"
-            className="font-display text-xl font-extrabold tracking-tight hover:opacity-80 transition-opacity"
+            className="font-display text-xl font-extrabold tracking-tight transition-opacity hover:opacity-80"
           >
             Skill<span className="text-accent">Workshop</span>
           </Link>
@@ -328,12 +316,12 @@ export function DashboardSidebar({ role }: { role: string }) {
 
         <SidebarNavContent sections={sections} pathname={pathname} />
 
-        <div className="mt-auto flex flex-col gap-2 p-5 border-t border-sidebar-border/50 bg-black/40 backdrop-blur-md">
+        <div className="border-sidebar-border/50 mt-auto flex flex-col gap-2 border-t bg-black/40 p-5 backdrop-blur-md">
           <Button
             variant="ghost"
             size="sm"
             asChild
-            className="justify-start gap-3 rounded-xl text-sidebar-text-muted hover:bg-sidebar-hover hover:text-white transition-all group"
+            className="text-sidebar-text-muted hover:bg-sidebar-hover group justify-start gap-3 rounded-xl transition-all hover:text-white"
           >
             <Link href="/">
               <ExternalLink className="size-4 transition-transform group-hover:scale-110" />
@@ -344,7 +332,7 @@ export function DashboardSidebar({ role }: { role: string }) {
             variant="ghost"
             size="sm"
             onClick={handleLogout}
-            className="justify-start gap-3 rounded-xl text-sidebar-text-muted hover:bg-danger-subtle hover:text-danger transition-all group"
+            className="text-sidebar-text-muted hover:bg-danger-subtle hover:text-danger group justify-start gap-3 rounded-xl transition-all"
           >
             <LogOut className="size-4 transition-transform group-hover:scale-110" />
             <span className="font-bold">Logout</span>
@@ -353,11 +341,7 @@ export function DashboardSidebar({ role }: { role: string }) {
       </aside>
 
       <div className="lg:hidden">
-        <MobileSheetSidebar
-          sections={sections}
-          pathname={pathname}
-          onLogout={handleLogout}
-        />
+        <MobileSheetSidebar sections={sections} pathname={pathname} onLogout={handleLogout} />
       </div>
     </>
   );
@@ -380,18 +364,18 @@ function MobileSheetSidebar({
         <Button
           variant="ghost"
           size="icon"
-          className="fixed top-3 left-3 z-40 lg:hidden h-10 w-10 rounded-lg bg-background/80 backdrop-blur shadow-sm border border-border"
+          className="bg-background/80 border-border fixed top-3 left-3 z-40 h-10 w-10 rounded-lg border shadow-sm backdrop-blur lg:hidden"
         >
           <Menu className="size-6" />
         </Button>
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-70 p-0 border-r border-sidebar-border bg-sidebar-bg text-sidebar-text"
+        className="border-sidebar-border bg-sidebar-bg text-sidebar-text w-70 border-r p-0"
         showCloseButton={false}
       >
-        <SheetHeader className="flex flex-row items-center gap-3 px-6 h-20 border-b border-sidebar-border">
-          <GraduationCap className="size-7 text-primary" />
+        <SheetHeader className="border-sidebar-border flex h-20 flex-row items-center gap-3 border-b px-6">
+          <GraduationCap className="text-primary size-7" />
           <Link href="/" onClick={() => setOpen(false)}>
             <SheetTitle className="font-display text-lg font-extrabold tracking-tight text-white">
               Skill<span className="text-primary">Workshop</span>
@@ -405,12 +389,12 @@ function MobileSheetSidebar({
           onNavigate={() => setOpen(false)}
         />
 
-        <div className="mt-auto flex flex-col gap-2 p-4 border-t border-sidebar-border bg-black/20">
+        <div className="border-sidebar-border mt-auto flex flex-col gap-2 border-t bg-black/20 p-4">
           <Button
             variant="ghost"
             size="sm"
             asChild
-            className="justify-start h-11 rounded-xl text-sidebar-text-muted hover:bg-sidebar-hover hover:text-white"
+            className="text-sidebar-text-muted hover:bg-sidebar-hover h-11 justify-start rounded-xl hover:text-white"
             onClick={() => setOpen(false)}
           >
             <Link href="/">
@@ -422,7 +406,7 @@ function MobileSheetSidebar({
             variant="ghost"
             size="sm"
             onClick={onLogout}
-            className="justify-start h-11 rounded-xl text-sidebar-text-muted hover:bg-danger-subtle hover:text-danger"
+            className="text-sidebar-text-muted hover:bg-danger-subtle hover:text-danger h-11 justify-start rounded-xl"
           >
             <LogOut className="mr-3 size-4" />
             Logout

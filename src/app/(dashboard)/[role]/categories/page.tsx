@@ -28,12 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { PageHeader } from "@/components/layout/PageHeader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -138,8 +133,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     try {
       const fd = new FormData();
       fd.append("name", formName.trim());
-      if (formDescription.trim())
-        fd.append("description", formDescription.trim());
+      if (formDescription.trim()) fd.append("description", formDescription.trim());
       if (formFile) fd.append("file", formFile);
 
       await createCategory(fd);
@@ -148,9 +142,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
       fetchCategoriesData();
       toast.success("Category created successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to create category",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to create category");
     } finally {
       setSaving(false);
     }
@@ -165,8 +157,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     try {
       const fd = new FormData();
       fd.append("name", formName.trim());
-      if (formDescription.trim())
-        fd.append("description", formDescription.trim());
+      if (formDescription.trim()) fd.append("description", formDescription.trim());
       if (formFile) fd.append("file", formFile);
 
       await updateCategory(editTarget._id, fd);
@@ -175,9 +166,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
       fetchCategoriesData();
       toast.success("Category updated successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to update category",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to update category");
     } finally {
       setSaving(false);
     }
@@ -192,9 +181,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
       fetchCategoriesData();
       toast.success("Category deleted successfully");
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to delete category",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to delete category");
     } finally {
       setDeleting(false);
     }
@@ -205,7 +192,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
   const filteredCategories = categories.filter(
     (cat) =>
       cat.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      cat.description?.toLowerCase().includes(searchQuery.toLowerCase()),
+      cat.description?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // ── Render ─────────────────────────────────────────────────────────
@@ -221,39 +208,34 @@ export default function CategoriesPage({ params: _params }: PageProps) {
           >
             <Button
               onClick={openCreateDialog}
-              className="h-11 rounded-xl px-5 font-bold shadow-raised hover:shadow-float transition-all"
+              className="shadow-raised hover:shadow-float h-11 rounded-xl px-5 font-bold transition-all"
             >
-              <Plus className="size-4 mr-2" />
+              <Plus className="mr-2 size-4" />
               Create Category
             </Button>
           </PageHeader>
         </div>
 
         {/* ── Toolbar ────────────────────────────────────────────────── */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-surface-1 p-4 rounded-2xl border border-border shadow-sm">
+        <div className="bg-surface-1 border-border flex flex-col items-center justify-between gap-4 rounded-2xl border p-4 shadow-sm sm:flex-row">
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 size-4 text-foreground-disabled" />
+            <Search className="text-foreground-disabled absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
             <Input
               placeholder="Search categories..."
-              className="pl-10 h-11 rounded-xl bg-surface-2 border-transparent focus:border-primary/20 transition-all"
+              className="bg-surface-2 focus:border-primary/20 h-11 rounded-xl border-transparent pl-10 transition-all"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <Button
-              variant="outline"
-              className="flex-1 sm:flex-none h-11 rounded-xl border-dashed"
-            >
-              <SlidersHorizontal className="size-4 mr-2 text-foreground-muted" />
+          <div className="flex w-full items-center gap-2 sm:w-auto">
+            <Button variant="outline" className="h-11 flex-1 rounded-xl border-dashed sm:flex-none">
+              <SlidersHorizontal className="text-foreground-muted mr-2 size-4" />
               Filters
             </Button>
-            <div className="hidden sm:block h-8 w-px bg-border mx-2" />
-            <p className="text-sm font-bold text-foreground shrink-0">
+            <div className="bg-border mx-2 hidden h-8 w-px sm:block" />
+            <p className="text-foreground shrink-0 text-sm font-bold">
               {filteredCategories.length}{" "}
-              <span className="text-foreground-muted font-medium">
-                Categories
-              </span>
+              <span className="text-foreground-muted font-medium">Categories</span>
             </p>
           </div>
         </div>
@@ -262,10 +244,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
         {loading ? (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {[...Array(8)].map((_, i) => (
-              <div
-                key={i}
-                className="aspect-video rounded-3xl bg-surface-2 animate-shimmer"
-              />
+              <div key={i} className="bg-surface-2 animate-shimmer aspect-video rounded-3xl" />
             ))}
           </div>
         ) : categories.length === 0 ? (
@@ -289,9 +268,9 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                   exit={{ opacity: 0, scale: 0.9 }}
                   key={cat._id}
                 >
-                  <Card className="group overflow-hidden rounded-3xl border-border bg-surface-1 transition-all duration-300 hover:shadow-float">
+                  <Card className="group border-border bg-surface-1 hover:shadow-float overflow-hidden rounded-3xl transition-all duration-300">
                     {/* Thumbnail */}
-                    <div className="relative aspect-video w-full bg-surface-2 overflow-hidden border-b border-border">
+                    <div className="bg-surface-2 border-border relative aspect-video w-full overflow-hidden border-b">
                       {cat.thumbnail ? (
                         <Image
                           src={cat.thumbnail}
@@ -301,17 +280,17 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
                         />
                       ) : (
-                        <div className="flex h-full items-center justify-center bg-linear-to-br from-surface-2 to-surface-3">
-                          <ImageIcon2 className="size-10 text-foreground-disabled/30" />
+                        <div className="from-surface-2 to-surface-3 flex h-full items-center justify-center bg-linear-to-br">
+                          <ImageIcon2 className="text-foreground-disabled/30 size-10" />
                         </div>
                       )}
-                      <div className="absolute top-3 right-3 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity translate-y-1 group-hover:translate-y-0 duration-300">
+                      <div className="absolute top-3 right-3 flex translate-y-1 gap-1 opacity-0 transition-opacity duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <Button
                               variant="secondary"
                               size="icon-xs"
-                              className="size-8 rounded-lg shadow-raised bg-white/90 backdrop-blur-md hover:bg-white text-foreground"
+                              className="shadow-raised text-foreground size-8 rounded-lg bg-white/90 backdrop-blur-md hover:bg-white"
                               onClick={() => openEditDialog(cat)}
                             >
                               <Pencil className="size-3.5" />
@@ -324,7 +303,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                             <Button
                               variant="secondary"
                               size="icon-xs"
-                              className="size-8 rounded-lg shadow-raised bg-white/90 backdrop-blur-md hover:bg-danger hover:text-white text-danger"
+                              className="shadow-raised hover:bg-danger text-danger size-8 rounded-lg bg-white/90 backdrop-blur-md hover:text-white"
                               onClick={() => setDeleteTarget(cat)}
                             >
                               <Trash2 className="size-3.5" />
@@ -336,18 +315,17 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                     </div>
                     <CardContent className="p-5">
                       <div className="min-w-0">
-                        <h3 className="truncate text-base font-bold text-foreground leading-tight">
+                        <h3 className="text-foreground truncate text-base leading-tight font-bold">
                           {cat.name}
                         </h3>
-                        <p className="mt-1.5 text-[13px] text-foreground-subtle line-clamp-2 min-h-[36px]">
-                          {cat.description ||
-                            "No description provided for this category."}
+                        <p className="text-foreground-subtle mt-1.5 line-clamp-2 min-h-0 text-[13px]">
+                          {cat.description || "No description provided for this category."}
                         </p>
-                        <div className="mt-4 flex items-center justify-between pt-4 border-t border-border/50">
-                          <p className="text-[11px] font-mono font-bold text-foreground-disabled uppercase tracking-tighter">
+                        <div className="border-border/50 mt-4 flex items-center justify-between border-t pt-4">
+                          <p className="text-foreground-disabled font-mono text-[11px] font-bold tracking-tighter uppercase">
                             SLUG: {cat.slug}
                           </p>
-                          <span className="text-[11px] font-bold text-primary px-2 py-0.5 rounded-full bg-primary/5 border border-primary/10">
+                          <span className="text-primary bg-primary/5 border-primary/10 rounded-full border px-2 py-0.5 text-[11px] font-bold">
                             Active
                           </span>
                         </div>
@@ -370,14 +348,12 @@ export default function CategoriesPage({ params: _params }: PageProps) {
             }
           }}
         >
-          <DialogContent className="max-w-md rounded-[32px] p-0 overflow-hidden border-none shadow-2xl">
+          <DialogContent className="max-w-md overflow-hidden rounded-4xl border-none p-0 shadow-2xl">
             <DialogHeader className="p-8 pb-0">
-              <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-                <Plus className="size-6 text-primary" />
+              <div className="bg-primary/10 mb-4 flex size-12 items-center justify-center rounded-2xl">
+                <Plus className="text-primary size-6" />
               </div>
-              <DialogTitle className="text-2xl font-bold">
-                New Category
-              </DialogTitle>
+              <DialogTitle className="text-2xl font-bold">New Category</DialogTitle>
               <DialogDescription className="text-foreground-subtle">
                 Define a new domain to organize your workshops.
               </DialogDescription>
@@ -392,7 +368,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                 onFileChange={handleFileChange}
               />
             </div>
-            <DialogFooter className="p-8 pt-0 flex gap-2">
+            <DialogFooter className="flex gap-2 p-8 pt-0">
               <Button
                 variant="ghost"
                 onClick={() => {
@@ -400,18 +376,18 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                   resetForm();
                 }}
                 disabled={saving}
-                className="rounded-xl flex-1 h-12 font-bold"
+                className="h-12 flex-1 rounded-xl font-bold"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreate}
                 disabled={saving}
-                className="rounded-xl flex-1 h-12 font-bold shadow-raised"
+                className="shadow-raised h-12 flex-1 rounded-xl font-bold"
               >
                 {saving ? (
                   <>
-                    <Loader2 className="animate-spin size-4 mr-2" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Creating...
                   </>
                 ) : (
@@ -432,14 +408,12 @@ export default function CategoriesPage({ params: _params }: PageProps) {
             }
           }}
         >
-          <DialogContent className="max-w-md rounded-[32px] p-0 overflow-hidden border-none shadow-2xl">
+          <DialogContent className="max-w-md overflow-hidden rounded-4xl border-none p-0 shadow-2xl">
             <DialogHeader className="p-8 pb-0">
-              <div className="size-12 rounded-2xl bg-accent/10 flex items-center justify-center mb-4">
-                <Pencil className="size-5 text-accent-foreground" />
+              <div className="bg-accent/10 mb-4 flex size-12 items-center justify-center rounded-2xl">
+                <Pencil className="text-accent-foreground size-5" />
               </div>
-              <DialogTitle className="text-2xl font-bold">
-                Edit Category
-              </DialogTitle>
+              <DialogTitle className="text-2xl font-bold">Edit Category</DialogTitle>
               <DialogDescription className="text-foreground-subtle">
                 Update the information for &quot;{editTarget?.name}&quot;
               </DialogDescription>
@@ -454,7 +428,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                 onFileChange={handleFileChange}
               />
             </div>
-            <DialogFooter className="p-8 pt-0 flex gap-2">
+            <DialogFooter className="flex gap-2 p-8 pt-0">
               <Button
                 variant="ghost"
                 onClick={() => {
@@ -462,18 +436,18 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                   resetForm();
                 }}
                 disabled={saving}
-                className="rounded-xl flex-1 h-12 font-bold"
+                className="h-12 flex-1 rounded-xl font-bold"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUpdate}
                 disabled={saving}
-                className="rounded-xl flex-1 h-12 font-bold shadow-raised"
+                className="shadow-raised h-12 flex-1 rounded-xl font-bold"
               >
                 {saving ? (
                   <>
-                    <Loader2 className="animate-spin size-4 mr-2" />
+                    <Loader2 className="mr-2 size-4 animate-spin" />
                     Saving...
                   </>
                 ) : (
@@ -520,7 +494,7 @@ function CategoryForm({
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="cat-name" className="text-[13px] font-bold ml-1">
+        <Label htmlFor="cat-name" className="ml-1 text-[13px] font-bold">
           Category Name
         </Label>
         <Input
@@ -528,14 +502,11 @@ function CategoryForm({
           placeholder="e.g. Graphic Design"
           value={name}
           onChange={(e) => onNameChange(e.target.value)}
-          className="h-12 rounded-xl bg-surface-2 border-transparent focus:border-primary/20 transition-all"
+          className="bg-surface-2 focus:border-primary/20 h-12 rounded-xl border-transparent transition-all"
         />
       </div>
       <div className="space-y-2">
-        <Label
-          htmlFor="cat-desc"
-          className="text-[13px] font-bold ml-1 text-foreground-subtle"
-        >
+        <Label htmlFor="cat-desc" className="text-foreground-subtle ml-1 text-[13px] font-bold">
           Short Description
         </Label>
         <Textarea
@@ -544,30 +515,19 @@ function CategoryForm({
           value={description}
           onChange={(e) => onDescriptionChange(e.target.value)}
           rows={3}
-          className="rounded-xl bg-surface-2 border-transparent focus:border-primary/20 transition-all resize-none"
+          className="bg-surface-2 focus:border-primary/20 resize-none rounded-xl border-transparent transition-all"
         />
       </div>
       <div className="space-y-3">
-        <Label className="text-[13px] font-bold ml-1">Cover Image</Label>
-        <div className="group relative aspect-video w-full rounded-2xl border-2 border-dashed border-border bg-surface-2 overflow-hidden flex flex-col items-center justify-center transition-colors hover:border-primary/30">
+        <Label className="ml-1 text-[13px] font-bold">Cover Image</Label>
+        <div className="group border-border bg-surface-2 hover:border-primary/30 relative flex aspect-video w-full flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed transition-colors">
           {preview ? (
             <>
-              <Image
-                src={preview}
-                alt="Preview"
-                fill
-                unoptimized
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="rounded-lg font-bold"
-                  asChild
-                >
+              <Image src={preview} alt="Preview" fill unoptimized className="object-cover" />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <Button variant="secondary" size="sm" className="rounded-lg font-bold" asChild>
                   <label className="cursor-pointer">
-                    <Pencil className="size-3.5 mr-2" />
+                    <Pencil className="mr-2 size-3.5" />
                     Change Image
                     <input
                       type="file"
@@ -580,23 +540,14 @@ function CategoryForm({
               </div>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center text-center p-6">
-              <div className="size-12 rounded-full bg-surface-1 flex items-center justify-center mb-3">
-                <ImageIcon className="size-6 text-foreground-disabled" />
+            <div className="flex flex-col items-center justify-center p-6 text-center">
+              <div className="bg-surface-1 mb-3 flex size-12 items-center justify-center rounded-full">
+                <ImageIcon className="text-foreground-disabled size-6" />
               </div>
-              <p className="text-sm font-bold text-foreground">
-                Upload category thumbnail
-              </p>
-              <p className="text-xs text-foreground-disabled mt-1">
-                PNG, JPG or WebP up to 5MB
-              </p>
+              <p className="text-foreground text-sm font-bold">Upload category thumbnail</p>
+              <p className="text-foreground-disabled mt-1 text-xs">PNG, JPG or WebP up to 5MB</p>
               <label className="absolute inset-0 cursor-pointer">
-                <input
-                  type="file"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={onFileChange}
-                />
+                <input type="file" className="hidden" accept="image/*" onChange={onFileChange} />
               </label>
             </div>
           )}

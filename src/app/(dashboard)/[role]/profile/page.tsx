@@ -18,13 +18,7 @@ import {
 import { z } from "zod/v4";
 import { toast } from "sonner";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -54,9 +48,7 @@ const profileSchema = z.object({
 const passwordSchema = z
   .object({
     currentPassword: z.string().min(6, "Current password is required"),
-    newPassword: z
-      .string()
-      .min(8, "New password must be at least 8 characters"),
+    newPassword: z.string().min(8, "New password must be at least 8 characters"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -102,7 +94,7 @@ function PasswordStrengthBar({ password }: { password: string }) {
           />
         ))}
       </div>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-muted-foreground text-xs">
         Password strength: <span className="font-medium">{strength.label}</span>
       </p>
     </div>
@@ -127,9 +119,7 @@ export default function ProfilePage() {
     age: "" as string,
     address: "",
   });
-  const [profileErrors, setProfileErrors] = useState<Record<string, string>>(
-    {},
-  );
+  const [profileErrors, setProfileErrors] = useState<Record<string, string>>({});
 
   // Password change state
   const [passwordData, setPasswordData] = useState({
@@ -137,9 +127,7 @@ export default function ProfilePage() {
     newPassword: "",
     confirmPassword: "",
   });
-  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>(
-    {},
-  );
+  const [passwordErrors, setPasswordErrors] = useState<Record<string, string>>({});
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -214,9 +202,7 @@ export default function ProfilePage() {
       toast.success("Profile updated successfully");
       setIsEditing(false);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to update profile",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to update profile");
     } finally {
       setIsUpdating(false);
     }
@@ -242,10 +228,7 @@ export default function ProfilePage() {
     setPasswordErrors({});
 
     try {
-      await changePassword(
-        passwordData.currentPassword,
-        passwordData.newPassword,
-      );
+      await changePassword(passwordData.currentPassword, passwordData.newPassword);
       toast.success("Password changed successfully");
       setPasswordData({
         currentPassword: "",
@@ -253,9 +236,7 @@ export default function ProfilePage() {
         confirmPassword: "",
       });
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to change password",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to change password");
     } finally {
       setIsChangingPassword(false);
     }
@@ -265,10 +246,7 @@ export default function ProfilePage() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <PageHeader
-          title="My Profile"
-          description="Manage your account settings"
-        />
+        <PageHeader title="My Profile" description="Manage your account settings" />
         <div className="grid gap-6 lg:grid-cols-3">
           <div className="lg:col-span-1">
             <FormSkeleton fields={5} />
@@ -286,7 +264,7 @@ export default function ProfilePage() {
       <div className="space-y-6">
         <PageHeader title="My Profile" />
         <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-16 text-center">
-          <p className="text-sm font-medium text-destructive">
+          <p className="text-destructive text-sm font-medium">
             {error ?? "Failed to load profile"}
           </p>
         </div>
@@ -298,26 +276,21 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="My Profile"
-        description="Manage your account settings and preferences"
-      />
+      <PageHeader title="My Profile" description="Manage your account settings and preferences" />
 
       <div className="grid gap-6 lg:grid-cols-3">
         {/* ── Profile Card (Left Column) ─────────────────────────── */}
         <Card className="lg:col-span-1">
           <CardContent className="flex flex-col items-center pt-6 pb-8">
             <Avatar className="size-24">
-              {user.picture && (
-                <AvatarImage src={user.picture} alt={user.name} />
-              )}
+              {user.picture && <AvatarImage src={user.picture} alt={user.name} />}
               <AvatarFallback className="bg-primary/10 text-primary text-xl font-semibold">
                 {initials}
               </AvatarFallback>
             </Avatar>
 
             <h2 className="mt-4 text-lg font-semibold">{user.name}</h2>
-            <p className="text-sm text-muted-foreground">{user.email}</p>
+            <p className="text-muted-foreground text-sm">{user.email}</p>
 
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
               <Badge variant="secondary">{user.role}</Badge>
@@ -337,32 +310,30 @@ export default function ProfilePage() {
 
             <div className="w-full space-y-3">
               <div className="flex items-center gap-3 text-sm">
-                <Mail className="size-4 text-muted-foreground shrink-0" />
+                <Mail className="text-muted-foreground size-4 shrink-0" />
                 <span className="truncate">{user.email}</span>
               </div>
               {user.phone && (
                 <div className="flex items-center gap-3 text-sm">
-                  <Phone className="size-4 text-muted-foreground shrink-0" />
+                  <Phone className="text-muted-foreground size-4 shrink-0" />
                   <span>{user.phone}</span>
                 </div>
               )}
               {user.address && (
                 <div className="flex items-center gap-3 text-sm">
-                  <MapPin className="size-4 text-muted-foreground shrink-0" />
+                  <MapPin className="text-muted-foreground size-4 shrink-0" />
                   <span className="truncate">{user.address}</span>
                 </div>
               )}
               {user.age && (
                 <div className="flex items-center gap-3 text-sm">
-                  <Award className="size-4 text-muted-foreground shrink-0" />
+                  <Award className="text-muted-foreground size-4 shrink-0" />
                   <span>Age: {user.age}</span>
                 </div>
               )}
               <div className="flex items-center gap-3 text-sm">
-                <Calendar className="size-4 text-muted-foreground shrink-0" />
-                <span className="text-muted-foreground">
-                  Joined {formatDate(user.createdAt)}
-                </span>
+                <Calendar className="text-muted-foreground size-4 shrink-0" />
+                <span className="text-muted-foreground">Joined {formatDate(user.createdAt)}</span>
               </div>
             </div>
           </CardContent>
@@ -376,16 +347,10 @@ export default function ProfilePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-base">Edit Profile</CardTitle>
-                  <CardDescription>
-                    Update your personal information
-                  </CardDescription>
+                  <CardDescription>Update your personal information</CardDescription>
                 </div>
                 {!isEditing && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setIsEditing(true)}
-                  >
+                  <Button variant="outline" size="sm" onClick={() => setIsEditing(true)}>
                     Edit
                   </Button>
                 )}
@@ -410,9 +375,7 @@ export default function ProfilePage() {
                         }
                       />
                       {profileErrors.name && (
-                        <p className="text-xs text-destructive">
-                          {profileErrors.name}
-                        </p>
+                        <p className="text-destructive text-xs">{profileErrors.name}</p>
                       )}
                     </div>
                     <div className="space-y-2">
@@ -429,9 +392,7 @@ export default function ProfilePage() {
                         placeholder="e.g. +880 1XXX-XXXXXX"
                       />
                       {profileErrors.phone && (
-                        <p className="text-xs text-destructive">
-                          {profileErrors.phone}
-                        </p>
+                        <p className="text-destructive text-xs">{profileErrors.phone}</p>
                       )}
                     </div>
                   </div>
@@ -453,9 +414,7 @@ export default function ProfilePage() {
                         placeholder="e.g. 30"
                       />
                       {profileErrors.age && (
-                        <p className="text-xs text-destructive">
-                          {profileErrors.age}
-                        </p>
+                        <p className="text-destructive text-xs">{profileErrors.age}</p>
                       )}
                     </div>
                     <div className="space-y-2">
@@ -472,9 +431,7 @@ export default function ProfilePage() {
                         placeholder="e.g. Dhaka, Bangladesh"
                       />
                       {profileErrors.address && (
-                        <p className="text-xs text-destructive">
-                          {profileErrors.address}
-                        </p>
+                        <p className="text-destructive text-xs">{profileErrors.address}</p>
                       )}
                     </div>
                   </div>
@@ -507,27 +464,19 @@ export default function ProfilePage() {
                 <div className="space-y-4">
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground">
-                        Name
-                      </p>
+                      <p className="text-muted-foreground text-xs font-medium">Name</p>
                       <p className="mt-0.5 text-sm">{user.name ?? "—"}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground">
-                        Phone
-                      </p>
+                      <p className="text-muted-foreground text-xs font-medium">Phone</p>
                       <p className="mt-0.5 text-sm">{user.phone ?? "—"}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground">
-                        Age
-                      </p>
+                      <p className="text-muted-foreground text-xs font-medium">Age</p>
                       <p className="mt-0.5 text-sm">{user.age ?? "—"}</p>
                     </div>
                     <div>
-                      <p className="text-xs font-medium text-muted-foreground">
-                        Address
-                      </p>
+                      <p className="text-muted-foreground text-xs font-medium">Address</p>
                       <p className="mt-0.5 text-sm">{user.address ?? "—"}</p>
                     </div>
                   </div>
@@ -540,7 +489,7 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <div className="flex items-center gap-2">
-                <Palette className="size-4 text-muted-foreground" />
+                <Palette className="text-muted-foreground size-4" />
                 <div>
                   <CardTitle className="text-base">Appearance</CardTitle>
                   <CardDescription>
@@ -551,10 +500,10 @@ export default function ProfilePage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">
-                  Choose your preferred theme. Select &quot;System&quot; to
-                  automatically match your device&apos;s appearance settings.
-                  Your preference will be saved and remembered across sessions.
+                <p className="text-muted-foreground text-sm">
+                  Choose your preferred theme. Select &quot;System&quot; to automatically match your
+                  device&apos;s appearance settings. Your preference will be saved and remembered
+                  across sessions.
                 </p>
                 <ThemeToggle />
               </div>
@@ -565,9 +514,7 @@ export default function ProfilePage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Change Password</CardTitle>
-              <CardDescription>
-                Update your password to keep your account secure
-              </CardDescription>
+              <CardDescription>Update your password to keep your account secure</CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleChangePassword} className="space-y-4">
@@ -594,12 +541,8 @@ export default function ProfilePage() {
                       variant="ghost"
                       size="icon-xs"
                       className="absolute top-1/2 right-2 -translate-y-1/2"
-                      onClick={() =>
-                        setShowCurrentPassword(!showCurrentPassword)
-                      }
-                      aria-label={
-                        showCurrentPassword ? "Hide password" : "Show password"
-                      }
+                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                      aria-label={showCurrentPassword ? "Hide password" : "Show password"}
                     >
                       {showCurrentPassword ? (
                         <EyeOff className="size-4" />
@@ -609,9 +552,7 @@ export default function ProfilePage() {
                     </Button>
                   </div>
                   {passwordErrors.currentPassword && (
-                    <p className="text-xs text-destructive">
-                      {passwordErrors.currentPassword}
-                    </p>
+                    <p className="text-destructive text-xs">{passwordErrors.currentPassword}</p>
                   )}
                 </div>
 
@@ -640,9 +581,7 @@ export default function ProfilePage() {
                         size="icon-xs"
                         className="absolute top-1/2 right-2 -translate-y-1/2"
                         onClick={() => setShowNewPassword(!showNewPassword)}
-                        aria-label={
-                          showNewPassword ? "Hide password" : "Show password"
-                        }
+                        aria-label={showNewPassword ? "Hide password" : "Show password"}
                       >
                         {showNewPassword ? (
                           <EyeOff className="size-4" />
@@ -653,15 +592,12 @@ export default function ProfilePage() {
                     </div>
                     <PasswordStrengthBar password={passwordData.newPassword} />
                     {passwordErrors.newPassword && (
-                      <p className="text-xs text-destructive">
-                        {passwordErrors.newPassword}
-                      </p>
+                      <p className="text-destructive text-xs">{passwordErrors.newPassword}</p>
                     )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="confirmPassword">
-                      Confirm Password{" "}
-                      <span className="text-destructive">*</span>
+                      Confirm Password <span className="text-destructive">*</span>
                     </Label>
                     <div className="relative">
                       <Input
@@ -682,14 +618,8 @@ export default function ProfilePage() {
                         variant="ghost"
                         size="icon-xs"
                         className="absolute top-1/2 right-2 -translate-y-1/2"
-                        onClick={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        aria-label={
-                          showConfirmPassword
-                            ? "Hide password"
-                            : "Show password"
-                        }
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="size-4" />
@@ -699,35 +629,27 @@ export default function ProfilePage() {
                       </Button>
                     </div>
                     {passwordData.confirmPassword &&
-                      passwordData.newPassword ===
-                        passwordData.confirmPassword && (
-                        <div className="flex items-center gap-1.5 text-xs text-success">
+                      passwordData.newPassword === passwordData.confirmPassword && (
+                        <div className="text-success flex items-center gap-1.5 text-xs">
                           <Check className="size-3" />
                           <span>Passwords match</span>
                         </div>
                       )}
                     {passwordData.confirmPassword &&
-                      passwordData.newPassword !==
-                        passwordData.confirmPassword && (
-                        <div className="flex items-center gap-1.5 text-xs text-danger">
+                      passwordData.newPassword !== passwordData.confirmPassword && (
+                        <div className="text-danger flex items-center gap-1.5 text-xs">
                           <X className="size-3" />
                           <span>Passwords do not match</span>
                         </div>
                       )}
                     {passwordErrors.confirmPassword && (
-                      <p className="text-xs text-destructive">
-                        {passwordErrors.confirmPassword}
-                      </p>
+                      <p className="text-destructive text-xs">{passwordErrors.confirmPassword}</p>
                     )}
                   </div>
                 </div>
 
                 <div className="flex justify-end pt-2">
-                  <Button
-                    type="submit"
-                    disabled={isChangingPassword}
-                    variant="outline"
-                  >
+                  <Button type="submit" disabled={isChangingPassword} variant="outline">
                     {isChangingPassword && <Loader2 className="animate-spin" />}
                     Change Password
                   </Button>

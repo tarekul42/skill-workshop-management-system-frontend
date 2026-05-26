@@ -16,13 +16,7 @@ const ROLE_ROUTES: Record<string, string> = {
 };
 
 /** Auth page prefixes — users who already have a role cookie are redirected away */
-const AUTH_PREFIXES = [
-  "/login",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-  "/verify-otp",
-];
+const AUTH_PREFIXES = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-otp"];
 
 // ─── Helpers ────────────────────────────────────────────────────────────
 
@@ -34,7 +28,7 @@ async function getRoleCookie(request: NextRequest): Promise<string | null> {
     const JWT_SECRET = process.env.JWT_SECRET;
     if (!JWT_SECRET) {
       console.error(
-        "[MIDDLEWARE] JWT_SECRET environment variable is not set. Denying all requests.",
+        "[MIDDLEWARE] JWT_SECRET environment variable is not set. Denying all requests."
       );
       return null;
     }
@@ -62,9 +56,7 @@ function getExpectedRole(pathname: string): string | null {
  * Checks if a path starts with any of the auth page prefixes.
  */
 function isAuthPage(pathname: string): boolean {
-  return AUTH_PREFIXES.some(
-    (prefix) => pathname === prefix || pathname.startsWith(prefix + "/"),
-  );
+  return AUTH_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(prefix + "/"));
 }
 
 // ─── Middleware ─────────────────────────────────────────────────────────
@@ -108,8 +100,7 @@ export async function proxy(request: NextRequest) {
 
   // ─── Security Headers ────────────────────────────────────────────────
   // CSP connect-src requires an origin (scheme+host+port), not a full path.
-  const backendUrl =
-    process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:5000/api/v1";
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:5000/api/v1";
   let backendOrigin = backendUrl;
   try {
     backendOrigin = new URL(backendUrl).origin;
@@ -141,14 +132,8 @@ export async function proxy(request: NextRequest) {
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=()",
-  );
-  response.headers.set(
-    "Strict-Transport-Security",
-    "max-age=31536000; includeSubDomains; preload",
-  );
+  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
 
   return response;
 }

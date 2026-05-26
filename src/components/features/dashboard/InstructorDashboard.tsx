@@ -26,11 +26,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/formatters";
-import {
-  AnimatedPage,
-  StaggerContainer,
-  StaggerItem,
-} from "@/components/ui/animated-page";
+import { AnimatedPage, StaggerContainer, StaggerItem } from "@/components/ui/animated-page";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 // ─── Types ──────────────────────────────────────────────────────────
@@ -92,16 +88,8 @@ const enrollmentTrendData = [
 
 // ─── Helpers ────────────────────────────────────────────────────────
 
-function AnimatedNumber({
-  value,
-  isCurrency = false,
-}: {
-  value: number;
-  isCurrency?: boolean;
-}) {
-  const [displayValue, setDisplayValue] = useState(
-    isCurrency ? formatCurrency(0) : "0",
-  );
+function AnimatedNumber({ value, isCurrency = false }: { value: number; isCurrency?: boolean }) {
+  const [displayValue, setDisplayValue] = useState(isCurrency ? formatCurrency(0) : "0");
 
   useEffect(() => {
     const controls = animate(0, value, {
@@ -137,35 +125,32 @@ export function InstructorDashboard({
   recentEnrollments,
 }: InstructorDashboardProps) {
   const greeting = getGreeting();
-  const firstName =
-    user?.firstName || user?.name?.split(" ")[0] || "Instructor";
+  const firstName = user?.firstName || user?.name?.split(" ")[0] || "Instructor";
 
   return (
     <AnimatedPage className="space-y-8">
       {/* ── Section 1: Greeting ────────────────────────────────────── */}
-      <div className="relative border-b border-border pb-10">
+      <div className="border-border relative border-b pb-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <div className="flex items-center gap-2 mb-3 text-foreground-disabled font-bold uppercase tracking-widest text-[11px]">
+            <div className="text-foreground-disabled mb-3 flex items-center gap-2 text-[11px] font-bold tracking-widest uppercase">
               <span>{greeting.text}</span>
               <span className="opacity-70">{greeting.emoji}</span>
             </div>
-            <h1 className="font-display text-4xl font-extrabold tracking-tight text-foreground md:text-5xl">
+            <h1 className="font-display text-foreground text-4xl font-extrabold tracking-tight md:text-5xl">
               Welcome back, {firstName}!
             </h1>
-            <p className="mt-4 text-lg text-foreground-subtle leading-relaxed">
+            <p className="text-foreground-subtle mt-4 text-lg leading-relaxed">
               Your workshops are reaching{" "}
-              <span className="text-primary font-bold">
-                {stats.totalStudents}
-              </span>{" "}
-              students. Keep building!
+              <span className="text-primary font-bold">{stats.totalStudents}</span> students. Keep
+              building!
             </p>
           </div>
-          <div className="mt-4 md:mt-0 shrink-0">
+          <div className="mt-4 shrink-0 md:mt-0">
             <Button
               asChild
               size="lg"
-              className="h-14 rounded-2xl font-bold shadow-lg transition-all hover:shadow-xl group px-8"
+              className="group h-14 rounded-2xl px-8 font-bold shadow-lg transition-all hover:shadow-xl"
             >
               <Link href="/instructor/workshops/create">
                 <Plus className="mr-2.5 size-5 transition-transform group-hover:scale-110" />
@@ -180,21 +165,21 @@ export function InstructorDashboard({
       <StaggerContainer className="grid gap-6 sm:grid-cols-3">
         {/* My Workshops */}
         <StaggerItem>
-          <div className="glass rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:shadow-3 hover:-translate-y-1 group">
+          <div className="glass hover:shadow-3 group rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled mb-4">
+                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-[0.1em] uppercase">
                   My Workshops
                 </p>
-                <div className="font-display text-4xl font-extrabold text-foreground leading-none">
+                <div className="font-display text-foreground text-4xl leading-none font-extrabold">
                   <AnimatedNumber value={stats.totalWorkshops} />
                 </div>
-                <p className="mt-3 text-[11px] font-bold text-foreground-muted uppercase tracking-wide">
+                <p className="text-foreground-muted mt-3 text-[11px] font-bold tracking-wide uppercase">
                   {stats.publishedCount} published · {stats.draftCount} draft
                 </p>
               </div>
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-primary-subtle shadow-sm transition-transform group-hover:scale-110 group-hover:-rotate-3">
-                <BookOpen className="size-7 text-primary" />
+              <div className="bg-primary-subtle flex size-14 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-110 group-hover:-rotate-3">
+                <BookOpen className="text-primary size-7" />
               </div>
             </div>
           </div>
@@ -202,22 +187,22 @@ export function InstructorDashboard({
 
         {/* Total Students */}
         <StaggerItem>
-          <div className="glass rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:shadow-3 hover:-translate-y-1 group">
+          <div className="glass hover:shadow-3 group rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled mb-4">
+                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-[0.1em] uppercase">
                   Total Students
                 </p>
-                <div className="font-display text-4xl font-extrabold text-foreground leading-none">
+                <div className="font-display text-foreground text-4xl leading-none font-extrabold">
                   <AnimatedNumber value={stats.totalStudents} />
                 </div>
-                <p className="mt-3 text-[11px] font-bold text-success uppercase tracking-wide flex items-center gap-1.5">
+                <p className="text-success mt-3 flex items-center gap-1.5 text-[11px] font-bold tracking-wide uppercase">
                   <TrendingUp className="size-3.5" />
                   +12% this month
                 </p>
               </div>
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-success-subtle shadow-sm transition-transform group-hover:scale-110 group-hover:-rotate-3">
-                <Users className="size-7 text-success" />
+              <div className="bg-success-subtle flex size-14 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-110 group-hover:-rotate-3">
+                <Users className="text-success size-7" />
               </div>
             </div>
           </div>
@@ -225,21 +210,21 @@ export function InstructorDashboard({
 
         {/* Total Revenue */}
         <StaggerItem>
-          <div className="glass rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:shadow-3 hover:-translate-y-1 group">
+          <div className="glass hover:shadow-3 group rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled mb-4">
+                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-[0.1em] uppercase">
                   Total Revenue
                 </p>
-                <div className="font-display text-[32px] font-extrabold text-foreground leading-none tracking-tight">
+                <div className="font-display text-foreground text-[32px] leading-none font-extrabold tracking-tight">
                   <AnimatedNumber value={stats.totalRevenue} isCurrency />
                 </div>
-                <p className="mt-3 text-[11px] font-bold text-foreground-muted uppercase tracking-wide">
+                <p className="text-foreground-muted mt-3 text-[11px] font-bold tracking-wide uppercase">
                   Lifetime earnings
                 </p>
               </div>
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-accent-subtle shadow-sm transition-transform group-hover:scale-110 group-hover:-rotate-3">
-                <DollarSign className="size-7 text-accent-foreground" />
+              <div className="bg-accent-subtle flex size-14 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-110 group-hover:-rotate-3">
+                <DollarSign className="text-accent-foreground size-7" />
               </div>
             </div>
           </div>
@@ -248,16 +233,16 @@ export function InstructorDashboard({
 
       {/* ── Section 3: Revenue Chart ──────────────────────────────── */}
       <StaggerItem>
-        <div className="glass rounded-[32px] p-8 shadow-sm transition-all duration-300 hover:shadow-2">
+        <div className="glass hover:shadow-2 rounded-[32px] p-8 shadow-sm transition-all duration-300">
           <div className="mb-8 flex items-center justify-between">
-            <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
+            <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
               Monthly Revenue
             </h2>
-            <div className="flex rounded-xl bg-surface-2 p-1 border border-border/40">
+            <div className="bg-surface-2 border-border/40 flex rounded-xl border p-1">
               {["3M", "6M", "12M"].map((tab) => (
                 <button
                   key={tab}
-                  className="rounded-lg px-4 py-1.5 text-xs font-bold text-foreground-disabled transition-all hover:text-foreground active:scale-95"
+                  className="text-foreground-disabled hover:text-foreground rounded-lg px-4 py-1.5 text-xs font-bold transition-all active:scale-95"
                 >
                   {tab}
                 </button>
@@ -269,16 +254,8 @@ export function InstructorDashboard({
               <AreaChart data={revenueData}>
                 <defs>
                   <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop
-                      offset="5%"
-                      stopColor="var(--primary)"
-                      stopOpacity={0.3}
-                    />
-                    <stop
-                      offset="95%"
-                      stopColor="var(--primary)"
-                      stopOpacity={0}
-                    />
+                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <XAxis
@@ -300,10 +277,7 @@ export function InstructorDashboard({
                     fontFamily: "var(--font-display)",
                     fontWeight: "700",
                   }}
-                  formatter={(value) => [
-                    formatCurrency(Number(value ?? 0)),
-                    "Revenue",
-                  ]}
+                  formatter={(value) => [formatCurrency(Number(value ?? 0)), "Revenue"]}
                 />
                 <Area
                   type="monotone"
@@ -324,16 +298,16 @@ export function InstructorDashboard({
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Recent Workshops Table */}
         <StaggerItem>
-          <div className="glass rounded-[32px] overflow-hidden shadow-sm transition-all duration-300 hover:shadow-2">
-            <div className="p-8 border-b border-border/50 flex items-center justify-between bg-surface-1/30">
-              <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
+          <div className="glass hover:shadow-2 overflow-hidden rounded-[32px] shadow-sm transition-all duration-300">
+            <div className="border-border/50 bg-surface-1/30 flex items-center justify-between border-b p-8">
+              <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
                 My Workshops
               </h2>
               <Button
                 variant="ghost"
                 size="sm"
                 asChild
-                className="text-foreground-muted font-bold text-xs uppercase tracking-widest hover:text-primary"
+                className="text-foreground-muted hover:text-primary text-xs font-bold tracking-widest uppercase"
               >
                 <Link href="/instructor/workshops">
                   Manage <ArrowRight className="ml-1.5 size-3.5" />
@@ -342,37 +316,37 @@ export function InstructorDashboard({
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left">
-                <thead className="bg-surface-2/60 border-b border-border/50">
+                <thead className="bg-surface-2/60 border-border/50 border-b">
                   <tr>
-                    <th className="px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled">
+                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-[0.1em] uppercase">
                       Workshop
                     </th>
-                    <th className="px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled">
+                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-[0.1em] uppercase">
                       Students
                     </th>
-                    <th className="px-8 py-4 font-body text-[11px] font-bold uppercase tracking-[0.1em] text-foreground-disabled">
+                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-[0.1em] uppercase">
                       Status
                     </th>
                     <th className="px-8 py-4 text-right"></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border/30">
+                <tbody className="divide-border/30 divide-y">
                   {recentWorkshops.map((workshop) => (
                     <tr
                       key={workshop._id}
-                      className="hover:bg-surface-2/40 transition-colors group"
+                      className="hover:bg-surface-2/40 group transition-colors"
                     >
                       <td className="px-8 py-5">
                         <div className="flex items-center gap-4">
-                          <div className="size-11 rounded-xl bg-surface-3 flex items-center justify-center overflow-hidden shrink-0 border border-border/50 transition-transform group-hover:scale-110 group-hover:rotate-3">
-                            <BookOpen className="size-5.5 text-foreground-disabled" />
+                          <div className="bg-surface-3 border-border/50 flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-xl border transition-transform group-hover:scale-110 group-hover:rotate-3">
+                            <BookOpen className="text-foreground-disabled size-5.5" />
                           </div>
-                          <span className="font-body text-sm font-bold text-foreground line-clamp-1 group-hover:text-primary transition-colors">
+                          <span className="font-body text-foreground group-hover:text-primary line-clamp-1 text-sm font-bold transition-colors">
                             {workshop.title}
                           </span>
                         </div>
                       </td>
-                      <td className="px-8 py-5 font-body text-sm font-semibold text-foreground">
+                      <td className="font-body text-foreground px-8 py-5 text-sm font-semibold">
                         {workshop.currentEnrollments || 0}
                       </td>
                       <td className="px-8 py-5">
@@ -381,7 +355,7 @@ export function InstructorDashboard({
                       <td className="px-8 py-5 text-right">
                         <Link
                           href={`/instructor/workshops/edit/${workshop._id}`}
-                          className="flex size-9 items-center justify-center rounded-lg text-foreground-disabled hover:bg-primary/10 hover:text-primary transition-all"
+                          className="text-foreground-disabled hover:bg-primary/10 hover:text-primary flex size-9 items-center justify-center rounded-lg transition-all"
                         >
                           <Edit className="size-4.5" />
                         </Link>
@@ -393,9 +367,9 @@ export function InstructorDashboard({
                     <td colSpan={4} className="p-3">
                       <Link
                         href="/instructor/workshops/create"
-                        className="flex items-center justify-center w-full py-5 border-2 border-dashed border-border/60 rounded-2xl text-primary font-bold text-sm hover:bg-primary/5 hover:border-primary/40 transition-all group"
+                        className="border-border/60 text-primary hover:bg-primary/5 hover:border-primary/40 group flex w-full items-center justify-center rounded-2xl border-2 border-dashed py-5 text-sm font-bold transition-all"
                       >
-                        <Plus className="size-5 mr-2.5 group-hover:scale-125 transition-transform" />
+                        <Plus className="mr-2.5 size-5 transition-transform group-hover:scale-125" />
                         Create New Workshop
                       </Link>
                     </td>
@@ -408,16 +382,16 @@ export function InstructorDashboard({
 
         {/* Enrollment Trend Chart */}
         <StaggerItem>
-          <div className="glass rounded-[32px] p-8 shadow-sm transition-all duration-300 hover:shadow-2 flex flex-col h-full">
+          <div className="glass hover:shadow-2 flex h-full flex-col rounded-[32px] p-8 shadow-sm transition-all duration-300">
             <div className="mb-8">
-              <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
+              <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
                 Enrollment Trends
               </h2>
-              <p className="text-[11px] font-bold text-foreground-disabled uppercase tracking-widest mt-1.5">
+              <p className="text-foreground-disabled mt-1.5 text-[11px] font-bold tracking-widest uppercase">
                 Activity over last 8 weeks
               </p>
             </div>
-            <div className="flex-1 w-full min-h-50">
+            <div className="min-h-50 w-full flex-1">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={enrollmentTrendData}>
                   <XAxis
@@ -449,16 +423,16 @@ export function InstructorDashboard({
 
       {/* ── Section 5: Recent Enrollments ─────────────────────────── */}
       <StaggerItem>
-        <div className="glass rounded-[32px] p-8 shadow-sm transition-all duration-300 hover:shadow-2">
+        <div className="glass hover:shadow-2 rounded-[32px] p-8 shadow-sm transition-all duration-300">
           <div className="mb-8 flex items-center justify-between">
-            <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
+            <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
               Recent Student Activity
             </h2>
             <Button
               variant="ghost"
               size="sm"
               asChild
-              className="text-foreground-muted font-bold text-xs uppercase tracking-widest hover:text-primary"
+              className="text-foreground-muted hover:text-primary text-xs font-bold tracking-widest uppercase"
             >
               <Link href="/instructor/enrollments">
                 View All <ArrowRight className="ml-1.5 size-3.5" />
@@ -470,24 +444,24 @@ export function InstructorDashboard({
               recentEnrollments.map((enrollment) => (
                 <div
                   key={enrollment._id}
-                  className="flex items-center gap-5 p-5 rounded-[20px] border border-border/50 bg-background/40 hover:bg-surface-2 transition-all duration-300 hover:shadow-md group"
+                  className="border-border/50 bg-background/40 hover:bg-surface-2 group flex items-center gap-5 rounded-[20px] border p-5 transition-all duration-300 hover:shadow-md"
                 >
-                  <div className="size-14 rounded-full bg-surface-3 flex items-center justify-center text-foreground-disabled shrink-0 border border-border/50 group-hover:scale-105 transition-transform">
+                  <div className="bg-surface-3 text-foreground-disabled border-border/50 flex size-14 shrink-0 items-center justify-center rounded-full border transition-transform group-hover:scale-105">
                     <Users className="size-7" />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-body text-[15px] font-bold text-foreground truncate group-hover:text-primary transition-colors">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-body text-foreground group-hover:text-primary truncate text-[15px] font-bold transition-colors">
                       {enrollment.studentName || "Anonymous Student"}
                     </p>
-                    <p className="text-sm text-foreground-muted truncate mt-0.5">
+                    <p className="text-foreground-muted mt-0.5 truncate text-sm">
                       Enrolled in{" "}
-                      <span className="font-semibold text-foreground-subtle">
+                      <span className="text-foreground-subtle font-semibold">
                         {enrollment.workshopTitle}
                       </span>
                     </p>
                   </div>
-                  <div className="text-right shrink-0">
-                    <p className="text-[11px] font-bold text-foreground-disabled uppercase tracking-wide mb-2">
+                  <div className="shrink-0 text-right">
+                    <p className="text-foreground-disabled mb-2 text-[11px] font-bold tracking-wide uppercase">
                       {formatDate(enrollment.date)}
                     </p>
                     <StatusBadge status={enrollment.status} />
@@ -496,12 +470,10 @@ export function InstructorDashboard({
               ))
             ) : (
               <div className="py-12 text-center">
-                <div className="inline-flex size-12 items-center justify-center rounded-full bg-surface-3 mb-3">
-                  <LayoutDashboard className="size-6 text-muted-foreground/40" />
+                <div className="bg-surface-3 mb-3 inline-flex size-12 items-center justify-center rounded-full">
+                  <LayoutDashboard className="text-muted-foreground/40 size-6" />
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  No recent enrollments yet.
-                </p>
+                <p className="text-muted-foreground text-sm">No recent enrollments yet.</p>
               </div>
             )}
           </div>

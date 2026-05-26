@@ -46,14 +46,7 @@ const actionStyles: Record<AuditAction, string> = {
 
 // ─── Known collections ───────────────────────────────────────────────
 
-const KNOWN_COLLECTIONS = [
-  "User",
-  "Workshop",
-  "Category",
-  "Level",
-  "Enrollment",
-  "Payment",
-];
+const KNOWN_COLLECTIONS = ["User", "Workshop", "Category", "Level", "Enrollment", "Payment"];
 
 // ─── Component ───────────────────────────────────────────────────────
 
@@ -90,20 +83,11 @@ export default function AuditLogsPage({ params }: PageProps) {
       setTotalPages(res.meta.totalPage);
       setTotal(res.meta.total);
     } catch (err) {
-      toast.error(
-        err instanceof Error ? err.message : "Failed to load audit logs",
-      );
+      toast.error(err instanceof Error ? err.message : "Failed to load audit logs");
     } finally {
       setLoading(false);
     }
-  }, [
-    page,
-    limit,
-    filterCollection,
-    filterAction,
-    filterStartDate,
-    filterEndDate,
-  ]);
+  }, [page, limit, filterCollection, filterAction, filterStartDate, filterEndDate]);
 
   useEffect(() => {
     // Pure fix: Defer initial fetch to avoid cascading render lint error
@@ -121,8 +105,7 @@ export default function AuditLogsPage({ params }: PageProps) {
     setPage(1);
   };
 
-  const hasActiveFilters =
-    filterCollection || filterAction || filterStartDate || filterEndDate;
+  const hasActiveFilters = filterCollection || filterAction || filterStartDate || filterEndDate;
 
   // ── Render ─────────────────────────────────────────────────────────
 
@@ -131,10 +114,10 @@ export default function AuditLogsPage({ params }: PageProps) {
       <PageHeader title="Audit Logs" description="Track all system changes" />
 
       {/* ── Filter Bar ─────────────────────────────────────────────── */}
-      <div className="rounded-lg border bg-muted/30 p-4">
+      <div className="bg-muted/30 rounded-lg border p-4">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Collection</Label>
+            <Label className="text-muted-foreground text-xs">Collection</Label>
             <Select
               value={filterCollection}
               onValueChange={(v) => {
@@ -156,7 +139,7 @@ export default function AuditLogsPage({ params }: PageProps) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Action</Label>
+            <Label className="text-muted-foreground text-xs">Action</Label>
             <Select
               value={filterAction}
               onValueChange={(v) => {
@@ -176,7 +159,7 @@ export default function AuditLogsPage({ params }: PageProps) {
             </Select>
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">Start Date</Label>
+            <Label className="text-muted-foreground text-xs">Start Date</Label>
             <Input
               type="date"
               value={filterStartDate}
@@ -187,7 +170,7 @@ export default function AuditLogsPage({ params }: PageProps) {
             />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-xs text-muted-foreground">End Date</Label>
+            <Label className="text-muted-foreground text-xs">End Date</Label>
             <Input
               type="date"
               value={filterEndDate}
@@ -198,12 +181,7 @@ export default function AuditLogsPage({ params }: PageProps) {
             />
           </div>
           <div className="flex items-end">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={resetFilters}
-              disabled={!hasActiveFilters}
-            >
+            <Button variant="outline" size="sm" onClick={resetFilters} disabled={!hasActiveFilters}>
               Clear Filters
             </Button>
           </div>
@@ -212,9 +190,7 @@ export default function AuditLogsPage({ params }: PageProps) {
 
       {/* ── Info bar ───────────────────────────────────────────────── */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-muted-foreground">
-          {total} log entries total
-        </p>
+        <p className="text-muted-foreground text-sm">{total} log entries total</p>
       </div>
 
       {/* ── Table ──────────────────────────────────────────────────── */}
@@ -240,10 +216,8 @@ export default function AuditLogsPage({ params }: PageProps) {
             ) : logs.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-48 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    {hasActiveFilters
-                      ? "No logs match your filters."
-                      : "No audit logs found."}
+                  <p className="text-muted-foreground text-sm">
+                    {hasActiveFilters ? "No logs match your filters." : "No audit logs found."}
                   </p>
                 </TableCell>
               </TableRow>
@@ -251,42 +225,33 @@ export default function AuditLogsPage({ params }: PageProps) {
               logs.map((log) => (
                 <TableRow key={log._id}>
                   <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={actionStyles[log.action]}
-                    >
+                    <Badge variant="outline" className={actionStyles[log.action]}>
                       {log.action}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm font-medium">
-                      {log.collectionName}
-                    </span>
+                    <span className="text-sm font-medium">{log.collectionName}</span>
                   </TableCell>
                   <TableCell>
-                    <span className="font-mono text-xs text-muted-foreground">
+                    <span className="text-muted-foreground font-mono text-xs">
                       {truncate(log.documentId, 14)}
                     </span>
                   </TableCell>
                   <TableCell>
                     <div>
-                      <p className="text-sm">
-                        {log.performedBy?.name || "System"}
-                      </p>
+                      <p className="text-sm">{log.performedBy?.name || "System"}</p>
                       {log.performedBy?.role && (
-                        <p className="text-xs text-muted-foreground">
-                          {log.performedBy.role}
-                        </p>
+                        <p className="text-muted-foreground text-xs">{log.performedBy.role}</p>
                       )}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="text-xs text-muted-foreground font-mono">
+                    <span className="text-muted-foreground font-mono text-xs">
                       {log.ipAddress || "—"}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       {formatDateTime(log.createdAt)}
                     </span>
                   </TableCell>
@@ -300,7 +265,7 @@ export default function AuditLogsPage({ params }: PageProps) {
       {/* ── Server Pagination ──────────────────────────────────────── */}
       {!loading && totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Page {page} of {totalPages}
           </p>
           <div className="flex items-center gap-1">

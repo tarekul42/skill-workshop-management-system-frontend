@@ -13,16 +13,11 @@ vi.mock("framer-motion", () => ({
     span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
       <span {...props}>{children}</span>
     ),
-    button: ({
-      children,
-      ...props
-    }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+    button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
       <button {...props}>{children}</button>
     ),
   },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
+  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
 // Mock next/navigation
@@ -40,9 +35,7 @@ describe("EmptyState", () => {
 
   // ── Description ──────────────────────────────────────────────────
   it("renders the description when provided", () => {
-    render(
-      <EmptyState title="Empty" description="Try adjusting your filters" />,
-    );
+    render(<EmptyState title="Empty" description="Try adjusting your filters" />);
     expect(screen.getByText("Try adjusting your filters")).toBeInTheDocument();
   });
 
@@ -56,23 +49,13 @@ describe("EmptyState", () => {
   // ── Action button ────────────────────────────────────────────────
   it("renders action button when action prop is provided", () => {
     const onClick = vi.fn();
-    render(
-      <EmptyState
-        title="Empty"
-        action={{ label: "Browse Workshops", onClick }}
-      />,
-    );
+    render(<EmptyState title="Empty" action={{ label: "Browse Workshops", onClick }} />);
     expect(screen.getByText("Browse Workshops")).toBeInTheDocument();
   });
 
   it("calls action.onClick when action button is clicked", () => {
     const onClick = vi.fn();
-    render(
-      <EmptyState
-        title="Empty"
-        action={{ label: "Browse Workshops", onClick }}
-      />,
-    );
+    render(<EmptyState title="Empty" action={{ label: "Browse Workshops", onClick }} />);
     fireEvent.click(screen.getByText("Browse Workshops"));
     expect(onClick).toHaveBeenCalledTimes(1);
   });
@@ -80,23 +63,13 @@ describe("EmptyState", () => {
   // ── Secondary action ─────────────────────────────────────────────
   it("renders secondary action button when secondaryAction prop is provided", () => {
     const onClick = vi.fn();
-    render(
-      <EmptyState
-        title="Empty"
-        secondaryAction={{ label: "Clear Filters", onClick }}
-      />,
-    );
+    render(<EmptyState title="Empty" secondaryAction={{ label: "Clear Filters", onClick }} />);
     expect(screen.getByText("Clear Filters")).toBeInTheDocument();
   });
 
   it("calls secondaryAction.onClick when secondary button is clicked", () => {
     const onClick = vi.fn();
-    render(
-      <EmptyState
-        title="Empty"
-        secondaryAction={{ label: "Clear Filters", onClick }}
-      />,
-    );
+    render(<EmptyState title="Empty" secondaryAction={{ label: "Clear Filters", onClick }} />);
     fireEvent.click(screen.getByText("Clear Filters"));
     expect(onClick).toHaveBeenCalledTimes(1);
   });
@@ -115,27 +88,17 @@ describe("EmptyState", () => {
   });
 
   // ── Variants render different icons ──────────────────────────────
-  it.each([
-    "workshops",
-    "enrollments",
-    "payments",
-    "users",
-    "calendar",
-    "default",
-  ] as const)("renders an icon for variant '%s'", (variant) => {
-    const { container } = render(
-      <EmptyState title="Empty" variant={variant} />,
-    );
-    expect(container.querySelector("svg")).toBeInTheDocument();
-  });
+  it.each(["workshops", "enrollments", "payments", "users", "calendar", "default"] as const)(
+    "renders an icon for variant '%s'",
+    (variant) => {
+      const { container } = render(<EmptyState title="Empty" variant={variant} />);
+      expect(container.querySelector("svg")).toBeInTheDocument();
+    }
+  );
 
   it("renders different SVG paths for different variants", () => {
-    const { container: c1 } = render(
-      <EmptyState title="Empty" variant="workshops" />,
-    );
-    const { container: c2 } = render(
-      <EmptyState title="Empty" variant="users" />,
-    );
+    const { container: c1 } = render(<EmptyState title="Empty" variant="workshops" />);
+    const { container: c2 } = render(<EmptyState title="Empty" variant="users" />);
     // Both have SVGs but they should be different icons
     const svg1 = c1.querySelector("svg");
     const svg2 = c2.querySelector("svg");

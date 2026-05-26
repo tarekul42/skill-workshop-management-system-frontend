@@ -120,12 +120,10 @@ export function WorkshopCardSkeleton({
   if (variant === "compact") {
     // Home page style: image placeholder, badge, title, description, footer
     return (
-      <div
-        className={count > 1 ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-4" : ""}
-      >
+      <div className={count > 1 ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-4" : ""}>
         {Array.from({ length: count }).map((_, i) => (
           <Card key={i} className="flex flex-col">
-            <div className="flex h-40 items-center justify-center rounded-t-xl bg-muted">
+            <div className="bg-muted flex h-40 items-center justify-center rounded-t-xl">
               <Skeleton className="size-10 rounded-full" />
             </div>
             <CardHeader>
@@ -148,12 +146,10 @@ export function WorkshopCardSkeleton({
 
   // Detailed style (workshops page): image, badges, description, location/date, price + CTA
   return (
-    <div
-      className={count > 1 ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3" : ""}
-    >
+    <div className={count > 1 ? "grid gap-6 sm:grid-cols-2 lg:grid-cols-3" : ""}>
       {Array.from({ length: count }).map((_, i) => (
         <Card key={i} className="flex flex-col overflow-hidden">
-          <div className="relative flex aspect-16/10 items-center justify-center bg-muted">
+          <div className="bg-muted relative flex aspect-16/10 items-center justify-center">
             <Skeleton className="size-12 rounded-full" />
           </div>
           <CardContent className="flex flex-1 flex-col gap-2 pt-4">
@@ -184,11 +180,7 @@ interface CategoryCardSkeletonProps {
 
 export function CategoryCardSkeleton({ count = 1 }: CategoryCardSkeletonProps) {
   return (
-    <div
-      className={
-        count > 1 ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : ""
-      }
-    >
+    <div className={count > 1 ? "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3" : ""}>
       {Array.from({ length: count }).map((_, i) => (
         <Card key={i} className="transition-shadow hover:shadow-md">
           <CardHeader className="items-center text-center">
@@ -220,7 +212,7 @@ export function WorkshopDetailSkeleton() {
           <Skeleton className="h-4 w-40" />
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="mx-auto max-w-4xl">
           {/* Hero */}
           <div className="mb-8">
             <Skeleton className="h-10 w-3/4" />
@@ -315,7 +307,7 @@ export function WorkshopDetailSkeleton() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
                 <Card key={i} className="overflow-hidden">
-                  <div className="flex aspect-16/10 items-center justify-center bg-muted">
+                  <div className="bg-muted flex aspect-16/10 items-center justify-center">
                     <Skeleton className="size-10 rounded-full" />
                   </div>
                   <CardContent className="flex flex-col gap-2 pt-4">

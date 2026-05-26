@@ -10,22 +10,12 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-type StatusCategory =
-  | "warning"
-  | "success"
-  | "danger"
-  | "muted"
-  | "info"
-  | "default";
+type StatusCategory = "warning" | "success" | "danger" | "muted" | "info" | "default";
 
 function getStatusCategory(status: string): StatusCategory {
   const normalized = status.toUpperCase().replace(/[\s_-]/g, "");
 
-  if (
-    ["PENDING", "PENDINGPAYMENT", "PENDINGREVIEW", "PENDINGAPPROVAL"].includes(
-      normalized,
-    )
-  ) {
+  if (["PENDING", "PENDINGPAYMENT", "PENDINGREVIEW", "PENDINGAPPROVAL"].includes(normalized)) {
     return "warning";
   }
 
@@ -45,15 +35,9 @@ function getStatusCategory(status: string): StatusCategory {
   }
 
   if (
-    [
-      "CANCEL",
-      "CANCELLED",
-      "CANCELED",
-      "INACTIVE",
-      "BLOCKED",
-      "FAILED",
-      "REJECTED",
-    ].includes(normalized)
+    ["CANCEL", "CANCELLED", "CANCELED", "INACTIVE", "BLOCKED", "FAILED", "REJECTED"].includes(
+      normalized
+    )
   ) {
     return "danger";
   }
@@ -91,19 +75,15 @@ const variantMap: Record<
   default: "secondary",
 };
 
-export function StatusBadge({
-  status,
-  dot = false,
-  className,
-}: StatusBadgeProps) {
+export function StatusBadge({ status, dot = false, className }: StatusBadgeProps) {
   const category = getStatusCategory(status);
 
   return (
     <Badge
       variant={variantMap[category]}
       className={cn(
-        "font-extrabold uppercase tracking-[0.1em] text-[10px] px-2.5 py-1 rounded-lg shadow-sm border border-black/5 ring-1 ring-white/10 flex items-center gap-1.5 w-fit",
-        className,
+        "flex w-fit items-center gap-1.5 rounded-lg border border-black/5 px-2.5 py-1 text-[10px] font-extrabold tracking-[0.1em] uppercase shadow-sm ring-1 ring-white/10",
+        className
       )}
     >
       {/* §1.3 — Dot variant: prepend a 6px circle in the matching foreground color */}
@@ -111,7 +91,7 @@ export function StatusBadge({
         <span
           className={cn(
             "inline-block size-1.5 shrink-0 rounded-full shadow-[0_0_6px_rgba(0,0,0,0.1)]",
-            dotColorMap[category],
+            dotColorMap[category]
           )}
           aria-hidden="true"
         />

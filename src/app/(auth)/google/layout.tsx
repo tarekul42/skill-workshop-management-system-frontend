@@ -10,10 +10,6 @@ export const metadata: Metadata = {
   },
 };
 
-export default function GoogleCallbackLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function GoogleCallbackLayout({ children }: { children: React.ReactNode }) {
   return children;
 }

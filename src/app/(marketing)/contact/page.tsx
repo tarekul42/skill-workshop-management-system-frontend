@@ -4,13 +4,7 @@ import { useState, type FormEvent } from "react";
 import { Mail, Phone, MapPin, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -51,9 +45,7 @@ export default function ContactPage() {
     message: "",
   });
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
@@ -78,12 +70,9 @@ export default function ContactPage() {
     <section className="site-container py-12 md:py-16 lg:py-20">
       {/* Page Header */}
       <div className="mx-auto mb-10 max-w-2xl text-center md:mb-14">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Contact Us
-        </h1>
-        <p className="mt-3 text-muted-foreground">
-          We&apos;d love to hear from you. Reach out and let us know how we can
-          help.
+        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Contact Us</h1>
+        <p className="text-muted-foreground mt-3">
+          We&apos;d love to hear from you. Reach out and let us know how we can help.
         </p>
       </div>
 
@@ -92,13 +81,11 @@ export default function ContactPage() {
         {/* Left Column — Contact Info */}
         <div className="flex flex-col gap-8">
           <div>
-            <h2 className="text-2xl font-semibold tracking-tight">
-              Get in Touch
-            </h2>
-            <p className="mt-2 text-muted-foreground">
-              Have a question about our workshops, need help with enrollment, or
-              just want to say hello? We&apos;re here to help. Reach out through
-              any of the channels below or fill out the contact form.
+            <h2 className="text-2xl font-semibold tracking-tight">Get in Touch</h2>
+            <p className="text-muted-foreground mt-2">
+              Have a question about our workshops, need help with enrollment, or just want to say
+              hello? We&apos;re here to help. Reach out through any of the channels below or fill
+              out the contact form.
             </p>
           </div>
 
@@ -110,22 +97,20 @@ export default function ContactPage() {
               return (
                 <Card key={item.label} size="sm">
                   <CardContent className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                      <IconComponent className="size-5 text-muted-foreground" />
+                    <div className="bg-muted flex h-10 w-10 shrink-0 items-center justify-center rounded-lg">
+                      <IconComponent className="text-muted-foreground size-5" />
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium">{item.label}</p>
                       {item.href ? (
                         <a
                           href={item.href}
-                          className="text-sm text-muted-foreground hover:text-foreground hover:underline"
+                          className="text-muted-foreground hover:text-foreground text-sm hover:underline"
                         >
                           {item.value}
                         </a>
                       ) : (
-                        <p className="text-sm text-muted-foreground">
-                          {item.value}
-                        </p>
+                        <p className="text-muted-foreground text-sm">{item.value}</p>
                       )}
                     </div>
                   </CardContent>
@@ -140,8 +125,7 @@ export default function ContactPage() {
           <CardHeader>
             <CardTitle className="text-xl">Send us a message</CardTitle>
             <CardDescription>
-              Fill out the form below and we&apos;ll get back to you as soon as
-              possible.
+              Fill out the form below and we&apos;ll get back to you as soon as possible.
             </CardDescription>
           </CardHeader>
           <CardContent>
