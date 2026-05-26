@@ -15,7 +15,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }} # Fix detached HEAD issue
+          ref: ${{ github.event.pull_request.head.ref }}
           repository: ${{ github.event.pull_request.head.repo.full_name }}
           fetch-depth: 0
 
@@ -26,6 +26,9 @@ jobs:
 
       - name: Install dependencies
         run: bun install
+
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps
 
       - name: Check if running as GitHub Actions bot
         id: check_actor
