@@ -8,6 +8,7 @@
 - NEVER edit files in `node_modules/`, `.next/`, or `dist/`
 - NEVER modify `.env` or `.env.local` files — only create `.env.example` templates
 - NEVER push to `main` or `master` branch directly — always create a feature branch
+- ALWAYS verify workflow file changes are committed and pushed before merging a PR
 
 ## Testing Discipline Guard
 
@@ -44,7 +45,7 @@
 - ALWAYS use `concurrency` groups to prevent parallel deployments
 - NEVER auto-deploy to production on `main` push without all checks passing
 - ALWAYS deploy to a preview/staging environment first
-- Pin all GitHub Actions to a specific SHA, not just a tag
+- Use version tags (e.g., `@v4`, `@v2`) for GitHub Actions — avoid pinning to full SHAs since they can become unresolvable if the action repo is force-pushed or garbage-collected
 
 ## Frontend-Specific Guard
 
