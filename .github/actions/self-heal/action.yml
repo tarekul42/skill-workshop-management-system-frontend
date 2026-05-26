@@ -80,7 +80,7 @@ runs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add .
-        git commit -m "chore: apply automated lint/format fixes [skip ci]"
+        git commit --no-verify -m "chore: apply automated lint/format fixes [skip ci]"
         git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" "HEAD:$BRANCH"
         echo "✅ Fixes committed and pushed"
 
