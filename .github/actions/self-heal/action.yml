@@ -1,0 +1,115 @@
+name: "Self-Healing CI Middleware"
+description: "Runs CI checks with auto-fix-retry. If a check fails, runs the corresponding fix command, retries, and only fails if the retry also fails. Commits and pushes any fixes back to the PR branch."
+
+inputs:
+  github-token:
+    description: "GitHub token for committing fixes"
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: "composite"
+  steps:
+    # ── Bot guard: skip fix loop if triggered by bot ────────────
+    - name: "Check if running as GitHub Actions bot"
+      id: check_actor
+      shell: bash
+      run: |
+        if [ "${{ github.actor }}" = "github-actions[bot]" ]; then
+          echo "is_bot=true" >> $GITHUB_OUTPUT
+        else
+          echo "is_bot=false" >> $GITHUB_OUTPUT
+        fi
+
+    # ── Format Check → Fix → Re-check ───────────────────────────
+    - name: "Format Check → Fix → Re-check"
+      if: steps.check_actor.outputs.is_bot == 'false'
+      shell: bash
+      run: |
+        echo "▶ Running format:check..."
+        if bun run format:check; then
+          echo "✅ format:check passed"
+        else
+          echo "❌ format:check failed → running format fix..."
+          bun run format
+          echo "▶ Re-running format:check..."
+          if bun run format:check; then
+            echo "✅ format:check passed after fix"
+            echo "format_fixed=true" >> $GITHUB_ENV
+          else
+            echo "❌ format:check still failing after fix"
+            exit 1
+          fi
+        fi
+
+    # ── Lint → Fix → Re-check ───────────────────────────────────
+    - name: "Lint → Fix → Re-check"
+      if: steps.check_actor.outputs.is_bot == 'false'
+      shell: bash
+      run: |
+        echo "▶ Running lint..."
+        if bun run lint; then
+          echo "✅ lint passed"
+        else
+          echo "❌ lint failed → running lint fix..."
+          bun run lint:fix
+          echo "▶ Re-running lint..."
+          if bun run lint; then
+            echo "✅ lint passed after fix"
+            echo "lint_fixed=true" >> $GITHUB_ENV
+          else
+            echo "❌ lint still failing after fix"
+            exit 1
+          fi
+        fi
+
+    # ── Commit and push fixes if any were applied ────────────────
+    - name: "Commit and push fixes"
+      if: steps.check_actor.outputs.is_bot == 'false' && (env.format_fixed == 'true' || env.lint_fixed == 'true')
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "chore: apply automated lint/format fixes [skip ci]"
+        git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+    # ── Type Check (no auto-fix) ─────────────────────────────────
+    - name: "Type Check"
+      shell: bash
+      run: |
+        echo "▶ Running typecheck..."
+        if bun run typecheck; then
+          echo "✅ typecheck passed"
+        else
+          echo "❌ typecheck failed — manual intervention required"
+          exit 1
+        fi
+
+    # ── Unit Tests (no auto-fix) ─────────────────────────────────
+    - name: "Unit Tests"
+      shell: bash
+      run: |
+        echo "▶ Running tests..."
+        if bun run test -- --run; then
+          echo "✅ tests passed"
+        else
+          echo "❌ tests failed — manual intervention required"
+          exit 1
+        fi
+
+    # ── Build (no auto-fix) ──────────────────────────────────────
+    - name: "Build"
+      shell: bash
+      env:
+        NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
+        NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL }}
+        JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      run: |
+        echo "▶ Running build..."
+        if bun run build; then
+          echo "✅ build passed"
+        else
+          echo "❌ build failed — manual intervention required"
+          exit 1
+        fi

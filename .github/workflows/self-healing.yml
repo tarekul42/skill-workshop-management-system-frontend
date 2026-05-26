@@ -15,7 +15,7 @@ concurrency:
 jobs:
   self-heal:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -32,48 +32,5 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Check if running as GitHub Actions bot
-        id: check_actor
-        run: |
-          if [ "${{ github.actor }}" = "github-actions[bot]" ]; then
-            echo "is_bot=true" >> $GITHUB_OUTPUT
-          else
-            echo "is_bot=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Run lint and format fixes
-        if: steps.check_actor.outputs.is_bot == 'false'
-        run: |
-          bun run lint:fix || true
-          bun run format || true
-
-      - name: Check for changes from fixes
-        if: steps.check_actor.outputs.is_bot == 'false'
-        id: git_check
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            echo "changes_detected=true" >> $GITHUB_OUTPUT
-          else
-            echo "changes_detected=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Commit and push fixes
-        if: steps.check_actor.outputs.is_bot == 'false' && steps.git_check.outputs.changes_detected == 'true'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "chore: apply automated lint/format fixes [skip ci]"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-
-      - name: Final Verification
-        run: |
-          bun run format:check
-          bun run lint
-          bun run typecheck
-          bun run test -- --run
-          bun run build
-        env:
-          NEXT_PUBLIC_BACKEND_API_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_API_URL }}
-          NEXT_PUBLIC_FRONTEND_URL: ${{ secrets.NEXT_PUBLIC_FRONTEND_URL }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      - name: Self-Healing CI Middleware
+        uses: ./.github/actions/self-heal
