@@ -1,0 +1,96 @@
+name: "Self-Healing CI Middleware"
+description: "Runs format and lint checks with auto-fix-retry. If a check fails, runs the corresponding fix command, retries, and only fails if the retry also fails. Commits and pushes any fixes back to the PR branch."
+
+runs:
+  using: "composite"
+  steps:
+    # ── Bot guard: skip fix loop if triggered by bot ────────────
+    - name: "Check trigger actor"
+      id: guard
+      shell: bash
+      run: |
+        ACTOR="${{ github.actor }}"
+        echo "Actor: $ACTOR"
+        if [ "$ACTOR" = "github-actions[bot]" ]; then
+          echo "Triggered by bot — skipping fix loop to prevent infinite cycle"
+          echo "is_human=false" >> $GITHUB_OUTPUT
+        else
+          echo "Triggered by human — auto-fix enabled"
+          echo "is_human=true" >> $GITHUB_OUTPUT
+        fi
+
+    # ── Format Check → Fix → Re-check ───────────────────────────
+    - name: "Format Check → Fix → Re-check"
+      if: steps.guard.outputs.is_human == 'true'
+      shell: bash
+      run: |
+        echo "▶ Running format:check..."
+        if bun run format:check; then
+          echo "✅ format:check passed on first try"
+        else
+          echo "❌ format:check failed → running bun run format..."
+          bun run format
+          echo "▶ Re-running format:check..."
+          if bun run format:check; then
+            echo "✅ format:check passed after fix"
+            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+          else
+            echo "❌ format:check still failing after fix — manual intervention required"
+            exit 1
+          fi
+        fi
+
+    # ── Lint → Fix → Re-check ───────────────────────────────────
+    - name: "Lint → Fix → Re-check"
+      if: steps.guard.outputs.is_human == 'true'
+      shell: bash
+      run: |
+        echo "▶ Running lint..."
+        if bun run lint; then
+          echo "✅ lint passed on first try"
+        else
+          echo "❌ lint failed → running bun run lint:fix..."
+          bun run lint:fix
+          echo "▶ Re-running lint..."
+          if bun run lint; then
+            echo "✅ lint passed after fix"
+            echo "HAS_CHANGES=true" >> $GITHUB_ENV
+          else
+            echo "❌ lint still failing after fix — manual intervention required"
+            exit 1
+          fi
+        fi
+
+    # ── Commit and push fixes if any were applied ────────────────
+    - name: "Commit and push fixes to PR branch"
+      if: steps.guard.outputs.is_human == 'true' && env.HAS_CHANGES == 'true'
+      shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+      run: |
+        BRANCH="${GITHUB_HEAD_REF}"
+        if [ -z "$BRANCH" ]; then
+          BRANCH="${{ github.event.pull_request.head.ref }}"
+        fi
+        if [ -z "$BRANCH" ]; then
+          echo "⚠ Could not determine branch name — skipping commit"
+          exit 0
+        fi
+        echo "Committing fixes to branch: $BRANCH"
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit --no-verify -m "chore: apply automated lint/format fixes [skip ci]"
+        git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" "HEAD:$BRANCH"
+        echo "✅ Fixes committed and pushed"
+
+    # ── Verify: format and lint still pass after all fixes ──────
+    - name: "Verify fixes"
+      shell: bash
+      run: |
+        echo "▶ Verifying format:check..."
+        bun run format:check
+        echo "✅ format:check verified"
+        echo "▶ Verifying lint..."
+        bun run lint
+        echo "✅ lint verified"
