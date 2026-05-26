@@ -123,7 +123,9 @@ export async function proxy(request: NextRequest) {
     "form-action 'self'",
     "frame-ancestors 'none'",
     !isDev ? "upgrade-insecure-requests" : null,
-  ].filter(Boolean).join("; ");
+  ]
+    .filter(Boolean)
+    .join("; ");
 
   response.headers.set("Content-Security-Policy", cspHeader);
   response.headers.set("x-nonce", nonce);

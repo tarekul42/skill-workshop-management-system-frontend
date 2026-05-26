@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import "./globals.css";
 import QueryProviders from "../providers/QueryProvider";
 import { FRONTEND_URL } from "@/lib/constants";
-import { headers } from "next/headers";
 import { cookies } from "next/headers";
 
 const display = Bricolage_Grotesque({

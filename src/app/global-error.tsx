@@ -2,13 +2,6 @@
 
 import { useEffect } from "react";
 import { AlertTriangle, RotateCcw } from "lucide-react";
-import { Geist, Geist_Mono } from "next/font/google";
-
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export default function GlobalError({
   error,
@@ -23,7 +16,7 @@ export default function GlobalError({
 
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className="antialiased">
         <div className="bg-background flex min-h-screen flex-col items-center justify-center px-4 py-16">
           {/* Illustration */}
           <div className="relative mb-8">
