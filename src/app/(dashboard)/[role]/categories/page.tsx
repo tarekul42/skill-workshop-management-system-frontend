@@ -33,7 +33,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { PageHeader } from "@/components/layout/PageHeader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+
 import {
   fetchCategories,
   createCategory,
@@ -201,7 +201,6 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     <TooltipProvider>
       <div className="space-y-8">
         <div className="space-y-2">
-          <Breadcrumbs />
           <PageHeader
             title="Category Management"
             description="Organize your curriculum by defining workshop categories and domains."

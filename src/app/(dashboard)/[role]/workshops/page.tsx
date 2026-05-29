@@ -39,7 +39,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { cn } from "@/lib/utils";
 import {
@@ -147,7 +147,6 @@ export default function WorkshopsPage({ params }: PageProps) {
   return (
     <TooltipProvider>
       <div className="space-y-6">
-        <Breadcrumbs />
         <PageHeader
           title="Workshop Management"
           description="Create and manage your workshops across the platform."
