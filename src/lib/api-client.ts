@@ -11,9 +11,7 @@ export function handleSessionExpired(): void {
   // Avoid redirect loops: don't redirect if already on an auth page
   const currentPath = window.location.pathname;
   const authPages = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-otp"];
-  const isOnAuthPage = authPages.some(
-    (p) => currentPath === p || currentPath.startsWith(`${p}/`)
-  );
+  const isOnAuthPage = authPages.some((p) => currentPath === p || currentPath.startsWith(`${p}/`));
   if (isOnAuthPage) return;
 
   window.location.assign("/login");

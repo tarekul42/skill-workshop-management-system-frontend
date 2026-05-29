@@ -42,9 +42,9 @@ export async function getAuthRole() {
   const cookieStore = await cookies();
   const token = cookieStore.get("swms_role")?.value;
   if (!token) return null;
-  
+
   try {
-    const { payload } = await import("jose").then(m => m.jwtVerify(token, getSecret()));
+    const { payload } = await import("jose").then((m) => m.jwtVerify(token, getSecret()));
     return payload.role as string;
   } catch {
     return null;

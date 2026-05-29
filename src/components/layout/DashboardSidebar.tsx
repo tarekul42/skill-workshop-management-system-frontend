@@ -242,7 +242,7 @@ function SidebarNavContent({
                             "group/nav-item relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all duration-300",
                             isActive
                               ? "bg-primary shadow-3 translate-x-1 text-white"
-                              : "text-sidebar-text-muted hover:bg-sidebar-hover hover:translate-x-1 hover:text-sidebar-text"
+                              : "text-sidebar-text-muted hover:bg-sidebar-hover hover:text-sidebar-text hover:translate-x-1"
                           )}
                         >
                           {IconComponent && (
@@ -321,7 +321,7 @@ export function DashboardSidebar({ role }: { role: string }) {
             variant="ghost"
             size="sm"
             asChild
-            className="text-sidebar-text-muted hover:bg-sidebar-hover group justify-start gap-3 rounded-xl transition-all hover:text-sidebar-text"
+            className="text-sidebar-text-muted hover:bg-sidebar-hover group hover:text-sidebar-text justify-start gap-3 rounded-xl transition-all"
           >
             <Link href="/">
               <ExternalLink className="size-4 transition-transform group-hover:scale-110" />
@@ -377,7 +377,7 @@ function MobileSheetSidebar({
         <SheetHeader className="border-sidebar-border flex h-20 flex-row items-center gap-3 border-b px-6">
           <GraduationCap className="text-primary size-7" />
           <Link href="/" onClick={() => setOpen(false)}>
-            <SheetTitle className="font-display text-lg font-extrabold tracking-tight text-sidebar-text">
+            <SheetTitle className="font-display text-sidebar-text text-lg font-extrabold tracking-tight">
               Skill<span className="text-primary">Workshop</span>
             </SheetTitle>
           </Link>
@@ -394,7 +394,7 @@ function MobileSheetSidebar({
             variant="ghost"
             size="sm"
             asChild
-            className="text-sidebar-text-muted hover:bg-sidebar-hover h-11 justify-start rounded-xl hover:text-sidebar-text"
+            className="text-sidebar-text-muted hover:bg-sidebar-hover hover:text-sidebar-text h-11 justify-start rounded-xl"
             onClick={() => setOpen(false)}
           >
             <Link href="/">
