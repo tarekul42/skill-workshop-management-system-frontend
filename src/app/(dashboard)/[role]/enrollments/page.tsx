@@ -61,7 +61,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+
 import { formatDate, formatCurrency } from "@/lib/formatters";
 import {
   getAllEnrollments,
@@ -360,7 +360,6 @@ export default function EnrollmentsPage({ params }: PageProps) {
       <TooltipProvider>
         <div className="space-y-8">
           <div className="space-y-2">
-            <Breadcrumbs />
             <PageHeader
               title="My Enrollments"
               description="Track your active workshops, check schedules, and manage your registrations."
@@ -600,7 +599,6 @@ export default function EnrollmentsPage({ params }: PageProps) {
     <TooltipProvider>
       <div className="space-y-8">
         <div className="space-y-2">
-          <Breadcrumbs />
           <PageHeader
             title="Enrollment Management"
             description="Manage global workshop registrations, update statuses, and monitor student participation."

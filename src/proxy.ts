@@ -65,7 +65,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const roleCookie = await getRoleCookie(request);
   const bytes = crypto.getRandomValues(new Uint8Array(16));
-  const nonce = btoa(String.fromCharCode(...bytes));
+  const nonce = Buffer.from(bytes).toString("base64");
 
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-nonce", nonce);
@@ -85,9 +85,12 @@ export async function proxy(request: NextRequest) {
       loginUrl.searchParams.set("callbackUrl", pathname);
       response = NextResponse.redirect(loginUrl);
     } else if (roleCookie !== expectedRole) {
-      const loginUrl = request.nextUrl.clone();
-      loginUrl.pathname = "/login";
-      response = NextResponse.redirect(loginUrl);
+      // Wrong role — redirect to their correct dashboard instead of /login
+      const roleKey = roleCookie.toLowerCase().replace("_", "-");
+      const dashboardPath = `/${roleKey}/dashboard`;
+      const dashboardUrl = request.nextUrl.clone();
+      dashboardUrl.pathname = dashboardPath;
+      response = NextResponse.redirect(dashboardUrl);
     }
   } else if (isAuthPage(pathname)) {
     if (roleCookie && ROLE_ROUTES[roleCookie.toLowerCase()]) {

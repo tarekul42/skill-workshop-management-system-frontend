@@ -32,3 +32,21 @@ export async function clearSecureAuthCookie() {
   const cookieStore = await cookies();
   cookieStore.delete("swms_role");
 }
+
+export async function checkAuthSession() {
+  const cookieStore = await cookies();
+  return cookieStore.has("swms_role");
+}
+
+export async function getAuthRole() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get("swms_role")?.value;
+  if (!token) return null;
+  
+  try {
+    const { payload } = await import("jose").then(m => m.jwtVerify(token, getSecret()));
+    return payload.role as string;
+  } catch {
+    return null;
+  }
+}

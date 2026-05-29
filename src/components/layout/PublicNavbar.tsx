@@ -20,7 +20,7 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { getSavedUser, clearSavedUser } from "@/lib/auth-helpers";
-import { clearSecureAuthCookie } from "@/app/actions/auth";
+import { clearSecureAuthCookie, checkAuthSession } from "@/app/actions/auth";
 import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
 import { DASHBOARD_ROUTES } from "@/lib/constants";
@@ -49,6 +49,18 @@ export function PublicNavbar() {
   useEffect(() => {
     // Pure fix: Defer state update to avoid cascading render lint error
     const timer = setTimeout(() => syncUser(), 0);
+
+    const verifySession = async () => {
+      if (getSavedUser()) {
+        const isValid = await checkAuthSession();
+        if (!isValid) {
+          clearSavedUser();
+          clearAccessToken();
+          syncUser();
+        }
+      }
+    };
+    verifySession();
 
     const handleStorageChange = () => syncUser();
     const handleAuthChange = () => syncUser();

@@ -71,6 +71,16 @@
   --color-foreground: var(--foreground);
   --color-border: var(--border);
 
+  /* Sidebar */
+  --color-sidebar-bg: var(--sidebar-bg);
+  --color-sidebar-text: var(--sidebar-text);
+  --color-sidebar-text-subtle: var(--sidebar-text-subtle);
+  --color-sidebar-text-muted: var(--sidebar-text-muted);
+  --color-sidebar-active-bg: var(--sidebar-active-bg);
+  --color-sidebar-active-text: var(--sidebar-active-text);
+  --color-sidebar-hover: var(--sidebar-hover);
+  --color-sidebar-border: var(--sidebar-border);
+
   /* Legacy/Shadcn Aliases for compatibility */
   --color-destructive: var(--danger);
   --color-destructive-foreground: var(--danger-foreground);
@@ -187,14 +197,14 @@
   --border-focus: var(--primary);
 
   /* === SIDEBAR === */
-  --sidebar-bg: oklch(0.14 0.03 250);
-  --sidebar-text: oklch(0.9 0.01 250);
-  --sidebar-text-subtle: oklch(0.6 0.02 250);
-  --sidebar-text-muted: oklch(0.55 0.02 250);
-  --sidebar-active-bg: oklch(0.22 0.05 250);
-  --sidebar-active-text: oklch(0.85 0.05 175); /* teal accent for active */
-  --sidebar-hover: oklch(0.2 0.04 250);
-  --sidebar-border: oklch(0.22 0.03 250);
+  --sidebar-bg: var(--background);
+  --sidebar-text: var(--foreground);
+  --sidebar-text-subtle: var(--foreground-subtle);
+  --sidebar-text-muted: var(--foreground-muted);
+  --sidebar-active-bg: var(--primary);
+  --sidebar-active-text: var(--primary-foreground);
+  --sidebar-hover: var(--surface-2);
+  --sidebar-border: var(--border);
 
   /* §1.4 — Elevation System (Shadows — Refined for depth and realism) */
   --shadow-0: none;
@@ -254,9 +264,9 @@
   --info-subtle: oklch(0.18 0.04 240);
   --info-foreground: oklch(0.95 0.01 240);
 
-  /* Dark sidebar */
-  --sidebar-bg: oklch(0.1 0.025 250);
-  --sidebar-active-bg: oklch(0.18 0.05 250);
+  /* Dark sidebar specific tweaks (inherits from semantic vars in :root) */
+  --sidebar-bg: var(--surface-1);
+  --sidebar-active-bg: var(--primary);
 
   /* Elevation System (Dark) */
   --shadow-raised: 0 4px 12px oklch(0 0 0 / 0.25), 0 1px 4px oklch(0 0 0 / 0.15);
