@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -61,12 +61,23 @@ function SuccessContent() {
   const txnId = searchParams.get("txnId");
   const date = searchParams.get("date") || new Date().toISOString();
 
+  const [returnUrl, setReturnUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const url = sessionStorage.getItem("payment_return_url");
+    if (url) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setReturnUrl(url);
+      sessionStorage.removeItem("payment_return_url");
+    }
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.4 }}
-      className="text-center"
+      className="mx-auto max-w-2xl text-center"
     >
       <SuccessIcon />
 
@@ -122,10 +133,17 @@ function SuccessContent() {
           asChild
           className="shadow-raised hover:shadow-float h-14 flex-1 rounded-2xl text-base font-bold transition-all"
         >
-          <Link href="/student/enrollments">
-            Go to My Enrollments
-            <ArrowRight className="ml-2 size-5" />
-          </Link>
+          {returnUrl ? (
+            <Link href={returnUrl}>
+              Continue to Workshop
+              <ArrowRight className="ml-2 size-5" />
+            </Link>
+          ) : (
+            <Link href="/student/enrollments">
+              Go to My Enrollments
+              <ArrowRight className="ml-2 size-5" />
+            </Link>
+          )}
         </Button>
         <Button variant="outline" asChild className="h-14 flex-1 rounded-2xl text-base font-bold">
           <Link href="/student/payments">

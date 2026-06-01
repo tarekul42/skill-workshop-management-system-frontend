@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Download, Printer, ArrowLeft, ShieldCheck, Globe, Mail } from "lucide-react";
 import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { getInvoice } from "@/lib/api/services";
+import { ApiError } from "@/lib/api-client";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 
 interface InvoicePageData {
@@ -31,8 +32,9 @@ interface InvoicePageData {
 
 export default function InvoicePage() {
   const { id } = useParams();
+  const router = useRouter();
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ApiError | string | null>(null);
   const [data, setData] = useState<InvoicePageData | null>(null);
 
   useEffect(() => {
@@ -41,9 +43,13 @@ export default function InvoicePage() {
       setLoading(true);
       try {
         const res = await getInvoice(id as string);
-        setData(res);
-      } catch {
-        setError("Failed to load invoice details.");
+        setData(res as InvoicePageData);
+      } catch (err) {
+        if (err instanceof ApiError) {
+          setError(err);
+        } else {
+          setError("Failed to load invoice details.");
+        }
       } finally {
         setLoading(false);
       }
@@ -58,7 +64,7 @@ export default function InvoicePage() {
   if (loading) {
     return (
       <div className="bg-surface-2 flex min-h-screen items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-2">
           <div className="border-primary size-10 animate-spin rounded-full border-4 border-t-transparent" />
           <p className="text-foreground-muted animate-pulse text-sm font-bold">
             Retrieving invoice...
@@ -69,6 +75,31 @@ export default function InvoicePage() {
   }
 
   if (error || !data) {
+    let title = "Unable to find invoice";
+    let message =
+      "We couldn&apos;t locate the invoice with the provided ID. Please check the transaction history in your dashboard.";
+
+    if (error instanceof ApiError) {
+      if (error.status === 404) {
+        title = "Invoice Not Found";
+        message = error.message || "The invoice with the provided ID does not exist.";
+      } else if (error.status === 403 || error.status === 401) {
+        title = "Access Denied";
+        message =
+          error.message ||
+          "You do not have permission to view this invoice. Please ensure you are logged in with the correct account.";
+      } else if (error.status === 0) {
+        title = "Network Error";
+        message =
+          "Unable to connect to the server. Please check your internet connection and try again.";
+      } else {
+        title = `Error (${error.status})`;
+        message = error.message || "An unexpected error occurred while fetching the invoice.";
+      }
+    } else if (typeof error === "string") {
+      message = error;
+    }
+
     return (
       <div className="bg-surface-2 flex min-h-screen items-center justify-center p-6 text-center">
         <div className="max-w-md space-y-6">
@@ -76,11 +107,8 @@ export default function InvoicePage() {
             <ShieldCheck className="text-danger size-8" />
           </div>
           <div className="space-y-2">
-            <h1 className="text-2xl font-bold">Unable to find invoice</h1>
-            <p className="text-foreground-muted">
-              We couldn&apos;t locate the invoice with the provided ID. Please check the transaction
-              history in your dashboard.
-            </p>
+            <h1 className="text-2xl font-bold">{title}</h1>
+            <p className="text-foreground-muted">{message}</p>
           </div>
           <Button asChild variant="outline" className="rounded-xl">
             <a href="/student/payments">
@@ -100,14 +128,22 @@ export default function InvoicePage() {
   const u = e.user || {};
 
   return (
-    <div className="bg-surface-2 min-h-screen p-4 sm:p-8 print:bg-white print:p-0">
+    <div className="w-full p-2 sm:p-0 print:bg-white print:p-0">
       {/* Top Bar (Hidden on print) */}
-      <div className="mx-auto mb-6 flex max-w-4xl flex-col items-center justify-between gap-4 sm:flex-row print:hidden">
-        <Button variant="ghost" asChild className="rounded-xl">
-          <button onClick={() => window.history.back()}>
-            <ArrowLeft className="mr-2 size-4" />
-            Back
-          </button>
+      <div className="mx-auto mb-6 flex max-w-5xl flex-col items-center justify-between gap-2 sm:flex-row print:hidden">
+        <Button
+          variant="ghost"
+          className="rounded-xl"
+          onClick={() => {
+            if (window.history.length > 1) {
+              router.back();
+            } else {
+              router.push("/student/payments");
+            }
+          }}
+        >
+          <ArrowLeft className="mr-2 size-4" />
+          Back
         </Button>
         <div className="flex items-center gap-3">
           <Button
@@ -136,10 +172,10 @@ export default function InvoicePage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mx-auto max-w-4xl overflow-hidden rounded-[32px] bg-white shadow-xl print:rounded-none print:shadow-none"
+        className="mx-auto max-w-5xl overflow-hidden rounded-4xl bg-white shadow-xl print:rounded-none print:shadow-none"
       >
         {/* Header Section */}
-        <div className="from-primary to-primary-hover flex flex-col justify-between gap-8 bg-linear-to-r p-8 text-white sm:flex-row sm:p-12">
+        <div className="from-primary to-primary-hover flex flex-col justify-between gap-8 bg-linear-to-r p-8 text-white sm:flex-row sm:p-6">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <div className="flex size-12 items-center justify-center rounded-2xl border border-white/20 bg-white/20 backdrop-blur-md">
@@ -178,7 +214,7 @@ export default function InvoicePage() {
         </div>
 
         {/* Details Grid */}
-        <div className="space-y-12 p-8 sm:p-12">
+        <div className="space-y-12 p-8 sm:p-6">
           <div className="grid grid-cols-1 gap-12 sm:grid-cols-2">
             <div className="space-y-4">
               <h3 className="text-foreground-disabled border-border border-b pb-2 text-xs font-bold tracking-widest uppercase">

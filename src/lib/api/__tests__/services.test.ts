@@ -1,15 +1,22 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ApiError } from "@/lib/api-client";
 
 // Mock the api-client module
-const mockApiClient = vi.fn();
-const mockApiClientPaginated = vi.fn();
-const mockApiClientFormData = vi.fn();
-
-vi.mock("@/lib/api-client", () => ({
-  apiClient: mockApiClient,
-  apiClientPaginated: mockApiClientPaginated,
-  apiClientFormData: mockApiClientFormData,
+const { mockApiClient, mockApiClientPaginated, mockApiClientFormData } = vi.hoisted(() => ({
+  mockApiClient: vi.fn(),
+  mockApiClientPaginated: vi.fn(),
+  mockApiClientFormData: vi.fn(),
 }));
+
+vi.mock("@/lib/api-client", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/api-client")>();
+  return {
+    ...actual,
+    apiClient: mockApiClient,
+    apiClientPaginated: mockApiClientPaginated,
+    apiClientFormData: mockApiClientFormData,
+  };
+});
 
 describe("API Services", () => {
   beforeEach(() => {
@@ -301,6 +308,48 @@ describe("API Services", () => {
           body: { email: "test@test.com", otp: "123456" },
         })
       );
+    });
+  });
+
+  describe("getInvoice", () => {
+    it("should retrieve invoice details successfully", async () => {
+      const mockInvoiceData = { invoiceUrl: "http://example.com/invoice.pdf" };
+      mockApiClient.mockResolvedValueOnce(mockInvoiceData);
+
+      const { getInvoice } = await import("../services");
+      const result = await getInvoice("valid-invoice-id");
+
+      expect(mockApiClient).toHaveBeenCalledWith("/payment/invoice/valid-invoice-id");
+      expect(result).toEqual(mockInvoiceData);
+    });
+
+    it("should throw ApiError with status 404 for not found invoice", async () => {
+      mockApiClient.mockRejectedValueOnce(new ApiError(404, "Payment not found"));
+
+      const { getInvoice } = await import("../services");
+      const promise = getInvoice("non-existent-id");
+      await expect(promise).rejects.toThrow(ApiError);
+      await expect(promise).rejects.toHaveProperty("status", 404);
+    });
+
+    it("should throw ApiError with status 403 for unauthorized access", async () => {
+      mockApiClient.mockRejectedValueOnce(
+        new ApiError(403, "You can only access your own invoices")
+      );
+
+      const { getInvoice } = await import("../services");
+      const promise = getInvoice("unauthorized-id");
+      await expect(promise).rejects.toThrow(ApiError);
+      await expect(promise).rejects.toHaveProperty("status", 403);
+    });
+
+    it("should throw ApiError with status 500 for internal server error", async () => {
+      mockApiClient.mockRejectedValueOnce(new ApiError(500, "Internal Server Error"));
+
+      const { getInvoice } = await import("../services");
+      const promise = getInvoice("server-error-id");
+      await expect(promise).rejects.toThrow(ApiError);
+      await expect(promise).rejects.toHaveProperty("status", 500);
     });
   });
 

@@ -62,5 +62,5 @@ lint_output.txt
 plans/
 
 playwright-report/
-test-results/.env
+test-results/
 .env.local

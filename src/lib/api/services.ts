@@ -499,7 +499,10 @@ export async function getAllEnrollments(
  * Fetch the current user's own enrollments.
  */
 export async function getMyEnrollments(): Promise<IEnrollment[]> {
-  return apiClient<IEnrollment[]>("/enrollment/my-enrollments");
+  const res = await apiClient<{ data: IEnrollment[] } | IEnrollment[]>(
+    "/enrollment/my-enrollments"
+  );
+  return (res as { data: IEnrollment[] }).data ?? (res as IEnrollment[]);
 }
 
 /**

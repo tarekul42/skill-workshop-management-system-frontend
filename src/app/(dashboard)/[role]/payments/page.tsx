@@ -223,7 +223,7 @@ export default function PaymentsPage({ params }: PageProps) {
   } = useQuery({
     queryKey: ["my-enrollments"],
     queryFn: getMyEnrollments,
-    enabled: role === "STUDENT",
+    enabled: role?.toUpperCase() === "STUDENT",
   });
 
   const allStudentPayments = useMemo(
@@ -290,7 +290,7 @@ export default function PaymentsPage({ params }: PageProps) {
   }, [page, limit]);
 
   useEffect(() => {
-    if (!role || role === "STUDENT") return;
+    if (!role || role.toUpperCase() === "STUDENT") return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData();
   }, [role, fetchData]);
@@ -333,7 +333,7 @@ export default function PaymentsPage({ params }: PageProps) {
   // RENDER: STUDENT VIEW
   // ═══════════════════════════════════════════════════════════════════
 
-  if (role === "STUDENT") {
+  if (role?.toUpperCase() === "STUDENT") {
     return (
       <TooltipProvider>
         <div className="space-y-8">

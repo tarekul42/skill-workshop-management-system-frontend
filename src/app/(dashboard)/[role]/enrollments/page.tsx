@@ -255,7 +255,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
   } = useQuery({
     queryKey: ["my-enrollments"],
     queryFn: getMyEnrollments,
-    enabled: role === "STUDENT",
+    enabled: role?.toUpperCase() === "STUDENT",
   });
 
   const cancelMutation = useMutation({
@@ -291,7 +291,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
   } = useQuery({
     queryKey: ["all-enrollments", page, limit],
     queryFn: () => getAllEnrollments({ page, limit }),
-    enabled: !!role && role !== "STUDENT",
+    enabled: !!role && role.toUpperCase() !== "STUDENT",
   });
 
   const enrollments = adminEnrollmentsData?.data || [];
@@ -355,7 +355,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
   // RENDER: STUDENT VIEW
   // ═══════════════════════════════════════════════════════════════════
 
-  if (role === "STUDENT") {
+  if (role?.toUpperCase() === "STUDENT") {
     return (
       <TooltipProvider>
         <div className="space-y-8">
