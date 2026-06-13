@@ -30,8 +30,11 @@ const ROLE_COOKIE_MAP: Record<string, string> = {
 };
 
 const getSecret = () => {
-  const secret = process.env.JWT_SECRET;
-  if (!secret) return null;
+  const secret = process.env.JWT_SECRET || process.env.NEXT_PUBLIC_JWT_SECRET;
+  if (!secret) {
+    console.error("[AUTH] JWT_SECRET environment variable is not set. Auth guard disabled.");
+    return null;
+  }
   return new TextEncoder().encode(secret);
 };
 
