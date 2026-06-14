@@ -4,20 +4,31 @@ import { render, screen } from "@testing-library/react";
 import { StatusBadge } from "../status-badge";
 
 // Mock framer-motion
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
-      <div {...props}>{children}</div>
-    ),
-    span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
-      <span {...props}>{children}</span>
-    ),
-    button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
-      <button {...props}>{children}</button>
-    ),
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+vi.mock("framer-motion", () => {
+  const filterProps = ({
+    initial: _initial,
+    animate: _animate,
+    exit: _exit,
+    transition: _transition,
+    whileHover: _whileHover,
+    whileTap: _whileTap,
+    ...props
+  }: Record<string, unknown>) => props;
+  return {
+    motion: {
+      div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+        <div {...filterProps(props)}>{children}</div>
+      ),
+      span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
+        <span {...filterProps(props)}>{children}</span>
+      ),
+      button: ({ children, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) => (
+        <button {...filterProps(props)}>{children}</button>
+      ),
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  };
+});
 
 describe("StatusBadge", () => {
   // ── Warning set ──────────────────────────────────────────────────

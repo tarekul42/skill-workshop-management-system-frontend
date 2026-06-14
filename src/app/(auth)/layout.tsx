@@ -32,7 +32,7 @@ export default async function AuthLayout({ children }: { children: React.ReactNo
 
       {/* Right Panel - 100% on mobile, 60% on desktop */}
       <div className="flex w-full flex-col items-center justify-center p-6 lg:w-3/5 lg:p-12">
-        <div className="w-full max-w-[480px]">{children}</div>
+        <div className="w-full max-w-120">{children}</div>
       </div>
     </div>
   );

@@ -45,11 +45,14 @@ function getLevelBadgeVariant(level: string): "default" | "secondary" | "danger"
   }
 }
 
+const ITEMS_PER_PAGE = 9;
+
 export default function WorkshopsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedLevel, setSelectedLevel] = useState<LevelOption>("all");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const { data: categoriesData } = useQuery({
     queryKey: ["public-categories"],
@@ -117,11 +120,19 @@ export default function WorkshopsPage() {
     selectedLevel !== "all" ||
     sortBy !== "newest";
 
+  // Pagination calculations
+  const totalPages = Math.max(1, Math.ceil(filteredWorkshops.length / ITEMS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const startIndex = (safePage - 1) * ITEMS_PER_PAGE;
+  const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, filteredWorkshops.length);
+  const paginatedWorkshops = filteredWorkshops.slice(startIndex, endIndex);
+
   function resetFilters() {
     setSearchQuery("");
     setSelectedCategory("all");
     setSelectedLevel("all");
     setSortBy("newest");
+    setCurrentPage(1);
   }
 
   return (
@@ -242,8 +253,11 @@ export default function WorkshopsPage() {
             {/* Results Count */}
             <p className="text-muted-foreground animate-fade-in mb-6 text-sm">
               Showing{" "}
-              <span className="text-foreground font-medium">{filteredWorkshops.length}</span>{" "}
-              workshop{filteredWorkshops.length !== 1 ? "s" : ""}
+              <span className="text-foreground font-medium">
+                {filteredWorkshops.length > 0 ? startIndex + 1 : 0}–{endIndex}
+              </span>{" "}
+              of <span className="text-foreground font-medium">{filteredWorkshops.length}</span>{" "}
+              workshops
             </p>
 
             {/* Workshop Grid or Empty State */}
@@ -285,7 +299,7 @@ export default function WorkshopsPage() {
               </div>
             ) : (
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredWorkshops.map((workshop) => (
+                {paginatedWorkshops.map((workshop) => (
                   <div key={workshop._id} className="group block">
                     <div className="border-border bg-surface-1 shadow-raised hover:shadow-float overflow-hidden rounded-[20px] border transition-all duration-300 hover:-translate-y-0.75">
                       {/* Image Container - height 200px */}
@@ -421,28 +435,49 @@ export default function WorkshopsPage() {
           </>
         )}
 
-        {/* Pagination Section placeholder */}
-        {filteredWorkshops.length > 0 && (
-          <div className="border-border mt-12 flex items-center justify-center gap-2 border-t py-10">
-            <Button variant="ghost" disabled className="opacity-40">
-              Previous
-            </Button>
-            <Button
-              variant="default"
-              className="bg-primary text-primary-foreground h-9 w-9 rounded-lg p-0"
-            >
-              1
-            </Button>
-            <Button variant="ghost" className="hover:bg-surface-2 h-9 w-9 rounded-lg p-0">
-              2
-            </Button>
-            <Button variant="ghost" className="hover:bg-surface-2 h-9 w-9 rounded-lg p-0">
-              3
-            </Button>
-            <span className="text-foreground-muted px-2">...</span>
-            <Button variant="ghost" disabled className="opacity-40">
-              Next
-            </Button>
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="border-border mt-12 flex flex-col items-center gap-4 border-t py-10 sm:flex-row sm:justify-between">
+            <p className="text-foreground-muted text-sm">
+              Page <span className="text-foreground font-semibold">{safePage}</span> of{" "}
+              <span className="text-foreground font-semibold">{totalPages}</span>
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="hover:bg-surface-2 h-9 rounded-lg px-3 text-sm font-medium disabled:opacity-40"
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                disabled={safePage <= 1}
+                aria-label="Previous page"
+              >
+                Previous
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <Button
+                  key={pageNum}
+                  variant={safePage === pageNum ? "default" : "ghost"}
+                  size="icon-xs"
+                  className={`h-9 w-9 rounded-lg p-0 text-sm font-bold ${
+                    safePage !== pageNum && "hover:bg-surface-2 text-foreground-muted"
+                  }`}
+                  onClick={() => setCurrentPage(pageNum)}
+                  aria-label={`Page ${pageNum}`}
+                >
+                  {pageNum}
+                </Button>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                className="hover:bg-surface-2 h-9 rounded-lg px-3 text-sm font-medium disabled:opacity-40"
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                disabled={safePage >= totalPages}
+                aria-label="Next page"
+              >
+                Next
+              </Button>
+            </div>
           </div>
         )}
       </div>

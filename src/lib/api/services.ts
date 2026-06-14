@@ -1,6 +1,8 @@
 import { apiClient, apiClientFormData, apiClientPaginated } from "@/lib/api-client";
 
 import type {
+  ContactInput,
+  CreateReviewInput,
   EnrollmentStats,
   EnrollmentStatus,
   IAuditLog,
@@ -8,10 +10,13 @@ import type {
   IEnrollment,
   ILevel,
   IPayment,
+  IReview,
+  IReviewStats,
   IUser,
   IWorkshop,
   PaginationMeta,
   PaymentStats,
+  UpdateReviewInput,
   UserStats,
   WorkshopStats,
 } from "@/types";
@@ -661,4 +666,82 @@ export async function getAuditLogs(
  */
 export async function getAuditLogById(id: string): Promise<IAuditLog> {
   return apiClient<IAuditLog>(`/audit/${id}`);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// REVIEW SERVICES
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Fetch approved reviews for a workshop (public).
+ */
+export async function getWorkshopReviews(
+  workshopId: string,
+  params?: { page?: number; limit?: number; sort?: string }
+): Promise<{ data: IReview[]; meta: PaginationMeta }> {
+  const searchParams = new URLSearchParams();
+  if (params?.page) searchParams.set("page", String(params.page));
+  if (params?.limit) searchParams.set("limit", String(params.limit));
+  if (params?.sort) searchParams.set("sort", params.sort);
+  const qs = searchParams.toString();
+  return apiClient<{ data: IReview[]; meta: PaginationMeta }>(
+    `/review/workshop/${workshopId}${qs ? `?${qs}` : ""}`
+  );
+}
+
+/**
+ * Fetch review statistics for a workshop (public).
+ */
+export async function getWorkshopReviewStats(workshopId: string): Promise<IReviewStats> {
+  return apiClient<IReviewStats>(`/review/workshop/${workshopId}/stats`);
+}
+
+/**
+ * Create a new review (auth required).
+ */
+export async function createReview(payload: CreateReviewInput): Promise<IReview> {
+  return apiClient<IReview>("/review", {
+    method: "POST",
+    body: payload,
+  });
+}
+
+/**
+ * Get the authenticated user's review for a workshop (auth required).
+ */
+export async function getUserReviewForWorkshop(workshopId: string): Promise<IReview | null> {
+  return apiClient<IReview | null>(`/review/workshop/${workshopId}/my-review`);
+}
+
+/**
+ * Update a review (auth required).
+ */
+export async function updateReview(reviewId: string, payload: UpdateReviewInput): Promise<IReview> {
+  return apiClient<IReview>(`/review/${reviewId}`, {
+    method: "PATCH",
+    body: payload,
+  });
+}
+
+/**
+ * Delete a review (auth required).
+ */
+export async function deleteReview(reviewId: string): Promise<void> {
+  return apiClient<void>(`/review/${reviewId}`, {
+    method: "DELETE",
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CONTACT SERVICES
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Submit a contact message (public).
+ */
+export async function submitContact(payload: ContactInput): Promise<{ _id: string }> {
+  return apiClient<{ _id: string }>("/contact", {
+    method: "POST",
+    body: payload,
+  });
 }

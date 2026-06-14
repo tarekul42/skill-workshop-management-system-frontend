@@ -259,7 +259,7 @@ function SidebarNavContent({
                           {isActive && (
                             <motion.div
                               layoutId="active-indicator"
-                              className="bg-accent absolute top-1/4 left-[-4px] h-1/2 w-1 rounded-full"
+                              className="bg-accent absolute top-1/4 -left-1 h-1/2 w-1 rounded-full"
                               transition={{
                                 type: "spring",
                                 stiffness: 300,

@@ -6,3 +6,13 @@ export type { IPayment, PaymentStatus } from "./payment.types";
 export type { EnrollmentStats, PaymentStats, UserStats, WorkshopStats } from "./stats.types";
 export type { IsActive, IUser, UserRole } from "./user.types";
 export type { ICategory, ILevel, IWorkshop } from "./workshop.types";
+export type { ContactInput } from "./contact.types";
+export type {
+  CreateReviewInput,
+  IReview,
+  IReviewStats,
+  IReviewUser,
+  ReviewSortOption,
+  ReviewStatus,
+  UpdateReviewInput,
+} from "./review.types";

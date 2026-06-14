@@ -31,7 +31,7 @@ import { AnimatedPage } from "@/components/ui/animated-page";
 import { saveUser, redirectToDashboard } from "@/lib/auth-helpers";
 import { setSecureAuthCookie } from "@/app/actions/auth";
 import { apiClient, storeAccessToken } from "@/lib/api-client";
-import { BACKEND_API_URL } from "@/lib/constants";
+import { BACKEND_API_URL, DEMO_CREDENTIALS, type DemoRole } from "@/lib/constants";
 
 function LoginContent() {
   const router = useRouter();
@@ -248,6 +248,41 @@ function LoginContent() {
             </form>
           </Form>
         </CardContent>
+
+        {/* ── Demo Login Buttons ─────────────────────────────────── */}
+        <div className="border-border bg-surface-1 border-t px-6 pt-6 pb-2">
+          <p className="text-foreground-muted mb-4 text-center text-xs font-semibold tracking-wider uppercase">
+            Quick Demo Access
+          </p>
+          <div className="grid grid-cols-3 gap-3">
+            {(Object.keys(DEMO_CREDENTIALS) as DemoRole[]).map((role) => {
+              const cred = DEMO_CREDENTIALS[role];
+              const hasCreds = cred.email && cred.password;
+              return (
+                <Button
+                  key={role}
+                  type="button"
+                  variant="outline"
+                  disabled={loading || !hasCreds}
+                  onClick={() => {
+                    if (!hasCreds) return;
+                    form.setValue("email", cred.email);
+                    form.setValue("password", cred.password);
+                    setTimeout(() => {
+                      form.handleSubmit(onSubmit)();
+                    }, 0);
+                  }}
+                  className="border-border bg-background hover:bg-surface-2 hover:border-border-strong flex h-auto flex-col gap-1.5 rounded-xl border py-3 text-center transition-all disabled:opacity-40"
+                >
+                  <span className="text-foreground text-sm font-bold">{cred.label}</span>
+                  <span className="text-foreground-muted text-[10px] leading-tight font-medium">
+                    {hasCreds ? "Auto-fill & Sign in" : "Not configured"}
+                  </span>
+                </Button>
+              );
+            })}
+          </div>
+        </div>
 
         {/* Footer links */}
         <CardFooter className="flex-col gap-2 pt-0 pb-2">
