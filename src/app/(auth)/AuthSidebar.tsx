@@ -71,7 +71,7 @@ export function AuthSidebar() {
       </div>
 
       {/* Bottom Section - Testimonials */}
-      <div className="relative z-10 h-[140px]">
+      <div className="relative z-10 h-35">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIdx}

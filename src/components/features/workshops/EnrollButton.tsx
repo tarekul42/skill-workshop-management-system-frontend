@@ -98,6 +98,10 @@ export function EnrollButton({
       const data = result as unknown as { paymentUrl?: string };
       if (data.paymentUrl) {
         setState("payment");
+
+        // Save the current URL to return to after payment
+        sessionStorage.setItem("payment_return_url", window.location.pathname);
+
         // Redirect to payment gateway
         window.location.href = data.paymentUrl;
       } else {
@@ -106,8 +110,12 @@ export function EnrollButton({
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Failed to enroll. Please try again.";
-      setErrorMessage(message);
-      setState("error");
+      if (message.toLowerCase().includes("active enrollment")) {
+        setState("enrolled");
+      } else {
+        setErrorMessage(message);
+        setState("error");
+      }
     }
   };
 
@@ -120,17 +128,21 @@ export function EnrollButton({
         <Button
           variant="secondary"
           size={size}
-          disabled
+          onClick={() => {
+            const user = getSavedUser();
+            const role = (user?.role || "student").toLowerCase();
+            router.push(`/${role}/enrollments`);
+          }}
           className={cn(
-            "bg-success/20 text-success-foreground border-success-subtle hover:bg-success/20 w-full border opacity-100",
+            "bg-success text-success-foreground border-success-subtle hover:bg-success/90 w-full border",
             className
           )}
         >
-          <CheckCircle className="text-success mr-2 size-4" />
-          Already Enrolled
+          <CheckCircle className="mr-2 size-4" />
+          View Workshop
         </Button>
         <p className="text-muted-foreground text-center text-xs">
-          You&apos;re enrolled in this workshop.
+          You&apos;re already enrolled in this workshop.
         </p>
       </div>
     );

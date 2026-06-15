@@ -672,6 +672,51 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Section 7: Newsletter Subscription (New 8th Section) ── */}
+      <section className="bg-background border-border border-t py-24">
+        <div className="site-container max-w-4xl text-center">
+          <div className="bg-primary/5 border-primary/10 rounded-3xl border p-8 sm:p-12">
+            <span className="text-primary mb-3 block text-xs font-bold tracking-[0.2em] uppercase">
+              Stay Updated
+            </span>
+            <h2 className="font-display text-foreground text-3xl font-bold tracking-tight sm:text-4xl">
+              Join the Skill Workshop Newsletter
+            </h2>
+            <p className="text-foreground-subtle mx-auto mt-4 max-w-lg text-sm leading-relaxed sm:text-base">
+              Get weekly updates on upcoming workshops, early-bird discounts, and professional
+              learning resources directly in your inbox.
+            </p>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                // Mock submission for frontend demonstration
+                const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement)
+                  .value;
+                if (email) {
+                  alert(`Thank you for subscribing with: ${email}`);
+                  e.currentTarget.reset();
+                }
+              }}
+              className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center"
+            >
+              <input
+                name="email"
+                type="email"
+                required
+                placeholder="Enter your email address"
+                className="bg-background border-border focus:border-primary/40 h-12 w-full rounded-xl border px-4 text-sm transition-all outline-none sm:w-80"
+              />
+              <Button type="submit" className="h-12 rounded-xl px-6 font-bold shadow-md">
+                Subscribe Now
+              </Button>
+            </form>
+            <p className="text-foreground-disabled mt-4 text-xs">
+              We respect your privacy. Unsubscribe at any time.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ── Section: CTA Banner ────────────────────────────────────── */}
       <section className="py-32">
         <div className="site-container">

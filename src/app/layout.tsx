@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import "./globals.css";
 import QueryProviders from "../providers/QueryProvider";
 import { FRONTEND_URL } from "@/lib/constants";
-import { cookies } from "next/headers";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -91,11 +90,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const nonce = (await cookies()).get("__csp_nonce")?.value ?? "";
-
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" suppressHydrationWarning nonce={nonce}>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${display.variable} ${body.variable} ${mono.variable} font-body antialiased`}
       >

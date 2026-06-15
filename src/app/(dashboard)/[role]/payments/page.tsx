@@ -54,7 +54,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { PageHeader } from "@/components/layout/PageHeader";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+
 import { formatCurrency, formatDate, truncate } from "@/lib/formatters";
 import { getAllEnrollments, getMyEnrollments, refundPayment, getInvoice } from "@/lib/api/services";
 import type { IEnrollment } from "@/types";
@@ -223,7 +223,7 @@ export default function PaymentsPage({ params }: PageProps) {
   } = useQuery({
     queryKey: ["my-enrollments"],
     queryFn: getMyEnrollments,
-    enabled: role === "STUDENT",
+    enabled: role?.toUpperCase() === "STUDENT",
   });
 
   const allStudentPayments = useMemo(
@@ -290,7 +290,7 @@ export default function PaymentsPage({ params }: PageProps) {
   }, [page, limit]);
 
   useEffect(() => {
-    if (!role || role === "STUDENT") return;
+    if (!role || role.toUpperCase() === "STUDENT") return;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchData();
   }, [role, fetchData]);
@@ -333,12 +333,11 @@ export default function PaymentsPage({ params }: PageProps) {
   // RENDER: STUDENT VIEW
   // ═══════════════════════════════════════════════════════════════════
 
-  if (role === "STUDENT") {
+  if (role?.toUpperCase() === "STUDENT") {
     return (
       <TooltipProvider>
         <div className="space-y-8">
           <div className="space-y-2">
-            <Breadcrumbs />
             <PageHeader
               title="My Payments"
               description="Review your transaction history and download invoices."
@@ -447,7 +446,6 @@ export default function PaymentsPage({ params }: PageProps) {
     <TooltipProvider>
       <div className="space-y-8">
         <div className="space-y-2">
-          <Breadcrumbs />
           <PageHeader
             title="Payment Management"
             description="Monitor transactions, issue refunds, and manage invoices across the platform."

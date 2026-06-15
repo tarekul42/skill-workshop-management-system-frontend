@@ -42,7 +42,7 @@ export function PublicFooter() {
             <Link href="/" className="group inline-flex items-center gap-2">
               <GraduationCap className="text-primary size-8 transition-transform group-hover:scale-110" />
               <span className="font-display text-2xl font-extrabold tracking-tight">
-                Skill<span className="text-primary">Workshop</span>
+                Skill <span className="text-primary">Workshop</span>
               </span>
             </Link>
             <p className="text-sidebar-text-muted max-w-xs text-sm leading-relaxed">

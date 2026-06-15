@@ -71,7 +71,7 @@ function TableSkeleton({ rows = 5, columns = 4 }: { rows?: number; columns?: num
       {Array.from({ length: rows }).map((_, rowIdx) => (
         <TableRow key={rowIdx} className="border-border hover:bg-transparent">
           {Array.from({ length: columns }).map((_, colIdx) => (
-            <TableCell key={colIdx} className="h-[60px] px-4">
+            <TableCell key={colIdx} className="h-15 px-4">
               <div className="bg-surface-2 animate-shimmer h-4 w-full rounded-md" />
             </TableCell>
           ))}
@@ -165,8 +165,8 @@ export function DataTable<TData, TValue>({
                   <Settings2 className="size-5" />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="shadow-3 w-[200px] rounded-xl p-2">
-                <p className="text-foreground-muted px-2 py-2 text-[11px] font-bold tracking-[0.1em] uppercase">
+              <DropdownMenuContent align="end" className="shadow-3 w-50 rounded-xl p-2">
+                <p className="text-foreground-muted px-2 py-2 text-[11px] font-bold tracking-widest uppercase">
                   Toggle Columns
                 </p>
                 {table
@@ -246,7 +246,7 @@ export function DataTable<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="border-border hover:bg-surface-1/50 h-[60px] transition-colors"
+                    className="border-border hover:bg-surface-1/50 h-15 transition-colors"
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="text-foreground px-4 text-sm">
@@ -263,7 +263,7 @@ export function DataTable<TData, TValue>({
                         <Search className="text-foreground-disabled size-6" />
                       </div>
                       <p className="text-foreground text-sm font-bold">{emptyMessage}</p>
-                      <p className="text-foreground-muted max-w-[200px] text-xs">
+                      <p className="text-foreground-muted max-w-50 text-xs">
                         Try adjusting your filters or search terms to find what you&apos;re looking
                         for.
                       </p>

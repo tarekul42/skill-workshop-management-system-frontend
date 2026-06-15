@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EnrollButton } from "@/components/features/workshops/EnrollButton";
+import { ReviewSection } from "@/components/features/reviews/ReviewSection";
 import { BACKEND_API_URL } from "@/lib/constants";
 import {
   enrichWorkshop,
@@ -568,6 +569,9 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
               </div>
             </section>
           </div>
+
+          {/* ── Section: Student Reviews ─────────────────────────────── */}
+          <ReviewSection workshopId={workshop._id} />
 
           {/* Right Column: Sticky Sidebar - THE CONVERSION ENGINE */}
           <aside className="hidden-scrollbar hidden lg:sticky lg:top-23 lg:block lg:max-h-[calc(100vh-100px)] lg:self-start lg:overflow-y-auto">

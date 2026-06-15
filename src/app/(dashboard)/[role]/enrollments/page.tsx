@@ -61,7 +61,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+
 import { formatDate, formatCurrency } from "@/lib/formatters";
 import {
   getAllEnrollments,
@@ -255,7 +255,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
   } = useQuery({
     queryKey: ["my-enrollments"],
     queryFn: getMyEnrollments,
-    enabled: role === "STUDENT",
+    enabled: role?.toUpperCase() === "STUDENT",
   });
 
   const cancelMutation = useMutation({
@@ -291,7 +291,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
   } = useQuery({
     queryKey: ["all-enrollments", page, limit],
     queryFn: () => getAllEnrollments({ page, limit }),
-    enabled: !!role && role !== "STUDENT",
+    enabled: !!role && role.toUpperCase() !== "STUDENT",
   });
 
   const enrollments = adminEnrollmentsData?.data || [];
@@ -355,12 +355,11 @@ export default function EnrollmentsPage({ params }: PageProps) {
   // RENDER: STUDENT VIEW
   // ═══════════════════════════════════════════════════════════════════
 
-  if (role === "STUDENT") {
+  if (role?.toUpperCase() === "STUDENT") {
     return (
       <TooltipProvider>
         <div className="space-y-8">
           <div className="space-y-2">
-            <Breadcrumbs />
             <PageHeader
               title="My Enrollments"
               description="Track your active workshops, check schedules, and manage your registrations."
@@ -600,7 +599,6 @@ export default function EnrollmentsPage({ params }: PageProps) {
     <TooltipProvider>
       <div className="space-y-8">
         <div className="space-y-2">
-          <Breadcrumbs />
           <PageHeader
             title="Enrollment Management"
             description="Manage global workshop registrations, update statuses, and monitor student participation."

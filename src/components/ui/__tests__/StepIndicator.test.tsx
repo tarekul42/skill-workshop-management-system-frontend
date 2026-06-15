@@ -1,4 +1,3 @@
-import React from "react";
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { StepIndicator } from "../step-indicator";
@@ -114,13 +113,13 @@ describe("StepIndicator", () => {
   it("renders connecting lines between steps", () => {
     const { container } = render(<StepIndicator currentStep={1} />);
     // There should be 2 connecting lines (between 3 steps)
-    const lines = container.querySelectorAll(".h-\\[2px\\]");
+    const lines = container.querySelectorAll(".h-0\\.5");
     expect(lines.length).toBe(2);
   });
 
   it("completed connecting lines have bg-success class", () => {
     const { container } = render(<StepIndicator currentStep={3} />);
-    const lines = container.querySelectorAll(".h-\\[2px\\]");
+    const lines = container.querySelectorAll(".h-0\\.5");
     // Both lines should be success (steps 1 and 2 are completed)
     expect(lines[0]).toHaveClass("bg-success");
     expect(lines[1]).toHaveClass("bg-success");

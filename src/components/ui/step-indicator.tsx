@@ -34,7 +34,7 @@ export function StepIndicator({ currentStep }: StepIndicatorProps) {
             </div>
             {idx < steps.length - 1 && (
               <div
-                className={`mx-2 h-[2px] w-8 transition-colors sm:w-16 ${isCompleted ? "bg-success" : "bg-surface-3"} `}
+                className={`mx-2 h-0.5 w-8 transition-colors sm:w-16 ${isCompleted ? "bg-success" : "bg-surface-3"} `}
               />
             )}
           </div>

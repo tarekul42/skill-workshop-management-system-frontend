@@ -102,7 +102,7 @@ export default function InstructorRegisterPage() {
 
   return (
     <AnimatedPage className="w-full">
-      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-3xl sm:p-4">
         <CardHeader className="pb-2 text-center">
           <Link href="/" className="mb-6 flex items-center justify-center gap-2">
             <BookOpen className="text-primary size-9" />

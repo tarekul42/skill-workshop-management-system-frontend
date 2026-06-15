@@ -4,16 +4,23 @@ import { render, screen } from "@testing-library/react";
 import { StatsCard } from "../stats-card";
 import { BookOpen } from "lucide-react";
 
-vi.mock("framer-motion", () => ({
-  motion: {
-    span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
-      <span {...props}>{children}</span>
-    ),
-  },
-  useMotionValue: () => ({ set: vi.fn(), get: vi.fn() }),
-  useTransform: (_: unknown, fn: (v: number) => number) => fn(42),
-  animate: vi.fn(() => ({ stop: vi.fn() })),
-}));
+vi.mock("framer-motion", () => {
+  const filterProps = (allProps: Record<string, unknown>) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { initial, animate, exit, transition, whileHover, whileTap, ...props } = allProps;
+    return props;
+  };
+  return {
+    motion: {
+      span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
+        <span {...filterProps(props)}>{children}</span>
+      ),
+    },
+    useMotionValue: () => ({ set: vi.fn(), get: vi.fn() }),
+    useTransform: (_: unknown, fn: (v: number) => number) => fn(42),
+    animate: vi.fn(() => ({ stop: vi.fn() })),
+  };
+});
 
 describe("StatsCard", () => {
   it("renders the title prop", () => {

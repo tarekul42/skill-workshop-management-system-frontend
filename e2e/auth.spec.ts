@@ -8,7 +8,7 @@ test.describe("Authentication Flow", () => {
     await expect(page.getByText("Welcome back")).toBeVisible();
     await expect(page.getByLabel("Email")).toBeVisible();
     await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
-    await expect(page.getByRole("button", { name: /Sign In/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Sign In", exact: true })).toBeVisible();
   });
 
   test("should show error on invalid credentials", async ({ page }) => {
@@ -28,7 +28,7 @@ test.describe("Authentication Flow", () => {
 
     await page.locator('input[name="email"]').fill("invalid@example.com");
     await page.locator('input[name="password"]').fill("wrongpassword");
-    await page.getByRole("button", { name: /Sign In/i }).click();
+    await page.getByRole("button", { name: "Sign In", exact: true }).click();
 
     await expect(page.getByText(/Invalid email or password/i)).toBeVisible({ timeout: 10000 });
   });

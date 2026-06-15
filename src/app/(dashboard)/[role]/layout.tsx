@@ -16,10 +16,27 @@ export const metadata: Metadata = {
 };
 
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-
-import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
+import { jwtVerify } from "jose";
+import { notFound, redirect } from "next/navigation";
 
 const VALID_ROLES = ["super-admin", "admin", "instructor", "student"];
+
+const ROLE_COOKIE_MAP: Record<string, string> = {
+  "super-admin": "SUPER_ADMIN",
+  admin: "ADMIN",
+  instructor: "INSTRUCTOR",
+  student: "STUDENT",
+};
+
+const getSecret = () => {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    console.error("[AUTH] JWT_SECRET environment variable is not set. Auth guard disabled.");
+    return null;
+  }
+  return new TextEncoder().encode(secret);
+};
 
 export default async function DashboardLayout({
   children,
@@ -32,6 +49,37 @@ export default async function DashboardLayout({
 
   if (!VALID_ROLES.includes(role)) {
     notFound();
+  }
+
+  // Server-side auth guard: verify the swms_role cookie matches this route
+  const secret = getSecret();
+  if (secret) {
+    const cookieStore = await cookies();
+    const token = cookieStore.get("swms_role")?.value;
+
+    if (!token) {
+      redirect("/login");
+    }
+
+    try {
+      const { payload } = await jwtVerify(token, secret);
+      const cookieRole = (payload.role as string) ?? null;
+      const expectedRole = ROLE_COOKIE_MAP[role];
+
+      if (cookieRole !== expectedRole) {
+        // Wrong role — redirect to their correct dashboard
+        const dashMap: Record<string, string> = {
+          SUPER_ADMIN: "/super-admin/dashboard",
+          ADMIN: "/admin/dashboard",
+          INSTRUCTOR: "/instructor/dashboard",
+          STUDENT: "/student/dashboard",
+        };
+        redirect(dashMap[cookieRole ?? ""] ?? "/login");
+      }
+    } catch {
+      // Invalid/expired JWT → redirect to login
+      redirect("/login");
+    }
   }
 
   const normalizedRole = role.toUpperCase().replace("-", "_") as

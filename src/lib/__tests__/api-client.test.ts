@@ -45,7 +45,7 @@ Object.defineProperty(global, "localStorage", { value: localStorageMock });
 const mockLocationAssign = vi.fn();
 Object.defineProperty(global, "window", {
   value: {
-    location: { assign: mockLocationAssign },
+    location: { assign: mockLocationAssign, pathname: "/" },
   },
   writable: true,
 });

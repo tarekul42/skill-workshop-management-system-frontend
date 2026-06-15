@@ -7,7 +7,13 @@ export function handleSessionExpired(): void {
   clearAccessToken();
   localStorage.removeItem("skillworkshop_user");
   document.cookie = "swms_role=;path=/;max-age=0;SameSite=Lax";
-  // Use Next.js router for client-side navigation (preserves shared layout state)
+
+  // Avoid redirect loops: don't redirect if already on an auth page
+  const currentPath = window.location.pathname;
+  const authPages = ["/login", "/register", "/forgot-password", "/reset-password", "/verify-otp"];
+  const isOnAuthPage = authPages.some((p) => currentPath === p || currentPath.startsWith(`${p}/`));
+  if (isOnAuthPage) return;
+
   window.location.assign("/login");
 }
 

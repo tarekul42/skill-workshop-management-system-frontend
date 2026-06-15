@@ -73,7 +73,7 @@ export function ConfirmDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="shadow-4 max-w-[440px] rounded-[32px] p-8">
+      <DialogContent className="shadow-4 max-w-110 rounded-4xl p-8">
         <DialogHeader className="items-center text-center">
           {/* Icon container */}
           <div
@@ -96,7 +96,7 @@ export function ConfirmDialog({
 
         {requireConfirmText && (
           <div className="mt-6 space-y-3">
-            <p className="text-foreground-disabled text-center text-[11px] font-bold tracking-[0.1em] uppercase">
+            <p className="text-foreground-disabled text-center text-[11px] font-bold tracking-widest uppercase">
               Type{" "}
               <span className="text-foreground bg-surface-2 border-border rounded border px-1.5 py-0.5 font-mono">
                 {requireConfirmText}

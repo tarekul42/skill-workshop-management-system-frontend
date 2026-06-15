@@ -182,7 +182,7 @@ export function StudentDashboard({
 
       {/* ── Section 3: My Recent Enrollments ───────────────────────── */}
       <StaggerItem>
-        <div className="glass hover:shadow-2 rounded-[32px] p-8 shadow-sm transition-all duration-300">
+        <div className="glass hover:shadow-2 rounded-4xl p-8 shadow-sm transition-all duration-300">
           <div className="mb-8 flex items-center justify-between">
             <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
               My Recent Enrollments
@@ -259,7 +259,7 @@ export function StudentDashboard({
               })}
             </div>
           ) : (
-            <div className="border-border bg-surface-1/30 flex flex-col items-center justify-center rounded-[24px] border-2 border-dashed py-20 text-center">
+            <div className="border-border bg-surface-1/30 flex flex-col items-center justify-center rounded-3xl border-2 border-dashed py-20 text-center">
               <div className="bg-surface-3 shadow-inner-sm mb-6 inline-flex size-16 items-center justify-center rounded-full">
                 <BookOpen className="text-foreground-disabled/40 size-8" />
               </div>
@@ -283,14 +283,14 @@ export function StudentDashboard({
 
       {/* ── Section 4: Quick Actions ───────────────────────────────── */}
       <StaggerItem>
-        <div className="glass hover:shadow-2 rounded-[32px] p-8 shadow-sm transition-all duration-300">
+        <div className="glass hover:shadow-2 rounded-4xl p-8 shadow-sm transition-all duration-300">
           <h2 className="font-display text-foreground mb-8 text-2xl font-bold tracking-tight">
             Quick Actions
           </h2>
           <div className="grid gap-5 sm:grid-cols-3">
             <Link
               href="/workshops"
-              className="group border-primary/10 bg-primary-subtle/50 hover:bg-primary flex flex-col items-start gap-6 rounded-[24px] border p-6 transition-all duration-300 hover:shadow-xl"
+              className="group border-primary/10 bg-primary-subtle/50 hover:bg-primary flex flex-col items-start gap-6 rounded-3xl border p-6 transition-all duration-300 hover:shadow-xl"
             >
               <div className="flex size-14 items-center justify-center rounded-2xl bg-white shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3 group-hover:bg-white/20">
                 <Search className="text-primary size-7 transition-colors group-hover:text-white" />
@@ -307,7 +307,7 @@ export function StudentDashboard({
 
             <Link
               href="/student/payments"
-              className="group border-accent/10 bg-accent-subtle/50 hover:bg-accent flex flex-col items-start gap-6 rounded-[24px] border p-6 transition-all duration-300 hover:shadow-xl"
+              className="group border-accent/10 bg-accent-subtle/50 hover:bg-accent flex flex-col items-start gap-6 rounded-3xl border p-6 transition-all duration-300 hover:shadow-xl"
             >
               <div className="flex size-14 items-center justify-center rounded-2xl bg-white shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3 group-hover:bg-white/20">
                 <FileText className="text-accent-foreground size-7 transition-colors group-hover:text-white" />
@@ -324,7 +324,7 @@ export function StudentDashboard({
 
             <Link
               href="/student/profile"
-              className="group border-border bg-surface-2 hover:bg-foreground group flex flex-col items-start gap-6 rounded-[24px] border p-6 transition-all duration-300 hover:shadow-xl"
+              className="group border-border bg-surface-2 hover:bg-foreground group flex flex-col items-start gap-6 rounded-3xl border p-6 transition-all duration-300 hover:shadow-xl"
             >
               <div className="flex size-14 items-center justify-center rounded-2xl bg-white shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3 group-hover:bg-white/20">
                 <User className="text-foreground size-7 transition-colors group-hover:text-white" />

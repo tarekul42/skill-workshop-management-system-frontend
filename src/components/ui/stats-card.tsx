@@ -44,7 +44,7 @@ function StatsCardSkeleton() {
       <CardHeader>
         <div className="flex items-center justify-between">
           <Skeleton className="h-4 w-28" />
-          <Skeleton className="size-11 rounded-[12px]" />
+          <Skeleton className="size-11 rounded-xl" />
         </div>
       </CardHeader>
       <CardContent>
@@ -94,7 +94,7 @@ export function StatsCard({
           </p>
           <div
             className={cn(
-              "flex size-11 items-center justify-center rounded-[12px]",
+              "flex size-11 items-center justify-center rounded-xl",
               variantClasses.container
             )}
           >
