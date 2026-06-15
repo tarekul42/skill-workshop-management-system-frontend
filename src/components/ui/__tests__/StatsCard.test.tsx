@@ -5,15 +5,11 @@ import { StatsCard } from "../stats-card";
 import { BookOpen } from "lucide-react";
 
 vi.mock("framer-motion", () => {
-  const filterProps = ({
-    initial: _initial,
-    animate: _animate,
-    exit: _exit,
-    transition: _transition,
-    whileHover: _whileHover,
-    whileTap: _whileTap,
-    ...props
-  }: Record<string, unknown>) => props;
+  const filterProps = (allProps: Record<string, unknown>) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { initial, animate, exit, transition, whileHover, whileTap, ...props } = allProps;
+    return props;
+  };
   return {
     motion: {
       span: ({ children, ...props }: React.HTMLAttributes<HTMLSpanElement>) => (
