@@ -82,7 +82,7 @@ export function StatusBadge({ status, dot = false, className }: StatusBadgeProps
     <Badge
       variant={variantMap[category]}
       className={cn(
-        "flex w-fit items-center gap-1.5 rounded-lg border border-black/5 px-2.5 py-1 text-[10px] font-extrabold tracking-[0.1em] uppercase shadow-sm ring-1 ring-white/10",
+        "flex w-fit items-center gap-1.5 rounded-lg border border-black/5 px-2.5 py-1 text-[10px] font-extrabold tracking-widest uppercase shadow-sm ring-1 ring-white/10",
         className
       )}
     >

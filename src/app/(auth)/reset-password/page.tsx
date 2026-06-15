@@ -70,7 +70,7 @@ function ResetPasswordContent() {
   if (!token) {
     return (
       <AnimatedPage className="w-full">
-        <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+        <Card className="border-border bg-surface-1 shadow-3 sm:rounded-3xl sm:p-4">
           <CardHeader className="items-center pb-2 text-center">
             <div className="bg-danger-subtle mt-4 flex size-16 items-center justify-center rounded-full">
               <span className="text-2xl">🔑</span>
@@ -96,7 +96,7 @@ function ResetPasswordContent() {
   if (success) {
     return (
       <AnimatedPage className="w-full">
-        <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+        <Card className="border-border bg-surface-1 shadow-3 sm:rounded-3xl sm:p-4">
           <CardHeader className="items-center pb-2 text-center">
             <div className="bg-success/10 mt-4 flex size-16 items-center justify-center rounded-full">
               <motion.svg
@@ -136,7 +136,7 @@ function ResetPasswordContent() {
 
   return (
     <AnimatedPage className="w-full">
-      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-3xl sm:p-4">
         <CardHeader className="items-center pb-2 text-center">
           <div className="bg-primary-subtle mt-4 flex size-16 items-center justify-center rounded-full">
             <Lock className="text-primary size-8" />

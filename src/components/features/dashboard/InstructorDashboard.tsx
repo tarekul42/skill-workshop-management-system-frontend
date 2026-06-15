@@ -165,10 +165,10 @@ export function InstructorDashboard({
       <StaggerContainer className="grid gap-6 sm:grid-cols-3">
         {/* My Workshops */}
         <StaggerItem>
-          <div className="glass hover:shadow-3 group rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
+          <div className="glass hover:shadow-3 group rounded-3xl p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-[0.1em] uppercase">
+                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-widest uppercase">
                   My Workshops
                 </p>
                 <div className="font-display text-foreground text-4xl leading-none font-extrabold">
@@ -187,10 +187,10 @@ export function InstructorDashboard({
 
         {/* Total Students */}
         <StaggerItem>
-          <div className="glass hover:shadow-3 group rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
+          <div className="glass hover:shadow-3 group rounded-3xl p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-[0.1em] uppercase">
+                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-widest uppercase">
                   Total Students
                 </p>
                 <div className="font-display text-foreground text-4xl leading-none font-extrabold">
@@ -210,10 +210,10 @@ export function InstructorDashboard({
 
         {/* Total Revenue */}
         <StaggerItem>
-          <div className="glass hover:shadow-3 group rounded-[24px] p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
+          <div className="glass hover:shadow-3 group rounded-3xl p-7 shadow-sm transition-all duration-300 hover:-translate-y-1">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-[0.1em] uppercase">
+                <p className="font-body text-foreground-disabled mb-4 text-[11px] font-bold tracking-widest uppercase">
                   Total Revenue
                 </p>
                 <div className="font-display text-foreground text-[32px] leading-none font-extrabold tracking-tight">
@@ -233,7 +233,7 @@ export function InstructorDashboard({
 
       {/* ── Section 3: Revenue Chart ──────────────────────────────── */}
       <StaggerItem>
-        <div className="glass hover:shadow-2 rounded-[32px] p-8 shadow-sm transition-all duration-300">
+        <div className="glass hover:shadow-2 rounded-4xl p-8 shadow-sm transition-all duration-300">
           <div className="mb-8 flex items-center justify-between">
             <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
               Monthly Revenue
@@ -298,7 +298,7 @@ export function InstructorDashboard({
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Recent Workshops Table */}
         <StaggerItem>
-          <div className="glass hover:shadow-2 overflow-hidden rounded-[32px] shadow-sm transition-all duration-300">
+          <div className="glass hover:shadow-2 overflow-hidden rounded-4xl shadow-sm transition-all duration-300">
             <div className="border-border/50 bg-surface-1/30 flex items-center justify-between border-b p-8">
               <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
                 My Workshops
@@ -318,13 +318,13 @@ export function InstructorDashboard({
               <table className="w-full text-left">
                 <thead className="bg-surface-2/60 border-border/50 border-b">
                   <tr>
-                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-[0.1em] uppercase">
+                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-widest uppercase">
                       Workshop
                     </th>
-                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-[0.1em] uppercase">
+                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-widest uppercase">
                       Students
                     </th>
-                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-[0.1em] uppercase">
+                    <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-widest uppercase">
                       Status
                     </th>
                     <th className="px-8 py-4 text-right"></th>
@@ -382,7 +382,7 @@ export function InstructorDashboard({
 
         {/* Enrollment Trend Chart */}
         <StaggerItem>
-          <div className="glass hover:shadow-2 flex h-full flex-col rounded-[32px] p-8 shadow-sm transition-all duration-300">
+          <div className="glass hover:shadow-2 flex h-full flex-col rounded-4xl p-8 shadow-sm transition-all duration-300">
             <div className="mb-8">
               <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
                 Enrollment Trends
@@ -423,7 +423,7 @@ export function InstructorDashboard({
 
       {/* ── Section 5: Recent Enrollments ─────────────────────────── */}
       <StaggerItem>
-        <div className="glass hover:shadow-2 rounded-[32px] p-8 shadow-sm transition-all duration-300">
+        <div className="glass hover:shadow-2 rounded-4xl p-8 shadow-sm transition-all duration-300">
           <div className="mb-8 flex items-center justify-between">
             <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
               Recent Student Activity

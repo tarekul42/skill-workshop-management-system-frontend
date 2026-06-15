@@ -167,7 +167,7 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border-border bg-surface-1 rounded-[24px] border p-7 shadow-sm transition-all hover:shadow-md">
+    <div className="border-border bg-surface-1 rounded-3xl border p-7 shadow-sm transition-all hover:shadow-md">
       <div className="mb-6 flex items-center gap-3">
         <div className="bg-primary/10 text-primary flex size-10 items-center justify-center rounded-xl">
           {icon}
@@ -385,7 +385,7 @@ export function WorkshopForm({
 
   // ── Render ───────────────────────────────────────────────────────
   return (
-    <div className="w-full max-w-[720px]">
+    <div className="w-full max-w-180">
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* ── Section 1: Basic Info ──────────────────────────────────── */}
         <SectionCard title="Basic Information" icon={<LayoutGrid className="size-5" />}>
@@ -659,7 +659,7 @@ export function WorkshopForm({
                 {existingImages.map((url, idx) => (
                   <div
                     key={`existing-${idx}`}
-                    className="group border-border relative aspect-[16/9] overflow-hidden rounded-xl border shadow-sm"
+                    className="group border-border relative aspect-video overflow-hidden rounded-xl border shadow-sm"
                   >
                     <Image
                       src={url}
@@ -687,7 +687,7 @@ export function WorkshopForm({
                 {imagePreviews.map((src, idx) => (
                   <div
                     key={`new-${idx}`}
-                    className="group border-border relative aspect-[16/9] overflow-hidden rounded-xl border shadow-sm"
+                    className="group border-border relative aspect-video overflow-hidden rounded-xl border shadow-sm"
                   >
                     <Image
                       src={src}

@@ -100,7 +100,7 @@ export default function VerifyOTPPage() {
 
   return (
     <AnimatedPage className="w-full">
-      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-[24px] sm:p-4">
+      <Card className="border-border bg-surface-1 shadow-3 sm:rounded-3xl sm:p-4">
         <CardHeader className="items-center pb-2 text-center">
           <StepIndicator currentStep={2} />
           <div className="bg-primary-subtle mt-4 flex size-16 items-center justify-center rounded-full">
@@ -235,7 +235,7 @@ export default function VerifyOTPPage() {
 function OTPSlot({ slot }: { slot: SlotProps }) {
   return (
     <div
-      className={`font-display relative flex h-[64px] w-[52px] items-center justify-center rounded-xl border-[1.5px] text-center text-[24px] font-bold transition-all ${
+      className={`font-display relative flex h-16 w-13 items-center justify-center rounded-xl border-[1.5px] text-center text-[24px] font-bold transition-all ${
         slot.isActive
           ? "border-primary ring-primary/20 z-10 ring-[3px]"
           : slot.char

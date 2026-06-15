@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import type { LucideIcon } from "lucide-react";
 import {
   FileQuestion,
@@ -73,7 +72,7 @@ export function EmptyState({
     >
       {/* Illustration Area */}
       <div className="relative mb-10">
-        <div className="bg-primary/30 absolute inset-0 scale-[2] animate-pulse rounded-full opacity-20 blur-[64px]" />
+        <div className="bg-primary/30 absolute inset-0 scale-[2] animate-pulse rounded-full opacity-20 blur-3xl" />
         <div className="glass shadow-3 group relative flex size-28 items-center justify-center rounded-[40px] transition-transform duration-500 hover:scale-105">
           <Icon
             className={cn("size-12 transition-transform group-hover:scale-110", config.color)}
@@ -90,13 +89,13 @@ export function EmptyState({
       </h3>
 
       {description && (
-        <p className="text-foreground-subtle mb-12 max-w-[340px] text-base leading-relaxed">
+        <p className="text-foreground-subtle mb-12 max-w-85 text-base leading-relaxed">
           {description}
         </p>
       )}
 
       {/* Actions */}
-      <div className="flex w-full flex-col gap-4 sm:w-auto sm:min-w-[240px]">
+      <div className="flex w-full flex-col gap-4 sm:w-auto sm:min-w-60">
         {action && (
           <Button
             size="lg"
