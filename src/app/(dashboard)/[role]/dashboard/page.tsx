@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import {
   BookOpen,
   ClipboardList,
@@ -23,18 +24,27 @@ import { apiClient, apiClientPaginated } from "@/lib/api-client";
 import { fetchAdminDashboard } from "@/lib/api/services";
 import { formatDate, formatCurrency } from "@/lib/formatters";
 import { AnimatedPage, StaggerContainer, StaggerItem } from "@/components/ui/animated-page";
-import { StudentDashboard } from "@/components/features/dashboard/StudentDashboard";
-import {
-  InstructorDashboard,
-  type InstructorWorkshopItem,
-  type InstructorEnrollmentItem,
+import type {
+  InstructorWorkshopItem,
+  InstructorEnrollmentItem,
 } from "@/components/features/dashboard/InstructorDashboard";
-import {
-  AdminDashboard,
-  type AuditLogItem,
-  type PlatformHealth,
-  type AdminDashboardProps,
+import type {
+  AuditLogItem,
+  PlatformHealth,
+  AdminDashboardProps,
 } from "@/components/features/dashboard/AdminDashboard";
+
+const StudentDashboard = dynamic(() =>
+  import("@/components/features/dashboard/StudentDashboard").then((m) => m.StudentDashboard)
+);
+
+const InstructorDashboard = dynamic(() =>
+  import("@/components/features/dashboard/InstructorDashboard").then((m) => m.InstructorDashboard)
+);
+
+const AdminDashboard = dynamic(() =>
+  import("@/components/features/dashboard/AdminDashboard").then((m) => m.AdminDashboard)
+);
 
 // ─── Props ──────────────────────────────────────────────────────────
 

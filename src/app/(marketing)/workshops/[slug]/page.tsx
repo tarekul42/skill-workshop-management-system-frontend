@@ -67,7 +67,7 @@ function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
               fill
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="object-cover transition-transform duration-500 group-hover:scale-104"
-              unoptimized
+              loading="lazy"
             />
           ) : (
             <div className="bg-surface-3 flex h-full w-full items-center justify-center">
@@ -365,7 +365,6 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                       sizes="(max-width: 1024px) 100vw, 66vw"
                       className="object-cover"
                       priority
-                      unoptimized
                     />
                     {/* Thumbnails strip at bottom if >1 image */}
                     {workshop.images.length > 1 && (
@@ -381,7 +380,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                               fill
                               sizes="64px"
                               className="object-cover"
-                              unoptimized
+                              loading="lazy"
                             />
                           </div>
                         ))}

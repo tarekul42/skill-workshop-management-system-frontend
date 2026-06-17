@@ -241,6 +241,7 @@ export default function WorkshopsPage({ params }: PageProps) {
                               fill
                               sizes="52px"
                               className="object-cover transition-transform group-hover:scale-105"
+                              loading="lazy"
                             />
                           ) : (
                             <div className="text-muted-foreground flex size-full items-center justify-center text-[8px] font-bold tracking-tighter uppercase">
@@ -394,6 +395,7 @@ export default function WorkshopsPage({ params }: PageProps) {
                           fill
                           sizes="192px"
                           className="object-cover"
+                          loading="lazy"
                         />
                       </div>
                     ))}

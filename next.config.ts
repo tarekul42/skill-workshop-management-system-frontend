@@ -27,6 +27,7 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   output: "standalone",
   images: {
+    formats: ["image/webp", "image/avif"],
     remotePatterns: [
       {
         protocol: "http",
@@ -34,9 +35,19 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: "https",
-        hostname: "**",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "plus.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.freepik.com",
       },
     ],
+    deviceSizes: [480, 640, 768, 1024, 1280, 1536],
+    imageSizes: [16, 32, 48, 64, 96, 128, 192, 256],
   },
   async headers() {
     return [

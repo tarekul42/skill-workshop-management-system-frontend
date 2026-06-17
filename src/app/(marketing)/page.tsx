@@ -519,9 +519,9 @@ export default function HomePage() {
 
           <div className="mt-20">
             {isLoading ? (
-              <WorkshopCardSkeleton count={4} />
+              <WorkshopCardSkeleton count={3} />
             ) : featuredWorkshops.length > 0 ? (
-              <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
                 {featuredWorkshops.map((workshop, idx) => (
                   <motion.div
                     key={workshop._id}
@@ -548,6 +548,7 @@ export default function HomePage() {
                               fill
                               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                               className="object-cover transition-transform duration-700 group-hover:scale-105"
+                              loading="lazy"
                             />
                           ) : (
                             <div className="bg-surface-3 flex h-full w-full items-center justify-center">

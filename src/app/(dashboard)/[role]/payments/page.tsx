@@ -124,7 +124,7 @@ function PaymentCard({
             fill
             sizes="72px"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
-            unoptimized
+            loading="lazy"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
