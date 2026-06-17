@@ -389,7 +389,7 @@ export default function HomePage() {
     [workshopsRaw?.data, categories, levels]
   );
 
-  const featuredWorkshops = workshops.slice(0, 4);
+  const featuredWorkshops = workshops.slice(0, 3);
   const isLoading = !categoriesData || !workshopsRaw;
 
   return (
