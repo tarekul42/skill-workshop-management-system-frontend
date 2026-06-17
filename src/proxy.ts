@@ -64,16 +64,8 @@ function isAuthPage(pathname: string): boolean {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const roleCookie = await getRoleCookie(request);
-  const bytes = crypto.getRandomValues(new Uint8Array(16));
-  const nonce = Buffer.from(bytes).toString("base64");
-
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
-
   // Initialize response
-  let response = NextResponse.next({
-    request: { headers: requestHeaders },
-  });
+  let response = NextResponse.next();
 
   // ── Protected dashboard routes ──────────────────────────────────────
   const expectedRole = getExpectedRole(pathname);
@@ -102,45 +94,6 @@ export async function proxy(request: NextRequest) {
   }
 
   // ─── Security Headers ────────────────────────────────────────────────
-  // CSP connect-src requires an origin (scheme+host+port), not a full path.
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:5001/api/v1";
-  let backendOrigin = backendUrl;
-  try {
-    backendOrigin = new URL(backendUrl).origin;
-  } catch {
-    // If parsing fails, fall back to the raw value
-  }
-
-  const isDev = process.env.NODE_ENV === "development";
-
-  const cspHeader = [
-    "default-src 'self'",
-    `script-src 'self' https://vercel.live 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ` 'nonce-${nonce}'`}`,
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com https://vercel.live https://vercel.com",
-    "font-src 'self' data: https://fonts.gstatic.com",
-    `connect-src 'self' ${backendOrigin} https://lh3.googleusercontent.com https://vercel.live https://*.vercel.app`,
-    "frame-src 'self' https://sandbox.sslcommerz.com https://vercel.live",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-    !isDev ? "upgrade-insecure-requests" : null,
-  ]
-    .filter(Boolean)
-    .join("; ");
-
-  response.headers.set("Content-Security-Policy", cspHeader);
-  response.headers.set("x-nonce", nonce);
-  // Also set a cookie so the layout can read the nonce reliably
-  // (headers() in server components may not see middleware-modified request headers)
-  response.cookies.set("__csp_nonce", nonce, {
-    httpOnly: false,
-    secure: !isDev,
-    sameSite: "strict",
-    path: "/",
-    maxAge: 60,
-  });
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
