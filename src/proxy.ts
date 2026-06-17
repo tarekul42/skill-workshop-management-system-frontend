@@ -115,7 +115,7 @@ export async function proxy(request: NextRequest) {
 
   const cspHeader = [
     "default-src 'self'",
-    `script-src 'self' https://vercel.live${isDev ? " 'unsafe-inline' 'unsafe-eval'" : ` 'nonce-${nonce}'`}`,
+    `script-src 'self' https://vercel.live 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ` 'nonce-${nonce}'`}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' blob: https://res.cloudinary.com https://lh3.googleusercontent.com https://images.unsplash.com https://vercel.live https://vercel.com",
     "font-src 'self' data: https://fonts.gstatic.com",
