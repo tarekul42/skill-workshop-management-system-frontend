@@ -17,11 +17,6 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=()",
   },
-  {
-    key: "Content-Security-Policy",
-    value:
-      "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; img-src 'self' data: https:; connect-src 'self' https://vercel.live https://cdnjs.cloudflare.com; frame-src 'self' https://vercel.live;",
-  },
 ];
 
 const nextConfig: NextConfig = {
@@ -44,6 +39,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "img.freepik.com",
+      },
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
       },
     ],
     deviceSizes: [480, 640, 768, 1024, 1280, 1536],
