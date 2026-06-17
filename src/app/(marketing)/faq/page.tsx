@@ -199,8 +199,8 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
   if (faqList.length === 0) {
     return (
       <div className="py-12 text-center">
-        <HelpCircle className="text-muted-foreground/40 mx-auto mb-3 size-10" />
-        <p className="text-muted-foreground">No questions found for this category.</p>
+        <HelpCircle className="text-foreground-muted/40 mx-auto mb-3 size-10" />
+        <p className="text-foreground-subtle">No questions found for this category.</p>
       </div>
     );
   }
@@ -212,7 +212,7 @@ function FAQAccordion({ faqs: faqList }: { faqs: IFAQ[] }) {
           <AccordionTrigger className="px-6 py-4 text-left text-sm leading-relaxed font-medium hover:no-underline sm:text-base">
             {faq.question}
           </AccordionTrigger>
-          <AccordionContent className="text-muted-foreground px-6 pb-6 text-sm leading-relaxed">
+          <AccordionContent className="text-foreground-subtle px-6 pb-6 text-sm leading-relaxed">
             {faq.answer}
           </AccordionContent>
         </AccordionItem>
@@ -242,13 +242,16 @@ export default function FAQPage() {
   }, [activeCategory, searchQuery]);
 
   return (
-    <section className="site-container py-12 md:py-16 lg:py-20">
+    <section className="site-container py-24">
       {/* Page Header */}
-      <div className="mb-10 md:mb-14">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+      <div className="mx-auto mb-16 max-w-2xl text-center">
+        <span className="text-primary mb-4 block text-xs font-bold tracking-[0.2em] uppercase">
+          FAQ
+        </span>
+        <h1 className="text-foreground font-display text-4xl font-bold tracking-tight sm:text-5xl">
           Frequently Asked Questions
         </h1>
-        <p className="text-muted-foreground mt-3 max-w-2xl">
+        <p className="text-foreground-subtle mt-6 text-lg">
           Find answers to common questions about our workshops, enrollment, payments, and more.
         </p>
       </div>
@@ -259,7 +262,7 @@ export default function FAQPage() {
         <aside className="space-y-6">
           {/* Search */}
           <div className="relative">
-            <Search className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2" />
+            <Search className="text-foreground-muted absolute top-1/2 left-3 size-4 -translate-y-1/2" />
             <Input
               placeholder="Search questions..."
               value={searchQuery}
@@ -270,7 +273,7 @@ export default function FAQPage() {
 
           {/* Category Cards */}
           <div className="space-y-2">
-            <p className="text-muted-foreground px-1 text-xs font-semibold tracking-wider uppercase">
+            <p className="text-foreground-muted px-1 text-xs font-semibold tracking-wider uppercase">
               Categories
             </p>
             <nav className="space-y-1">
@@ -284,14 +287,14 @@ export default function FAQPage() {
                     className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors ${
                       isActive
                         ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                        : "text-foreground-muted hover:bg-muted hover:text-foreground"
                     }`}
                   >
                     <Icon className="size-4 shrink-0" />
                     <div className="min-w-0 flex-1">
                       <span className="block truncate font-medium">{cat.label}</span>
                       {!isActive && (
-                        <span className="text-muted-foreground/70 block truncate text-xs">
+                        <span className="text-foreground-muted/70 block truncate text-xs">
                           {cat.description}
                         </span>
                       )}
@@ -300,7 +303,7 @@ export default function FAQPage() {
                       className={`flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium ${
                         isActive
                           ? "bg-primary-foreground/20 text-primary-foreground"
-                          : "bg-muted text-muted-foreground"
+                          : "bg-muted text-foreground-muted"
                       }`}
                     >
                       {cat.count}
@@ -317,7 +320,7 @@ export default function FAQPage() {
               <Headphones className="text-primary size-5" />
             </div>
             <h3 className="text-sm font-semibold">Still have questions?</h3>
-            <p className="text-muted-foreground mt-1 text-xs leading-relaxed">
+            <p className="text-foreground-subtle mt-1 text-xs leading-relaxed">
               Can&apos;t find the answer you&apos;re looking for? Our support team is here to help.
             </p>
             <Button asChild size="sm" className="mt-4 w-full">
@@ -333,7 +336,7 @@ export default function FAQPage() {
         <div>
           {/* Active filter indicator */}
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-muted-foreground text-sm">
+            <p className="text-foreground-subtle text-sm">
               Showing <span className="text-foreground font-medium">{filteredFAQs.length}</span>{" "}
               question{filteredFAQs.length !== 1 ? "s" : ""}
               {activeCategory !== "all" && (

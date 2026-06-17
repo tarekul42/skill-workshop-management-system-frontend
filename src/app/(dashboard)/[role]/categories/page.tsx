@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import {
   Plus,
@@ -86,9 +86,10 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     }
   }, []);
 
-  // useEffect(() => {
-  //   fetchCategoriesData();
-  // }, [fetchCategoriesData]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchCategoriesData();
+  }, [fetchCategoriesData]);
 
   // ── Form helpers ──────────────────────────────────────────────────
 
@@ -277,6 +278,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                           fill
                           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                           className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="from-surface-2 to-surface-3 flex h-full items-center justify-center bg-linear-to-br">
@@ -522,7 +524,7 @@ function CategoryForm({
         <div className="group border-border bg-surface-2 hover:border-primary/30 relative flex aspect-video w-full flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed transition-colors">
           {preview ? (
             <>
-              <Image src={preview} alt="Preview" fill unoptimized className="object-cover" />
+              <Image src={preview} alt="Preview" fill className="object-cover" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                 <Button variant="secondary" size="sm" className="rounded-lg font-bold" asChild>
                   <label className="cursor-pointer">

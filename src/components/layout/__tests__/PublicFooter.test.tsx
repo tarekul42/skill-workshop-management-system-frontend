@@ -48,7 +48,7 @@ describe("PublicFooter", () => {
 
   it("renders contact phone", () => {
     render(<PublicFooter />);
-    expect(screen.getByText("+880 1234-567890")).toBeInTheDocument();
+    expect(screen.getByText("+880 1712-345678")).toBeInTheDocument();
   });
 
   it("renders office address", () => {
@@ -64,21 +64,21 @@ describe("PublicFooter", () => {
     ["FAQ", "/faq"],
   ])("renders platform link '%s' with href '%s'", (label, href) => {
     render(<PublicFooter />);
-    const link = screen.getByText(label);
-    expect(link).toBeInTheDocument();
-    expect(link.closest("a")).toHaveAttribute("href", href);
+    const links = screen.getAllByText(label);
+    const match = links.find((l) => l.closest("a")?.getAttribute("href") === href);
+    expect(match).toBeTruthy();
   });
 
   it.each([
     ["Become an Instructor", "/register?role=instructor"],
     ["Instructor Dashboard", "/instructor/dashboard"],
-    ["Teaching Resources", "/resources"],
-    ["Support", "/support"],
+    ["FAQ", "/faq"],
+    ["Contact Support", "/contact"],
   ])("renders instructor link '%s' with href '%s'", (label, href) => {
     render(<PublicFooter />);
-    const link = screen.getByText(label);
-    expect(link).toBeInTheDocument();
-    expect(link.closest("a")).toHaveAttribute("href", href);
+    const links = screen.getAllByText(label);
+    const match = links.find((l) => l.closest("a")?.getAttribute("href") === href);
+    expect(match).toBeTruthy();
   });
 
   it.each(["Facebook", "Twitter", "LinkedIn", "YouTube"])(

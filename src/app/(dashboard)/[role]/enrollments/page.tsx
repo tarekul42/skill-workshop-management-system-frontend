@@ -422,150 +422,146 @@ export default function EnrollmentsPage({ params }: PageProps) {
               }}
             />
           ) : (
-            <div className="border-border bg-surface-1 overflow-hidden rounded-3xl border shadow-sm">
-              <Table>
-                <TableHeader className="bg-surface-2/50">
-                  <TableRow className="border-border hover:bg-transparent">
-                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                      Workshop
-                    </TableHead>
-                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                      Status
-                    </TableHead>
-                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                      Seats
-                    </TableHead>
-                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                      Date
-                    </TableHead>
-                    <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                      Payment
-                    </TableHead>
-                    <TableHead className="text-foreground-muted px-6 py-4 text-right text-[11px] font-bold tracking-wider uppercase">
-                      Actions
-                    </TableHead>
+            <Table>
+              <TableHeader className="bg-surface-2/50">
+                <TableRow className="border-border hover:bg-transparent">
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Workshop
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Status
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Seats
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Date
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                    Payment
+                  </TableHead>
+                  <TableHead className="text-foreground-muted px-6 py-4 text-right text-[11px] font-bold tracking-wider uppercase">
+                    Actions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredStudentEnrollments.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="h-48 text-center">
+                      <p className="text-foreground-muted text-sm font-medium">
+                        No enrollments match your search.
+                      </p>
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredStudentEnrollments.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={6} className="h-48 text-center">
-                        <p className="text-foreground-muted text-sm font-medium">
-                          No enrollments match your search.
-                        </p>
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    filteredStudentEnrollments.map((enrollment) => {
-                      const canCancel = isCancelable(enrollment.status);
-                      return (
-                        <TableRow
-                          key={enrollment._id}
-                          className="group border-border hover:bg-surface-2/40 transition-colors"
-                        >
-                          <TableCell className="px-6 py-4">
-                            <div className="flex flex-col">
-                              <Link
-                                href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
-                                className="font-display text-foreground hover:text-primary max-w-64 truncate text-[15px] font-bold transition-colors"
-                              >
-                                {enrollment.workshop.title}
-                              </Link>
-                              {enrollment.workshop.location && (
-                                <div className="text-foreground-muted mt-1 flex items-center gap-1.5 text-[12px]">
-                                  <MapPin className="size-3" />
-                                  <span className="max-w-48 truncate">
-                                    {enrollment.workshop.location}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          </TableCell>
-                          <TableCell className="px-6 py-4">
-                            <StatusBadge status={enrollment.status} dot />
-                          </TableCell>
-                          <TableCell className="px-6 py-4">
-                            <div className="text-foreground flex items-center gap-2 text-sm font-medium">
-                              <Users className="text-foreground-disabled size-3.5" />
-                              {enrollment.studentCount}
-                            </div>
-                          </TableCell>
-                          <TableCell className="px-6 py-4">
-                            <span className="text-foreground-muted text-[13px]">
-                              {formatDate(enrollment.createdAt)}
-                            </span>
-                          </TableCell>
-                          <TableCell className="px-6 py-4">
-                            {enrollment.payment ? (
-                              <div className="flex flex-col gap-1">
-                                <StatusBadge
-                                  status={enrollment.payment.status}
-                                  dot
-                                  className="origin-left scale-90"
-                                />
-                                <span className="text-foreground-muted ml-1 text-[11px] font-bold">
-                                  {formatCurrency(enrollment.payment.amount)}
+                ) : (
+                  filteredStudentEnrollments.map((enrollment) => {
+                    const canCancel = isCancelable(enrollment.status);
+                    return (
+                      <TableRow
+                        key={enrollment._id}
+                        className="group border-border hover:bg-surface-2/40 transition-colors"
+                      >
+                        <TableCell className="px-6 py-4">
+                          <div className="flex flex-col">
+                            <Link
+                              href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
+                              className="font-display text-foreground hover:text-primary max-w-64 truncate text-[15px] font-bold transition-colors"
+                            >
+                              {enrollment.workshop.title}
+                            </Link>
+                            {enrollment.workshop.location && (
+                              <div className="text-foreground-muted mt-1 flex items-center gap-1.5 text-[12px]">
+                                <MapPin className="size-3" />
+                                <span className="max-w-48 truncate">
+                                  {enrollment.workshop.location}
                                 </span>
                               </div>
-                            ) : (
-                              <span className="text-foreground-disabled text-xs font-medium">
-                                —
-                              </span>
                             )}
-                          </TableCell>
-                          <TableCell className="px-6 py-4 text-right">
-                            <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6 py-4">
+                          <StatusBadge status={enrollment.status} dot />
+                        </TableCell>
+                        <TableCell className="px-6 py-4">
+                          <div className="text-foreground flex items-center gap-2 text-sm font-medium">
+                            <Users className="text-foreground-disabled size-3.5" />
+                            {enrollment.studentCount}
+                          </div>
+                        </TableCell>
+                        <TableCell className="px-6 py-4">
+                          <span className="text-foreground-muted text-[13px]">
+                            {formatDate(enrollment.createdAt)}
+                          </span>
+                        </TableCell>
+                        <TableCell className="px-6 py-4">
+                          {enrollment.payment ? (
+                            <div className="flex flex-col gap-1">
+                              <StatusBadge
+                                status={enrollment.payment.status}
+                                dot
+                                className="origin-left scale-90"
+                              />
+                              <span className="text-foreground-muted ml-1 text-[11px] font-bold">
+                                {formatCurrency(enrollment.payment.amount)}
+                              </span>
+                            </div>
+                          ) : (
+                            <span className="text-foreground-disabled text-xs font-medium">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell className="px-6 py-4 text-right">
+                          <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon-xs"
+                                  className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg"
+                                  onClick={() => handleViewDetails(enrollment)}
+                                >
+                                  <Eye className="size-4" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>View Details</TooltipContent>
+                            </Tooltip>
+
+                            {canCancel && (
                               <Tooltip>
                                 <TooltipTrigger asChild>
                                   <Button
                                     variant="ghost"
                                     size="icon-xs"
-                                    className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg"
-                                    onClick={() => handleViewDetails(enrollment)}
+                                    onClick={() => openCancelConfirm(enrollment)}
+                                    className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
                                   >
-                                    <Eye className="size-4" />
+                                    <XCircle className="size-4" />
                                   </Button>
                                 </TooltipTrigger>
-                                <TooltipContent>View Details</TooltipContent>
+                                <TooltipContent>Cancel Enrollment</TooltipContent>
                               </Tooltip>
+                            )}
 
-                              {canCancel && (
-                                <Tooltip>
-                                  <TooltipTrigger asChild>
-                                    <Button
-                                      variant="ghost"
-                                      size="icon-xs"
-                                      onClick={() => openCancelConfirm(enrollment)}
-                                      className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
-                                    >
-                                      <XCircle className="size-4" />
-                                    </Button>
-                                  </TooltipTrigger>
-                                  <TooltipContent>Cancel Enrollment</TooltipContent>
-                                </Tooltip>
-                              )}
-
-                              <Button
-                                variant="ghost"
-                                size="icon-xs"
-                                className="size-8 rounded-lg"
-                                asChild
+                            <Button
+                              variant="ghost"
+                              size="icon-xs"
+                              className="size-8 rounded-lg"
+                              asChild
+                            >
+                              <Link
+                                href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
                               >
-                                <Link
-                                  href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
-                                >
-                                  <ArrowRight className="size-4" />
-                                </Link>
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                                <ArrowRight className="size-4" />
+                              </Link>
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
+                )}
+              </TableBody>
+            </Table>
           )}
 
           {/* Student detail dialog */}
@@ -627,180 +623,178 @@ export default function EnrollmentsPage({ params }: PageProps) {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-surface-2/30">
-                <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                    Student
-                  </TableHead>
-                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                    Workshop
-                  </TableHead>
-                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                    Status
-                  </TableHead>
-                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                    Qty
-                  </TableHead>
-                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                    Date
-                  </TableHead>
-                  <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
-                    Payment
-                  </TableHead>
-                  <TableHead className="text-foreground-muted px-6 py-4 text-right text-[11px] font-bold tracking-wider uppercase">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {adminLoading ? (
-                  [...Array(5)].map((_, i) => (
-                    <TableRow key={i} className="border-border">
-                      <TableCell colSpan={7} className="p-6">
-                        <div className="bg-surface-2 h-8 animate-pulse rounded-lg" />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : enrollments.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="h-64 text-center">
-                      <EmptyState
-                        icon={BookOpenCheck}
-                        title="No enrollments found"
-                        description="There are no registration records currently available."
-                      />
+          <Table>
+            <TableHeader className="bg-surface-2/30">
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                  Student
+                </TableHead>
+                <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                  Workshop
+                </TableHead>
+                <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                  Status
+                </TableHead>
+                <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                  Qty
+                </TableHead>
+                <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                  Date
+                </TableHead>
+                <TableHead className="text-foreground-muted px-6 py-4 text-[11px] font-bold tracking-wider uppercase">
+                  Payment
+                </TableHead>
+                <TableHead className="text-foreground-muted px-6 py-4 text-right text-[11px] font-bold tracking-wider uppercase">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {adminLoading ? (
+                [...Array(5)].map((_, i) => (
+                  <TableRow key={i} className="border-border">
+                    <TableCell colSpan={7} className="p-6">
+                      <div className="bg-surface-2 h-8 animate-pulse rounded-lg" />
                     </TableCell>
                   </TableRow>
-                ) : (
-                  enrollments.map((enrollment) => (
-                    <TableRow
-                      key={enrollment._id}
-                      className="group border-border hover:bg-surface-2/40 transition-colors"
-                    >
-                      <TableCell className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-primary/10 text-primary border-primary/5 flex size-9 items-center justify-center rounded-full border text-xs font-bold">
-                            {enrollment.user?.name?.[0] || "?"}
-                          </div>
-                          <div>
-                            <p className="text-foreground text-sm font-bold">
-                              {enrollment.user?.name || "—"}
-                            </p>
-                            <p className="text-foreground-muted text-[11px] font-medium">
-                              {enrollment.user?.email || ""}
-                            </p>
-                          </div>
+                ))
+              ) : enrollments.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-64 text-center">
+                    <EmptyState
+                      icon={BookOpenCheck}
+                      title="No enrollments found"
+                      description="There are no registration records currently available."
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                enrollments.map((enrollment) => (
+                  <TableRow
+                    key={enrollment._id}
+                    className="group border-border hover:bg-surface-2/40 transition-colors"
+                  >
+                    <TableCell className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-primary/10 text-primary border-primary/5 flex size-9 items-center justify-center rounded-full border text-xs font-bold">
+                          {enrollment.user?.name?.[0] || "?"}
                         </div>
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <p className="text-foreground max-w-48 truncate text-sm font-medium">
-                          {enrollment.workshop?.title || "—"}
-                        </p>
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <StatusBadge status={enrollment.status} dot />
-                      </TableCell>
-                      <TableCell className="px-6 py-4 text-center sm:text-left">
-                        <span className="text-foreground text-sm font-bold">
-                          {enrollment.studentCount}
-                        </span>
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <span className="text-foreground-muted text-[13px]">
-                          {formatDate(enrollment.createdAt)}
-                        </span>
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <PaymentStatusBadge status={enrollment.payment?.status} />
-                      </TableCell>
-                      <TableCell className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon-xs"
-                                className="hover:bg-primary/10 size-8 rounded-lg"
-                                onClick={() => setViewEnrollment(enrollment)}
-                              >
-                                <Eye className="size-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>View Details</TooltipContent>
-                          </Tooltip>
+                        <div>
+                          <p className="text-foreground text-sm font-bold">
+                            {enrollment.user?.name || "—"}
+                          </p>
+                          <p className="text-foreground-muted text-[11px] font-medium">
+                            {enrollment.user?.email || ""}
+                          </p>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <p className="text-foreground max-w-48 truncate text-sm font-medium">
+                        {enrollment.workshop?.title || "—"}
+                      </p>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <StatusBadge status={enrollment.status} dot />
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-center sm:text-left">
+                      <span className="text-foreground text-sm font-bold">
+                        {enrollment.studentCount}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <span className="text-foreground-muted text-[13px]">
+                        {formatDate(enrollment.createdAt)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <PaymentStatusBadge status={enrollment.payment?.status} />
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon-xs"
+                              className="hover:bg-primary/10 size-8 rounded-lg"
+                              onClick={() => setViewEnrollment(enrollment)}
+                            >
+                              <Eye className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>View Details</TooltipContent>
+                        </Tooltip>
 
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon-xs"
-                                className="hover:bg-accent/10 size-8 rounded-lg"
-                                onClick={() => {
-                                  setStatusTarget(enrollment);
-                                  setNewStatus(enrollment.status);
-                                }}
-                              >
-                                <Pencil className="size-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Edit Status</TooltipContent>
-                          </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon-xs"
+                              className="hover:bg-accent/10 size-8 rounded-lg"
+                              onClick={() => {
+                                setStatusTarget(enrollment);
+                                setNewStatus(enrollment.status);
+                              }}
+                            >
+                              <Pencil className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Edit Status</TooltipContent>
+                        </Tooltip>
 
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="ghost"
-                                size="icon-xs"
-                                className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
-                                onClick={() => setDeleteTarget(enrollment)}
-                              >
-                                <Trash2 className="size-4" />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>Delete Record</TooltipContent>
-                          </Tooltip>
-                        </div>
-                        {/* Mobile dropdown */}
-                        <div className="sm:hidden">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon-xs">
-                                <MoreHorizontal className="size-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => setViewEnrollment(enrollment)}>
-                                <Eye className="mr-2 size-4" />
-                                Details
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => {
-                                  setStatusTarget(enrollment);
-                                  setNewStatus(enrollment.status);
-                                }}
-                              >
-                                <Pencil className="mr-2 size-4" />
-                                Update Status
-                              </DropdownMenuItem>
-                              <DropdownMenuItem
-                                onClick={() => setDeleteTarget(enrollment)}
-                                className="text-danger"
-                              >
-                                <Trash2 className="mr-2 size-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon-xs"
+                              className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
+                              onClick={() => setDeleteTarget(enrollment)}
+                            >
+                              <Trash2 className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Delete Record</TooltipContent>
+                        </Tooltip>
+                      </div>
+                      {/* Mobile dropdown */}
+                      <div className="sm:hidden">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon-xs">
+                              <MoreHorizontal className="size-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => setViewEnrollment(enrollment)}>
+                              <Eye className="mr-2 size-4" />
+                              Details
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setStatusTarget(enrollment);
+                                setNewStatus(enrollment.status);
+                              }}
+                            >
+                              <Pencil className="mr-2 size-4" />
+                              Update Status
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => setDeleteTarget(enrollment)}
+                              className="text-danger"
+                            >
+                              <Trash2 className="mr-2 size-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
 
           {!adminLoading && totalPages > 1 && (
             <div className="bg-surface-2/20 border-border flex flex-col items-center justify-between gap-4 border-t p-5 sm:flex-row">

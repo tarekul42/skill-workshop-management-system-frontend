@@ -194,73 +194,71 @@ export default function AuditLogsPage({ params }: PageProps) {
       </div>
 
       {/* ── Table ──────────────────────────────────────────────────── */}
-      <div className="rounded-lg border">
-        <Table>
-          <TableHeader>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Action</TableHead>
+            <TableHead>Collection</TableHead>
+            <TableHead>Document ID</TableHead>
+            <TableHead>Performed By</TableHead>
+            <TableHead>IP Address</TableHead>
+            <TableHead>Date</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {loading ? (
             <TableRow>
-              <TableHead>Action</TableHead>
-              <TableHead>Collection</TableHead>
-              <TableHead>Document ID</TableHead>
-              <TableHead>Performed By</TableHead>
-              <TableHead>IP Address</TableHead>
-              <TableHead>Date</TableHead>
+              <TableCell colSpan={6} className="p-4">
+                <TableSkeleton rows={5} columns={6} />
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="p-4">
-                  <TableSkeleton rows={5} columns={6} />
+          ) : logs.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="h-48 text-center">
+                <p className="text-muted-foreground text-sm">
+                  {hasActiveFilters ? "No logs match your filters." : "No audit logs found."}
+                </p>
+              </TableCell>
+            </TableRow>
+          ) : (
+            logs.map((log) => (
+              <TableRow key={log._id}>
+                <TableCell>
+                  <Badge variant="outline" className={actionStyles[log.action]}>
+                    {log.action}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <span className="text-sm font-medium">{log.collectionName}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-muted-foreground font-mono text-xs">
+                    {truncate(log.documentId, 14)}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <div>
+                    <p className="text-sm">{log.performedBy?.name || "System"}</p>
+                    {log.performedBy?.role && (
+                      <p className="text-muted-foreground text-xs">{log.performedBy.role}</p>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span className="text-muted-foreground font-mono text-xs">
+                    {log.ipAddress || "—"}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-muted-foreground text-sm">
+                    {formatDateTime(log.createdAt)}
+                  </span>
                 </TableCell>
               </TableRow>
-            ) : logs.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-48 text-center">
-                  <p className="text-muted-foreground text-sm">
-                    {hasActiveFilters ? "No logs match your filters." : "No audit logs found."}
-                  </p>
-                </TableCell>
-              </TableRow>
-            ) : (
-              logs.map((log) => (
-                <TableRow key={log._id}>
-                  <TableCell>
-                    <Badge variant="outline" className={actionStyles[log.action]}>
-                      {log.action}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm font-medium">{log.collectionName}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-muted-foreground font-mono text-xs">
-                      {truncate(log.documentId, 14)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div>
-                      <p className="text-sm">{log.performedBy?.name || "System"}</p>
-                      {log.performedBy?.role && (
-                        <p className="text-muted-foreground text-xs">{log.performedBy.role}</p>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-muted-foreground font-mono text-xs">
-                      {log.ipAddress || "—"}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-muted-foreground text-sm">
-                      {formatDateTime(log.createdAt)}
-                    </span>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
       {/* ── Server Pagination ──────────────────────────────────────── */}
       {!loading && totalPages > 1 && (

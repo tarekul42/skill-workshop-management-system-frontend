@@ -124,7 +124,7 @@ function PaymentCard({
             fill
             sizes="72px"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
-            unoptimized
+            loading="lazy"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
@@ -469,153 +469,149 @@ export default function PaymentsPage({ params }: PageProps) {
             </div>
           </div>
 
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader className="bg-surface-2/30">
-                <TableRow className="border-border hover:bg-transparent">
-                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
-                    Transaction ID
-                  </TableHead>
-                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
-                    Student & Workshop
-                  </TableHead>
-                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
-                    Amount
-                  </TableHead>
-                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
-                    Status
-                  </TableHead>
-                  <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
-                    Date
-                  </TableHead>
-                  <TableHead className="text-foreground-muted h-12 px-6 text-right text-[11px] font-bold tracking-wider uppercase">
-                    Actions
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {loading ? (
-                  [...Array(5)].map((_, i) => (
-                    <TableRow key={i} className="border-border">
-                      <TableCell colSpan={6} className="p-6">
-                        <div className="bg-surface-2 h-6 animate-pulse rounded-lg" />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : payments.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="h-64 text-center">
-                      <EmptyState
-                        icon={CreditCard}
-                        title="No payments found"
-                        description="There are no payment records matching your criteria."
-                      />
+          <Table>
+            <TableHeader className="bg-surface-2/30">
+              <TableRow className="border-border hover:bg-transparent">
+                <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
+                  Transaction ID
+                </TableHead>
+                <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
+                  Student & Workshop
+                </TableHead>
+                <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
+                  Amount
+                </TableHead>
+                <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
+                  Status
+                </TableHead>
+                <TableHead className="text-foreground-muted h-12 px-6 text-[11px] font-bold tracking-wider uppercase">
+                  Date
+                </TableHead>
+                <TableHead className="text-foreground-muted h-12 px-6 text-right text-[11px] font-bold tracking-wider uppercase">
+                  Actions
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loading ? (
+                [...Array(5)].map((_, i) => (
+                  <TableRow key={i} className="border-border">
+                    <TableCell colSpan={6} className="p-6">
+                      <div className="bg-surface-2 h-6 animate-pulse rounded-lg" />
                     </TableCell>
                   </TableRow>
-                ) : (
-                  payments.map((payment) => (
-                    <TableRow
-                      key={payment.paymentId}
-                      className="group border-border hover:bg-surface-2/40 transition-colors"
-                    >
-                      <TableCell className="px-6 py-4">
-                        <span className="text-foreground font-mono text-xs font-medium">
-                          {truncate(payment.transactionId, 16)}
-                        </span>
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <div>
-                          <p className="text-foreground text-sm font-bold">{payment.studentName}</p>
-                          <p className="text-foreground-muted mt-0.5 max-w-48 truncate text-xs">
-                            {payment.workshopTitle}
-                          </p>
-                        </div>
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <span className="font-display text-foreground text-sm font-bold">
-                          {formatCurrency(payment.amount)}
-                        </span>
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <StatusBadge status={payment.status} dot />
-                      </TableCell>
-                      <TableCell className="px-6 py-4">
-                        <span className="text-foreground-muted text-sm">
-                          {formatDate(payment.createdAt)}
-                        </span>
-                      </TableCell>
-                      <TableCell className="px-6 py-4 text-right">
-                        <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                ))
+              ) : payments.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={6} className="h-64 text-center">
+                    <EmptyState
+                      icon={CreditCard}
+                      title="No payments found"
+                      description="There are no payment records matching your criteria."
+                    />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                payments.map((payment) => (
+                  <TableRow
+                    key={payment.paymentId}
+                    className="group border-border hover:bg-surface-2/40 transition-colors"
+                  >
+                    <TableCell className="px-6 py-4">
+                      <span className="text-foreground font-mono text-xs font-medium">
+                        {truncate(payment.transactionId, 16)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <div>
+                        <p className="text-foreground text-sm font-bold">{payment.studentName}</p>
+                        <p className="text-foreground-muted mt-0.5 max-w-48 truncate text-xs">
+                          {payment.workshopTitle}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <span className="font-display text-foreground text-sm font-bold">
+                        {formatCurrency(payment.amount)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <StatusBadge status={payment.status} dot />
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <span className="text-foreground-muted text-sm">
+                        {formatDate(payment.createdAt)}
+                      </span>
+                    </TableCell>
+                    <TableCell className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon-xs"
+                              className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg"
+                              onClick={() => handleViewInvoice(payment.paymentId)}
+                            >
+                              <Eye className="size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>View Invoice</TooltipContent>
+                        </Tooltip>
+
+                        {payment.status === "PAID" && (
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Button
                                 variant="ghost"
                                 size="icon-xs"
-                                className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg"
-                                onClick={() => handleViewInvoice(payment.paymentId)}
+                                className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
+                                onClick={() => {
+                                  setRefundTarget(payment);
+                                  setRefundReason("");
+                                }}
                               >
-                                <Eye className="size-4" />
+                                <RotateCcw className="size-4" />
                               </Button>
                             </TooltipTrigger>
-                            <TooltipContent>View Invoice</TooltipContent>
+                            <TooltipContent>Issue Refund</TooltipContent>
                           </Tooltip>
-
-                          {payment.status === "PAID" && (
-                            <Tooltip>
-                              <TooltipTrigger asChild>
-                                <Button
-                                  variant="ghost"
-                                  size="icon-xs"
-                                  className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
-                                  onClick={() => {
-                                    setRefundTarget(payment);
-                                    setRefundReason("");
-                                  }}
-                                >
-                                  <RotateCcw className="size-4" />
-                                </Button>
-                              </TooltipTrigger>
-                              <TooltipContent>Issue Refund</TooltipContent>
-                            </Tooltip>
-                          )}
-                        </div>
-                        {/* Mobile action menu fallback */}
-                        <div className="sm:hidden">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon-xs">
-                                <MoreHorizontal className="size-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-40">
+                        )}
+                      </div>
+                      {/* Mobile action menu fallback */}
+                      <div className="sm:hidden">
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon-xs">
+                              <MoreHorizontal className="size-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-40">
+                            <DropdownMenuItem onClick={() => handleViewInvoice(payment.paymentId)}>
+                              <FileText className="mr-2 size-4" />
+                              View Invoice
+                            </DropdownMenuItem>
+                            {payment.status === "PAID" && (
                               <DropdownMenuItem
-                                onClick={() => handleViewInvoice(payment.paymentId)}
+                                onClick={() => {
+                                  setRefundTarget(payment);
+                                  setRefundReason("");
+                                }}
+                                className="text-danger focus:text-danger"
                               >
-                                <FileText className="mr-2 size-4" />
-                                View Invoice
+                                <RotateCcw className="mr-2 size-4" />
+                                Refund
                               </DropdownMenuItem>
-                              {payment.status === "PAID" && (
-                                <DropdownMenuItem
-                                  onClick={() => {
-                                    setRefundTarget(payment);
-                                    setRefundReason("");
-                                  }}
-                                  className="text-danger focus:text-danger"
-                                >
-                                  <RotateCcw className="mr-2 size-4" />
-                                  Refund
-                                </DropdownMenuItem>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
 
           {/* Pagination */}
           {!loading && totalPages > 1 && (

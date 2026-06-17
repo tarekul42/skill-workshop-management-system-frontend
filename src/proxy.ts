@@ -103,7 +103,7 @@ export async function proxy(request: NextRequest) {
 
   // ─── Security Headers ────────────────────────────────────────────────
   // CSP connect-src requires an origin (scheme+host+port), not a full path.
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:5000/api/v1";
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_API_URL || "http://localhost:5001/api/v1";
   let backendOrigin = backendUrl;
   try {
     backendOrigin = new URL(backendUrl).origin;

@@ -190,159 +190,158 @@ export default function WorkshopsPage({ params }: PageProps) {
         </div>
 
         {/* ── Table ──────────────────────────────────────────────────── */}
-        <div className="rounded-lg border">
-          <Table>
-            <TableHeader className="bg-surface-2">
-              <TableRow className="border-border border-b hover:bg-transparent">
-                <TableHead className="w-20 py-4">Image</TableHead>
-                <TableHead className="py-4">Workshop Details</TableHead>
-                <TableHead className="py-4">Category</TableHead>
-                <TableHead className="py-4">Level</TableHead>
-                <TableHead className="py-4 text-right">Price</TableHead>
-                <TableHead className="py-4">Capacity</TableHead>
-                <TableHead className="py-4">Status</TableHead>
-                <TableHead className="py-4">Created</TableHead>
-                <TableHead className="w-30 py-4 text-center">Actions</TableHead>
+        <Table>
+          <TableHeader className="bg-surface-2">
+            <TableRow className="border-border border-b hover:bg-transparent">
+              <TableHead className="w-20 py-4">Image</TableHead>
+              <TableHead className="py-4">Workshop Details</TableHead>
+              <TableHead className="py-4">Category</TableHead>
+              <TableHead className="py-4">Level</TableHead>
+              <TableHead className="py-4 text-right">Price</TableHead>
+              <TableHead className="py-4">Capacity</TableHead>
+              <TableHead className="py-4">Status</TableHead>
+              <TableHead className="py-4">Created</TableHead>
+              <TableHead className="w-30 py-4 text-center">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={9} className="p-4">
+                  <TableSkeleton rows={5} columns={9} />
+                </TableCell>
               </TableRow>
-            </TableHeader>
-            <TableBody>
-              {isLoading ? (
-                <TableRow>
-                  <TableCell colSpan={9} className="p-4">
-                    <TableSkeleton rows={5} columns={9} />
-                  </TableCell>
-                </TableRow>
-              ) : workshops.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={9} className="h-48 text-center">
-                    <p className="text-muted-foreground text-sm">
-                      {searchTerm ? "No workshops match your search." : "No workshops found."}
-                    </p>
-                  </TableCell>
-                </TableRow>
-              ) : (
-                workshops
-                  .filter((ws: IWorkshop) => {
-                    if (statusFilter === "all") return true;
-                    const isPublished = ws.currentEnrollments > 0 || ws.price === 0;
-                    return statusFilter === "published" ? isPublished : !isPublished;
-                  })
-                  .map((ws: IWorkshop) => {
-                    const enrollmentRate = (ws.currentEnrollments / (ws.maxSeats || 1)) * 100;
-                    const isFull = (ws.currentEnrollments || 0) >= (ws.maxSeats || 0);
+            ) : workshops.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={9} className="h-48 text-center">
+                  <p className="text-muted-foreground text-sm">
+                    {searchTerm ? "No workshops match your search." : "No workshops found."}
+                  </p>
+                </TableCell>
+              </TableRow>
+            ) : (
+              workshops
+                .filter((ws: IWorkshop) => {
+                  if (statusFilter === "all") return true;
+                  const isPublished = ws.currentEnrollments > 0 || ws.price === 0;
+                  return statusFilter === "published" ? isPublished : !isPublished;
+                })
+                .map((ws: IWorkshop) => {
+                  const enrollmentRate = (ws.currentEnrollments / (ws.maxSeats || 1)) * 100;
+                  const isFull = (ws.currentEnrollments || 0) >= (ws.maxSeats || 0);
 
-                    return (
-                      <TableRow key={ws._id} className="group hover:bg-surface-2 transition-colors">
-                        <TableCell>
-                          <div className="border-border bg-surface-3 relative h-10 w-13 shrink-0 overflow-hidden rounded-md border">
-                            {ws.images && ws.images.length > 0 ? (
-                              <Image
-                                src={ws.images[0]}
-                                alt={ws.title}
-                                fill
-                                sizes="52px"
-                                className="object-cover transition-transform group-hover:scale-105"
-                              />
-                            ) : (
-                              <div className="text-muted-foreground flex size-full items-center justify-center text-[8px] font-bold tracking-tighter uppercase">
-                                No Img
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col">
-                            <span className="font-display text-foreground max-w-50 truncate text-[15px] font-semibold">
-                              {ws.title}
-                            </span>
-                            <span className="text-muted-foreground text-[12px] font-medium">
-                              /{ws.slug || ws._id.slice(-6)}
-                            </span>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className="border-accent-subtle bg-accent-subtle/10 text-accent rounded-full px-2 text-[10px] font-bold"
-                          >
-                            {getCategoryName(ws.category) || "Uncategorized"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge
-                            variant="outline"
-                            className="border-primary-subtle bg-primary-subtle/10 text-primary rounded-full px-2 text-[10px] font-bold"
-                          >
-                            {getLevelName(ws.level) || "General"}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <span className="font-display text-foreground text-[16px] font-bold">
-                            {ws.price != null && ws.price > 0 ? formatCurrency(ws.price) : "Free"}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex min-w-25 flex-col gap-1.5">
-                            <div className="flex items-center justify-between text-[11px] font-bold">
-                              <span className={isFull ? "text-destructive" : "text-foreground"}>
-                                {ws.currentEnrollments || 0}/{ws.maxSeats || "∞"}
-                              </span>
-                              {isFull && (
-                                <span className="text-destructive text-[9px] uppercase">Full</span>
-                              )}
+                  return (
+                    <TableRow key={ws._id} className="group hover:bg-surface-2 transition-colors">
+                      <TableCell>
+                        <div className="border-border bg-surface-3 relative h-10 w-13 shrink-0 overflow-hidden rounded-md border">
+                          {ws.images && ws.images.length > 0 ? (
+                            <Image
+                              src={ws.images[0]}
+                              alt={ws.title}
+                              fill
+                              sizes="52px"
+                              className="object-cover transition-transform group-hover:scale-105"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="text-muted-foreground flex size-full items-center justify-center text-[8px] font-bold tracking-tighter uppercase">
+                              No Img
                             </div>
-                            {ws.maxSeats && (
-                              <div className="bg-surface-3 h-1.5 w-full overflow-hidden rounded-full">
-                                <div
-                                  className={cn(
-                                    "h-full rounded-full transition-all duration-1000",
-                                    isFull ? "bg-destructive" : "bg-primary"
-                                  )}
-                                  style={{
-                                    width: `${Math.min(enrollmentRate, 100)}%`,
-                                  }}
-                                />
-                              </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex flex-col">
+                          <span className="font-display text-foreground max-w-50 truncate text-[15px] font-semibold">
+                            {ws.title}
+                          </span>
+                          <span className="text-muted-foreground text-[12px] font-medium">
+                            /{ws.slug || ws._id.slice(-6)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className="border-accent-subtle bg-accent-subtle/10 text-accent rounded-full px-2 text-[10px] font-bold"
+                        >
+                          {getCategoryName(ws.category) || "Uncategorized"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className="border-primary-subtle bg-primary-subtle/10 text-primary rounded-full px-2 text-[10px] font-bold"
+                        >
+                          {getLevelName(ws.level) || "General"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <span className="font-display text-foreground text-[16px] font-bold">
+                          {ws.price != null && ws.price > 0 ? formatCurrency(ws.price) : "Free"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex min-w-25 flex-col gap-1.5">
+                          <div className="flex items-center justify-between text-[11px] font-bold">
+                            <span className={isFull ? "text-destructive" : "text-foreground"}>
+                              {ws.currentEnrollments || 0}/{ws.maxSeats || "∞"}
+                            </span>
+                            {isFull && (
+                              <span className="text-destructive text-[9px] uppercase">Full</span>
                             )}
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          <StatusBadge
-                            status={
-                              ws.currentEnrollments > 0 || ws.price === 0 ? "Published" : "Draft"
-                            }
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <span className="text-muted-foreground cursor-default text-xs font-medium underline decoration-dotted underline-offset-4">
-                                {formatDate(ws.createdAt)}
-                              </span>
-                            </TooltipTrigger>
-                            <TooltipContent side="top">
-                              <p className="text-[10px] font-bold">
-                                Full Date: {new Date(ws.createdAt).toLocaleString()}
-                              </p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TableCell>
-                        <TableCell>
-                          <WorkshopActions
-                            workshop={ws}
-                            role={dashboardRole}
-                            onView={() => setViewWorkshop(ws)}
-                            onEdit={() => router.push(`/${dashboardRole}/workshops/${ws._id}/edit`)}
-                            onDelete={() => setDeleteTarget(ws)}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                          {ws.maxSeats && (
+                            <div className="bg-surface-3 h-1.5 w-full overflow-hidden rounded-full">
+                              <div
+                                className={cn(
+                                  "h-full rounded-full transition-all duration-1000",
+                                  isFull ? "bg-destructive" : "bg-primary"
+                                )}
+                                style={{
+                                  width: `${Math.min(enrollmentRate, 100)}%`,
+                                }}
+                              />
+                            </div>
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <StatusBadge
+                          status={
+                            ws.currentEnrollments > 0 || ws.price === 0 ? "Published" : "Draft"
+                          }
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="text-muted-foreground cursor-default text-xs font-medium underline decoration-dotted underline-offset-4">
+                              {formatDate(ws.createdAt)}
+                            </span>
+                          </TooltipTrigger>
+                          <TooltipContent side="top">
+                            <p className="text-[10px] font-bold">
+                              Full Date: {new Date(ws.createdAt).toLocaleString()}
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TableCell>
+                      <TableCell>
+                        <WorkshopActions
+                          workshop={ws}
+                          role={dashboardRole}
+                          onView={() => setViewWorkshop(ws)}
+                          onEdit={() => router.push(`/${dashboardRole}/workshops/${ws._id}/edit`)}
+                          onDelete={() => setDeleteTarget(ws)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })
+            )}
+          </TableBody>
+        </Table>
 
         {/* ── Server Pagination ──────────────────────────────────────── */}
         {!isLoading && totalPages > 1 && (
@@ -396,6 +395,7 @@ export default function WorkshopsPage({ params }: PageProps) {
                           fill
                           sizes="192px"
                           className="object-cover"
+                          loading="lazy"
                         />
                       </div>
                     ))}

@@ -745,3 +745,38 @@ export async function submitContact(payload: ContactInput): Promise<{ _id: strin
     body: payload,
   });
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// DASHBOARD SERVICES
+// ═══════════════════════════════════════════════════════════════════════
+
+/**
+ * Fetch consolidated admin dashboard stats (replaces 7 separate API calls).
+ */
+export async function fetchAdminDashboard(): Promise<{
+  users: {
+    totalUsers: number;
+    newUsersInLastSevenDays: number;
+    usersByRole: { _id: string; count: number }[];
+  };
+  workshops: {
+    totalWorkshop: number;
+    totalWorkshopByCategory: { _id: string; count: number }[];
+  };
+  enrollments: {
+    totalEnrollment: number;
+    enrollmentsLastSevenDays: number;
+  };
+  payments: {
+    totalPayment: number;
+    totalRevenue: { _id: null; totalRevenue: number }[];
+  };
+  trends: {
+    enrollmentTrends: { _id: { year: number; month: number }; count: number }[];
+    revenueTrends: { _id: { year: number; month: number }; revenue: number }[];
+    userTrends: { _id: { year: number; month: number }; count: number }[];
+    dailyEnrollments: { _id: { year: number; month: number; day: number }; count: number }[];
+  };
+}> {
+  return apiClient("/stats/dashboard");
+}

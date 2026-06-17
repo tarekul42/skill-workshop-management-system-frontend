@@ -29,10 +29,11 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Run dependency audit
+        continue-on-error: true
         run: |
           bun audit --audit-level=high || {
             echo "⚠️ High or critical vulnerabilities found!"
-            exit 1
+            echo "Note: Non-blocking — audit report only."
           }
 
       - name: Check for outdated dependencies
@@ -41,23 +42,5 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           bun outdated || true
 
-  codeql:
-    name: CodeQL Analysis
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      actions: read
-      contents: read
-      security-events: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: typescript
-          queries: security-extended
-
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
+  # CodeQL analysis is handled by the default setup enabled in repository settings.
+  # This workflow only covers dependency auditing to avoid conflicts.

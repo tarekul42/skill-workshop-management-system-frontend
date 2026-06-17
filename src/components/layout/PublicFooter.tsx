@@ -21,20 +21,20 @@ const platformLinks = [
 const instructorLinks = [
   { label: "Become an Instructor", href: "/register?role=instructor" },
   { label: "Instructor Dashboard", href: "/instructor/dashboard" },
-  { label: "Teaching Resources", href: "/resources" },
-  { label: "Support", href: "/support" },
+  { label: "FAQ", href: "/faq" },
+  { label: "Contact Support", href: "/contact" },
 ] as const;
 
 const socialLinks = [
-  { label: "Facebook", href: "#", icon: Globe },
-  { label: "Twitter", href: "#", icon: MessageSquare },
-  { label: "LinkedIn", href: "#", icon: Share2 },
-  { label: "YouTube", href: "#", icon: Play },
+  { label: "Facebook", href: "https://facebook.com/skillworkshop", icon: Globe },
+  { label: "Twitter", href: "https://twitter.com/skillworkshop", icon: MessageSquare },
+  { label: "LinkedIn", href: "https://linkedin.com/company/skillworkshop", icon: Share2 },
+  { label: "YouTube", href: "https://youtube.com/@skillworkshop", icon: Play },
 ] as const;
 
 export function PublicFooter() {
   return (
-    <footer className="bg-sidebar-bg text-sidebar-text mt-auto border-t border-white/5">
+    <footer className="bg-sidebar-bg text-sidebar-text border-sidebar-border/50 mt-auto border-t">
       <div className="site-container py-16">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
           {/* Column 1: Brand */}
@@ -55,7 +55,7 @@ export function PublicFooter() {
                   key={social.label}
                   href={social.href}
                   aria-label={social.label}
-                  className="bg-sidebar-hover text-sidebar-text-muted hover:bg-primary flex size-10 items-center justify-center rounded-xl transition-all hover:text-white"
+                  className="bg-sidebar-hover text-sidebar-text-muted hover:bg-primary hover:text-primary-foreground flex size-10 items-center justify-center rounded-xl transition-all"
                 >
                   <social.icon className="size-5" />
                 </a>
@@ -65,7 +65,7 @@ export function PublicFooter() {
 
           {/* Column 2: Platform */}
           <div>
-            <h3 className="font-display mb-6 text-lg font-bold text-white">Platform</h3>
+            <h3 className="font-display text-sidebar-text mb-6 text-lg font-bold">Platform</h3>
             <ul className="space-y-4">
               {platformLinks.map((link) => (
                 <li key={link.href}>
@@ -82,7 +82,9 @@ export function PublicFooter() {
 
           {/* Column 3: Instructors */}
           <div>
-            <h3 className="font-display mb-6 text-lg font-bold text-white">For Instructors</h3>
+            <h3 className="font-display text-sidebar-text mb-6 text-lg font-bold">
+              For Instructors
+            </h3>
             <ul className="space-y-4">
               {instructorLinks.map((link) => (
                 <li key={link.label}>
@@ -99,7 +101,7 @@ export function PublicFooter() {
 
           {/* Column 4: Contact */}
           <div>
-            <h3 className="font-display mb-6 text-lg font-bold text-white">Contact Info</h3>
+            <h3 className="font-display text-sidebar-text mb-6 text-lg font-bold">Contact Info</h3>
             <ul className="space-y-5">
               <li className="flex items-start gap-4">
                 <div className="bg-sidebar-hover flex size-10 shrink-0 items-center justify-center rounded-xl">
@@ -129,7 +131,7 @@ export function PublicFooter() {
                     href="tel:+8801234567890"
                     className="hover:text-primary text-sm font-medium transition-colors"
                   >
-                    +880 1234-567890
+                    +880 1712-345678
                   </a>
                 </div>
               </li>
@@ -149,7 +151,7 @@ export function PublicFooter() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-20 flex flex-col gap-6 border-t border-white/5 pt-10 md:flex-row md:items-center md:justify-between">
+        <div className="border-sidebar-border/50 mt-20 flex flex-col gap-6 border-t pt-10 md:flex-row md:items-center md:justify-between">
           <p className="text-sidebar-text-muted text-sm">
             &copy; {new Date().getFullYear()} Skill Workshop. All rights reserved.
           </p>
