@@ -11,7 +11,6 @@ import {
   User,
   Search,
   Banknote,
-  FileText,
   Calendar,
 } from "lucide-react";
 
@@ -245,7 +244,7 @@ export function StudentDashboard({
                       <div className="flex items-center gap-4">
                         {isPending && (
                           <Link
-                            href={`/checkout/${enrollment._id}`}
+                            href="/student/payments"
                             className="text-warning text-xs font-bold tracking-widest uppercase hover:underline"
                           >
                             Pay Now &rarr;
@@ -287,7 +286,7 @@ export function StudentDashboard({
           <h2 className="font-display text-foreground mb-8 text-2xl font-bold tracking-tight">
             Quick Actions
           </h2>
-          <div className="grid gap-5 sm:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2">
             <Link
               href="/workshops"
               className="group border-primary/10 bg-primary-subtle/50 hover:bg-primary flex flex-col items-start gap-6 rounded-3xl border p-6 transition-all duration-300 hover:shadow-xl"
@@ -301,23 +300,6 @@ export function StudentDashboard({
                 </h3>
                 <p className="text-primary/70 mt-1.5 text-sm font-medium transition-colors group-hover:text-white/80">
                   Find your next favorite skill
-                </p>
-              </div>
-            </Link>
-
-            <Link
-              href="/student/payments"
-              className="group border-accent/10 bg-accent-subtle/50 hover:bg-accent flex flex-col items-start gap-6 rounded-3xl border p-6 transition-all duration-300 hover:shadow-xl"
-            >
-              <div className="flex size-14 items-center justify-center rounded-2xl bg-white shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3 group-hover:bg-white/20">
-                <FileText className="text-accent-foreground size-7 transition-colors group-hover:text-white" />
-              </div>
-              <div>
-                <h3 className="font-display text-accent-foreground text-xl font-bold transition-colors group-hover:text-white">
-                  My Certificates
-                </h3>
-                <p className="text-accent-foreground/70 mt-1.5 text-sm font-medium transition-colors group-hover:text-white/80">
-                  Download your achievements
                 </p>
               </div>
             </Link>

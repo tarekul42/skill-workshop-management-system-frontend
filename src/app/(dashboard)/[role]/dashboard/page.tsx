@@ -9,6 +9,8 @@ import {
   ArrowRight,
   ExternalLink,
   Calendar,
+  DollarSign,
+  Users,
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +20,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getSavedUser } from "@/lib/auth-helpers";
 import { apiClient, apiClientPaginated } from "@/lib/api-client";
-import { formatDate } from "@/lib/formatters";
+import { fetchAdminDashboard } from "@/lib/api/services";
+import { formatDate, formatCurrency } from "@/lib/formatters";
 import { AnimatedPage, StaggerContainer, StaggerItem } from "@/components/ui/animated-page";
 import { StudentDashboard } from "@/components/features/dashboard/StudentDashboard";
 import {
@@ -30,6 +33,7 @@ import {
   AdminDashboard,
   type AuditLogItem,
   type PlatformHealth,
+  type AdminDashboardProps,
 } from "@/components/features/dashboard/AdminDashboard";
 
 // ─── Props ──────────────────────────────────────────────────────────
@@ -58,6 +62,15 @@ interface WorkshopItem {
   maxSeats?: number;
   createdAt?: string;
   status?: string;
+}
+
+// ─── Stats API Response Types ───────────────────────────────────────
+
+interface HealthDashboardResponse {
+  status: string;
+  responseTimeMs: number;
+  redis: { connected: boolean };
+  database: { connected: boolean; latencyMs: number };
 }
 
 // ─── Stat Card ──────────────────────────────────────────────────────
@@ -159,13 +172,14 @@ function ActivityItem({
 // ─── Dashboard Page ─────────────────────────────────────────────────
 
 export default function DashboardPage({ params }: PageProps) {
-  const { role } = React.use(params);
+  const role = React.use(params).role;
+  const normalizedRole = role?.toUpperCase() ?? "";
   const [mounted, setMounted] = useState(false);
   const user = mounted ? getSavedUser() : null;
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [stats] = useState<StatCardProps[]>([]);
+  const [stats, setStats] = useState<StatCardProps[]>([]);
   const [recentEnrollments] = useState<EnrollmentItem[]>([]);
   const [recentWorkshops] = useState<WorkshopItem[]>([]);
   const [studentData, setStudentData] = useState<{
@@ -201,45 +215,74 @@ export default function DashboardPage({ params }: PageProps) {
       roles: { name: string; value: number }[];
       categories: { name: string; count: number }[];
     };
+    trends: AdminDashboardProps["trends"];
   } | null>(null);
 
   useEffect(() => {
-    if (!role) return;
+    if (!normalizedRole) return;
 
     async function loadDashboard() {
       setLoading(true);
       setError(null);
 
       try {
-        if (role === "SUPER_ADMIN" || role === "ADMIN") {
-          const [usersRes, workshopsRes, enrollmentsRes, paymentsRes, auditLogsRes] =
-            await Promise.allSettled([
-              apiClient<{ totalUsers: number }>("/stats/users"),
-              apiClient<{ totalWorkshop: number }>("/stats/workshops"),
-              apiClient<{ totalEnrollment: number }>("/stats/enrollment"),
-              apiClient<{ totalRevenue: { _id: null; totalRevenue: number }[] }>("/stats/payment"),
-              apiClientPaginated<AuditLogItem[]>("/audit-log?page=1&limit=10"),
-              apiClient<unknown>("/health/health-check"),
-            ]);
+        if (normalizedRole === "SUPER_ADMIN" || normalizedRole === "ADMIN") {
+          const [dashboardRes, auditLogsRes, healthRes] = await Promise.allSettled([
+            fetchAdminDashboard(),
+            apiClientPaginated<AuditLogItem[]>("/audit?page=1&limit=10"),
+            apiClient<HealthDashboardResponse>("/health/dashboard"),
+          ]);
 
-          const totalUsers = usersRes.status === "fulfilled" ? (usersRes.value.totalUsers ?? 0) : 0;
-          const totalWorkshops =
-            workshopsRes.status === "fulfilled" ? (workshopsRes.value.totalWorkshop ?? 0) : 0;
-          const totalEnrollments =
-            enrollmentsRes.status === "fulfilled" ? (enrollmentsRes.value.totalEnrollment ?? 0) : 0;
-          const totalRevenue =
-            paymentsRes.status === "fulfilled"
-              ? (paymentsRes.value.totalRevenue?.[0]?.totalRevenue ?? 0)
-              : 0;
+          const usersStats = dashboardRes.status === "fulfilled" ? dashboardRes.value.users : null;
+          const workshopsStats =
+            dashboardRes.status === "fulfilled" ? dashboardRes.value.workshops : null;
+          const enrollmentsStats =
+            dashboardRes.status === "fulfilled" ? dashboardRes.value.enrollments : null;
+          const paymentsStats =
+            dashboardRes.status === "fulfilled" ? dashboardRes.value.payments : null;
+          const trendsData = dashboardRes.status === "fulfilled" ? dashboardRes.value.trends : null;
+
+          const totalUsers = usersStats?.totalUsers ?? 0;
+          const totalWorkshops = workshopsStats?.totalWorkshop ?? 0;
+          const totalEnrollments = enrollmentsStats?.totalEnrollment ?? 0;
+          const totalRevenue = paymentsStats?.totalRevenue?.[0]?.totalRevenue ?? 0;
 
           const auditLogs =
             auditLogsRes.status === "fulfilled" ? (auditLogsRes.value.data ?? []) : [];
 
+          // Health from real /health/dashboard endpoint
+          const healthRaw = healthRes.status === "fulfilled" ? healthRes.value : null;
           const health: PlatformHealth = {
-            api: { status: "HEALTHY", latency: 45 },
-            db: { status: "HEALTHY", latency: 12 },
-            cache: { status: "HEALTHY", latency: 8 },
+            api: {
+              status: healthRaw?.status === "healthy" ? "HEALTHY" : "DEGRADED",
+              latency: healthRaw?.responseTimeMs ?? 0,
+            },
+            db: {
+              status: healthRaw?.database?.connected ? "HEALTHY" : "DOWN",
+              latency: healthRaw?.database?.latencyMs ?? 0,
+            },
+            cache: { status: healthRaw?.redis?.connected ? "HEALTHY" : "DOWN", latency: 0 },
           };
+
+          // Role distribution from real usersByRole data
+          const usersByRole = usersStats?.usersByRole ?? [];
+          const roles =
+            usersByRole.length > 0
+              ? usersByRole.map((r: { _id: string; count: number }) => ({
+                  name: r._id.charAt(0) + r._id.slice(1).toLowerCase().replace(/_/g, " "),
+                  value: r.count,
+                }))
+              : [{ name: "Students", value: Math.max(1, totalUsers) }];
+
+          // Category distribution from real totalWorkshopByCategory data
+          const categoriesData = workshopsStats?.totalWorkshopByCategory ?? [];
+          const categories = categoriesData.map((c: { _id: string; count: number }) => ({
+            name: c._id,
+            count: c.count,
+          }));
+
+          // Trends data
+          const trends = trendsData;
 
           setAdminData({
             stats: {
@@ -251,20 +294,43 @@ export default function DashboardPage({ params }: PageProps) {
             auditLogs,
             health,
             distribution: {
-              roles: [
-                { name: "Students", value: Math.floor(totalUsers * 0.85) },
-                { name: "Instructors", value: Math.floor(totalUsers * 0.12) },
-                { name: "Admins", value: Math.floor(totalUsers * 0.03) },
-              ],
-              categories: [
-                { name: "Development", count: 45 },
-                { name: "Design", count: 32 },
-                { name: "Marketing", count: 18 },
-                { name: "Business", count: 24 },
-              ],
+              roles,
+              categories,
             },
+            trends,
           });
-        } else if (role === "INSTRUCTOR") {
+
+          setStats([
+            {
+              icon: <Users className="text-primary size-4" />,
+              label: "Total Users",
+              value: totalUsers.toLocaleString(),
+              change: `${usersStats?.newUsersInLastSevenDays ?? 0} new this week`,
+              iconBg: "bg-primary-subtle",
+            },
+            {
+              icon: <BookOpen className="text-success size-4" />,
+              label: "Workshops",
+              value: totalWorkshops.toLocaleString(),
+              change: `${totalWorkshops} active`,
+              iconBg: "bg-success-subtle",
+            },
+            {
+              icon: <DollarSign className="text-warning size-4" />,
+              label: "Revenue",
+              value: formatCurrency(totalRevenue),
+              change: `${paymentsStats?.totalPayment ?? 0} transactions`,
+              iconBg: "bg-warning-subtle",
+            },
+            {
+              icon: <ClipboardList className="text-info size-4" />,
+              label: "Enrollments",
+              value: totalEnrollments.toLocaleString(),
+              change: `${enrollmentsStats?.enrollmentsLastSevenDays ?? 0} enrolled this week`,
+              iconBg: "bg-info-subtle",
+            },
+          ]);
+        } else if (normalizedRole === "INSTRUCTOR") {
           const [workshopsRes, enrollmentsRes] = await Promise.allSettled([
             apiClientPaginated<WorkshopItem[]>("/workshop?page=1&limit=100"),
             apiClientPaginated<EnrollmentItem[]>("/enrollment?page=1&limit=100"),
@@ -329,7 +395,7 @@ export default function DashboardPage({ params }: PageProps) {
               status: e.status || "PENDING",
             })),
           });
-        } else if (role === "STUDENT") {
+        } else if (normalizedRole === "STUDENT") {
           const enrollmentsRes = await Promise.allSettled([
             apiClient<EnrollmentItem[]>("/enrollment/my-enrollments"),
           ]);
@@ -379,11 +445,11 @@ export default function DashboardPage({ params }: PageProps) {
     const timer = setTimeout(() => setMounted(true), 0);
     loadDashboard();
     return () => clearTimeout(timer);
-  }, [role]);
+  }, [role, normalizedRole]);
 
-  const dashboardBase = `/${(role ?? "student").toLowerCase()}`;
+  const dashboardBase = `/${normalizedRole.toLowerCase()}`;
 
-  if (role === "STUDENT" && studentData && !loading && !error) {
+  if (normalizedRole === "STUDENT" && studentData && !loading && !error) {
     return (
       <StudentDashboard
         user={user}
@@ -394,7 +460,7 @@ export default function DashboardPage({ params }: PageProps) {
     );
   }
 
-  if (role === "INSTRUCTOR" && instructorData && !loading && !error) {
+  if (normalizedRole === "INSTRUCTOR" && instructorData && !loading && !error) {
     return (
       <InstructorDashboard
         user={user}
@@ -405,14 +471,21 @@ export default function DashboardPage({ params }: PageProps) {
     );
   }
 
-  if ((role === "ADMIN" || role === "SUPER_ADMIN") && adminData && !loading && !error) {
+  if (
+    (normalizedRole === "ADMIN" || normalizedRole === "SUPER_ADMIN") &&
+    adminData &&
+    !loading &&
+    !error
+  ) {
     return (
       <AdminDashboard
         user={user}
         stats={adminData.stats}
         auditLogs={adminData.auditLogs}
+        auditBase={`${dashboardBase}/audit-logs`}
         health={adminData.health}
         distribution={adminData.distribution}
+        trends={adminData.trends}
       />
     );
   }
@@ -423,9 +496,9 @@ export default function DashboardPage({ params }: PageProps) {
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Welcome back, {user?.name ?? "User"}!</h1>
         <p className="text-muted-foreground">
-          {role === "STUDENT"
+          {normalizedRole === "STUDENT"
             ? "Track your workshop enrollments and progress."
-            : role === "INSTRUCTOR"
+            : normalizedRole === "INSTRUCTOR"
               ? "Monitor your workshops, students, and revenue."
               : "Here's an overview of your platform."}
         </p>
@@ -470,7 +543,9 @@ export default function DashboardPage({ params }: PageProps) {
               <div className="flex items-center gap-2">
                 <ClipboardList className="text-muted-foreground size-4" />
                 <CardTitle className="text-base">
-                  {role === "STUDENT" ? "My Recent Enrollments" : "Recent Student Enrollments"}
+                  {normalizedRole === "STUDENT"
+                    ? "My Recent Enrollments"
+                    : "Recent Student Enrollments"}
                 </CardTitle>
               </div>
               <Button variant="ghost" size="sm" asChild>
@@ -511,7 +586,9 @@ export default function DashboardPage({ params }: PageProps) {
       {!loading &&
         !error &&
         recentWorkshops.length > 0 &&
-        (role === "SUPER_ADMIN" || role === "ADMIN" || role === "INSTRUCTOR") && (
+        (normalizedRole === "SUPER_ADMIN" ||
+          normalizedRole === "ADMIN" ||
+          normalizedRole === "INSTRUCTOR") && (
           <StaggerItem>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">

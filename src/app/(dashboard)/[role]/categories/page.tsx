@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import {
   Plus,
@@ -86,9 +86,10 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     }
   }, []);
 
-  // useEffect(() => {
-  //   fetchCategoriesData();
-  // }, [fetchCategoriesData]);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchCategoriesData();
+  }, [fetchCategoriesData]);
 
   // ── Form helpers ──────────────────────────────────────────────────
 

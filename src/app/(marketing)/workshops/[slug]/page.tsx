@@ -11,7 +11,6 @@ import {
   ArrowLeft,
   Clock,
   Shield,
-  Share2,
   BookOpen,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EnrollButton } from "@/components/features/workshops/EnrollButton";
+import { ShareButtons } from "@/components/features/workshops/ShareButtons";
 import { ReviewSection } from "@/components/features/reviews/ReviewSection";
 import { BACKEND_API_URL } from "@/lib/constants";
 import {
@@ -57,7 +57,7 @@ function getLevelBadgeVariant(level: string): "default" | "secondary" | "danger"
 function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
   return (
     <div className="group block h-full">
-      <div className="border-border bg-surface-1 shadow-raised hover:shadow-float flex h-full flex-col overflow-hidden rounded-[20px] border transition-all duration-300 hover:-translate-y-0.75">
+      <div className="border-border bg-surface-1 shadow-raised hover:shadow-float flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-0.75">
         {/* Image Container */}
         <div className="relative h-45 shrink-0 overflow-hidden">
           {workshop.images && workshop.images.length > 0 ? (
@@ -353,7 +353,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
             <div className="mb-2">
               {/* Image Carousel - Height 440px, border-radius 20px */}
               <div
-                className="relative mb-7 overflow-hidden rounded-[20px]"
+                className="relative mb-7 overflow-hidden rounded-2xl"
                 style={{ height: "440px" }}
               >
                 {workshop.images && workshop.images.length > 0 ? (
@@ -704,30 +704,7 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                   Share this workshop
                 </p>
                 <div className="flex gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    className="rounded-full"
-                    aria-label="Copy Link"
-                  >
-                    <Share2 className="size-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    className="rounded-full"
-                    aria-label="Share on Facebook"
-                  >
-                    <span className="text-xs font-bold">f</span>
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    className="rounded-full"
-                    aria-label="Share on LinkedIn"
-                  >
-                    <span className="text-xs font-bold">in</span>
-                  </Button>
+                  <ShareButtons />
                 </div>
               </div>
             </div>

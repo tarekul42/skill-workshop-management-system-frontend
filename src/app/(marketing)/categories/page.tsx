@@ -12,9 +12,9 @@ import {
   Terminal,
   Camera,
   BarChart3,
+  Cloud,
   ArrowRight,
   BookOpen,
-  Sparkles,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -33,6 +33,7 @@ const categoryIconMap: Record<string, { icon: React.ElementType; color: string }
   Programming: { icon: Terminal, color: "oklch(0.6 0.2 150)" },
   Photography: { icon: Camera, color: "oklch(0.6 0.2 340)" },
   "Data Science": { icon: BarChart3, color: "oklch(0.6 0.2 200)" },
+  "DevOps & Cloud Infrastructure": { icon: Cloud, color: "oklch(0.5 0.15 220)" },
 };
 
 function getCategoryGradient(name: string) {
@@ -69,9 +70,9 @@ function CategoryCard({ category }: { category: ICategory }) {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      className="group border-border bg-surface-1 hover:shadow-float relative flex flex-col overflow-hidden rounded-3xl border transition-all duration-300 hover:-translate-y-1"
+      className="group border-border bg-surface-1 hover:shadow-float relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-1"
     >
-      <Link href={`/categories/${category.slug}`} className="absolute inset-0 z-10">
+      <Link href={`/workshops?category=${category.slug}`} className="absolute inset-0 z-10">
         <span className="sr-only">View {category.name}</span>
       </Link>
 
@@ -145,17 +146,15 @@ export default function CategoriesPage() {
   return (
     <div className="flex min-h-screen flex-col">
       {/* Hero Section */}
-      <section className="from-primary-subtle to-background relative overflow-hidden bg-linear-to-b py-20 lg:py-28">
-        <div className="bg-dot-pattern absolute top-0 left-1/2 h-full w-full -translate-x-1/2 opacity-40" />
-        <div className="site-container relative z-10 text-center">
+      <section className="from-primary/10 via-primary/5 to-background relative overflow-hidden bg-linear-to-br py-24">
+        <div className="bg-primary/5 pointer-events-none absolute -top-24 left-1/2 h-100 w-150 -translate-x-1/2 rounded-full blur-3xl" />
+        <div className="site-container relative text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-primary/10 border-primary/10 mb-6 inline-flex items-center gap-2 rounded-full border px-3 py-1"
           >
-            <Sparkles className="text-primary size-4" />
-            <span className="text-primary text-xs font-bold tracking-widest uppercase">
+            <span className="text-primary mb-4 block text-xs font-bold tracking-[0.2em] uppercase">
               All Disciplines
             </span>
           </motion.div>
@@ -164,7 +163,7 @@ export default function CategoriesPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-display-lg sm:text-display-xl text-foreground mx-auto max-w-3xl font-black tracking-tight"
+            className="font-display text-foreground text-4xl font-bold tracking-tight sm:text-5xl"
           >
             Explore by <span className="text-primary">Category</span>
           </motion.h1>
@@ -182,15 +181,15 @@ export default function CategoriesPage() {
       </section>
 
       {/* Categories Grid */}
-      <section className="site-container py-16 lg:py-24">
+      <section className="site-container py-24">
         {loading ? (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-surface-2 animate-shimmer aspect-4/3 rounded-3xl" />
+              <div key={i} className="bg-surface-2 aspect-4/3 animate-pulse rounded-2xl" />
             ))}
           </div>
         ) : categories.length > 0 ? (
-          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => (
               <CategoryCard key={category._id} category={category} />
             ))}
@@ -205,21 +204,19 @@ export default function CategoriesPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="site-container mb-24">
-        <div className="bg-foreground relative overflow-hidden rounded-[40px] p-8 sm:p-16">
-          <div className="from-primary/20 to-accent/20 absolute inset-0 bg-linear-to-br opacity-50" />
-          <div className="relative z-10 flex flex-col items-center justify-between gap-10 md:flex-row">
-            <div className="max-w-xl text-center md:text-left">
-              <h2 className="text-display-sm sm:text-display-md mb-4 font-bold text-white">
-                Can&apos;t find what you&apos;re looking for?
-              </h2>
-              <p className="text-lg text-white/70">
-                We&apos;re constantly adding new workshops. Tell us what you&apos;d like to learn!
-              </p>
-            </div>
+      <section className="bg-primary">
+        <div className="site-container py-24">
+          <div className="mx-auto max-w-2xl text-center">
+            <h2 className="text-primary-foreground font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Can&apos;t find what you&apos;re looking for?
+            </h2>
+            <p className="text-primary-foreground/80 mt-4">
+              We&apos;re constantly adding new workshops. Tell us what you&apos;d like to learn!
+            </p>
             <Button
+              variant="secondary"
               size="lg"
-              className="text-foreground shadow-spotlight h-14 shrink-0 rounded-2xl bg-white px-8 text-base font-bold hover:bg-white/90"
+              className="bg-background text-foreground hover:bg-background/90 mt-8"
             >
               Request a Category
             </Button>

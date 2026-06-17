@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useMemo } from "react";
 import {
   LineChart,
   Line,
@@ -15,6 +15,7 @@ import {
   Cell,
   Legend,
 } from "recharts";
+import Link from "next/link";
 import {
   Users,
   BookOpen,
@@ -27,22 +28,28 @@ import {
   CheckCircle2,
   AlertCircle,
   XCircle,
+  ArrowRight,
 } from "lucide-react";
 
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { AnimatedPage, StaggerContainer, StaggerItem } from "@/components/ui/animated-page";
 import { Badge } from "@/components/ui/badge";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
+import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import type { AuditAction } from "@/types/audit.types";
 
 // ─── Types ──────────────────────────────────────────────────────────
 
 export interface AuditLogItem {
   _id: string;
-  action: string;
-  collection: string;
-  userEmail: string;
-  timestamp: string;
+  action: AuditAction;
+  collectionName: string;
+  documentId: string;
+  performedBy?: { _id: string; name: string; email: string; role: string };
+  ipAddress?: string;
+  userAgent?: string;
+  createdAt: string;
 }
 
 export interface PlatformHealth {
@@ -60,35 +67,28 @@ export interface AdminDashboardProps {
     totalEnrollments: number;
   };
   auditLogs: AuditLogItem[];
+  auditBase?: string;
   health: PlatformHealth;
   distribution: {
     roles: { name: string; value: number }[];
     categories: { name: string; count: number }[];
   };
+  trends: {
+    enrollmentTrends: { _id: { year: number; month: number }; count: number }[];
+    revenueTrends: { _id: { year: number; month: number }; revenue: number }[];
+    userTrends: { _id: { year: number; month: number }; count: number }[];
+    dailyEnrollments: { _id: { year: number; month: number; day: number }; count: number }[];
+  } | null;
 }
 
-// ─── Mock Trend Data ────────────────────────────────────────────────
-
-const sparklineData = [
-  { value: 40 },
-  { value: 35 },
-  { value: 55 },
-  { value: 45 },
-  { value: 70 },
-  { value: 65 },
-  { value: 85 },
-];
-
-const analyticsData = [
-  { name: "Jan", revenue: 45000, enrollments: 120, users: 450 },
-  { name: "Feb", revenue: 52000, enrollments: 150, users: 510 },
-  { name: "Mar", revenue: 48000, enrollments: 140, users: 580 },
-  { name: "Apr", revenue: 61000, enrollments: 190, users: 690 },
-  { name: "May", revenue: 55000, enrollments: 175, users: 780 },
-  { name: "Jun", revenue: 72000, enrollments: 230, users: 920 },
-];
-
 const COLORS = ["var(--primary)", "var(--success)", "var(--info)", "var(--accent)"];
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+const actionStyles: Record<AuditAction | string, string> = {
+  CREATE: "border-success/30 bg-success-subtle text-success",
+  UPDATE: "border-info/30 bg-info-subtle text-info",
+  DELETE: "border-danger/30 bg-danger-subtle text-danger",
+};
 
 // ─── Main Component ─────────────────────────────────────────────────
 
@@ -96,10 +96,45 @@ export function AdminDashboard({
   user,
   stats,
   auditLogs,
+  auditBase = "/admin/audit-logs",
   health,
   distribution,
+  trends,
 }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<"revenue" | "enrollments" | "users">("revenue");
+  const [activeTab, setActiveTab] = React.useState<"revenue" | "enrollments" | "users">("revenue");
+
+  const dailySparkline = useMemo(() => {
+    if (!trends?.dailyEnrollments?.length) {
+      const fallback: { value: number }[] = [];
+      for (let i = 0; i < 7; i++) fallback.push({ value: 0 });
+      return fallback;
+    }
+    return trends.dailyEnrollments.map((d) => ({ value: d.count }));
+  }, [trends]);
+
+  const chartData = useMemo(() => {
+    const source =
+      activeTab === "revenue"
+        ? trends?.revenueTrends
+        : activeTab === "enrollments"
+          ? trends?.enrollmentTrends
+          : trends?.userTrends;
+
+    if (!source?.length) {
+      return [
+        { name: MONTHS[new Date().getMonth()], value: 0 },
+        { name: MONTHS[(new Date().getMonth() + 1) % 12], value: 0 },
+      ];
+    }
+
+    return source.map((item) => ({
+      name: MONTHS[item._id.month - 1],
+      value:
+        "revenue" in item
+          ? (item as { revenue: number }).revenue
+          : (item as { count: number }).count,
+    }));
+  }, [activeTab, trends]);
 
   return (
     <AnimatedPage className="space-y-8">
@@ -121,7 +156,7 @@ export function AdminDashboard({
             value={stats.totalUsers.toLocaleString()}
             icon={<Users className="text-primary size-5" />}
             iconBg="bg-primary-subtle"
-            data={sparklineData}
+            data={dailySparkline}
             color="var(--primary)"
           />
         </ErrorBoundary>
@@ -131,7 +166,7 @@ export function AdminDashboard({
             value={stats.totalWorkshops.toLocaleString()}
             icon={<BookOpen className="text-success size-5" />}
             iconBg="bg-success-subtle"
-            data={sparklineData.map((d) => ({ value: d.value * 0.8 }))}
+            data={dailySparkline}
             color="var(--success)"
           />
         </ErrorBoundary>
@@ -141,7 +176,7 @@ export function AdminDashboard({
             value={formatCurrency(stats.totalRevenue)}
             icon={<DollarSign className="text-warning size-5" />}
             iconBg="bg-warning-subtle"
-            data={sparklineData.map((d) => ({ value: d.value * 1.2 }))}
+            data={dailySparkline}
             color="var(--warning)"
           />
         </ErrorBoundary>
@@ -151,7 +186,7 @@ export function AdminDashboard({
             value={stats.totalEnrollments.toLocaleString()}
             icon={<ClipboardList className="text-info size-5" />}
             iconBg="bg-info-subtle"
-            data={sparklineData.map((d) => ({ value: d.value * 1.1 }))}
+            data={dailySparkline}
             color="var(--accent)"
           />
         </ErrorBoundary>
@@ -186,40 +221,46 @@ export function AdminDashboard({
                   </div>
                 </div>
                 <div className="h-80 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={analyticsData}>
-                      <defs>
-                        <linearGradient id="colorMain" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.2} />
-                          <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <XAxis
-                        dataKey="name"
-                        axisLine={false}
-                        tickLine={false}
-                        tick={{ fill: "var(--foreground-muted)", fontSize: 12 }}
-                      />
-                      <YAxis hide />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "var(--surface-2)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "12px",
-                          boxShadow: "var(--shadow-md)",
-                        }}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey={activeTab}
-                        stroke="var(--primary)"
-                        strokeWidth={3}
-                        fillOpacity={1}
-                        fill="url(#colorMain)"
-                        animationDuration={1000}
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  {chartData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart data={chartData}>
+                        <defs>
+                          <linearGradient id="colorMain" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.2} />
+                            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+                          </linearGradient>
+                        </defs>
+                        <XAxis
+                          dataKey="name"
+                          axisLine={false}
+                          tickLine={false}
+                          tick={{ fill: "var(--foreground-muted)", fontSize: 12 }}
+                        />
+                        <YAxis hide />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "var(--surface-2)",
+                            border: "1px solid var(--border)",
+                            borderRadius: "12px",
+                            boxShadow: "var(--shadow-md)",
+                          }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="value"
+                          stroke="var(--primary)"
+                          strokeWidth={3}
+                          fillOpacity={1}
+                          fill="url(#colorMain)"
+                          animationDuration={1000}
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="text-muted-foreground flex h-full items-center justify-center text-sm">
+                      No trend data available yet
+                    </div>
+                  )}
                 </div>
               </div>
             </ErrorBoundary>
@@ -233,12 +274,11 @@ export function AdminDashboard({
                   <h2 className="font-display text-foreground text-2xl font-bold tracking-tight">
                     Recent Audit Logs
                   </h2>
-                  <Badge
-                    variant="outline"
-                    className="bg-background/50 h-6 rounded-full px-3 text-[10px] font-bold tracking-widest uppercase"
-                  >
-                    Live Feed
-                  </Badge>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href={auditBase}>
+                      View All <ArrowRight className="ml-1 size-3.5" />
+                    </Link>
+                  </Button>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
@@ -248,7 +288,13 @@ export function AdminDashboard({
                           Action
                         </th>
                         <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-widest uppercase">
+                          Collection
+                        </th>
+                        <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-widest uppercase">
                           User
+                        </th>
+                        <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-widest uppercase">
+                          IP
                         </th>
                         <th className="font-body text-foreground-disabled px-8 py-4 text-[11px] font-bold tracking-widest uppercase">
                           When
@@ -263,27 +309,35 @@ export function AdminDashboard({
                             className="hover:bg-surface-2/40 group transition-colors"
                           >
                             <td className="px-8 py-5">
-                              <div className="flex flex-col">
-                                <span className="font-body text-foreground group-hover:text-primary text-sm font-bold capitalize transition-colors">
-                                  {log.action.replace(/_/g, " ")}
-                                </span>
-                                <span className="text-foreground-disabled mt-0.5 text-[10px] font-bold tracking-wide uppercase">
-                                  {log.collection}
-                                </span>
-                              </div>
+                              <Badge variant="outline" className={actionStyles[log.action]}>
+                                {log.action}
+                              </Badge>
+                            </td>
+                            <td className="px-8 py-5">
+                              <span className="text-foreground-disabled text-[10px] font-bold tracking-wide uppercase">
+                                {log.collectionName}
+                              </span>
                             </td>
                             <td className="text-foreground px-8 py-5 text-sm font-semibold">
-                              {log.userEmail}
+                              {log.performedBy?.name ?? log.performedBy?.email ?? "System"}
+                              {log.performedBy?.role ? (
+                                <span className="text-foreground-muted ml-1.5 text-[10px] font-medium">
+                                  ({log.performedBy.role.replace(/_/g, " ")})
+                                </span>
+                              ) : null}
+                            </td>
+                            <td className="text-foreground-muted px-8 py-5 font-mono text-[11px]">
+                              {log.ipAddress || "—"}
                             </td>
                             <td className="text-foreground-muted px-8 py-5 text-[11px] font-medium">
-                              {formatDate(log.timestamp)}
+                              {formatDate(log.createdAt)}
                             </td>
                           </tr>
                         ))
                       ) : (
                         <tr>
                           <td
-                            colSpan={3}
+                            colSpan={5}
                             className="text-muted-foreground py-12 text-center text-sm italic"
                           >
                             No recent logs recorded.
@@ -308,35 +362,41 @@ export function AdminDashboard({
                   User Distribution
                 </h2>
                 <div className="h-60 w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                      <Pie
-                        data={distribution.roles}
-                        innerRadius={65}
-                        outerRadius={85}
-                        paddingAngle={10}
-                        dataKey="value"
-                        animationDuration={1500}
-                      >
-                        {distribution.roles.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
-                            stroke="none"
-                          />
-                        ))}
-                      </Pie>
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: "var(--surface-2)",
-                          border: "1px solid var(--border)",
-                          borderRadius: "12px",
-                          boxShadow: "var(--shadow-md)",
-                        }}
-                      />
-                      <Legend iconType="circle" iconSize={8} />
-                    </PieChart>
-                  </ResponsiveContainer>
+                  {distribution.roles.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={distribution.roles}
+                          innerRadius={65}
+                          outerRadius={85}
+                          paddingAngle={10}
+                          dataKey="value"
+                          animationDuration={1500}
+                        >
+                          {distribution.roles.map((_entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[index % COLORS.length]}
+                              stroke="none"
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "var(--surface-2)",
+                            border: "1px solid var(--border)",
+                            borderRadius: "12px",
+                            boxShadow: "var(--shadow-md)",
+                          }}
+                        />
+                        <Legend iconType="circle" iconSize={8} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="text-muted-foreground flex h-full items-center justify-center text-sm">
+                      No user data
+                    </div>
+                  )}
                 </div>
               </div>
             </ErrorBoundary>
@@ -350,28 +410,32 @@ export function AdminDashboard({
                   Popular Categories
                 </h2>
                 <div className="space-y-6">
-                  {distribution.categories.map((cat) => (
-                    <div key={cat.name} className="space-y-2">
-                      <div className="flex items-center justify-between text-xs font-bold tracking-wider uppercase">
-                        <span className="text-foreground">{cat.name}</span>
-                        <span className="text-foreground-muted">{cat.count} enrollments</span>
-                      </div>
-                      <div className="bg-surface-3 h-2.5 w-full overflow-hidden rounded-full">
-                        <motion.div
-                          initial={{ width: 0 }}
-                          whileInView={{
-                            width: `${(cat.count / Math.max(...distribution.categories.map((c) => c.count))) * 100}%`,
-                          }}
-                          viewport={{ once: true }}
-                          className="bg-primary h-full rounded-full"
-                          transition={{
-                            duration: 1.5,
-                            ease: [0.16, 1, 0.3, 1],
-                          }}
-                        />
-                      </div>
+                  {distribution.categories.length > 0 ? (
+                    distribution.categories.map((cat) => {
+                      const maxCount = Math.max(...distribution.categories.map((c) => c.count));
+                      return (
+                        <div key={cat.name} className="space-y-2">
+                          <div className="flex items-center justify-between text-xs font-bold tracking-wider uppercase">
+                            <span className="text-foreground">{cat.name}</span>
+                            <span className="text-foreground-muted">{cat.count} workshops</span>
+                          </div>
+                          <div className="bg-surface-3 h-2.5 w-full overflow-hidden rounded-full">
+                            <motion.div
+                              initial={{ width: 0 }}
+                              whileInView={{ width: `${(cat.count / maxCount) * 100}%` }}
+                              viewport={{ once: true }}
+                              className="bg-primary h-full rounded-full"
+                              transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <div className="text-muted-foreground flex items-center justify-center py-8 text-sm">
+                      No categories yet
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             </ErrorBoundary>
@@ -404,7 +468,7 @@ export function AdminDashboard({
                     icon={<Database className="size-4.5" />}
                   />
                   <HealthCard
-                    name="Core Service"
+                    name="Cache"
                     status={health.cache.status}
                     latency={health.cache.latency}
                     icon={<ShieldCheck className="size-4.5" />}
@@ -457,18 +521,20 @@ function StatCardWithSparkline({
           </div>
         </div>
         <div className="absolute right-0 bottom-0 h-15 w-25 opacity-30 transition-opacity group-hover:opacity-50">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data}>
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke={color}
-                strokeWidth={3}
-                dot={false}
-                animationDuration={2000}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+          {data.length > 0 && (
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data}>
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke={color}
+                  strokeWidth={3}
+                  dot={false}
+                  animationDuration={2000}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
         </div>
       </div>
     </StaggerItem>

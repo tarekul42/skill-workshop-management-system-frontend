@@ -196,84 +196,82 @@ export function DataTable<TData, TValue>({
         </div>
 
         {/* ── Table ── */}
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader className="bg-surface-2/50 h-11">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="border-border hover:bg-transparent">
-                  {headerGroup.headers.map((header) => {
-                    const isSortable = header.column.getCanSort();
-                    const sortDir = header.column.getIsSorted();
+        <Table>
+          <TableHeader className="bg-surface-2/50 h-11">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="border-border hover:bg-transparent">
+                {headerGroup.headers.map((header) => {
+                  const isSortable = header.column.getCanSort();
+                  const sortDir = header.column.getIsSorted();
 
-                    return (
-                      <TableHead
-                        key={header.id}
-                        className={cn(
-                          "text-foreground-muted px-4 text-[12px] font-bold tracking-widest uppercase",
-                          isSortable &&
-                            "hover:text-foreground group cursor-pointer transition-colors select-none"
+                  return (
+                    <TableHead
+                      key={header.id}
+                      className={cn(
+                        "text-foreground-muted px-4 text-[12px] font-bold tracking-widest uppercase",
+                        isSortable &&
+                          "hover:text-foreground group cursor-pointer transition-colors select-none"
+                      )}
+                      onClick={header.column.getToggleSortingHandler()}
+                    >
+                      <div className="flex items-center gap-2">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(header.column.columnDef.header, header.getContext())}
+                        {isSortable && (
+                          <span className="text-foreground-disabled group-hover:text-foreground transition-colors">
+                            {sortDir === "asc" ? (
+                              <ArrowUp className="size-3" />
+                            ) : sortDir === "desc" ? (
+                              <ArrowDown className="size-3" />
+                            ) : (
+                              <ArrowUpDown className="size-3 opacity-0 group-hover:opacity-100" />
+                            )}
+                          </span>
                         )}
-                        onClick={header.column.getToggleSortingHandler()}
-                      >
-                        <div className="flex items-center gap-2">
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(header.column.columnDef.header, header.getContext())}
-                          {isSortable && (
-                            <span className="text-foreground-disabled group-hover:text-foreground transition-colors">
-                              {sortDir === "asc" ? (
-                                <ArrowUp className="size-3" />
-                              ) : sortDir === "desc" ? (
-                                <ArrowDown className="size-3" />
-                              ) : (
-                                <ArrowUpDown className="size-3 opacity-0 group-hover:opacity-100" />
-                              )}
-                            </span>
-                          )}
-                        </div>
-                      </TableHead>
-                    );
-                  })}
-                </TableRow>
-              ))}
-            </TableHeader>
-
-            <TableBody>
-              {isLoading ? (
-                <TableSkeleton rows={pageSize} columns={columns.length} />
-              ) : table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                    className="border-border hover:bg-surface-1/50 h-15 transition-colors"
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} className="text-foreground px-4 text-sm">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-64 text-center">
-                    <div className="flex flex-col items-center justify-center gap-2">
-                      <div className="bg-surface-2 mb-2 flex size-12 items-center justify-center rounded-full">
-                        <Search className="text-foreground-disabled size-6" />
                       </div>
-                      <p className="text-foreground text-sm font-bold">{emptyMessage}</p>
-                      <p className="text-foreground-muted max-w-50 text-xs">
-                        Try adjusting your filters or search terms to find what you&apos;re looking
-                        for.
-                      </p>
-                    </div>
-                  </TableCell>
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+
+          <TableBody>
+            {isLoading ? (
+              <TableSkeleton rows={pageSize} columns={columns.length} />
+            ) : table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  className="border-border hover:bg-surface-1/50 h-15 transition-colors"
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} className="text-foreground px-4 text-sm">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-64 text-center">
+                  <div className="flex flex-col items-center justify-center gap-2">
+                    <div className="bg-surface-2 mb-2 flex size-12 items-center justify-center rounded-full">
+                      <Search className="text-foreground-disabled size-6" />
+                    </div>
+                    <p className="text-foreground text-sm font-bold">{emptyMessage}</p>
+                    <p className="text-foreground-muted max-w-50 text-xs">
+                      Try adjusting your filters or search terms to find what you&apos;re looking
+                      for.
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
 
         {/* ── Pagination Bar ── */}
         {enablePagination && !isLoading && (

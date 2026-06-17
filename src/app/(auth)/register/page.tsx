@@ -164,7 +164,7 @@ export default function RegisterPage() {
                   <FormItem className="grid gap-1.5">
                     <FormLabel>
                       <Phone className="mr-1.5 inline-block size-3.5" />
-                      Phone <span className="text-muted-foreground font-normal">(optional)</span>
+                      Phone <span className="text-foreground-muted font-normal">(optional)</span>
                     </FormLabel>
                     <FormControl>
                       <Input placeholder="+8801XXXXXXXXX" disabled={loading} {...field} />
@@ -195,7 +195,7 @@ export default function RegisterPage() {
                         />
                         <button
                           type="button"
-                          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 transition-colors"
+                          className="text-foreground-muted hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 transition-colors"
                           onClick={() => setShowPassword(!showPassword)}
                           tabIndex={-1}
                           aria-label={showPassword ? "Hide password" : "Show password"}
@@ -234,7 +234,7 @@ export default function RegisterPage() {
                         />
                         <button
                           type="button"
-                          className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 transition-colors"
+                          className="text-foreground-muted hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 transition-colors"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                           tabIndex={-1}
                           aria-label={showConfirmPassword ? "Hide password" : "Show password"}
@@ -272,7 +272,7 @@ export default function RegisterPage() {
           {/* Divider */}
           <div className="relative my-6">
             <Separator />
-            <span className="bg-card text-muted-foreground absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 text-xs">
+            <span className="bg-card text-foreground-muted absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 px-2 text-xs">
               or continue with
             </span>
           </div>

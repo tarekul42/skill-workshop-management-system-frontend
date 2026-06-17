@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, Bell, User, Settings, LogOut } from "lucide-react";
+import { Menu, User, Settings, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -15,7 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 import { getSavedUser, getUserRole, clearSavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie } from "@/app/actions/auth";
@@ -91,25 +90,6 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
 
       {/* ── Right side actions ─────────────────────────────────────── */}
       <div className="flex items-center gap-3">
-        {/* Notification bell */}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              aria-label="Notifications"
-              className="hover:bg-surface-2 relative rounded-xl"
-            >
-              <Bell className="size-4.5" />
-              {/* Notification dot */}
-              <span className="bg-accent ring-background absolute top-2 right-2 size-2 rounded-full ring-2" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent className="shadow-3 border-border rounded-lg">
-            Notifications
-          </TooltipContent>
-        </Tooltip>
-
         {/* User dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

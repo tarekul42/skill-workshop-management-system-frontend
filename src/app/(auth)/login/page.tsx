@@ -9,14 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema, type LoginInput } from "@/lib/validations/auth";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -103,7 +96,7 @@ function LoginContent() {
             <BookOpen className="text-primary size-9" />
             <span className="font-display text-2xl font-bold">Skill Workshop</span>
           </Link>
-          <CardTitle className="font-display text-[28px] font-bold">Welcome back</CardTitle>
+          <h1 className="font-display text-[28px] font-bold">Welcome back</h1>
           <CardDescription className="text-foreground-muted mt-1 mb-7 text-[14px]">
             Sign in to continue your learning journey
           </CardDescription>
@@ -254,7 +247,7 @@ function LoginContent() {
           <p className="text-foreground-muted mb-4 text-center text-xs font-semibold tracking-wider uppercase">
             Quick Demo Access
           </p>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
             {(Object.keys(DEMO_CREDENTIALS) as DemoRole[]).map((role) => {
               const cred = DEMO_CREDENTIALS[role];
               const hasCreds = cred.email && cred.password;
@@ -272,12 +265,16 @@ function LoginContent() {
                       form.handleSubmit(onSubmit)();
                     }, 0);
                   }}
-                  className="border-border bg-background hover:bg-surface-2 hover:border-border-strong flex h-auto flex-col gap-1.5 rounded-xl border py-3 text-center transition-all disabled:opacity-40"
+                  className="border-border bg-background hover:bg-surface-2 hover:border-border-strong h-auto rounded-xl border px-1 py-3 text-center whitespace-normal transition-all disabled:opacity-40 sm:px-2"
                 >
-                  <span className="text-foreground text-sm font-bold">{cred.label}</span>
-                  <span className="text-foreground-muted text-[10px] leading-tight font-medium">
-                    {hasCreds ? "Auto-fill & Sign in" : "Not configured"}
-                  </span>
+                  <div className="flex flex-col items-center gap-1">
+                    <span className="text-foreground text-sm leading-none font-bold">
+                      {cred.label}
+                    </span>
+                    <span className="text-foreground-muted text-[10px] leading-tight font-medium">
+                      {hasCreds ? "Auto-fill & Sign in" : "Not configured"}
+                    </span>
+                  </div>
                 </Button>
               );
             })}

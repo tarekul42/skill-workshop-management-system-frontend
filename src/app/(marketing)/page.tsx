@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useMemo, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect, useState, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { motion, useSpring, useTransform, useInView } from "framer-motion";
+import { motion, useSpring, useTransform, useInView, AnimatePresence } from "framer-motion";
 import {
   Users,
   BookOpen,
@@ -19,10 +19,12 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { WorkshopCardSkeleton } from "@/components/ui/loading-skeleton";
 import { formatCurrency } from "@/lib/formatters";
+import { toast } from "sonner";
 import {
   fetchWorkshops,
   fetchCategories,
@@ -30,14 +32,22 @@ import {
   enrichWorkshops,
   getLevelName,
 } from "@/lib/api/services";
-import { cn } from "@/lib/utils";
 import { getInitials } from "@/lib/formatters";
 import { fadeInUp, staggerContainer, scaleIn } from "@/lib/motion-variants";
 
 const PUBLIC_STALE_TIME = 5 * 60 * 1000;
 
+interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+  workshop: string;
+  rating: number;
+}
+
 // ─── Inline Testimonials ──────────────────────────────────────────────────
-const testimonials = [
+const testimonials: Testimonial[] = [
   {
     id: "testimonial-001",
     name: "Mehedi Hasan",
@@ -96,22 +106,30 @@ const features = [
   {
     icon: GraduationCap,
     title: "Expert Instructors",
-    description: "Learn from verified industry professionals with years of real-world experience.",
+    description:
+      "Every instructor is a verified industry professional with proven experience at top companies in Bangladesh and beyond. They bring real projects, case studies, and insider knowledge straight from the field — so you're not just learning theory, you're learning what actually works on the job.",
+    image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80",
   },
   {
     icon: Wrench,
     title: "Hands-on Learning",
-    description: "Practical workshops, not passive lectures. Build skills you can use on Day 1.",
+    description:
+      "Forget death-by-PowerPoint. Our workshops are built around live coding sessions, real-world projects, and collaborative problem-solving. By the time you walk out, you will have built something tangible — a working app, a live campaign, or a portfolio piece — that proves what you can do.",
+    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800&q=80",
   },
   {
     icon: Calendar,
     title: "Flexible Schedule",
-    description: "Choose workshops that fit your life. Weekend and evening batches available.",
+    description:
+      "We know you are juggling work, studies, or family. That is why every workshop offers weekend and evening batches, plus recorded sessions you can revisit anytime. Miss a class? Catch up on your own time. Learning should fit your life, not the other way around.",
+    image: "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&q=80",
   },
   {
     icon: Award,
     title: "Industry Certificate",
-    description: "Earn recognized certificates to boost your professional profile.",
+    description:
+      "Earn more than just attendance — walk away with a verified certificate that speaks to real employers. Our certificates are co-signed by industry partners, include a verifiable digital badge, and detail the exact skills you mastered. Add them to your LinkedIn, portfolio, or resume with confidence.",
+    image: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800&q=80",
   },
 ];
 
@@ -139,7 +157,7 @@ function AnimatedCounter({ value }: { value: string }) {
   const isDecimal = value.includes(".");
 
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true });
   const springValue = useSpring(0, {
     stiffness: 80,
     damping: 20,
@@ -233,6 +251,117 @@ function HeroIllustration() {
   );
 }
 
+// ─── Component: TestimonialCarousel ──────────────────────────────────
+function TestimonialCarousel({ testimonials }: { testimonials: Testimonial[] }) {
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const next = useCallback(
+    () => setActive((a) => (a + 1) % testimonials.length),
+    [testimonials.length]
+  );
+  const prev = useCallback(
+    () => setActive((a) => (a - 1 + testimonials.length) % testimonials.length),
+    [testimonials.length]
+  );
+
+  useEffect(() => {
+    if (paused) return;
+    const id = setInterval(next, 5000);
+    intervalRef.current = id;
+    return () => clearInterval(id);
+  }, [paused, next]);
+
+  const t = testimonials[active];
+
+  return (
+    <div
+      className="site-container"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <div className="mx-auto mb-16 max-w-2xl text-center">
+        <span className="text-primary mb-3 block text-xs font-bold tracking-[0.2em] uppercase">
+          Voices
+        </span>
+        <h2 className="font-display text-foreground text-4xl font-bold sm:text-5xl">
+          What Our Students Say
+        </h2>
+      </div>
+
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={t.id}
+          layout
+          initial={{ opacity: 0, x: 80 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -80 }}
+          transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="mx-auto max-w-4xl"
+        >
+          <div className="bg-background border-border/50 relative rounded-2xl border p-10 shadow-sm sm:p-16">
+            <div className="text-primary/[0.06] pointer-events-none absolute top-6 left-8 font-serif text-[180px] leading-none select-none">
+              &ldquo;
+            </div>
+
+            <div className="relative z-10">
+              <StarRating rating={t.rating} />
+
+              <blockquote className="text-foreground mt-8 text-xl leading-relaxed sm:text-2xl sm:leading-[1.6]">
+                &ldquo;{t.content}&rdquo;
+              </blockquote>
+
+              <div className="mt-10 flex items-center gap-5">
+                <div className="bg-primary-subtle text-primary flex size-14 items-center justify-center rounded-full text-lg font-extrabold shadow-sm">
+                  {getInitials(t.name)}
+                </div>
+                <div>
+                  <div className="text-foreground text-base font-bold">{t.name}</div>
+                  <div className="text-foreground-muted text-sm">{t.role}</div>
+                  <Badge variant="secondary" className="mt-1.5 text-[10px] font-bold uppercase">
+                    {t.workshop}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Navigation */}
+      <div className="mt-10 flex items-center justify-center gap-4">
+        <button
+          onClick={prev}
+          className="bg-background border-border hover:border-primary/30 flex size-10 items-center justify-center rounded-full border transition-all"
+          aria-label="Previous testimonial"
+        >
+          <ArrowRight className="size-4 rotate-180" />
+        </button>
+        <div className="flex items-center gap-2">
+          {testimonials.map((_t: Testimonial, i: number) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className={`h-2 rounded-full transition-all duration-500 ${
+                i === active ? "bg-primary w-8" : "bg-border hover:bg-foreground-muted w-2"
+              }`}
+              aria-label={`Go to testimonial ${i + 1}`}
+            />
+          ))}
+        </div>
+        <button
+          onClick={next}
+          className="bg-background border-border hover:border-primary/30 flex size-10 items-center justify-center rounded-full border transition-all"
+          aria-label="Next testimonial"
+        >
+          <ArrowRight className="size-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main Page ────────────────────────────────────────────────────────────
 export default function HomePage() {
   const { data: categoriesData } = useQuery({
@@ -266,128 +395,102 @@ export default function HomePage() {
   return (
     <div className="overflow-hidden">
       {/* ── Section: Hero ────────────────────────────────────────── */}
-      <section className="bg-background relative min-h-[calc(100vh-72px)] overflow-hidden pt-24 pb-40 lg:pt-36">
+      <section className="bg-background relative flex min-h-[calc(100vh-72px)] overflow-hidden">
         {/* Background blobs & dots */}
-        <div className="bg-dot-pattern absolute inset-0 opacity-[0.08]" />
-        <div className="absolute top-[-5%] right-[-10%] size-200 rounded-full bg-[radial-gradient(ellipse_at_center,var(--primary),transparent_70%)] opacity-[0.08] blur-[120px]" />
-        <div className="absolute bottom-[-5%] left-[-5%] size-125 rounded-full bg-[radial-gradient(ellipse_at_center,var(--accent),transparent_70%)] opacity-[0.06] blur-[100px]" />
+        <div className="bg-dot-pattern absolute inset-0" />
+        <div className="absolute top-[-5%] right-[-10%] size-200 rounded-full bg-[radial-gradient(ellipse_at_center,var(--primary),transparent_70%)] opacity-20 blur-[120px]" />
+        <div className="absolute bottom-[-5%] left-[-5%] size-125 rounded-full bg-[radial-gradient(ellipse_at_center,var(--accent),transparent_70%)] opacity-15 blur-[100px]" />
 
-        <div className="site-container relative grid items-center gap-16 lg:grid-cols-2">
-          <motion.div
-            variants={staggerContainer}
-            initial="initial"
-            animate="animate"
-            className="text-left"
-          >
-            <motion.div variants={fadeInUp} className="mb-8">
-              <Badge
-                variant="accent"
-                className="h-7 rounded-full px-4 py-1 text-[13px] font-bold tracking-widest uppercase shadow-sm"
-              >
-                🇧🇩 Made for Bangladesh
-              </Badge>
-            </motion.div>
-
-            <motion.h1
-              variants={fadeInUp}
-              className="font-display text-foreground text-[56px] leading-[1.05] font-extrabold tracking-[-0.04em] sm:text-[80px] lg:text-[96px]"
-            >
-              Unlock{" "}
-              <span className="text-primary relative inline-block">
-                Real Skills.
-                <svg
-                  className="absolute -bottom-3 left-0 w-full"
-                  viewBox="0 0 300 15"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    d="M5 12C80 2 220 2 295 12"
-                    stroke="var(--accent)"
-                    strokeWidth="5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-              <br />
-              Build Your Future.
-            </motion.h1>
-
-            <motion.p
-              variants={fadeInUp}
-              className="text-foreground-subtle mt-12 max-w-160 text-xl leading-relaxed sm:text-2xl"
-            >
-              Connect with industry experts across Bangladesh through hands-on workshops designed
-              for real-world results.
-            </motion.p>
-
-            <motion.div variants={fadeInUp} className="mt-10 flex flex-wrap gap-3">
-              <Button size="lg" asChild className="px-8">
-                <Link href="/workshops">Browse Workshops</Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="ghost"
-                asChild
-                className="text-foreground gap-2 font-semibold"
-              >
-                <Link href="/about">
-                  <div className="bg-surface-2 text-primary flex size-10 items-center justify-center rounded-full">
-                    <Play className="ml-1 size-4 fill-current" />
-                  </div>
-                  Watch How It Works
-                </Link>
-              </Button>
-            </motion.div>
-
-            {/* In-hero stats - 4 stats separated by | dividers */}
+        <div className="site-container relative z-10 flex items-center">
+          <div className="grid w-full items-center gap-16 lg:grid-cols-2">
             <motion.div
-              variants={fadeInUp}
-              className="border-border mt-16 flex flex-wrap items-center gap-6 border-t pt-12"
+              variants={staggerContainer}
+              initial="initial"
+              animate="animate"
+              className="text-left"
             >
-              {stats.map((stat, idx) => (
-                <React.Fragment key={stat.label}>
-                  {idx > 0 && <div className="bg-border h-8 w-px" />}
-                  <div className="flex flex-col items-center">
-                    <span className="font-display text-foreground text-2xl font-bold">
-                      <AnimatedCounter value={stat.value} />
-                    </span>
-                    <span className="text-foreground-muted text-[12px] font-semibold tracking-[0.08em] uppercase">
-                      {stat.label}
-                    </span>
-                  </div>
-                </React.Fragment>
-              ))}
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            variants={scaleIn}
-            initial="initial"
-            animate="animate"
-            className="hidden lg:block"
-          >
-            <HeroIllustration />
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── Section: Stats Bar (Social Proof Strip) ────────────────── */}
-      <section className="border-border bg-surface-1 border-y py-10">
-        <div className="site-container flex flex-wrap items-center justify-between gap-8 md:flex-nowrap">
-          {stats.map((stat) => (
-            <div key={stat.label} className="group flex items-center gap-4">
-              <div className="bg-primary-subtle flex size-14 items-center justify-center rounded-full transition-transform group-hover:scale-110">
-                <stat.icon className="text-primary size-6" />
-              </div>
-              <div className="flex flex-col">
-                <span className="font-display text-foreground text-2xl leading-none font-bold">
-                  <AnimatedCounter value={stat.value} />
+              <motion.h1
+                variants={fadeInUp}
+                className="font-display text-foreground text-[56px] leading-[1.05] font-extrabold tracking-[-0.04em] sm:text-[80px] lg:text-[96px]"
+              >
+                Unlock{" "}
+                <span className="text-primary relative inline-block">
+                  Real Skills.
+                  <svg
+                    className="absolute -bottom-3 left-0 w-full"
+                    viewBox="0 0 300 15"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M5 12C80 2 220 2 295 12"
+                      stroke="var(--accent)"
+                      strokeWidth="5"
+                      strokeLinecap="round"
+                    />
+                  </svg>
                 </span>
-                <span className="text-foreground-muted text-sm font-medium">{stat.label}</span>
-              </div>
-            </div>
-          ))}
+                <br />
+                Build Your Future.
+              </motion.h1>
+
+              <motion.p
+                variants={fadeInUp}
+                className="text-foreground-subtle mt-8 max-w-160 text-xl leading-relaxed sm:text-2xl"
+              >
+                Connect with industry experts across Bangladesh through hands-on workshops designed
+                for real-world results.
+              </motion.p>
+
+              <motion.div variants={fadeInUp} className="mt-8 flex flex-wrap gap-3">
+                <Button size="lg" asChild className="px-8">
+                  <Link href="/workshops">Browse Workshops</Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="ghost"
+                  asChild
+                  className="text-foreground gap-2 font-semibold"
+                >
+                  <Link href="/about">
+                    <div className="bg-surface-2 text-primary flex size-10 items-center justify-center rounded-full">
+                      <Play className="ml-1 size-4 fill-current" />
+                    </div>
+                    Watch How It Works
+                  </Link>
+                </Button>
+              </motion.div>
+
+              {/* In-hero stats - 4 stats separated by | dividers */}
+              <motion.div
+                variants={fadeInUp}
+                className="border-border mt-12 flex flex-wrap items-center gap-6 border-t pt-10"
+              >
+                {stats.map((stat, idx) => (
+                  <React.Fragment key={stat.label}>
+                    {idx > 0 && <div className="bg-border h-8 w-px" />}
+                    <div className="flex flex-col items-center">
+                      <span className="font-display text-foreground text-2xl font-bold">
+                        <AnimatedCounter value={stat.value} />
+                      </span>
+                      <span className="text-foreground-muted text-[12px] font-semibold tracking-[0.08em] uppercase">
+                        {stat.label}
+                      </span>
+                    </div>
+                  </React.Fragment>
+                ))}
+              </motion.div>
+            </motion.div>
+
+            <motion.div
+              variants={scaleIn}
+              initial="initial"
+              animate="animate"
+              className="hidden lg:block"
+            >
+              <HeroIllustration />
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -431,7 +534,7 @@ export default function HomePage() {
                       ease: "easeOut",
                     }}
                   >
-                    <Link href={`/workshops/${workshop._id}`} className="group block h-full">
+                    <Link href={`/workshops/${workshop.slug}`} className="group block h-full">
                       <Card
                         interactive
                         className="border-border bg-surface-1 shadow-2 h-full overflow-hidden transition-all duration-500"
@@ -529,141 +632,159 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Section: Categories ────────────────────────────────────── */}
-      <section className="bg-surface-2 border-border border-y py-32">
+      {/* ── Section: Categories (Visual Immersion) ───────────────── */}
+      <section className="bg-surface-2 border-border relative border-y py-32">
         <div className="site-container">
-          <div className="mx-auto max-w-2xl text-center">
-            <span className="text-primary mb-4 block text-xs font-bold tracking-[0.2em] uppercase">
+          <div className="mx-auto mb-20 max-w-2xl text-center">
+            <span className="text-primary mb-4 block text-[13px] font-bold tracking-[0.25em] uppercase">
               Paths
             </span>
-            <h2 className="font-display text-foreground text-4xl font-bold sm:text-6xl">
+            <h2 className="font-display text-foreground text-4xl font-bold sm:text-5xl">
               Explore Categories
             </h2>
             <p className="text-foreground-subtle mt-6 text-xl leading-relaxed">
-              Find the perfect specialized path for your career goals.
+              Choose your path and start building career-ready skills.
             </p>
           </div>
 
-          <div className="mt-20 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {categories.map((cat, idx) => (
-              <motion.div
-                key={cat._id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-              >
-                <Link
-                  href={`/workshops?category=${cat.slug}`}
-                  className="group shadow-2 hover:shadow-4 relative block aspect-16/10 overflow-hidden rounded-3xl transition-all duration-500 hover:-translate-y-2"
+          <div className="grid gap-6 sm:grid-cols-2">
+            {categories.map((cat, idx) => {
+              const colors = [
+                "from-primary/20 to-accent/10",
+                "from-accent/20 to-primary/10",
+                "from-primary/15 to-surface-3",
+                "from-accent/15 to-surface-3",
+              ];
+              return (
+                <motion.div
+                  key={cat._id}
+                  initial={{ opacity: 0, y: 40 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, delay: idx * 0.1 }}
                 >
-                  {/* Background (placeholder color with gradient) */}
-                  <div className="bg-primary/10 absolute inset-0 transition-transform duration-700 group-hover:scale-110" />
-                  {/* Dark Gradient Overlay - Refined for readability */}
-                  <div className="absolute inset-0 bg-[linear-gradient(to_top,oklch(0_0_0/0.85)_15%,oklch(0_0_0/0.1)_100%)] transition-colors duration-500 group-hover:bg-black/60" />
+                  <Link
+                    href={`/workshops?category=${cat.slug}`}
+                    className={`group bg-gradient-to-br ${colors[idx % colors.length]} border-border/40 hover:shadow-float relative flex items-center gap-8 overflow-hidden rounded-[28px] border p-8 transition-all duration-500 hover:-translate-y-1 sm:p-10`}
+                  >
+                    {/* Decorative blob */}
+                    <div className="bg-primary/5 absolute -top-20 -right-20 size-50 rounded-full blur-[60px] transition-all duration-700 group-hover:scale-150" />
 
-                  <div className="absolute inset-0 flex flex-col justify-end p-10">
-                    <div className="glass-dark mb-5 flex size-14 items-center justify-center rounded-2xl shadow-lg transition-transform group-hover:scale-110 group-hover:rotate-3">
-                      <BookOpen className="size-7 text-white" />
+                    <div className="bg-background/80 border-border/30 relative z-10 flex size-20 shrink-0 items-center justify-center rounded-2xl border shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:-rotate-6">
+                      <BookOpen className="text-primary size-9" />
                     </div>
-                    <h3 className="font-display mb-3 text-3xl font-bold tracking-tight text-white">
-                      {cat.name}
-                    </h3>
-                    <p className="mb-5 line-clamp-2 text-base leading-relaxed text-white/70">
-                      {cat.description}
-                    </p>
-                    <span className="text-accent inline-flex items-center gap-2.5 text-[15px] font-bold transition-transform group-hover:translate-x-2">
-                      Explore Workshops <ArrowRight className="size-5" />
-                    </span>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
+
+                    <div className="relative z-10 min-w-0">
+                      <h3 className="font-display text-foreground mb-2 text-2xl font-bold tracking-tight">
+                        {cat.name}
+                      </h3>
+                      <p className="text-foreground-subtle line-clamp-2 text-sm leading-relaxed">
+                        {cat.description}
+                      </p>
+                      <span className="text-primary mt-4 inline-flex items-center gap-2 text-sm font-bold transition-transform group-hover:translate-x-2">
+                        View workshops <ArrowRight className="size-4" />
+                      </span>
+                    </div>
+                  </Link>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── Section: Why Choose Us ─────────────────────────────────── */}
-      <section className="bg-background py-32">
-        <div className="site-container">
-          <div className="border-border rounded-[48px] border bg-[radial-gradient(ellipse_at_center,oklch(var(--primary)/0.08),transparent_70%)] p-10 shadow-sm lg:p-24">
-            <div className="mx-auto mb-20 max-w-3xl text-center">
-              <h2 className="font-display text-foreground text-4xl font-bold tracking-tight sm:text-5xl">
-                Why Choose Skill Workshop?
-              </h2>
-              <p className="text-foreground-subtle mt-6 text-xl leading-relaxed">
-                We bridge the gap between traditional education and industry employment.
-              </p>
-            </div>
+      {/* ── Section: Why Choose Us (Alternating Visual Layout) ────── */}
+      <section className="bg-background relative overflow-hidden py-32">
+        {/* Background decoration */}
+        <div className="absolute top-1/2 left-1/2 size-200 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,oklch(var(--primary)/0.05),transparent_70%)]" />
 
-            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-              {features.map((feature) => (
-                <div
-                  key={feature.title}
-                  className="group bg-background border-border shadow-1 hover:shadow-float hover:border-primary/20 rounded-3xl border p-10 transition-all duration-500"
-                >
-                  <div className="bg-primary-subtle group-hover:bg-primary mb-8 flex size-16 items-center justify-center rounded-2xl shadow-sm transition-colors duration-500">
-                    <feature.icon className="text-primary size-8 transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 group-hover:text-white" />
+        <div className="site-container relative">
+          <div className="mx-auto mb-24 max-w-3xl text-center">
+            <span className="text-primary mb-4 block text-[13px] font-bold tracking-[0.25em] uppercase">
+              Why Choose Us
+            </span>
+            <h2 className="font-display text-foreground text-4xl font-bold tracking-tight sm:text-5xl">
+              Built for Real Growth
+            </h2>
+            <p className="text-foreground-subtle mt-6 text-xl leading-relaxed">
+              Every workshop is designed to bridge the gap between learning and doing.
+            </p>
+          </div>
+
+          <div className="space-y-28">
+            {features.map((feature, idx) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 60 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+                className={`grid items-center gap-20 ${
+                  idx % 2 === 0 ? "lg:grid-cols-[1fr_1.2fr]" : "lg:grid-cols-[1.2fr_1fr]"
+                }`}
+              >
+                {/* Text side */}
+                <div className={idx % 2 === 0 ? "lg:order-1" : "lg:order-2"}>
+                  <div className="bg-primary/10 mb-8 flex size-20 items-center justify-center rounded-2xl shadow-sm">
+                    <feature.icon className="text-primary size-9" />
                   </div>
-                  <h3 className="font-display text-foreground mb-4 text-2xl font-bold tracking-tight">
+                  <h3 className="font-display text-foreground mb-6 text-4xl font-bold tracking-tight">
                     {feature.title}
                   </h3>
-                  <p className="text-foreground-subtle text-[15px] leading-relaxed">
+                  <p className="text-foreground-subtle text-xl leading-[1.7]">
                     {feature.description}
                   </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Section: Testimonials ──────────────────────────────────── */}
-      <section className="bg-surface-1 py-24">
-        <div className="site-container">
-          <div className="mx-auto mb-16 max-w-2xl text-center">
-            <span className="text-primary mb-3 block text-xs font-bold tracking-[0.2em] uppercase">
-              Voices
-            </span>
-            <h2 className="font-display text-foreground text-4xl font-bold sm:text-5xl">
-              What Our Students Say
-            </h2>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {testimonials.map((t, idx) => (
-              <motion.div
-                key={t.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: idx * 0.1 }}
-                className={cn(
-                  "border-border bg-background hover:shadow-float relative rounded-2xl border p-8 shadow-sm transition-all",
-                  idx === 0 && "lg:col-span-1 lg:row-span-1"
-                )}
-              >
-                <div className="text-primary/10 absolute top-4 right-8 font-serif text-[80px] leading-none select-none">
-                  “
-                </div>
-                <div className="relative z-10">
-                  <StarRating rating={t.rating} />
-                  <p className="text-foreground mt-6 text-base leading-relaxed italic">
-                    &ldquo;{t.content}&rdquo;
-                  </p>
-                  <div className="border-border mt-8 flex items-center gap-4 border-t pt-6">
-                    <div className="bg-primary-subtle text-primary flex size-12 items-center justify-center rounded-full text-sm font-extrabold shadow-sm">
-                      {getInitials(t.name)}
+                  <div className="border-border mt-8 flex items-center gap-3 border-t pt-6">
+                    <div className="flex -space-x-2">
+                      <div className="border-background size-8 overflow-hidden rounded-full border-2">
+                        <Image
+                          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&q=60&fit=crop"
+                          alt=""
+                          width={32}
+                          height={32}
+                          className="size-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="border-background size-8 overflow-hidden rounded-full border-2">
+                        <Image
+                          src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&q=60&fit=crop"
+                          alt=""
+                          width={32}
+                          height={32}
+                          className="size-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="border-background size-8 overflow-hidden rounded-full border-2">
+                        <Image
+                          src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=64&q=60&fit=crop"
+                          alt=""
+                          width={32}
+                          height={32}
+                          className="size-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
                     </div>
-                    <div className="flex min-w-0 flex-col">
-                      <span className="text-foreground text-sm font-bold">{t.name}</span>
-                      <span className="text-foreground-muted truncate text-xs">{t.role}</span>
-                    </div>
+                    <span className="text-foreground-muted text-sm font-medium">
+                      Trusted by professionals
+                    </span>
                   </div>
-                  <div className="mt-4">
-                    <Badge variant="secondary" className="text-[10px] font-bold uppercase">
-                      {t.workshop}
-                    </Badge>
+                </div>
+
+                {/* Visual side */}
+                <div className={idx % 2 === 0 ? "lg:order-2" : "lg:order-1"}>
+                  <div className="relative aspect-4/3 overflow-hidden rounded-2xl shadow-sm">
+                    <Image
+                      src={feature.image}
+                      alt={feature.title}
+                      fill
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   </div>
                 </div>
               </motion.div>
@@ -672,7 +793,15 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Section 7: Newsletter Subscription (New 8th Section) ── */}
+      {/* ── Section: Testimonials (Carousel) ──────────────────────── */}
+      <section className="bg-surface-1 relative overflow-hidden py-24">
+        {/* Background decoration */}
+        <div className="bg-primary/[0.03] absolute top-1/2 left-1/2 size-150 -translate-x-1/2 -translate-y-1/2 rounded-full blur-[100px]" />
+
+        <TestimonialCarousel testimonials={testimonials} />
+      </section>
+
+      {/* ── Section: Newsletter Subscription ── */}
       <section className="bg-background border-border border-t py-24">
         <div className="site-container max-w-4xl text-center">
           <div className="bg-primary/5 border-primary/10 rounded-3xl border p-8 sm:p-12">
@@ -689,22 +818,21 @@ export default function HomePage() {
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                // Mock submission for frontend demonstration
                 const email = (e.currentTarget.elements.namedItem("email") as HTMLInputElement)
                   .value;
                 if (email) {
-                  alert(`Thank you for subscribing with: ${email}`);
+                  toast.success("Subscribed! Check your inbox for updates.");
                   e.currentTarget.reset();
                 }
               }}
               className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center"
             >
-              <input
+              <Input
                 name="email"
                 type="email"
                 required
                 placeholder="Enter your email address"
-                className="bg-background border-border focus:border-primary/40 h-12 w-full rounded-xl border px-4 text-sm transition-all outline-none sm:w-80"
+                className="h-12 w-full sm:w-80"
               />
               <Button type="submit" className="h-12 rounded-xl px-6 font-bold shadow-md">
                 Subscribe Now
@@ -718,44 +846,36 @@ export default function HomePage() {
       </section>
 
       {/* ── Section: CTA Banner ────────────────────────────────────── */}
-      <section className="py-32">
+      <section className="bg-primary py-24">
         <div className="site-container">
-          <div className="bg-primary shadow-spotlight relative overflow-hidden rounded-[64px] px-10 py-24 text-center">
-            <div className="bg-dot-pattern absolute inset-0 opacity-[0.08]" />
-            <div className="relative z-10 flex flex-col items-center">
-              <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-primary-foreground/70 mb-6 block text-[13px] font-bold tracking-[0.4em] uppercase"
+          <div className="mx-auto max-w-2xl text-center">
+            <span className="text-primary-foreground/70 mb-4 block text-xs font-bold tracking-[0.2em] uppercase">
+              Take the Leap
+            </span>
+            <h2 className="text-primary-foreground font-display text-3xl font-bold tracking-tight sm:text-4xl">
+              Your skills upgrade starts today.
+            </h2>
+            <p className="text-primary-foreground/80 mx-auto mt-4 max-w-xl leading-relaxed">
+              Join 500+ learners across Bangladesh and master the skills that matter in the real
+              world.
+            </p>
+            <div className="mt-10 flex flex-wrap justify-center gap-4">
+              <Button
+                size="lg"
+                variant="secondary"
+                asChild
+                className="bg-background text-foreground hover:bg-background/90 font-bold"
               >
-                Take the Leap
-              </motion.span>
-              <h2 className="font-display max-w-4xl text-5xl leading-[1.05] font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
-                Your skills upgrade starts today.
-              </h2>
-              <p className="text-primary-foreground/80 mt-10 max-w-2xl text-xl leading-relaxed">
-                Join 500+ learners across Bangladesh and master the skills that matter in the real
-                world.
-              </p>
-              <div className="mt-14 flex flex-wrap justify-center gap-5">
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  asChild
-                  className="h-16 rounded-[20px] px-12 text-xl font-bold shadow-lg"
-                >
-                  <Link href="/register">Browse Workshops</Link>
-                </Button>
-                <Button
-                  size="lg"
-                  variant="outline"
-                  asChild
-                  className="hover:text-primary h-16 rounded-[20px] border-white/30 px-10 text-lg font-bold text-white shadow-md transition-all hover:bg-white"
-                >
-                  <Link href="/register?role=instructor">Become an Instructor</Link>
-                </Button>
-              </div>
+                <Link href="/register">Browse Workshops</Link>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground hover:text-primary font-bold"
+              >
+                <Link href="/register?role=instructor">Become an Instructor</Link>
+              </Button>
             </div>
           </div>
         </div>

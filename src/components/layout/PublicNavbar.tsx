@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, LayoutDashboard, LogOut, GraduationCap, Bell } from "lucide-react";
+import { Menu, LayoutDashboard, LogOut, GraduationCap } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -108,7 +108,7 @@ export function PublicNavbar() {
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
           ? "border-border bg-background/92 shadow-overlay h-16 border-b backdrop-blur-xl"
-          : "h-18 bg-transparent"
+          : "bg-background/60 h-18 border-b border-transparent"
       )}
     >
       <div className="site-container flex h-full items-center justify-between">
@@ -154,10 +154,6 @@ export function PublicNavbar() {
 
           {user ? (
             <div className="flex items-center gap-3">
-              <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
-                <Bell className="text-foreground-subtle h-4 w-4" />
-              </Button>
-
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button

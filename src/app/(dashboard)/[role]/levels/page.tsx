@@ -154,72 +154,70 @@ export default function LevelsPage({ params: _params }: PageProps) {
       </PageHeader>
 
       {/* ── Table ──────────────────────────────────────────────────── */}
-      <div className="rounded-lg border">
-        <Table>
-          <TableHeader>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Created Date</TableHead>
+            <TableHead className="w-25">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {loading ? (
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Created Date</TableHead>
-              <TableHead className="w-25">Actions</TableHead>
+              <TableCell colSpan={3} className="p-4">
+                <TableSkeleton rows={5} columns={3} />
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={3} className="p-4">
-                  <TableSkeleton rows={5} columns={3} />
+          ) : levels.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={3} className="h-48">
+                <EmptyState
+                  icon={Layers}
+                  title="No levels yet"
+                  description="Create your first workshop level."
+                  action={{
+                    label: "Create Level",
+                    onClick: openCreateDialog,
+                  }}
+                />
+              </TableCell>
+            </TableRow>
+          ) : (
+            levels.map((level) => (
+              <TableRow key={level._id}>
+                <TableCell>
+                  <span className="text-sm font-medium">{level.name}</span>
+                </TableCell>
+                <TableCell>
+                  <span className="text-muted-foreground text-sm">
+                    {formatDate(
+                      level._id.includes("created")
+                        ? new Date().toISOString()
+                        : new Date(parseInt(level._id.substring(0, 8), 16) * 1000).toISOString()
+                    )}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon-xs" onClick={() => openEditDialog(level)}>
+                      <Pencil className="size-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      onClick={() => setDeleteTarget(level)}
+                      className="text-muted-foreground hover:text-danger"
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
-            ) : levels.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={3} className="h-48">
-                  <EmptyState
-                    icon={Layers}
-                    title="No levels yet"
-                    description="Create your first workshop level."
-                    action={{
-                      label: "Create Level",
-                      onClick: openCreateDialog,
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
-            ) : (
-              levels.map((level) => (
-                <TableRow key={level._id}>
-                  <TableCell>
-                    <span className="text-sm font-medium">{level.name}</span>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-muted-foreground text-sm">
-                      {formatDate(
-                        level._id.includes("created")
-                          ? new Date().toISOString()
-                          : new Date(parseInt(level._id.substring(0, 8), 16) * 1000).toISOString()
-                      )}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-1">
-                      <Button variant="ghost" size="icon-xs" onClick={() => openEditDialog(level)}>
-                        <Pencil className="size-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon-xs"
-                        onClick={() => setDeleteTarget(level)}
-                        className="text-muted-foreground hover:text-danger"
-                      >
-                        <Trash2 className="size-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
       {/* ── Create Level Dialog ────────────────────────────────────── */}
       <Dialog

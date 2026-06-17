@@ -239,85 +239,83 @@ export default function UsersPage({ params }: PageProps) {
       </div>
 
       {/* ── Table ──────────────────────────────────────────────────── */}
-      <div className="rounded-lg border">
-        <Table>
-          <TableHeader>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Name</TableHead>
+            <TableHead>Phone</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Joined</TableHead>
+            <TableHead className="w-17.5">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {isLoading ? (
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead className="w-17.5">Actions</TableHead>
+              <TableCell colSpan={6} className="p-4">
+                <TableSkeleton rows={5} columns={6} />
+              </TableCell>
             </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={6} className="p-4">
-                  <TableSkeleton rows={5} columns={6} />
-                </TableCell>
-              </TableRow>
-            ) : users.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={6} className="h-48 text-center">
-                  <p className="text-muted-foreground text-sm">
-                    {searchTerm ? "No users match your search." : "No users found."}
-                  </p>
-                </TableCell>
-              </TableRow>
-            ) : (
-              users.map((user: IUser) => (
-                <TableRow key={user._id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <Avatar className="size-8">
-                        <AvatarFallback className="bg-muted text-xs">
-                          {getInitials(user.name)}
-                        </AvatarFallback>
-                      </Avatar>
+          ) : users.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="h-48 text-center">
+                <p className="text-muted-foreground text-sm">
+                  {searchTerm ? "No users match your search." : "No users found."}
+                </p>
+              </TableCell>
+            </TableRow>
+          ) : (
+            users.map((user: IUser) => (
+              <TableRow key={user._id}>
+                <TableCell>
+                  <div className="flex items-center gap-3">
+                    <Avatar className="size-8">
+                      <AvatarFallback className="bg-muted text-xs">
+                        {getInitials(user.name)}
+                      </AvatarFallback>
+                    </Avatar>
 
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">{user.name}</p>
-                        <p className="text-muted-foreground truncate text-xs" title={user.email}>
-                          {maskEmail(user.email)}
-                        </p>
-                      </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{user.name}</p>
+                      <p className="text-muted-foreground truncate text-xs" title={user.email}>
+                        {maskEmail(user.email)}
+                      </p>
                     </div>
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-muted-foreground text-sm" title={user.phone}>
-                      {user.phone ? maskPhone(user.phone) : "—"}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={roleColors[user.role]}>
-                      {user.role.replace("_", " ")}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={user.isActive} />
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-muted-foreground text-sm">
-                      {formatDate(user.createdAt)}
-                    </span>
-                  </TableCell>
-                  <TableCell>
-                    <DropdownActions
-                      user={user}
-                      onView={() => handleViewUser(user._id)}
-                      onEdit={() => handleEditRoleOpen(user)}
-                      onToggle={() => setToggleTarget(user)}
-                      onDelete={() => setDeleteTarget(user)}
-                    />
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <span className="text-muted-foreground text-sm" title={user.phone}>
+                    {user.phone ? maskPhone(user.phone) : "—"}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <Badge variant="outline" className={roleColors[user.role]}>
+                    {user.role.replace("_", " ")}
+                  </Badge>
+                </TableCell>
+                <TableCell>
+                  <StatusBadge status={user.isActive} />
+                </TableCell>
+                <TableCell>
+                  <span className="text-muted-foreground text-sm">
+                    {formatDate(user.createdAt)}
+                  </span>
+                </TableCell>
+                <TableCell>
+                  <DropdownActions
+                    user={user}
+                    onView={() => handleViewUser(user._id)}
+                    onEdit={() => handleEditRoleOpen(user)}
+                    onToggle={() => setToggleTarget(user)}
+                    onDelete={() => setDeleteTarget(user)}
+                  />
+                </TableCell>
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
       {/* ── Server Pagination ──────────────────────────────────────── */}
       {!isLoading && totalPages > 1 && (

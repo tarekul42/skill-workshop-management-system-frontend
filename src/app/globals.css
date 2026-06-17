@@ -313,7 +313,10 @@
   }
 
   .bg-dot-pattern {
-    background-image: radial-gradient(oklch(0.35 0.08 250 / 0.08) 1px, transparent 1px);
+    background-image: radial-gradient(
+      color-mix(in oklch, var(--foreground-muted) 25%, transparent) 1px,
+      transparent 1px
+    );
     background-size: 24px 24px;
   }
 
