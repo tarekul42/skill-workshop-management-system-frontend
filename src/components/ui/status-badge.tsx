@@ -11,6 +11,7 @@ interface StatusBadgeProps {
 type StatusCategory = "warning" | "success" | "danger" | "muted" | "info" | "default";
 
 function getStatusCategory(status: string): StatusCategory {
+  if (!status) return "default";
   const normalized = status.toUpperCase().replace(/[\s_-]/g, "");
 
   if (["PENDING", "PENDINGPAYMENT", "PENDINGREVIEW", "PENDINGAPPROVAL"].includes(normalized)) {
@@ -94,7 +95,7 @@ export function StatusBadge({ status, dot = false, className }: StatusBadgeProps
           aria-hidden="true"
         />
       )}
-      <span className="leading-none">{status.replace(/_/g, " ")}</span>
+      <span className="leading-none">{(status ?? "UNKNOWN").replace(/_/g, " ")}</span>
     </Badge>
   );
 }
