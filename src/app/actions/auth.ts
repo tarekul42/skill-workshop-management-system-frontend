@@ -2,6 +2,7 @@
 
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { ROLE_COOKIE, AUTH_COOKIE_EXPIRES } from "@/lib/constants";
 
 const getSecret = () => {
   const secret = process.env.JWT_SECRET;
@@ -15,11 +16,11 @@ export async function setSecureAuthCookie(role: string) {
   const jwt = await new SignJWT({ role })
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
-    .setExpirationTime("1d")
+    .setExpirationTime(AUTH_COOKIE_EXPIRES)
     .sign(getSecret());
 
   const cookieStore = await cookies();
-  cookieStore.set("swms_role", jwt, {
+  cookieStore.set(ROLE_COOKIE, jwt, {
     path: "/",
     maxAge: 1 * 24 * 60 * 60,
     sameSite: "lax",
@@ -30,17 +31,17 @@ export async function setSecureAuthCookie(role: string) {
 
 export async function clearSecureAuthCookie() {
   const cookieStore = await cookies();
-  cookieStore.delete("swms_role");
+  cookieStore.delete(ROLE_COOKIE);
 }
 
 export async function checkAuthSession() {
   const cookieStore = await cookies();
-  return cookieStore.has("swms_role");
+  return cookieStore.has(ROLE_COOKIE);
 }
 
 export async function getAuthRole() {
   const cookieStore = await cookies();
-  const token = cookieStore.get("swms_role")?.value;
+  const token = cookieStore.get(ROLE_COOKIE)?.value;
   if (!token) return null;
 
   try {

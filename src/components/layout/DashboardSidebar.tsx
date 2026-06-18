@@ -292,7 +292,9 @@ export function DashboardSidebar({ role }: { role: string }) {
   const handleLogout = async () => {
     try {
       await apiClient("/auth/logout", { method: "POST", skipCsrf: true });
-    } catch {}
+    } catch {
+      // Logout server call is best-effort; local cleanup happens below
+    }
     clearSavedUser();
     clearAccessToken();
     await clearSecureAuthCookie();

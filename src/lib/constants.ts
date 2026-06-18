@@ -32,3 +32,11 @@ export const DEMO_CREDENTIALS = {
 } as const;
 
 export type DemoRole = keyof typeof DEMO_CREDENTIALS;
+
+// ─── Auth ───────────────────────────────────────────────────────────────
+
+/** Cookie name that stores the user's role JWT */
+export const ROLE_COOKIE = "swms_role";
+
+/** JWT expiration duration for auth cookies */
+export const AUTH_COOKIE_EXPIRES = "1d";

@@ -1,11 +1,7 @@
 import { jwtVerify } from "jose";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-
-// ─── Configuration ──────────────────────────────────────────────────────
-
-/** Cookie that stores the user's role after login (e.g. "SUPER_ADMIN") */
-const ROLE_COOKIE = "swms_role";
+import { ROLE_COOKIE } from "@/lib/constants";
 
 /** Map of URL path prefixes to their expected role values */
 const ROLE_ROUTES: Record<string, string> = {
