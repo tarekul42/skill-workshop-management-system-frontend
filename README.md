@@ -1,248 +1,172 @@
 # Skill Workshop Management System — Frontend
 
-A modern, high-performance frontend for the Skill Workshop Management System. Built with **Next.js 16**, **TypeScript**, and **Tailwind CSS v4**, this application provides a seamless experience for students to discover and enroll in workshops, for instructors to manage their courses, and for administrators to oversee the entire ecosystem. Achieves 95+ Lighthouse Performance scores through image optimization, code-splitting, and efficient data fetching.
+> A modern, high-performance frontend for a production-grade educational platform where industry experts host workshops and students enroll. Built with **Next.js 16 (App Router)**, **React 19**, **TypeScript**, and **Tailwind CSS v4**. Achieves **95+ Lighthouse Performance scores** and ships with **282 unit tests (Vitest) + 80 E2E tests (Playwright) across 5 browsers**.
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-vercel.app-000000?style=flat-square&logo=vercel&logoColor=white)](https://skill-workshop-management-system-frontend.vercel.app)
+[![Backend Repo](https://img.shields.io/badge/Backend_Repo-GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/tarekul42/skill-workshop-management-system-backend)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://opensource.org/licenses/MIT)
 
 ---
 
-## 🌟 Features
+## 📋 Overview
 
-### 🎓 For Students
+This is the student/instructor/admin-facing frontend for the **Skill Workshop Management System** — a platform where industry experts host workshops and students discover, enroll in, and complete them. The app handles the full lifecycle: workshop discovery, OTP-verified registration, SSLCommerz checkout with PDF invoices, role-based dashboards, and admin analytics.
 
-- **Workshop Discovery**: Browse workshops with advanced filtering by category, level, and price.
-- **Secure Registration**: Smooth sign-up flow with OTP verification.
-- **Integrated Payments**: Secure checkout using SSLCommerz.
-- **Learning Dashboard**: Track enrolled workshops and download completion certificates.
-- **Theme Support**: Seamless switching between Light and Dark modes.
-
-### 👨‍🏫 For Instructors
-
-- **Workshop Management**: Create and manage workshop content, schedules, and prerequisites.
-- **Student Insights**: Monitor enrollments and student progress for individual workshops.
-- **Earnings Overview**: View revenue statistics from course enrollments.
-
-### 🛡️ For Administrators & Super Admins
-
-- **Consolidated Dashboard**: Single `/api/v1/stats/dashboard` endpoint replaces 7 separate API calls — loads analytics 6× faster.
-- **Comprehensive Analytics**: Real-time dashboard with stats on users, workshops, enrollments, and revenue plus trend charts.
-- **User Management**: Oversee all users, manage roles, and handle account statuses.
-- **Audit Trails**: Detailed logs of system actions for security and accountability.
-- **Category & Level Management**: Dynamically manage the platform's organization.
+The frontend is built on **Next.js 16 App Router** with server components, role-based route protection via middleware, and a unified API client that handles CSRF tokens and silent token refresh. It achieves **95+ Lighthouse Performance scores** through aggressive code-splitting, image optimization, and Turbopack builds.
 
 ---
 
-## 🚀 Tech Stack
+## 🛠️ Tech Stack
 
-| Category               | Technology                                                                |
-| ---------------------- | ------------------------------------------------------------------------- |
-| **Framework**          | [Next.js 16 (App Router)](https://nextjs.org/)                            |
-| **Language**           | [TypeScript](https://www.typescriptlang.org/)                             |
-| **Styling**            | [Tailwind CSS 4](https://tailwindcss.com/)                                |
-| **UI Components**      | [Shadcn UI](https://ui.shadcn.com/) / [Radix UI](https://radix-ui.com/)   |
-| **State Management**   | [TanStack Query v5](https://tanstack.com/query/latest)                    |
-| **Forms & Validation** | [React Hook Form](https://react-hook-form.com/) + [Zod](https://zod.dev/) |
-| **Animations**         | [Motion](https://motion.dev/) (v12)                                       |
-| **Charts**             | [Recharts](https://recharts.org/)                                         |
-| **Notifications**      | [Sonner](https://sonner.emilkowal.ski/)                                   |
-| **Icons**              | [Lucide React](https://lucide.dev/)                                       |
-| **Testing**            | [Vitest](https://vitest.dev/) + [Playwright](https://playwright.dev/)     |
-| **Package Manager**    | [Bun](https://bun.sh/)                                                    |
-
----
-
-## 📁 Project Structure
-
-```
-src/
-├── app/                      # Next.js App Router
-│   ├── (auth)/               # Auth routes (Login, Register, OTP, Forgot Password)
-│   ├── (dashboard)/          # Role-based dashboards (Admin, Instructor, Student)
-│   ├── (marketing)/          # Public pages (Home, Workshops, Categories)
-│   ├── actions/              # Server actions (auth, etc.)
-│   ├── payment/              # Payment callback routes (SSLCommerz)
-│   ├── workshops/            # Workshop catalog & detail pages
-│   ├── unauthorized/         # Unauthorized access page
-│   ├── error.tsx             # Global error boundary
-│   ├── not-found.tsx         # 404 page
-│   ├── layout.tsx            # Root layout
-│   └── globals.css           # Global styles & Tailwind theme
-├── components/
-│   ├── features/             # Feature-specific components
-│   ├── layout/               # Layout components (Header, Footer, Breadcrumbs)
-│   └── ui/                   # Reusable UI primitives (Shadcn)
-├── lib/
-│   ├── api/                  # API service layer
-│   ├── api-client.ts         # Unified API client with CSRF & token refresh
-│   ├── auth-helpers.ts       # Token/session management utilities
-│   ├── constants.ts          # App-wide constants & env config
-│   ├── formatters.ts         # Date, currency, and text formatters
-│   ├── motion-variants.ts    # Reusable Framer Motion animation variants
-│   ├── utils.ts              # Global utility functions (cn, etc.)
-│   ├── validation/           # Zod validation schemas
-│   └── __tests__/            # Unit tests for library modules
-├── providers/                # React context providers (Theme, QueryClient)
-└── types/                    # Shared TypeScript type definitions
-
-e2e/                          # Playwright E2E tests
-.github/workflows/            # CI/CD pipelines (GitHub Actions)
-```
+| Category        | Technology                         |
+| --------------- | ---------------------------------- |
+| Framework       | Next.js 16 (App Router, Turbopack) |
+| UI Runtime      | React 19.2                         |
+| Language        | TypeScript 5.9                     |
+| Styling         | Tailwind CSS 4 + shadcn/ui (Radix) |
+| Server State    | TanStack Query v5                  |
+| Forms           | React Hook Form + Zod              |
+| Animation       | Framer Motion 12                   |
+| Charts          | Recharts 3                         |
+| Notifications   | Sonner                             |
+| Icons           | Lucide React                       |
+| Theme           | next-themes (light/dark/system)    |
+| Testing         | Vitest 4 + Playwright 1.61         |
+| Package Manager | Bun                                |
 
 ---
 
-## 🛠️ Getting Started
+## ✨ Main Features
+
+- **Role-based dashboards** — separate, middleware-protected routes for Student / Instructor / Admin / Super Admin with granular access control
+- **Consolidated admin analytics endpoint** — one API call replaces 7 separate admin calls, loading the dashboard **6× faster** than the naive approach
+- **OTP-verified registration** — smooth sign-up flow with Redis-backed OTP, integrated with the backend's automated verification system
+- **SSLCommerz payment flow** — secure checkout with success/fail/cancel callback routes and PDF invoice download
+- **Unified API client** — auto-attaches CSRF tokens + Bearer credentials, silently refreshes on 401 without race conditions
+- **95+ Lighthouse Performance scores** — achieved through code-splitting, image optimization, and Turbopack
+- **282 unit tests (Vitest) + 80 E2E tests (Playwright)** across 5 browsers — Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari
+- **7 GitHub Actions CI/CD workflows** — format check → lint → typecheck → unit tests → E2E tests → build → deploy, plus secret scanning (TruffleHog) + security audit (CodeQL)
+- **Light / Dark / System theme** with persisted preference
+- **One-click demo login** — Student / Admin / Instructor buttons auto-fill seeded credentials from env vars
+
+---
+
+## 📦 Main Dependencies
+
+### Runtime Dependencies
+
+| Package                                                  | Purpose                        |
+| -------------------------------------------------------- | ------------------------------ |
+| `next@16.2.3`                                            | App Router framework           |
+| `react@19.2.4` / `react-dom@19.2.4`                      | UI runtime                     |
+| `@tanstack/react-query@^5.101.0`                         | Server state & data fetching   |
+| `@tanstack/react-table@^8.21.3`                          | Data tables (admin dashboards) |
+| `react-hook-form@^7.79.0` + `@hookform/resolvers@^5.4.0` | Form management                |
+| `zod@^4.4.3`                                             | Schema validation              |
+| `framer-motion@^12.40.0`                                 | Animations                     |
+| `recharts@^3.8.1`                                        | Charts (analytics)             |
+| `radix-ui@^1.6.0`                                        | Accessible UI primitives       |
+| `lucide-react@^1.20.0`                                   | Icons                          |
+| `sonner@^2.0.7`                                          | Toast notifications            |
+| `next-themes@^0.4.6`                                     | Theme switching                |
+| `jose@^6.2.3`                                            | JWT (client-side decoding)     |
+| `input-otp@^1.4.2`                                       | OTP input UI                   |
+| `date-fns@^4.4.0`                                        | Date formatting                |
+| `class-variance-authority` + `clsx` + `tailwind-merge`   | Class utilities                |
+
+### Dev Dependencies (key ones)
+
+| Package                                           | Purpose                   |
+| ------------------------------------------------- | ------------------------- |
+| `vitest@^4.1.9` + `@vitest/coverage-v8`           | Unit testing              |
+| `@playwright/test@^1.61.0`                        | E2E testing (5 browsers)  |
+| `@testing-library/react@^16.3.2`                  | Component testing         |
+| `eslint@^9.39.4` + `eslint-config-next@16.2.3`    | Linting                   |
+| `prettier@^3.8.4` + `prettier-plugin-tailwindcss` | Code formatting           |
+| `husky@^9.1.7` + `lint-staged@^17.0.7`            | Pre-commit hooks          |
+| `shadcn@^4.11.0`                                  | UI component CLI          |
+| `tailwindcss@^4.3.1` + `@tailwindcss/postcss`     | Styling                   |
+| `jsdom@^29.1.1`                                   | DOM environment for tests |
+
+---
+
+## 🚀 Run Locally
 
 ### Prerequisites
 
-- **[Bun](https://bun.sh/)** (recommended) or Node.js 18+
+- [Bun](https://bun.sh/) (recommended) or Node.js 18+
 - Backend API running — see the [Backend Repository](https://github.com/tarekul42/skill-workshop-management-system-backend)
 
 ### Installation
 
-1. **Clone the repository**:
-
-   ```bash
-   git clone https://github.com/tarekul42/skill-workshop-management-system-frontend.git
-   cd skill-workshop-management-system-frontend
-   ```
-
-2. **Install dependencies**:
-
-   ```bash
-   bun install
-   ```
-
-3. **Environment Setup**:
-
-   Copy the example env file and fill in your values:
-
-   ```bash
-   cp .env.example .env.local
-   ```
-
-   Required variables:
-
-| Variable                      | Description          | Example                                 |
-| ----------------------------- | -------------------- | --------------------------------------- |
-| `NEXT_PUBLIC_BACKEND_API_URL` | Backend API base URL | `http://localhost:5001/api/v1`          |
-| `NEXT_PUBLIC_FRONTEND_URL`    | Frontend URL         | `http://localhost:3000`                 |
-| `JWT_SECRET`                  | JWT signing secret   | Generate with `openssl rand -base64 32` |
-
-4. **Run the development server**:
-
-   ```bash
-   bun run dev
-   ```
-
-   Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-5. **Build for production**:
-
-   ```bash
-   bun run build
-   bun run start
-   ```
-
----
-
-## 📜 Available Scripts
-
-| Command                | Description                                                           |
-| ---------------------- | --------------------------------------------------------------------- |
-| `bun run dev`          | Start development server with hot reload                              |
-| `bun run build`        | Create optimized production build                                     |
-| `bun run start`        | Start production server                                               |
-| `bun run lint`         | Run ESLint                                                            |
-| `bun run lint:fix`     | Auto-fix ESLint issues                                                |
-| `bun run format`       | Format code with Prettier                                             |
-| `bun run format:check` | Check formatting without modifying                                    |
-| `bun run typecheck`    | Run TypeScript type checking                                          |
-| `bun run test`         | Run unit & integration tests (Vitest)                                 |
-| `bun run test:e2e`     | Run E2E tests (Playwright)                                            |
-| `bun run ci`           | Run full CI pipeline (format → lint → typecheck → test → e2e → build) |
-
----
-
-## 🧪 Testing
-
-### Unit Tests (Vitest)
-
-282 tests across 20 test files covering:
-
-- API client (CSRF, token refresh, error handling)
-- Auth helpers (localStorage/sessionStorage management)
-- Formatters, masking, validation utilities
-- UI components (Button, Card, Input, EmptyState, StatusBadge, PublicFooter)
-- Motion animation variants
-- Workshop catalog presence checks
-
 ```bash
-bun run test
+# 1. Clone
+git clone https://github.com/tarekul42/skill-workshop-management-system-frontend.git
+cd skill-workshop-management-system-frontend
+
+# 2. Install dependencies
+bun install
+
+# 3. Configure environment
+cp .env.example .env.local
+# Edit .env.local with your values (see table below)
+
+# 4. Run dev server
+bun run dev
 ```
 
-### E2E Tests (Playwright)
+Open http://localhost:3000 in your browser.
 
-80 tests across 5 browsers (Chromium, Firefox, WebKit, Mobile Chrome, Mobile Safari) covering:
+### Environment Variables
 
-- Authentication flow (login, registration, validation errors)
-- Dashboard access control (role-based redirects)
-- Workshop catalog (listing, filtering, detail pages)
-- Workshop management
+| Variable                               | Description                        | Example                 |
+| -------------------------------------- | ---------------------------------- | ----------------------- |
+| `NEXT_PUBLIC_BACKEND_API_URL`          | Backend API base URL               | `http://localhost:5000` |
+| `NEXT_PUBLIC_FRONTEND_URL`             | Frontend URL (for OAuth redirects) | `http://localhost:3000` |
+| `NEXT_PUBLIC_DEMO_STUDENT_EMAIL`       | Demo student email                 | `student@demo.com`      |
+| `NEXT_PUBLIC_DEMO_STUDENT_PASSWORD`    | Demo student password              | `student123`            |
+| `NEXT_PUBLIC_DEMO_ADMIN_EMAIL`         | Demo admin email                   | `admin@demo.com`        |
+| `NEXT_PUBLIC_DEMO_ADMIN_PASSWORD`      | Demo admin password                | `admin123`              |
+| `NEXT_PUBLIC_DEMO_INSTRUCTOR_EMAIL`    | Demo instructor email              | `instructor@demo.com`   |
+| `NEXT_PUBLIC_DEMO_INSTRUCTOR_PASSWORD` | Demo instructor password           | `instructor123`         |
 
-```bash
-bun run test:e2e
-```
+### Available Scripts
 
----
-
-## 🔄 CI/CD Pipeline
-
-The project uses **GitHub Actions** for continuous integration and deployment:
-
-| Workflow                | Trigger                      | Purpose                               |
-| ----------------------- | ---------------------------- | ------------------------------------- |
-| `ci-frontend.yml`       | Push/PR to `main`, `develop` | Lint → Typecheck → Unit Tests → Build |
-| `ci-e2e.yml`            | Push/PR to `main`, `develop` | E2E tests across 5 browsers           |
-| `bundle-analysis.yml`   | PR to `main`                 | Bundle size analysis                  |
-| `deploy-preview.yml`    | PR to `main`                 | Deploy preview to Vercel              |
-| `deploy-production.yml` | Push to `main`               | Deploy to Vercel Production           |
-| `secret-scan.yml`       | All pushes + PRs             | Secret scanning with TruffleHog       |
-| `security-audit.yml`    | Weekly + PR                  | Dependency audit + CodeQL analysis    |
-
-All secrets are managed via **GitHub Secrets** — see [`.github/SECRETS.md`](.github/SECRETS.md) for the full list.
+| Command             | Description                                                       |
+| ------------------- | ----------------------------------------------------------------- |
+| `bun run dev`       | Start dev server                                                  |
+| `bun run build`     | Production build                                                  |
+| `bun run start`     | Start production server                                           |
+| `bun run lint`      | Run ESLint                                                        |
+| `bun run typecheck` | TypeScript compiler check                                         |
+| `bun run test`      | Run Vitest unit tests                                             |
+| `bun run test:e2e`  | Run Playwright E2E tests (5 browsers)                             |
+| `bun run format`    | Format code with Prettier                                         |
+| `bun run ci`        | Full CI pipeline (format + lint + typecheck + test + e2e + build) |
 
 ---
 
-## 🛡️ Security
+## 🔗 Links
 
-- **CSRF Protection**: Integrated with the backend's Double CSRF pattern.
-- **Token Management**: Secure JWT handling with automatic refresh logic.
-- **Role-Based Access**: Middleware-enforced route protection for Admin, Instructor, and Student roles.
-- **Secret Scanning**: Automated TruffleHog scans on every push.
-- **Dependency Auditing**: Weekly `npm audit` + CodeQL analysis.
-
----
-
-## 🎨 Theme Customization
-
-The application supports system-level theme detection and manual toggling. Theme customization is done in `src/app/globals.css` using Tailwind CSS v4's `@theme` blocks.
-
-- **Dark Mode**: High-contrast, accessibility-focused design.
-- **Light Mode**: Clean, professional layout with soft colors.
-
----
-
-## 🤝 Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the script pipeline guide and development workflow.
+| Resource                  | URL                                                                      |
+| ------------------------- | ------------------------------------------------------------------------ |
+| 🌐 **Live Demo**          | https://skill-workshop-management-system-frontend.vercel.app             |
+| 🖥️ **Backend Repo**       | https://github.com/tarekul42/skill-workshop-management-system-backend    |
+| 📚 **API Docs (Swagger)** | https://skill-workshop-management-system-backend.up.railway.app/api-docs |
+| 📧 **Contact**            | tarekulrifat142@gmail.com                                                |
 
 ---
 
 ## 📄 License
 
-This project is licensed under the **MIT License**.
+MIT © Tarekul Islam Rifat
 
 ---
 
-## 🤝 Contact
+<div align="center">
 
-**Project Lead**: Tarekul Islam Rifat
-**Email**: [tarekulrifat142@gmail.com](mailto:tarekulrifat142@gmail.com)
+**⭐ If this project helped you, give it a star!**
+
+Built by [Tarekul Islam Rifat](https://github.com/tarekul42)
+
+</div>
