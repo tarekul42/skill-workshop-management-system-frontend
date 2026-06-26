@@ -19,6 +19,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { notFound, redirect } from "next/navigation";
+import { ROLE_COOKIE } from "@/lib/constants";
 
 const VALID_ROLES = ["super-admin", "admin", "instructor", "student"];
 
@@ -55,7 +56,7 @@ export default async function DashboardLayout({
   const secret = getSecret();
   if (secret) {
     const cookieStore = await cookies();
-    const token = cookieStore.get("swms_role")?.value;
+    const token = cookieStore.get(ROLE_COOKIE)?.value;
 
     if (!token) {
       redirect("/login");
