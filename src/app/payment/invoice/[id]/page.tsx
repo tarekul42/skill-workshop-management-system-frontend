@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { getInvoice } from "@/lib/api/services";
 import { ApiError } from "@/lib/api-client";
 import { formatCurrency, formatDate } from "@/lib/formatters";
+import { isValidUrl } from "@/lib/utils";
 
 interface InvoicePageData {
   invoiceUrl?: string;
@@ -154,7 +155,7 @@ export default function InvoicePage() {
             <Printer className="mr-2 size-4" />
             Print Invoice
           </Button>
-          {data.invoiceUrl && (
+          {data.invoiceUrl && isValidUrl(data.invoiceUrl) && (
             <Button
               asChild
               className="shadow-raised hover:shadow-float h-11 rounded-xl px-5 font-bold"

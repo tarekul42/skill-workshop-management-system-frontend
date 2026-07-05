@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export interface RateLimiterConfig {
   maxAttempts?: number;
@@ -35,6 +35,10 @@ export function useRateLimiter(config: RateLimiterConfig = {}) {
       timerRef.current = null;
     }
   }, []);
+
+  useEffect(() => {
+    return () => clearTimer();
+  }, [clearTimer]);
 
   const recordAttempt = useCallback(() => {
     attemptRef.current += 1;

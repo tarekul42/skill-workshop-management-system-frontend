@@ -56,6 +56,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 
 import { formatCurrency, formatDate, truncate } from "@/lib/formatters";
+import { isValidUrl } from "@/lib/utils";
 import { getAllEnrollments, getMyEnrollments, refundPayment, getInvoice } from "@/lib/api/services";
 import type { IEnrollment } from "@/types";
 
@@ -747,7 +748,7 @@ export default function PaymentsPage({ params }: PageProps) {
                   Generating invoice...
                 </p>
               </div>
-            ) : invoiceUrl ? (
+            ) : invoiceUrl && isValidUrl(invoiceUrl) ? (
               <div className="space-y-5 py-2">
                 <div className="bg-surface-2 border-border flex items-center justify-between rounded-2xl border p-4">
                   <div className="flex items-center gap-3">

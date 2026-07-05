@@ -112,6 +112,16 @@ export async function changePassword(currentPassword: string, newPassword: strin
 }
 
 /**
+ * Set a password for the first time (e.g., OAuth users who never had one).
+ */
+export async function setPassword(password: string): Promise<void> {
+  return apiClient<void>("/auth/set-password", {
+    method: "POST",
+    body: { password },
+  });
+}
+
+/**
  * Request a password-reset email.
  */
 export async function forgotPassword(email: string): Promise<void> {
