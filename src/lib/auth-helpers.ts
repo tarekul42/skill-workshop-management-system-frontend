@@ -1,8 +1,9 @@
 import { DASHBOARD_ROUTES } from "./constants";
 
-// ─── User Persistence (localStorage) ───────────────────────────────
-
-const USER_KEY = "skillworkshop_user";
+// ─── User Persistence (in-memory only) ────────────────────────────
+// Stored in a module-level variable rather than localStorage so that
+// an XSS attack cannot enumerate user data via storage APIs. Data
+// is lost on page reload and must be restored via the API.
 
 export interface SavedUser {
   _id: string;
@@ -13,34 +14,26 @@ export interface SavedUser {
   isVerified: boolean;
 }
 
+let cachedUser: SavedUser | null = null;
+
 export function saveUser(user: SavedUser): void {
-  if (typeof window === "undefined") return;
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  cachedUser = user;
 }
 
 export function getSavedUser(): SavedUser | null {
-  if (typeof window === "undefined") return null;
-  const raw = localStorage.getItem(USER_KEY);
-  if (!raw) return null;
-  try {
-    return JSON.parse(raw) as SavedUser;
-  } catch {
-    return null;
-  }
+  return cachedUser;
 }
 
 export function clearSavedUser(): void {
-  if (typeof window === "undefined") return;
-  localStorage.removeItem(USER_KEY);
+  cachedUser = null;
 }
 
 export function isLoggedIn(): boolean {
-  return getSavedUser() !== null;
+  return cachedUser !== null;
 }
 
 export function getUserRole(): string | null {
-  const user = getSavedUser();
-  return user?.role ?? null;
+  return cachedUser?.role ?? null;
 }
 
 export function redirectToDashboard(role: string): string {

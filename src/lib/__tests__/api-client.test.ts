@@ -229,13 +229,11 @@ describe("apiClientPaginated", () => {
 describe("handleSessionExpired", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorageMock.setItem("skillworkshop_user", JSON.stringify({ name: "Test" }));
   });
 
-  it("should clear user from localStorage and redirect to login", async () => {
+  it("should redirect to login and clear session", async () => {
     handleSessionExpired();
 
-    expect(localStorageMock.removeItem).toHaveBeenCalledWith("skillworkshop_user");
     expect(mockLocationAssign).toHaveBeenCalledWith("/login");
   });
 });

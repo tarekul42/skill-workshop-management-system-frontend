@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-import { getSavedUser, clearSavedUser } from "@/lib/auth-helpers";
+import { getSavedUser, saveUser, clearSavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie, checkAuthSession } from "@/app/actions/auth";
 import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
@@ -47,8 +47,24 @@ export function PublicNavbar() {
   }, []);
 
   useEffect(() => {
-    // Pure fix: Defer state update to avoid cascading render lint error
     const timer = setTimeout(() => syncUser(), 0);
+
+    const restoreSession = async () => {
+      if (!getSavedUser()) {
+        const isValid = await checkAuthSession();
+        if (isValid) {
+          try {
+            const { getMe } = await import("@/lib/api/services");
+            const me = await getMe();
+            saveUser(me);
+            syncUser();
+          } catch {
+            // Session restore failed — user is not authenticated
+          }
+        }
+      }
+    };
+    restoreSession();
 
     const verifySession = async () => {
       if (getSavedUser()) {
@@ -62,20 +78,16 @@ export function PublicNavbar() {
     };
     verifySession();
 
-    const handleStorageChange = () => syncUser();
     const handleAuthChange = () => syncUser();
-    window.addEventListener("storage", handleStorageChange);
     window.addEventListener("auth-change", handleAuthChange);
 
     const handleScroll = () => {
-      // §2.3 — scroll >50px triggers compact nav
       setScrolled(window.scrollY > 50);
     };
     window.addEventListener("scroll", handleScroll);
 
     return () => {
       clearTimeout(timer);
-      window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("auth-change", handleAuthChange);
       window.removeEventListener("scroll", handleScroll);
     };

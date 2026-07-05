@@ -1,4 +1,5 @@
 import { BACKEND_API_URL } from "./constants";
+import { clearSavedUser } from "@/lib/auth-helpers";
 
 // ─── In-memory access token ───────────────────────────────────────
 // Stored in a module-level variable rather than sessionStorage so that
@@ -28,7 +29,7 @@ export function storeAccessToken(token: string): void {
 export function handleSessionExpired(): void {
   if (typeof window === "undefined") return;
   clearAccessToken();
-  localStorage.removeItem("skillworkshop_user");
+  clearSavedUser();
   document.cookie = "swms_role=;path=/;max-age=0;SameSite=Lax";
 
   // Avoid redirect loops: don't redirect if already on an auth page

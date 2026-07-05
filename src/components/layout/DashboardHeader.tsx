@@ -16,7 +16,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { getSavedUser, getUserRole, clearSavedUser } from "@/lib/auth-helpers";
+import { getSavedUser, saveUser, clearSavedUser } from "@/lib/auth-helpers";
+import type { SavedUser } from "@/lib/auth-helpers";
 import { clearSecureAuthCookie } from "@/app/actions/auth";
 import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
@@ -40,14 +41,24 @@ const roleLabels: Record<string, string> = {
 
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
   const router = useRouter();
-  const [mounted, setMounted] = React.useState(false);
-  const user = React.useMemo(() => (mounted ? getSavedUser() : null), [mounted]);
-  const role = React.useMemo(() => (mounted ? getUserRole() : null), [mounted]);
+  const [user, setUser] = React.useState<SavedUser | null>(() => getSavedUser());
+  const role = user?.role ?? null;
 
   React.useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
-  }, []);
+    if (user) return;
+
+    const restore = async () => {
+      try {
+        const { getMe } = await import("@/lib/api/services");
+        const me = await getMe();
+        saveUser(me);
+        setUser(me);
+      } catch {
+        // Restore failed — api-client will redirect to login on 401
+      }
+    };
+    restore();
+  }, [user]);
 
   const handleLogout = async () => {
     try {
