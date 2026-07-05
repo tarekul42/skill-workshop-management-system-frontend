@@ -87,7 +87,7 @@ function LoginContent() {
         };
       }>("/auth/login", {
         method: "POST",
-        body: values,
+        body: { ...values, email: values.email.trim() },
       });
 
       loginLimiter.reset();

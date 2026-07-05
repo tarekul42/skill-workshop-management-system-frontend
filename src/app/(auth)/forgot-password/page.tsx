@@ -44,7 +44,7 @@ export default function ForgotPasswordPage() {
     try {
       await apiClient("/auth/forgot-password", {
         method: "POST",
-        body: { email },
+        body: { email: email.trim() },
       });
       forgotLimiter.reset();
     } catch {

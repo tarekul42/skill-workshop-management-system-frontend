@@ -127,15 +127,15 @@ export function ReviewForm({ workshopId, existingReview, onSuccess, onCancel }: 
     if (isEditing) {
       updateMutation.mutate({
         rating: data.rating,
-        title: data.title,
-        content: data.content,
+        title: data.title.trim(),
+        content: data.content.trim(),
       });
     } else {
       createMutation.mutate({
         workshop: workshopId,
         rating: data.rating,
-        title: data.title,
-        content: data.content,
+        title: data.title.trim(),
+        content: data.content.trim(),
       });
     }
   };

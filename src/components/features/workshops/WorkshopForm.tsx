@@ -352,13 +352,13 @@ export function WorkshopForm({
 
     // Prepare JSON payload for the 'data' field
     const payloadData: Record<string, unknown> = {
-      title: formData.title,
+      title: formData.title.trim(),
       level: formData.level,
       category: formData.category,
     };
 
-    if (formData.description) payloadData.description = formData.description;
-    if (formData.location) payloadData.location = formData.location;
+    if (formData.description) payloadData.description = formData.description.trim();
+    if (formData.location) payloadData.location = formData.location.trim();
     if (formData.price !== undefined) payloadData.price = formData.price;
     if (formData.startDate) payloadData.startDate = formData.startDate;
     if (formData.endDate) payloadData.endDate = formData.endDate;

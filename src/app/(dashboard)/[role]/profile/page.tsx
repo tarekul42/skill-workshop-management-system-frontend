@@ -190,10 +190,10 @@ export default function ProfilePage() {
 
     try {
       const updated = await updateUser(user._id, {
-        name: result.data.name,
-        phone: result.data.phone,
+        name: result.data.name.trim(),
+        phone: result.data.phone?.trim(),
         age: result.data.age,
-        address: result.data.address,
+        address: result.data.address?.trim(),
       });
       setUser(updated);
 

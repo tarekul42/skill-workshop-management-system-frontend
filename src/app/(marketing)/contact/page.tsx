@@ -65,7 +65,13 @@ export default function ContactPage() {
 
   async function onSubmit(values: ContactInput) {
     try {
-      await submitContact(values);
+      await submitContact({
+        ...values,
+        name: values.name.trim(),
+        email: values.email.trim(),
+        subject: values.subject.trim(),
+        message: values.message.trim(),
+      });
       setSubmitSuccess(true);
       form.reset();
       toast.success("Message sent successfully!");
