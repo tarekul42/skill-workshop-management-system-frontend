@@ -93,12 +93,10 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // ─── Security Headers ────────────────────────────────────────────────
-  response.headers.set("X-Frame-Options", "DENY");
-  response.headers.set("X-Content-Type-Options", "nosniff");
-  response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
-  response.headers.set("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-  response.headers.set("Strict-Transport-Security", "max-age=31536000; includeSubDomains; preload");
+  // ─── Security Headers (deprecated) ──────────────────────────────────
+  // Security headers are now set globally in next.config.ts via the
+  // `headers()` export. This file is dead code kept for reference only.
+  // See: next.config.ts → securityHeaders array.
 
   return response;
 }
