@@ -1,4 +1,6 @@
 import { apiClient, apiClientFormData, apiClientPaginated } from "@/lib/api-client";
+import { unwrapNestedData, safeParseResponse } from "@/lib/api/validate";
+import { workshopSchema, enrollmentSchema, levelSchema } from "@/lib/api/schemas";
 
 import type {
   ContactInput,
@@ -242,8 +244,12 @@ export async function fetchWorkshops(
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchWorkshopBySlug(slug: string): Promise<IWorkshop> {
-  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(`/workshop/${slug}`);
-  return (data as { data: IWorkshop }).data ?? (data as IWorkshop);
+  const data = await apiClient<unknown>(`/workshop/${slug}`);
+  return safeParseResponse(
+    unwrapNestedData<IWorkshop>(data),
+    workshopSchema,
+    "fetchWorkshopBySlug"
+  );
 }
 
 /**
@@ -289,8 +295,11 @@ export async function deleteWorkshop(id: string): Promise<void> {
  * Uses raw `fetch` (public endpoint).
  */
 export async function fetchWorkshopLevels(): Promise<ILevel[]> {
-  const data = await apiClient<{ data: ILevel[] } | ILevel[]>("/workshop/levels");
-  return (data as { data: ILevel[] }).data ?? (data as ILevel[]);
+  const data = await apiClient<unknown>("/workshop/levels");
+  const unwrapped = Array.isArray(data) ? data : unwrapNestedData<ILevel[]>(data);
+  return Array.isArray(unwrapped)
+    ? unwrapped.map((item) => safeParseResponse(item, levelSchema, "fetchWorkshopLevels.item"))
+    : [];
 }
 
 /**
@@ -298,8 +307,8 @@ export async function fetchWorkshopLevels(): Promise<ILevel[]> {
  * Uses raw `fetch` (handles double-nested response from detail endpoint).
  */
 export async function fetchWorkshopById(id: string): Promise<IWorkshop> {
-  const data = await apiClient<{ data: IWorkshop } | IWorkshop>(`/workshop/${id}`);
-  return (data as { data: IWorkshop }).data ?? (data as IWorkshop);
+  const data = await apiClient<unknown>(`/workshop/${id}`);
+  return safeParseResponse(unwrapNestedData<IWorkshop>(data), workshopSchema, "fetchWorkshopById");
 }
 
 // ─── Workshop Enrichment Helpers ────────────────────────────────────
@@ -364,11 +373,11 @@ export function enrichWorkshop(
     ...workshop,
     category:
       typeof workshop.category === "string"
-        ? ((categories.find((c) => c._id === workshop.category) as ICategory) ?? workshop.category)
+        ? (categories.find((c) => c._id === workshop.category) ?? workshop.category)
         : workshop.category,
     level:
       typeof workshop.level === "string"
-        ? ((levels.find((l) => l._id === workshop.level) as ILevel) ?? workshop.level)
+        ? (levels.find((l) => l._id === workshop.level) ?? workshop.level)
         : workshop.level,
   };
 }
@@ -504,10 +513,11 @@ export async function getAllEnrollments(
  * Fetch the current user's own enrollments.
  */
 export async function getMyEnrollments(): Promise<IEnrollment[]> {
-  const res = await apiClient<{ data: IEnrollment[] } | IEnrollment[]>(
-    "/enrollment/my-enrollments"
-  );
-  return (res as { data: IEnrollment[] }).data ?? (res as IEnrollment[]);
+  const res = await apiClient<unknown>("/enrollment/my-enrollments");
+  const unwrapped = Array.isArray(res) ? res : unwrapNestedData<IEnrollment[]>(res);
+  return Array.isArray(unwrapped)
+    ? unwrapped.map((item) => safeParseResponse(item, enrollmentSchema, "getMyEnrollments.item"))
+    : [];
 }
 
 /**
