@@ -6,22 +6,22 @@ This document lists all GitHub Secrets required for the CI/CD pipelines.
 
 Add these in **Settings → Secrets and variables → Actions → New repository secret**.
 
-| Secret Name | Description | Example Value |
-|---|---|---|
-| `NEXT_PUBLIC_BACKEND_API_URL` | Backend API base URL | `https://skill-workshop-management-system-backend.vercel.app/api/v1` |
-| `NEXT_PUBLIC_FRONTEND_URL` | Frontend deployment URL | `https://skill-workshop-management-system.vercel.app` |
-| `JWT_SECRET` | JWT signing secret (generate with `openssl rand -base64 32`) | `AoACz3wDD8s7AEZTMG711Jd4MZg2IRqpCmhMqTrCePs` |
-| `VERCEL_TOKEN` | Vercel API token for deployments | `vercel_xxxxxxxxxxxx` |
+| Secret Name                   | Description                                                                         | Example Value                                                        |
+| ----------------------------- | ----------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `NEXT_PUBLIC_BACKEND_API_URL` | Backend API base URL                                                                | `https://skill-workshop-management-system-backend.vercel.app/api/v1` |
+| `NEXT_PUBLIC_FRONTEND_URL`    | Frontend deployment URL                                                             | `https://skill-workshop-management-system.vercel.app`                |
+| `JWT_SECRET`                  | JWT signing secret (generate with `openssl rand -base64 32` and set a unique value) | _(generate your own; never use example values in production)_        |
+| `VERCEL_TOKEN`                | Vercel API token for deployments                                                    | `vercel_xxxxxxxxxxxx`                                                |
 
 ## Workflows Using Secrets
 
-| Workflow | Secrets Used |
-|---|---|
-| `ci.yml` | `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET` |
-| `ci-frontend.yml` | `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET` |
-| `ci-e2e.yml` | `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET` |
-| `bundle-analysis.yml` | `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET` |
-| `deploy-preview.yml` | `VERCEL_TOKEN`, `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET` |
+| Workflow                | Secrets Used                                                                            |
+| ----------------------- | --------------------------------------------------------------------------------------- |
+| `ci.yml`                | `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET`                 |
+| `ci-frontend.yml`       | `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET`                 |
+| `ci-e2e.yml`            | `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET`                 |
+| `bundle-analysis.yml`   | `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET`                 |
+| `deploy-preview.yml`    | `VERCEL_TOKEN`, `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET` |
 | `deploy-production.yml` | `VERCEL_TOKEN`, `NEXT_PUBLIC_BACKEND_API_URL`, `NEXT_PUBLIC_FRONTEND_URL`, `JWT_SECRET` |
 
 ## Environment Variables in Code

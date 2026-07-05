@@ -266,9 +266,10 @@ export async function apiRequest<T>(
     const status = response.status;
     const message = json?.message ?? `Request failed with status ${status}`;
 
-    // Log critical errors
     if (status >= 500) {
-      console.error(`[API Server Error] ${method} ${endpoint}:`, json || status);
+      console.error(
+        `[API Server Error] ${method} ${endpoint}: status=${status} message=${json?.message ?? "(no message)"}`
+      );
     }
 
     throw new ApiError(status, message, json?.data);

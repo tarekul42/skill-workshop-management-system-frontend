@@ -27,7 +27,7 @@ export function safeParseResponse<T>(
   if (result.success) return result.data;
 
   if (process.env.NODE_ENV === "development") {
-    console.error(`[API] ${label} shape mismatch:`, result.error.issues, "Received:", data);
+    console.error(`[API] ${label} shape mismatch:`, result.error.issues);
   }
 
   return data as T;

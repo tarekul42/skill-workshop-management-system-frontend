@@ -119,16 +119,10 @@ Open http://localhost:3000 in your browser.
 
 ### Environment Variables
 
-| Variable                               | Description                        | Example                 |
-| -------------------------------------- | ---------------------------------- | ----------------------- |
-| `NEXT_PUBLIC_BACKEND_API_URL`          | Backend API base URL               | `http://localhost:5000` |
-| `NEXT_PUBLIC_FRONTEND_URL`             | Frontend URL (for OAuth redirects) | `http://localhost:3000` |
-| `NEXT_PUBLIC_DEMO_STUDENT_EMAIL`       | Demo student email                 | `student@demo.com`      |
-| `NEXT_PUBLIC_DEMO_STUDENT_PASSWORD`    | Demo student password              | `student123`            |
-| `NEXT_PUBLIC_DEMO_ADMIN_EMAIL`         | Demo admin email                   | `admin@demo.com`        |
-| `NEXT_PUBLIC_DEMO_ADMIN_PASSWORD`      | Demo admin password                | `admin123`              |
-| `NEXT_PUBLIC_DEMO_INSTRUCTOR_EMAIL`    | Demo instructor email              | `instructor@demo.com`   |
-| `NEXT_PUBLIC_DEMO_INSTRUCTOR_PASSWORD` | Demo instructor password           | `instructor123`         |
+| Variable                      | Description                        | Example                 |
+| ----------------------------- | ---------------------------------- | ----------------------- |
+| `NEXT_PUBLIC_BACKEND_API_URL` | Backend API base URL               | `http://localhost:5000` |
+| `NEXT_PUBLIC_FRONTEND_URL`    | Frontend URL (for OAuth redirects) | `http://localhost:3000` |
 
 ### Available Scripts
 
