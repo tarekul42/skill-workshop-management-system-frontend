@@ -18,7 +18,7 @@ import {
   Save,
   Lock,
 } from "lucide-react";
-import { z } from "zod/v4";
+import { z } from "zod";
 import { toast } from "sonner";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,7 +33,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { FormSkeleton } from "@/components/ui/loading-skeleton";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
-import { getMe, updateUser, changePassword } from "@/lib/api/services";
+import { getMe, updateUser, changePassword, setPassword } from "@/lib/api/services";
 import { formatDate, getInitials } from "@/lib/formatters";
 import { getSavedUser, saveUser } from "@/lib/auth-helpers";
 import { passwordSchema as passwordRule } from "@/lib/validation/password";
@@ -51,9 +51,19 @@ const profileSchema = z.object({
   address: z.string().optional(),
 });
 
-const passwordSchema = z
+const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: passwordRule,
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+const setPasswordSchema = z
+  .object({
     newPassword: passwordRule,
     confirmPassword: z.string().min(1, "Please confirm your new password"),
   })
@@ -213,11 +223,14 @@ export default function ProfilePage() {
     }
   };
 
-  // ── Password change ─────────────────────────────────────────────
+  // ── Password change / set ───────────────────────────────────────
+  const hasPassword = user?.auths?.some((a) => a.provider === "credentials") ?? false;
+
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const result = passwordSchema.safeParse(passwordData);
+    const schema = hasPassword ? changePasswordSchema : setPasswordSchema;
+    const result = schema.safeParse(passwordData);
 
     if (!result.success) {
       const fieldErrors: Record<string, string> = {};
@@ -233,8 +246,12 @@ export default function ProfilePage() {
     setPasswordErrors({});
 
     try {
-      await changePassword(passwordData.currentPassword, passwordData.newPassword);
-      toast.success("Password changed successfully");
+      if (hasPassword) {
+        await changePassword(passwordData.currentPassword, passwordData.newPassword);
+      } else {
+        await setPassword(passwordData.newPassword);
+      }
+      toast.success(hasPassword ? "Password changed successfully" : "Password set successfully");
       setPasswordData({
         currentPassword: "",
         newPassword: "",
@@ -516,7 +533,7 @@ export default function ProfilePage() {
             </CardContent>
           </Card>
 
-          {/* Change Password */}
+          {/* Change / Set Password */}
           <Card>
             <CardHeader>
               <div className="flex items-center gap-3">
@@ -524,52 +541,56 @@ export default function ProfilePage() {
                   <Lock className="text-primary size-4" />
                 </div>
                 <div>
-                  <CardTitle>Change Password</CardTitle>
+                  <CardTitle>{hasPassword ? "Change Password" : "Set Password"}</CardTitle>
                   <CardDescription>
-                    Update your password to keep your account secure
+                    {hasPassword
+                      ? "Update your password to keep your account secure"
+                      : "Set a password for your account to enable password-based login"}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleChangePassword} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="currentPassword">
-                    Current Password <span className="text-danger">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Input
-                      id="currentPassword"
-                      type={showCurrentPassword ? "text" : "password"}
-                      value={passwordData.currentPassword}
-                      onChange={(e) =>
-                        setPasswordData((prev) => ({
-                          ...prev,
-                          currentPassword: e.target.value,
-                        }))
-                      }
-                      placeholder="Enter your current password"
-                      className="pr-9"
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-xs"
-                      className="text-foreground-subtle absolute top-1/2 right-2 -translate-y-1/2"
-                      onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                      aria-label={showCurrentPassword ? "Hide password" : "Show password"}
-                    >
-                      {showCurrentPassword ? (
-                        <EyeOff className="size-4" />
-                      ) : (
-                        <Eye className="size-4" />
-                      )}
-                    </Button>
+                {hasPassword && (
+                  <div className="space-y-2">
+                    <Label htmlFor="currentPassword">
+                      Current Password <span className="text-danger">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        id="currentPassword"
+                        type={showCurrentPassword ? "text" : "password"}
+                        value={passwordData.currentPassword}
+                        onChange={(e) =>
+                          setPasswordData((prev) => ({
+                            ...prev,
+                            currentPassword: e.target.value,
+                          }))
+                        }
+                        placeholder="Enter your current password"
+                        className="pr-9"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon-xs"
+                        className="text-foreground-subtle absolute top-1/2 right-2 -translate-y-1/2"
+                        onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                        aria-label={showCurrentPassword ? "Hide password" : "Show password"}
+                      >
+                        {showCurrentPassword ? (
+                          <EyeOff className="size-4" />
+                        ) : (
+                          <Eye className="size-4" />
+                        )}
+                      </Button>
+                    </div>
+                    {passwordErrors.currentPassword && (
+                      <p className="text-danger text-xs">{passwordErrors.currentPassword}</p>
+                    )}
                   </div>
-                  {passwordErrors.currentPassword && (
-                    <p className="text-danger text-xs">{passwordErrors.currentPassword}</p>
-                  )}
-                </div>
+                )}
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
@@ -666,7 +687,7 @@ export default function ProfilePage() {
                 <div className="flex justify-end pt-2">
                   <Button type="submit" disabled={isChangingPassword}>
                     {isChangingPassword && <Loader2 className="mr-1.5 size-4 animate-spin" />}
-                    Change Password
+                    {hasPassword ? "Change Password" : "Set Password"}
                   </Button>
                 </div>
               </form>

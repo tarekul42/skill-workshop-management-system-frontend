@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { User, Palette, Shield, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 
-import { z } from "zod/v4";
+import { z } from "zod";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,7 +16,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/layout/PageHeader";
-import { getMe, updateUser, changePassword } from "@/lib/api/services";
+import { getMe, updateUser, changePassword, setPassword } from "@/lib/api/services";
 import { getSavedUser } from "@/lib/auth-helpers";
 import { FormSkeleton } from "@/components/ui/loading-skeleton";
 import { passwordSchema } from "@/lib/validation/password";
@@ -36,9 +36,19 @@ const settingsProfileSchema = z.object({
   address: z.string().optional(),
 });
 
-const settingsPasswordSchema = z
+const settingsChangePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: passwordSchema,
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+const settingsSetPasswordSchema = z
+  .object({
     newPassword: passwordSchema,
     confirmPassword: z.string().min(1, "Please confirm your new password"),
   })
@@ -111,10 +121,13 @@ export default function SettingsPage() {
   });
 
   const passwordMutation = useMutation({
-    mutationFn: (data: { currentPassword: string; newPassword: string }) =>
-      changePassword(data.currentPassword, data.newPassword),
+    mutationFn: (data: { currentPassword?: string; newPassword: string }) =>
+      data.currentPassword
+        ? changePassword(data.currentPassword, data.newPassword)
+        : setPassword(data.newPassword),
     onSuccess: () => {
-      toast.success("Password changed successfully");
+      const hasPassword = user?.auths?.some((a) => a.provider === "credentials");
+      toast.success(hasPassword ? "Password changed successfully" : "Password set successfully");
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
@@ -139,19 +152,18 @@ export default function SettingsPage() {
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const result = settingsPasswordSchema.safeParse({
-      currentPassword,
-      newPassword,
-      confirmPassword,
-    });
+    const hasPassword = profile?.auths?.some((a) => a.provider === "credentials") ?? false;
+    const schema = hasPassword ? settingsChangePasswordSchema : settingsSetPasswordSchema;
+    const result = schema.safeParse(
+      hasPassword
+        ? { currentPassword, newPassword, confirmPassword }
+        : { newPassword, confirmPassword }
+    );
     if (!result.success) {
       toast.error(result.error.issues[0].message);
       return;
     }
-    passwordMutation.mutate({
-      currentPassword: result.data.currentPassword,
-      newPassword: result.data.newPassword,
-    });
+    passwordMutation.mutate(hasPassword ? { currentPassword, newPassword } : { newPassword });
   };
 
   return (
@@ -310,31 +322,41 @@ export default function SettingsPage() {
         <TabsContent value="password">
           <Card>
             <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-              <CardDescription>Update your account password</CardDescription>
+              <CardTitle>
+                {profile?.auths?.some((a) => a.provider === "credentials")
+                  ? "Change Password"
+                  : "Set Password"}
+              </CardTitle>
+              <CardDescription>
+                {profile?.auths?.some((a) => a.provider === "credentials")
+                  ? "Update your account password"
+                  : "Set a password for your account to enable password-based login"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handlePasswordSubmit} className="max-w-md space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="current-password">Current Password</Label>
-                  <div className="relative">
-                    <Input
-                      id="current-password"
-                      type={showCurrent ? "text" : "password"}
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      aria-label={showCurrent ? "Hide current password" : "Show current password"}
-                      onClick={() => setShowCurrent(!showCurrent)}
-                      className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
-                    >
-                      {showCurrent ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                    </button>
+                {profile?.auths?.some((a) => a.provider === "credentials") && (
+                  <div className="space-y-2">
+                    <Label htmlFor="current-password">Current Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="current-password"
+                        type={showCurrent ? "text" : "password"}
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        required
+                      />
+                      <button
+                        type="button"
+                        aria-label={showCurrent ? "Hide current password" : "Show current password"}
+                        onClick={() => setShowCurrent(!showCurrent)}
+                        className="text-muted-foreground hover:text-foreground absolute top-1/2 right-3 -translate-y-1/2"
+                      >
+                        {showCurrent ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="space-y-2">
                   <Label htmlFor="new-password">New Password</Label>
                   <div className="relative">
@@ -389,7 +411,9 @@ export default function SettingsPage() {
                 <div className="flex justify-end pt-2">
                   <Button type="submit" disabled={passwordMutation.isPending}>
                     {passwordMutation.isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
-                    Change Password
+                    {profile?.auths?.some((a) => a.provider === "credentials")
+                      ? "Change Password"
+                      : "Set Password"}
                   </Button>
                 </div>
               </form>
