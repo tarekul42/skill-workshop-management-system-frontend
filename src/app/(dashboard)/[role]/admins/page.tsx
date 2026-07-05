@@ -11,6 +11,7 @@ import {
   UserCog,
   Ban,
   CheckCircle2,
+  Loader2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -226,23 +227,37 @@ export default function AdminsPage() {
                         <Button
                           variant="ghost"
                           size="sm"
+                          disabled={updateMutation.isPending}
                           onClick={() =>
                             updateMutation.mutate({ id: admin._id, data: { isActive: "BLOCKED" } })
                           }
                         >
-                          <Ban className="size-4" />
-                          <span className="ml-1.5 hidden sm:inline">Block</span>
+                          {updateMutation.isPending ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <Ban className="size-4" />
+                          )}
+                          <span className="ml-1.5 hidden sm:inline">
+                            {updateMutation.isPending ? "Blocking..." : "Block"}
+                          </span>
                         </Button>
                       ) : (
                         <Button
                           variant="ghost"
                           size="sm"
+                          disabled={updateMutation.isPending}
                           onClick={() =>
                             updateMutation.mutate({ id: admin._id, data: { isActive: "ACTIVE" } })
                           }
                         >
-                          <CheckCircle2 className="size-4" />
-                          <span className="ml-1.5 hidden sm:inline">Activate</span>
+                          {updateMutation.isPending ? (
+                            <Loader2 className="size-4 animate-spin" />
+                          ) : (
+                            <CheckCircle2 className="size-4" />
+                          )}
+                          <span className="ml-1.5 hidden sm:inline">
+                            {updateMutation.isPending ? "Activating..." : "Activate"}
+                          </span>
                         </Button>
                       )}
                     </div>
