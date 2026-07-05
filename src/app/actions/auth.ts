@@ -52,6 +52,8 @@ export async function getAuthRole() {
 }
 
 export async function getDemoCredentials() {
+  if (process.env.NODE_ENV === "production") return null;
+
   const email = process.env.DEMO_STUDENT_EMAIL ?? "";
   const password = process.env.DEMO_STUDENT_PASSWORD ?? "";
   if (!email || !password) return null;

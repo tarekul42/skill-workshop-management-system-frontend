@@ -444,7 +444,8 @@ export default function DashboardPage({ params }: PageProps) {
             recentEnrollments: enrollments.slice(0, 5),
           });
         }
-      } catch {
+      } catch (err) {
+        console.error("Failed to load dashboard data", err);
         setError("Unable to load statistics");
       } finally {
         setLoading(false);

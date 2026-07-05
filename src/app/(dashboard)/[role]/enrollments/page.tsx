@@ -465,7 +465,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                         <TableCell className="px-6 py-4">
                           <div className="flex flex-col">
                             <Link
-                              href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
+                              href={`/workshops/${enrollment.workshop?.slug || enrollment.workshop?._id || "#"}`}
                               className="font-display text-foreground hover:text-primary max-w-64 truncate text-[15px] font-bold transition-colors"
                             >
                               {enrollment.workshop.title}
@@ -552,7 +552,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                               asChild
                             >
                               <Link
-                                href={`/workshops/${enrollment.workshop.slug || enrollment.workshop._id}`}
+                                href={`/workshops/${enrollment.workshop?.slug || enrollment.workshop?._id || "#"}`}
                               >
                                 <ArrowRight className="size-4" />
                               </Link>
@@ -914,7 +914,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                     Dismiss
                   </Button>
                   <Link
-                    href={`/workshops/${viewEnrollment.workshop.slug || viewEnrollment.workshop?._id}`}
+                    href={`/workshops/${viewEnrollment.workshop?.slug || viewEnrollment.workshop?._id || "#"}`}
                     className="flex-1"
                   >
                     <Button className="w-full rounded-xl">View Workshop</Button>

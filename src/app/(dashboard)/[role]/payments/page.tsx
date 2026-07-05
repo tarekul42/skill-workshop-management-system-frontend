@@ -282,8 +282,9 @@ export default function PaymentsPage({ params }: PageProps) {
       setPayments(rows);
       setTotalPages(res.meta.totalPage);
       setTotal(res.meta.total);
-    } catch {
-      // Error handled silently
+    } catch (err) {
+      console.error("Failed to load payments", err);
+      toast.error("Failed to load payments");
     } finally {
       setLoading(false);
     }

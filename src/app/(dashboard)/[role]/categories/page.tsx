@@ -79,8 +79,9 @@ export default function CategoriesPage({ params: _params }: PageProps) {
     try {
       const data = await fetchCategories();
       setCategories(data);
-    } catch {
-      // Error handled silently
+    } catch (err) {
+      console.error("Failed to load categories", err);
+      toast.error("Failed to load categories");
     } finally {
       setLoading(false);
     }

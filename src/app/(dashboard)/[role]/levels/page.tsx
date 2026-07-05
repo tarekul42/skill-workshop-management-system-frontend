@@ -65,8 +65,9 @@ export default function LevelsPage({ params: _params }: PageProps) {
     try {
       const data = await fetchWorkshopLevels();
       setLevels(data);
-    } catch {
-      // Error handled silently
+    } catch (err) {
+      console.error("Failed to load levels", err);
+      toast.error("Failed to load levels");
     } finally {
       setLoading(false);
     }

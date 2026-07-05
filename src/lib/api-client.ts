@@ -34,7 +34,8 @@ export function handleSessionExpired(): void {
   if (typeof window === "undefined") return;
   clearAccessToken();
   clearSavedUser();
-  document.cookie = "swms_role=;path=/;max-age=0;SameSite=Lax";
+  const isSecure = window.location.protocol === "https:";
+  document.cookie = `swms_role=;path=/;max-age=0;SameSite=${isSecure ? "Strict" : "Lax"}${isSecure ? ";Secure" : ""}`;
 
   // Avoid redirect loops: don't redirect if already on an auth page
   const currentPath = window.location.pathname;
@@ -264,7 +265,10 @@ export async function apiRequest<T>(
 
   if (!response.ok || !json?.success) {
     const status = response.status;
-    const message = json?.message ?? `Request failed with status ${status}`;
+    const message =
+      status >= 500
+        ? "Internal server error. Please try again later."
+        : (json?.message ?? `Request failed with status ${status}`);
 
     if (status >= 500) {
       console.error(

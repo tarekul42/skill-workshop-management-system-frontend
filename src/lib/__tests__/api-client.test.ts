@@ -143,7 +143,7 @@ describe("apiClient", () => {
     } catch (err) {
       const apiError = err as { status: number; message: string };
       expect(apiError.status).toBe(500);
-      expect(apiError.message).toBe("Server Error");
+      expect(apiError.message).toBe("Internal server error. Please try again later.");
     }
   });
 

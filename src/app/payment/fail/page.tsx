@@ -55,7 +55,7 @@ function FailContent() {
     /[^a-zA-Z0-9 .,!?@\-_':;()]/g,
     ""
   );
-  const workshopSlug = searchParams.get("slug");
+  const workshopSlug = (searchParams.get("slug") || "").replace(/[^a-zA-Z0-9\-_]/g, "") || null;
 
   return (
     <motion.div
