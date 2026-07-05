@@ -12,6 +12,7 @@ export interface SavedUser {
   role: string;
   picture?: string;
   isVerified: boolean;
+  auths?: { provider: string; providerId: string }[];
 }
 
 let cachedUser: SavedUser | null = null;
