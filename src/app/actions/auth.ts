@@ -34,8 +34,8 @@ export async function clearSecureAuthCookie() {
 }
 
 export async function checkAuthSession() {
-  const cookieStore = await cookies();
-  return cookieStore.has("swms_role");
+  const role = await getAuthRole();
+  return role !== null;
 }
 
 export async function getAuthRole() {
