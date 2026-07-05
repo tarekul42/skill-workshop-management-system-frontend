@@ -517,6 +517,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                                 <Button
                                   variant="ghost"
                                   size="icon-xs"
+                                  aria-label="View enrollment details"
                                   className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg"
                                   onClick={() => handleViewDetails(enrollment)}
                                 >
@@ -532,6 +533,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                                   <Button
                                     variant="ghost"
                                     size="icon-xs"
+                                    aria-label="Cancel enrollment"
                                     onClick={() => openCancelConfirm(enrollment)}
                                     className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
                                   >
@@ -545,6 +547,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                             <Button
                               variant="ghost"
                               size="icon-xs"
+                              aria-label="View workshop"
                               className="size-8 rounded-lg"
                               asChild
                             >
@@ -717,6 +720,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                             <Button
                               variant="ghost"
                               size="icon-xs"
+                              aria-label="View enrollment details"
                               className="hover:bg-primary/10 size-8 rounded-lg"
                               onClick={() => setViewEnrollment(enrollment)}
                             >
@@ -731,6 +735,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                             <Button
                               variant="ghost"
                               size="icon-xs"
+                              aria-label="Edit enrollment status"
                               className="hover:bg-accent/10 size-8 rounded-lg"
                               onClick={() => {
                                 setStatusTarget(enrollment);
@@ -748,6 +753,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                             <Button
                               variant="ghost"
                               size="icon-xs"
+                              aria-label="Delete enrollment record"
                               className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
                               onClick={() => setDeleteTarget(enrollment)}
                             >
@@ -761,7 +767,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                       <div className="sm:hidden">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon-xs">
+                            <Button variant="ghost" size="icon-xs" aria-label="Enrollment actions">
                               <MoreHorizontal className="size-4" />
                             </Button>
                           </DropdownMenuTrigger>

@@ -550,6 +550,7 @@ export default function PaymentsPage({ params }: PageProps) {
                             <Button
                               variant="ghost"
                               size="icon-xs"
+                              aria-label="View invoice"
                               className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg"
                               onClick={() => handleViewInvoice(payment.paymentId)}
                             >
@@ -565,6 +566,7 @@ export default function PaymentsPage({ params }: PageProps) {
                               <Button
                                 variant="ghost"
                                 size="icon-xs"
+                                aria-label="Issue refund"
                                 className="hover:bg-danger/10 hover:text-danger size-8 rounded-lg"
                                 onClick={() => {
                                   setRefundTarget(payment);
@@ -582,7 +584,7 @@ export default function PaymentsPage({ params }: PageProps) {
                       <div className="sm:hidden">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon-xs">
+                            <Button variant="ghost" size="icon-xs" aria-label="Payment actions">
                               <MoreHorizontal className="size-4" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -756,7 +758,13 @@ export default function PaymentsPage({ params }: PageProps) {
                       <p className="text-foreground-muted text-xs">PDF format (0.4 MB)</p>
                     </div>
                   </div>
-                  <Button variant="ghost" size="icon" asChild className="rounded-xl">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Open invoice in new tab"
+                    asChild
+                    className="rounded-xl"
+                  >
                     <a href={invoiceUrl} target="_blank" rel="noopener noreferrer">
                       <ExternalLink className="size-5" />
                     </a>

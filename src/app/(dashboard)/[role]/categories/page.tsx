@@ -291,6 +291,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                             <Button
                               variant="secondary"
                               size="icon-xs"
+                              aria-label="Edit category"
                               className="shadow-raised text-foreground size-8 rounded-lg bg-white/90 backdrop-blur-md hover:bg-white"
                               onClick={() => openEditDialog(cat)}
                             >
@@ -304,6 +305,7 @@ export default function CategoriesPage({ params: _params }: PageProps) {
                             <Button
                               variant="secondary"
                               size="icon-xs"
+                              aria-label="Delete category"
                               className="shadow-raised hover:bg-danger text-danger size-8 rounded-lg bg-white/90 backdrop-blur-md hover:text-white"
                               onClick={() => setDeleteTarget(cat)}
                             >

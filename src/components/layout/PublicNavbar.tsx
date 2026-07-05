@@ -227,6 +227,7 @@ export function PublicNavbar() {
               <Button
                 variant="ghost"
                 size="icon"
+                aria-label="Toggle navigation menu"
                 className="hover:bg-surface-2 h-10 w-10 rounded-lg"
               >
                 <Menu className="size-6" />

@@ -148,6 +148,7 @@ function ListFieldEditor({
               <span className="text-foreground text-sm font-medium">{item}</span>
               <button
                 type="button"
+                aria-label="Remove item"
                 onClick={() => handleRemove(index)}
                 className="text-muted-foreground hover:text-destructive transition-colors"
               >
@@ -677,6 +678,7 @@ export function WorkshopForm({
                     <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                       <button
                         type="button"
+                        aria-label="Remove existing image"
                         onClick={() => handleRemoveExistingImage(url)}
                         className="bg-destructive flex size-9 items-center justify-center rounded-full text-white transition-transform hover:scale-110"
                       >
@@ -705,6 +707,7 @@ export function WorkshopForm({
                     <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                       <button
                         type="button"
+                        aria-label="Remove new image"
                         onClick={() => handleRemoveNewImage(idx)}
                         className="bg-destructive flex size-9 items-center justify-center rounded-full text-white transition-transform hover:scale-110"
                       >

@@ -160,6 +160,7 @@ export function DataTable<TData, TValue>({
                 <Button
                   variant="ghost"
                   size="icon"
+                  aria-label="Toggle column visibility"
                   className="hover:bg-surface-3 h-11 w-11 rounded-xl transition-colors"
                 >
                   <Settings2 className="size-5" />
@@ -188,6 +189,7 @@ export function DataTable<TData, TValue>({
             <Button
               variant="ghost"
               size="icon"
+              aria-label="Download table data"
               className="hover:bg-surface-3 h-11 w-11 rounded-xl transition-colors"
             >
               <Download className="size-5" />

@@ -364,6 +364,7 @@ function MobileSheetSidebar({
         <Button
           variant="ghost"
           size="icon"
+          aria-label="Toggle sidebar menu"
           className="bg-background/80 border-border fixed top-3 left-3 z-40 h-10 w-10 rounded-lg border shadow-sm backdrop-blur lg:hidden"
         >
           <Menu className="size-6" />

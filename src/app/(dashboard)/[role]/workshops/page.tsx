@@ -543,6 +543,7 @@ function WorkshopActions({
           <Button
             variant="ghost"
             size="icon"
+            aria-label="View workshop details"
             onClick={onView}
             className="hover:bg-primary/10 hover:text-primary size-8 rounded-lg transition-colors"
           >
@@ -559,6 +560,7 @@ function WorkshopActions({
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Edit workshop"
             onClick={onEdit}
             className="hover:bg-success/10 hover:text-success size-8 rounded-lg transition-colors"
           >
@@ -575,6 +577,7 @@ function WorkshopActions({
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Delete workshop"
             onClick={onDelete}
             className="hover:bg-destructive/10 hover:text-destructive size-8 rounded-lg transition-colors"
           >

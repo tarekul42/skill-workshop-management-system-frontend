@@ -200,12 +200,18 @@ export default function LevelsPage({ params: _params }: PageProps) {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-1">
-                    <Button variant="ghost" size="icon-xs" onClick={() => openEditDialog(level)}>
+                    <Button
+                      variant="ghost"
+                      size="icon-xs"
+                      aria-label="Edit level"
+                      onClick={() => openEditDialog(level)}
+                    >
                       <Pencil className="size-4" />
                     </Button>
                     <Button
                       variant="ghost"
                       size="icon-xs"
+                      aria-label="Delete level"
                       onClick={() => setDeleteTarget(level)}
                       className="text-muted-foreground hover:text-danger"
                     >
