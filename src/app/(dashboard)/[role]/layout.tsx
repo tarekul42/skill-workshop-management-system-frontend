@@ -32,8 +32,7 @@ const ROLE_COOKIE_MAP: Record<string, string> = {
 const getSecret = () => {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
-    console.error("[AUTH] JWT_SECRET environment variable is not set. Auth guard disabled.");
-    return null;
+    throw new Error("JWT_SECRET environment variable is not set. Cannot verify auth session.");
   }
   return new TextEncoder().encode(secret);
 };
@@ -53,33 +52,31 @@ export default async function DashboardLayout({
 
   // Server-side auth guard: verify the swms_role cookie matches this route
   const secret = getSecret();
-  if (secret) {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("swms_role")?.value;
+  const cookieStore = await cookies();
+  const token = cookieStore.get("swms_role")?.value;
 
-    if (!token) {
-      redirect("/login");
+  if (!token) {
+    redirect("/login");
+  }
+
+  try {
+    const { payload } = await jwtVerify(token, secret);
+    const cookieRole = (payload.role as string) ?? null;
+    const expectedRole = ROLE_COOKIE_MAP[role];
+
+    if (cookieRole !== expectedRole) {
+      // Wrong role — redirect to their correct dashboard
+      const dashMap: Record<string, string> = {
+        SUPER_ADMIN: "/super-admin/dashboard",
+        ADMIN: "/admin/dashboard",
+        INSTRUCTOR: "/instructor/dashboard",
+        STUDENT: "/student/dashboard",
+      };
+      redirect(dashMap[cookieRole ?? ""] ?? "/login");
     }
-
-    try {
-      const { payload } = await jwtVerify(token, secret);
-      const cookieRole = (payload.role as string) ?? null;
-      const expectedRole = ROLE_COOKIE_MAP[role];
-
-      if (cookieRole !== expectedRole) {
-        // Wrong role — redirect to their correct dashboard
-        const dashMap: Record<string, string> = {
-          SUPER_ADMIN: "/super-admin/dashboard",
-          ADMIN: "/admin/dashboard",
-          INSTRUCTOR: "/instructor/dashboard",
-          STUDENT: "/student/dashboard",
-        };
-        redirect(dashMap[cookieRole ?? ""] ?? "/login");
-      }
-    } catch {
-      // Invalid/expired JWT → redirect to login
-      redirect("/login");
-    }
+  } catch {
+    // Invalid/expired JWT → redirect to login
+    redirect("/login");
   }
 
   const normalizedRole = role.toUpperCase().replace("-", "_") as

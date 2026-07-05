@@ -44,8 +44,7 @@ export default function Error({
         transition={{ delay: 0.3, duration: 0.5 }}
         className="text-muted-foreground mb-8 max-w-md"
       >
-        {error.message ||
-          "An unexpected error occurred. We have been notified and are working on it."}
+        An unexpected error occurred. We have been notified and are working on it.
       </motion.p>
 
       <motion.div
