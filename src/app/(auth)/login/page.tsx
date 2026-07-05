@@ -23,6 +23,7 @@ import {
 import { AnimatedPage } from "@/components/ui/animated-page";
 import { saveUser, redirectToDashboard } from "@/lib/auth-helpers";
 import { setSecureAuthCookie, getDemoCredentials } from "@/app/actions/auth";
+import { useRateLimiter } from "@/hooks/useRateLimiter";
 import { apiClient, storeAccessToken } from "@/lib/api-client";
 import { BACKEND_API_URL, type DemoRole } from "@/lib/constants";
 
@@ -33,6 +34,7 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const loginLimiter = useRateLimiter({ label: "login" });
   const [demoCreds, setDemoCreds] = useState<Record<
     string,
     { email: string; password: string; label: string }
@@ -67,6 +69,7 @@ function LoginContent() {
   }, [searchParams]);
 
   async function onSubmit(values: LoginInput) {
+    if (loginLimiter.isLocked) return;
     setError("");
     setLoading(true);
 
@@ -87,11 +90,13 @@ function LoginContent() {
         body: values,
       });
 
+      loginLimiter.reset();
       saveUser(data.user);
       storeAccessToken(data.accessToken);
       await setSecureAuthCookie(data.user.role);
       router.push(redirectToDashboard(data.user.role));
     } catch (err: unknown) {
+      loginLimiter.recordAttempt();
       if (err instanceof Error) {
         setError(err.message);
       } else {
@@ -242,13 +247,15 @@ function LoginContent() {
               <Button
                 type="submit"
                 className="mt-1 h-12 w-full text-base font-semibold"
-                disabled={loading}
+                disabled={loading || loginLimiter.isLocked}
               >
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 size-4 animate-spin" />
                     Signing in...
                   </>
+                ) : loginLimiter.isLocked ? (
+                  <>Wait {loginLimiter.remaining}s</>
                 ) : (
                   "Sign In"
                 )}

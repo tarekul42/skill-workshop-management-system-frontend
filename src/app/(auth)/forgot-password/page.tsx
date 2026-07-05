@@ -19,6 +19,7 @@ import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/api-client";
 import { AnimatedPage } from "@/components/ui/animated-page";
 import { z } from "zod";
+import { useRateLimiter } from "@/hooks/useRateLimiter";
 
 const emailSchema = z.string().email("Please enter a valid email address").max(254);
 
@@ -27,9 +28,11 @@ export default function ForgotPasswordPage() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState("");
+  const forgotLimiter = useRateLimiter({ label: "forgot-password", maxAttempts: 3 });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (forgotLimiter.isLocked) return;
 
     const parsed = emailSchema.safeParse(email.trim());
     if (!parsed.success) {
@@ -43,7 +46,9 @@ export default function ForgotPasswordPage() {
         method: "POST",
         body: { email },
       });
+      forgotLimiter.reset();
     } catch {
+      forgotLimiter.recordAttempt();
       // Always show success regardless of API response (anti-enumeration)
     } finally {
       setLoading(false);
@@ -141,13 +146,15 @@ export default function ForgotPasswordPage() {
                 <Button
                   type="submit"
                   className="h-12 w-full text-base font-semibold"
-                  disabled={loading || !email.trim()}
+                  disabled={loading || forgotLimiter.isLocked || !email.trim()}
                 >
                   {loading ? (
                     <>
                       <Loader2 className="mr-2 size-4 animate-spin" />
                       Sending...
                     </>
+                  ) : forgotLimiter.isLocked ? (
+                    <>Wait {forgotLimiter.remaining}s</>
                   ) : (
                     "Send Reset Link"
                   )}

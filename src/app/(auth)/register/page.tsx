@@ -45,6 +45,7 @@ import {
 } from "@/components/ui/form";
 import { AnimatedPage } from "@/components/ui/animated-page";
 import { StepIndicator } from "@/components/ui/step-indicator";
+import { useRateLimiter } from "@/hooks/useRateLimiter";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -53,6 +54,7 @@ export default function RegisterPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const registerLimiter = useRateLimiter({ label: "register", maxAttempts: 3 });
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -71,6 +73,7 @@ export default function RegisterPage() {
   });
 
   async function onSubmit(values: RegisterInput) {
+    if (registerLimiter.isLocked) return;
     setError("");
     setLoading(true);
     try {
@@ -93,6 +96,7 @@ export default function RegisterPage() {
       storeOTPEmail(values.email.trim());
       router.push("/verify-otp");
     } catch (err: unknown) {
+      registerLimiter.recordAttempt();
       const message = err instanceof Error ? err.message : "Registration failed. Please try again.";
       setError(message);
     } finally {
@@ -262,9 +266,22 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                {loading && <Loader2 className="animate-spin" />}
-                Create Account
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={loading || registerLimiter.isLocked}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 size-4 animate-spin" />
+                    Creating account...
+                  </>
+                ) : registerLimiter.isLocked ? (
+                  <>Wait {registerLimiter.remaining}s</>
+                ) : (
+                  "Create Account"
+                )}
               </Button>
             </form>
           </Form>

@@ -13,6 +13,7 @@ import { AnimatedPage } from "@/components/ui/animated-page";
 import { PasswordChecklist } from "@/components/ui/password-checklist";
 import { isPasswordValid } from "@/lib/validation/password";
 import { motion } from "framer-motion";
+import { useRateLimiter } from "@/hooks/useRateLimiter";
 
 function ResetPasswordContent() {
   const router = useRouter();
@@ -21,6 +22,7 @@ function ResetPasswordContent() {
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const resetLimiter = useRateLimiter({ label: "reset-password", maxAttempts: 3 });
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -44,7 +46,7 @@ function ResetPasswordContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!isFormValid || !token) return;
+    if (resetLimiter.isLocked || !isFormValid || !token) return;
 
     setError("");
     setLoading(true);
@@ -57,8 +59,10 @@ function ResetPasswordContent() {
           newPassword,
         },
       });
+      resetLimiter.reset();
       setSuccess(true);
     } catch (err: unknown) {
+      resetLimiter.recordAttempt();
       const message =
         err instanceof Error ? err.message : "Failed to reset password. Please try again.";
       setError(message);
@@ -218,10 +222,18 @@ function ResetPasswordContent() {
             <Button
               type="submit"
               className="h-12 w-full text-base font-semibold"
-              disabled={!isFormValid || loading}
+              disabled={!isFormValid || loading || resetLimiter.isLocked}
             >
-              {loading && <Loader2 className="mr-2 size-4 animate-spin" />}
-              Update Password
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 size-4 animate-spin" />
+                  Updating...
+                </>
+              ) : resetLimiter.isLocked ? (
+                <>Wait {resetLimiter.remaining}s</>
+              ) : (
+                "Update Password"
+              )}
             </Button>
           </form>
         </CardContent>

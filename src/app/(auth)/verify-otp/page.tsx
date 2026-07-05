@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/card";
 import { getOTPEmail, clearOTPEmail, getOTPName } from "@/lib/auth-helpers";
 import { apiClient } from "@/lib/api-client";
+import { useRateLimiter } from "@/hooks/useRateLimiter";
 
 const otpSchema = z
   .string()
@@ -34,6 +35,8 @@ export default function VerifyOTPPage() {
   const [error, setError] = useState("");
   const [countdown, setCountdown] = useState(30);
   const [resendLoading, setResendLoading] = useState(false);
+  const verifyLimiter = useRateLimiter({ label: "verify-otp" });
+  const resendLimiter = useRateLimiter({ label: "resend-otp", maxAttempts: 3 });
   const [email, setEmail] = useState<string | null>(null);
   const [name, setName] = useState<string | null>(null);
 
@@ -60,6 +63,8 @@ export default function VerifyOTPPage() {
   const handleVerify = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
+      if (verifyLimiter.isLocked) return;
+
       const otpResult = otpSchema.safeParse(otp);
       if (!otpResult.success) {
         setError(otpResult.error.issues[0].message);
@@ -74,10 +79,12 @@ export default function VerifyOTPPage() {
           method: "POST",
           body: { email, otp },
         });
+        verifyLimiter.reset();
         clearOTPEmail();
         toast.success("Email verified! Please sign in.");
         router.push("/login");
       } catch (err: unknown) {
+        verifyLimiter.recordAttempt();
         const message =
           err instanceof Error ? err.message : "Verification failed. Please try again.";
         setError(message);
@@ -85,24 +92,26 @@ export default function VerifyOTPPage() {
         setLoading(false);
       }
     },
-    [otp, email, router]
+    [otp, email, router, verifyLimiter]
   );
 
   const handleResend = useCallback(async () => {
-    if (countdown > 0 || !email || !name) return;
+    if (countdown > 0 || resendLimiter.isLocked || !email || !name) return;
 
     setResendLoading(true);
     try {
       await apiClient("/otp/send", { method: "POST", body: { email, name } });
+      resendLimiter.reset();
       toast.success("New OTP sent!");
       setCountdown(30);
     } catch (err: unknown) {
+      resendLimiter.recordAttempt();
       const message = err instanceof Error ? err.message : "Failed to resend OTP.";
       toast.error(message);
     } finally {
       setResendLoading(false);
     }
-  }, [countdown, email, name]);
+  }, [countdown, email, name, resendLimiter]);
 
   if (!email) {
     return null;
@@ -160,13 +169,15 @@ export default function VerifyOTPPage() {
             <Button
               type="submit"
               className="h-12 w-full text-base font-semibold"
-              disabled={otp.length !== 6 || loading}
+              disabled={otp.length !== 6 || loading || verifyLimiter.isLocked}
             >
               {loading ? (
                 <>
                   <Loader2 className="mr-2 size-4 animate-spin" />
                   Verifying...
                 </>
+              ) : verifyLimiter.isLocked ? (
+                <>Wait {verifyLimiter.remaining}s</>
               ) : (
                 "Verify Email"
               )}
@@ -213,18 +224,20 @@ export default function VerifyOTPPage() {
 
             <button
               onClick={handleResend}
-              disabled={countdown > 0 || resendLoading}
+              disabled={countdown > 0 || resendLoading || resendLimiter.isLocked}
               className={`text-[13px] font-medium transition-colors ${
-                countdown > 0 || resendLoading
+                countdown > 0 || resendLoading || resendLimiter.isLocked
                   ? "text-foreground-disabled cursor-not-allowed"
                   : "text-primary hover:underline"
               }`}
             >
               {resendLoading
                 ? "Sending..."
-                : countdown > 0
-                  ? `Resend code (0:${countdown.toString().padStart(2, "0")})`
-                  : "Resend code"}
+                : resendLimiter.isLocked
+                  ? `Wait ${resendLimiter.remaining}s`
+                  : countdown > 0
+                    ? `Resend code (0:${countdown.toString().padStart(2, "0")})`
+                    : "Resend code"}
             </button>
           </div>
 
