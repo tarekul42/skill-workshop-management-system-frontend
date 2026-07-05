@@ -1,6 +1,10 @@
 import { BACKEND_API_URL } from "./constants";
 import { clearSavedUser } from "@/lib/auth-helpers";
 
+// ─── Defaults ──────────────────────────────────────────────────────
+
+export const DEFAULT_REQUEST_TIMEOUT = 30_000; // 30 seconds
+
 // ─── In-memory access token ───────────────────────────────────────
 // Stored in a module-level variable rather than sessionStorage so that
 // an XSS attack cannot enumerate tokens via storage APIs. On page reload
@@ -58,6 +62,35 @@ function isCsrfExempt(endpoint: string): boolean {
 
 const SESSION_EXPIRED_MSG = "Session expired. Please log in again.";
 
+const TIMEOUT_ERROR_MSG = "Request timed out. Please check your connection and try again.";
+
+function createTimeoutSignal(timeout: number): { signal: AbortSignal; clear: () => void } {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeout);
+  return {
+    signal: controller.signal,
+    clear: () => clearTimeout(timer),
+  };
+}
+
+async function fetchWithTimeout(
+  url: string,
+  options: RequestInit & { timeout?: number }
+): Promise<Response> {
+  const timeout = options.timeout ?? DEFAULT_REQUEST_TIMEOUT;
+  const { signal, clear } = createTimeoutSignal(timeout);
+  try {
+    return await fetch(url, { ...options, signal });
+  } catch (err) {
+    if (err instanceof DOMException && err.name === "AbortError") {
+      throw new ApiError(0, TIMEOUT_ERROR_MSG);
+    }
+    throw err;
+  } finally {
+    clear();
+  }
+}
+
 // Refresh mutex to prevent concurrent token refresh calls
 let isRefreshing = false;
 let refreshPromise: Promise<Response> | null = null;
@@ -75,13 +108,13 @@ async function attemptTokenRefresh(
     if (currentToken) {
       fetchHeaders["Authorization"] = `Bearer ${currentToken}`;
     }
-    return fetch(url, fetchOptions);
+    return fetchWithTimeout(url, fetchOptions);
   }
 
   isRefreshing = true;
   refreshPromise = (async () => {
     try {
-      const refreshRes = await fetch(`${BACKEND_API_URL}/auth/refresh-token`, {
+      const refreshRes = await fetchWithTimeout(`${BACKEND_API_URL}/auth/refresh-token`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -113,7 +146,7 @@ async function attemptTokenRefresh(
   if (currentToken) {
     fetchHeaders["Authorization"] = `Bearer ${currentToken}`;
   }
-  return fetch(url, fetchOptions);
+  return fetchWithTimeout(url, fetchOptions);
 }
 
 // ─── Unified API client ───────────────────────────────────────────────
@@ -143,6 +176,7 @@ export interface ApiClientOptions {
   headers?: Record<string, string>;
   skipCsrf?: boolean;
   returnMeta?: boolean;
+  timeout?: number; // ms, defaults to DEFAULT_REQUEST_TIMEOUT
 }
 
 export class ApiError extends Error {
@@ -187,7 +221,7 @@ export async function apiRequest<T>(
 
   const isMutating = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
   if (isMutating && !isCsrfExempt(endpoint) && !skipCsrf) {
-    const csrfRes = await fetch(`${BACKEND_API_URL}/csrf-token`, {
+    const csrfRes = await fetchWithTimeout(`${BACKEND_API_URL}/csrf-token`, {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
       credentials: "include",
     });
@@ -215,8 +249,9 @@ export async function apiRequest<T>(
 
   let response: Response;
   try {
-    response = await fetch(url, fetchOptions);
+    response = await fetchWithTimeout(url, fetchOptions);
   } catch (err) {
+    if (err instanceof ApiError) throw err;
     console.error("Network error during API request:", err);
     throw new ApiError(0, "Network error. Please check your internet connection.");
   }
