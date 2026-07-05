@@ -82,10 +82,10 @@ function computeRevenueData(totalRevenue: number) {
     "Dec",
   ];
   const currentMonth = new Date().getMonth();
-  // Spread total revenue across the last 6 months as a rough estimate
+  // Spread total revenue evenly across the last 6 months
   return months.slice(Math.max(0, currentMonth - 5), currentMonth + 1).map((month) => ({
     month,
-    amount: Math.round((totalRevenue / 6) * (0.5 + Math.random())),
+    amount: Math.round(totalRevenue / 6),
   }));
 }
 

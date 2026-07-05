@@ -102,28 +102,33 @@ export function DataTable<TData, TValue>({
 
   const tableData = useMemo(() => (isLoading ? [] : data), [isLoading, data]);
 
-  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns non-memoizable functions
-  const table = useReactTable({
-    data: tableData,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onSortingChange: setSorting,
-    onGlobalFilterChange: setGlobalFilter,
-    onColumnVisibilityChange: setColumnVisibility,
-    state: {
-      sorting,
-      globalFilter,
-      columnVisibility,
-    },
-    initialState: {
-      pagination: {
-        pageSize,
-      },
-    },
-  });
+  // eslint-disable-next-line react-hooks/incompatible-library -- TanStack Table returns non-memoizable functions; wrapped config in useMemo to prevent unnecessary re-renders
+  const table = useReactTable(
+    useMemo(
+      () => ({
+        data: tableData,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
+        getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onSortingChange: setSorting,
+        onGlobalFilterChange: setGlobalFilter,
+        onColumnVisibilityChange: setColumnVisibility,
+        state: {
+          sorting,
+          globalFilter,
+          columnVisibility,
+        },
+        initialState: {
+          pagination: {
+            pageSize,
+          },
+        },
+      }),
+      [tableData, columns, enablePagination, sorting, globalFilter, columnVisibility, pageSize]
+    )
+  );
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>

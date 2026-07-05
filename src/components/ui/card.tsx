@@ -28,8 +28,27 @@ const cardVariants = cva(
 export interface CardProps
   extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof cardVariants> {}
 
-function Card({ className, size, interactive, ...props }: CardProps) {
-  return <div className={cn(cardVariants({ size, interactive }), className)} {...props} />;
+function Card({ className, size, interactive, onKeyDown, ...props }: CardProps) {
+  const isInteractive = !!interactive;
+  return (
+    <div
+      role={isInteractive ? "button" : undefined}
+      tabIndex={isInteractive ? 0 : undefined}
+      onKeyDown={
+        isInteractive
+          ? (e: React.KeyboardEvent<HTMLDivElement>) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onKeyDown?.(e);
+                (e.currentTarget as HTMLDivElement).click();
+              }
+            }
+          : onKeyDown
+      }
+      className={cn(cardVariants({ size, interactive }), className)}
+      {...props}
+    />
+  );
 }
 
 function CardHeader({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
