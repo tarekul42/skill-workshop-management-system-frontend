@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Mail, Loader2, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
+import { z } from "zod";
 import { OTPInput, REGEXP_ONLY_DIGITS, type SlotProps } from "input-otp";
 import { AnimatedPage } from "@/components/ui/animated-page";
 import { StepIndicator } from "@/components/ui/step-indicator";
@@ -20,6 +21,11 @@ import {
 } from "@/components/ui/card";
 import { getOTPEmail, clearOTPEmail, getOTPName } from "@/lib/auth-helpers";
 import { apiClient } from "@/lib/api-client";
+
+const otpSchema = z
+  .string()
+  .length(6, "OTP must be exactly 6 digits")
+  .regex(/^\d{6}$/, "OTP must contain only digits");
 
 export default function VerifyOTPPage() {
   const router = useRouter();
@@ -54,7 +60,11 @@ export default function VerifyOTPPage() {
   const handleVerify = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (otp.length !== 6) return;
+      const otpResult = otpSchema.safeParse(otp);
+      if (!otpResult.success) {
+        setError(otpResult.error.issues[0].message);
+        return;
+      }
 
       setError("");
       setLoading(true);

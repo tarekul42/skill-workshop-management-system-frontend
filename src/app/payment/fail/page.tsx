@@ -51,7 +51,10 @@ function ErrorIcon() {
 
 function FailContent() {
   const searchParams = useSearchParams();
-  const errorMsg = searchParams.get("error") || "Transaction failed or was cancelled.";
+  const errorMsg = (searchParams.get("error") || "Transaction failed or was cancelled.").replace(
+    /[^a-zA-Z0-9 .,!?@\-_':;()]/g,
+    ""
+  );
   const workshopSlug = searchParams.get("slug");
 
   return (

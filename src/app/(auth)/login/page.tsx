@@ -22,9 +22,9 @@ import {
 } from "@/components/ui/form";
 import { AnimatedPage } from "@/components/ui/animated-page";
 import { saveUser, redirectToDashboard } from "@/lib/auth-helpers";
-import { setSecureAuthCookie } from "@/app/actions/auth";
+import { setSecureAuthCookie, getDemoCredentials } from "@/app/actions/auth";
 import { apiClient, storeAccessToken } from "@/lib/api-client";
-import { BACKEND_API_URL, DEMO_CREDENTIALS, type DemoRole } from "@/lib/constants";
+import { BACKEND_API_URL, type DemoRole } from "@/lib/constants";
 
 function LoginContent() {
   const router = useRouter();
@@ -33,6 +33,14 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [demoCreds, setDemoCreds] = useState<Record<
+    string,
+    { email: string; password: string; label: string }
+  > | null>(null);
+
+  useEffect(() => {
+    getDemoCredentials().then(setDemoCreds);
+  }, []);
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -42,12 +50,19 @@ function LoginContent() {
     },
   });
 
-  // Show error from URL query param (e.g. OAuth redirect errors)
+  // Show error from URL query param (e.g. OAuth redirect errors).
+  // The value is sanitized to prevent XSS via URL injection.
   useEffect(() => {
     const urlError = searchParams.get("error");
     if (urlError) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setError(decodeURIComponent(urlError));
+      const decoded = decodeURIComponent(urlError);
+      // Strip anything that isn't safe text: allow letters, digits, spaces,
+      // and common punctuation. Reject everything else.
+      const sanitized = decoded.replace(/[^a-zA-Z0-9 .,!?@\-_':;()]/g, "").trim();
+      if (sanitized) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setError(sanitized);
+      }
     }
   }, [searchParams]);
 
@@ -248,9 +263,9 @@ function LoginContent() {
             Quick Demo Access
           </p>
           <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
-            {(Object.keys(DEMO_CREDENTIALS) as DemoRole[]).map((role) => {
-              const cred = DEMO_CREDENTIALS[role];
-              const hasCreds = cred.email && cred.password;
+            {(Object.keys(demoCreds ?? {}) as DemoRole[]).map((role) => {
+              const cred = demoCreds?.[role];
+              const hasCreds = !!cred?.email && !!cred?.password;
               return (
                 <Button
                   key={role}
@@ -269,7 +284,7 @@ function LoginContent() {
                 >
                   <div className="flex flex-col items-center gap-1">
                     <span className="text-foreground text-sm leading-none font-bold">
-                      {cred.label}
+                      {cred?.label ?? role}
                     </span>
                     <span className="text-foreground-muted text-[10px] leading-tight font-medium">
                       {hasCreds ? "Auto-fill & Sign in" : "Not configured"}

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { User, Palette, Shield, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 
+import { z } from "zod/v4";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +19,32 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { getMe, updateUser, changePassword } from "@/lib/api/services";
 import { getSavedUser } from "@/lib/auth-helpers";
 import { FormSkeleton } from "@/components/ui/loading-skeleton";
+import { passwordSchema } from "@/lib/validation/password";
+
+const settingsProfileSchema = z.object({
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must be at most 100 characters"),
+  phone: z.string().optional(),
+  age: z.coerce
+    .number()
+    .min(1, "Age must be at least 1")
+    .max(150, "Age must be at most 150")
+    .optional(),
+  address: z.string().optional(),
+});
+
+const settingsPasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, "Current password is required"),
+    newPassword: passwordSchema,
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 function getInitials(name: string): string {
   return name
@@ -96,33 +123,34 @@ export default function SettingsPage() {
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      toast.error("Name is required");
-      return;
-    }
-    updateMutation.mutate({
+    const result = settingsProfileSchema.safeParse({
       name,
       phone: phone || undefined,
-      age: age ? Number(age) : undefined,
+      age: age || undefined,
       address: address || undefined,
     });
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
+      return;
+    }
+    updateMutation.mutate(result.data);
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      toast.error("All password fields are required");
+    const result = settingsPasswordSchema.safeParse({
+      currentPassword,
+      newPassword,
+      confirmPassword,
+    });
+    if (!result.success) {
+      toast.error(result.error.issues[0].message);
       return;
     }
-    if (newPassword !== confirmPassword) {
-      toast.error("New passwords do not match");
-      return;
-    }
-    if (newPassword.length < 6) {
-      toast.error("Password must be at least 6 characters");
-      return;
-    }
-    passwordMutation.mutate({ currentPassword, newPassword });
+    passwordMutation.mutate({
+      currentPassword: result.data.currentPassword,
+      newPassword: result.data.newPassword,
+    });
   };
 
   return (

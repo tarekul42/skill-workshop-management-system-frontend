@@ -35,6 +35,7 @@ import { isPasswordValid } from "@/lib/validation/password";
 import { PasswordChecklist } from "@/components/ui/password-checklist";
 import { AnimatedPage } from "@/components/ui/animated-page";
 import { StepIndicator } from "@/components/ui/step-indicator";
+import { instructorSchema } from "@/lib/validations/auth";
 
 export default function InstructorRegisterPage() {
   const router = useRouter();
@@ -67,20 +68,34 @@ export default function InstructorRegisterPage() {
     e.preventDefault();
     setError("");
 
-    if (!formValid) return;
+    const parsed = instructorSchema.safeParse({
+      name: name.trim(),
+      email: email.trim(),
+      phone: phone.trim() || undefined,
+      password,
+      confirmPassword,
+      expertise: expertise.trim(),
+      bio: bio.trim(),
+    });
+
+    if (!parsed.success) {
+      const firstIssue = parsed.error.issues[0];
+      setError(firstIssue.message);
+      return;
+    }
 
     setLoading(true);
     try {
       await apiClient("/user/register", {
         method: "POST",
         body: {
-          name: name.trim(),
-          email: email.trim(),
-          password,
-          phone: phone.trim() || undefined,
+          name: parsed.data.name,
+          email: parsed.data.email,
+          password: parsed.data.password,
+          phone: parsed.data.phone,
           role: "INSTRUCTOR",
-          expertise: expertise.trim(),
-          bio: bio.trim(),
+          expertise: parsed.data.expertise,
+          bio: parsed.data.bio,
         },
       });
       await apiClient("/otp/send", {

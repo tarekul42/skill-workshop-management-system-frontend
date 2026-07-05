@@ -11,24 +11,4 @@ export const DASHBOARD_ROUTES = {
   STUDENT: "/student/dashboard",
 } as const;
 
-// ─── Demo Login Credentials ──────────────────────────────────────────
-
-export const DEMO_CREDENTIALS = {
-  student: {
-    email: process.env.NEXT_PUBLIC_DEMO_STUDENT_EMAIL ?? "",
-    password: process.env.NEXT_PUBLIC_DEMO_STUDENT_PASSWORD ?? "",
-    label: "Student",
-  },
-  admin: {
-    email: process.env.NEXT_PUBLIC_DEMO_ADMIN_EMAIL ?? "",
-    password: process.env.NEXT_PUBLIC_DEMO_ADMIN_PASSWORD ?? "",
-    label: "Admin",
-  },
-  instructor: {
-    email: process.env.NEXT_PUBLIC_DEMO_INSTRUCTOR_EMAIL ?? "",
-    password: process.env.NEXT_PUBLIC_DEMO_INSTRUCTOR_PASSWORD ?? "",
-    label: "Instructor",
-  },
-} as const;
-
-export type DemoRole = keyof typeof DEMO_CREDENTIALS;
+export type DemoRole = "student" | "admin" | "instructor";

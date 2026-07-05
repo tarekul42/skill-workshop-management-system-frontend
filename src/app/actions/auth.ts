@@ -50,3 +50,22 @@ export async function getAuthRole() {
     return null;
   }
 }
+
+export async function getDemoCredentials() {
+  const email = process.env.DEMO_STUDENT_EMAIL ?? "";
+  const password = process.env.DEMO_STUDENT_PASSWORD ?? "";
+  if (!email || !password) return null;
+  return {
+    student: { email, password, label: "Student" },
+    admin: {
+      email: process.env.DEMO_ADMIN_EMAIL ?? "",
+      password: process.env.DEMO_ADMIN_PASSWORD ?? "",
+      label: "Admin",
+    },
+    instructor: {
+      email: process.env.DEMO_INSTRUCTOR_EMAIL ?? "",
+      password: process.env.DEMO_INSTRUCTOR_PASSWORD ?? "",
+      label: "Instructor",
+    },
+  };
+}

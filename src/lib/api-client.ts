@@ -1,5 +1,28 @@
 import { BACKEND_API_URL } from "./constants";
 
+// ─── In-memory access token ───────────────────────────────────────
+// Stored in a module-level variable rather than sessionStorage so that
+// an XSS attack cannot enumerate tokens via storage APIs. On page reload
+// the token is lost, which triggers a refresh via the httpOnly cookie.
+
+let accessToken: string | null = null;
+
+function getAccessToken(): string | null {
+  return accessToken;
+}
+
+function setAccessToken(token: string): void {
+  accessToken = token;
+}
+
+export function clearAccessToken(): void {
+  accessToken = null;
+}
+
+export function storeAccessToken(token: string): void {
+  accessToken = token;
+}
+
 // ─── Auth session expired helper ──────────────────────────────────
 
 export function handleSessionExpired(): void {
@@ -30,27 +53,6 @@ const CSRF_EXEMPT_PATHS = [
 
 function isCsrfExempt(endpoint: string): boolean {
   return CSRF_EXEMPT_PATHS.some((p) => endpoint.startsWith(p));
-}
-
-const TOKEN_KEY = "skillworkshop_access_token";
-
-function getAccessToken(): string | null {
-  if (typeof window === "undefined") return null;
-  return sessionStorage.getItem(TOKEN_KEY);
-}
-
-function setAccessToken(token: string): void {
-  if (typeof window === "undefined") return;
-  sessionStorage.setItem(TOKEN_KEY, token);
-}
-
-export function clearAccessToken(): void {
-  if (typeof window === "undefined") return;
-  sessionStorage.removeItem(TOKEN_KEY);
-}
-
-export function storeAccessToken(token: string): void {
-  setAccessToken(token);
 }
 
 const SESSION_EXPIRED_MSG = "Session expired. Please log in again.";
@@ -184,19 +186,19 @@ export async function apiRequest<T>(
 
   const isMutating = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
   if (isMutating && !isCsrfExempt(endpoint) && !skipCsrf) {
-    try {
-      const csrfRes = await fetch(`${BACKEND_API_URL}/csrf-token`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-        credentials: "include",
-      });
-      if (csrfRes.ok) {
-        const csrfData = await csrfRes.json();
-        if (csrfData?.csrfToken) {
-          fetchHeaders["x-csrf-token"] = csrfData.csrfToken;
-        }
-      }
-    } catch {
-      // Non-critical
+    const csrfRes = await fetch(`${BACKEND_API_URL}/csrf-token`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      credentials: "include",
+    });
+    if (!csrfRes.ok) {
+      throw new ApiError(
+        csrfRes.status,
+        "Failed to fetch CSRF token — cannot process mutating request"
+      );
+    }
+    const csrfData = await csrfRes.json();
+    if (csrfData?.csrfToken) {
+      fetchHeaders["x-csrf-token"] = csrfData.csrfToken;
     }
   }
 

@@ -18,16 +18,24 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { apiClient } from "@/lib/api-client";
 import { AnimatedPage } from "@/components/ui/animated-page";
+import { z } from "zod";
+
+const emailSchema = z.string().email("Please enter a valid email address").max(254);
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email.trim()) return;
+    const parsed = emailSchema.safeParse(email.trim());
+    if (!parsed.success) {
+      setError("Please enter a valid email address");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -127,6 +135,8 @@ export default function ForgotPasswordPage() {
                     />
                   </div>
                 </div>
+
+                {error && <p className="text-danger text-center text-[14px]">{error}</p>}
 
                 <Button
                   type="submit"

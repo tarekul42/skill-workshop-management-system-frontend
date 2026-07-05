@@ -4,25 +4,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
-// Mock sessionStorage
-const sessionStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: vi.fn((key: string) => store[key] ?? null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value;
-    }),
-    removeItem: vi.fn((key: string) => {
-      delete store[key];
-    }),
-    clear: vi.fn(() => {
-      store = {};
-    }),
-    _store: store,
-  };
-})();
-Object.defineProperty(global, "sessionStorage", { value: sessionStorageMock });
-
 // Mock localStorage
 const localStorageMock = (() => {
   let store: Record<string, string> = {};
@@ -50,15 +31,22 @@ Object.defineProperty(global, "window", {
   writable: true,
 });
 
+import {
+  apiClient,
+  apiClientPaginated,
+  apiClientFormData,
+  storeAccessToken,
+  clearAccessToken,
+  handleSessionExpired,
+} from "@/lib/api-client";
+
 describe("apiClient", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    sessionStorageMock.setItem("skillworkshop_access_token", "test-access-token");
+    storeAccessToken("test-access-token");
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
-    sessionStorageMock.clear();
     localStorageMock.clear();
   });
 
@@ -68,7 +56,6 @@ describe("apiClient", () => {
       json: () => Promise.resolve({ success: true, data: { id: "1" } }),
     });
 
-    const { apiClient } = await import("@/lib/api-client");
     await apiClient("/test");
 
     const fetchCall = mockFetch.mock.calls[0];
@@ -77,14 +64,13 @@ describe("apiClient", () => {
   });
 
   it("should not attach Authorization header when no access token", async () => {
-    sessionStorageMock.removeItem("skillworkshop_access_token");
+    clearAccessToken();
 
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ success: true, data: {} }),
     });
 
-    const { apiClient } = await import("@/lib/api-client");
     await apiClient("/user/register", { method: "POST", body: {} });
 
     const fetchCall = mockFetch.mock.calls[0];
@@ -104,7 +90,6 @@ describe("apiClient", () => {
       json: () => Promise.resolve({ success: true, data: { id: "123" } }),
     });
 
-    const { apiClient } = await import("@/lib/api-client");
     await apiClient("/workshop/create", {
       method: "POST",
       body: { title: "Workshop" },
@@ -125,7 +110,6 @@ describe("apiClient", () => {
         }),
     });
 
-    const { apiClient } = await import("@/lib/api-client");
     await apiClient("/auth/login", {
       method: "POST",
       body: { email: "test@test.com", password: "pass" },
@@ -143,7 +127,6 @@ describe("apiClient", () => {
       json: () => Promise.resolve({ success: false, message: "Forbidden" }),
     });
 
-    const { apiClient } = await import("@/lib/api-client");
     await expect(apiClient("/admin/users")).rejects.toThrow("Forbidden");
   });
 
@@ -154,7 +137,6 @@ describe("apiClient", () => {
       json: () => Promise.resolve({ success: false, message: "Server Error" }),
     });
 
-    const { apiClient } = await import("@/lib/api-client");
     try {
       await apiClient("/test");
       expect.unreachable("Should have thrown");
@@ -168,7 +150,6 @@ describe("apiClient", () => {
   it("should handle network errors gracefully", async () => {
     mockFetch.mockRejectedValueOnce(new TypeError("Failed to fetch"));
 
-    const { apiClient } = await import("@/lib/api-client");
     await expect(apiClient("/test")).rejects.toThrow("Network error");
   });
 
@@ -184,7 +165,6 @@ describe("apiClient", () => {
       json: () => Promise.resolve({ success: true, data: { id: "1" } }),
     });
 
-    const { apiClientFormData } = await import("@/lib/api-client");
     const formData = new FormData();
     formData.append("title", "Test Workshop");
 
@@ -211,7 +191,6 @@ describe("apiClient", () => {
       json: () => Promise.resolve({ success: true, data: {} }),
     });
 
-    const { apiClient } = await import("@/lib/api-client");
     await apiClient("/test", { method: "POST", body: { key: "value" } });
 
     // The second fetch call is the actual POST (first is CSRF)
@@ -224,7 +203,7 @@ describe("apiClient", () => {
 describe("apiClientPaginated", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    sessionStorageMock.setItem("skillworkshop_access_token", "test-access-token");
+    storeAccessToken("test-access-token");
   });
 
   it("should return data and meta when returnMeta is true", async () => {
@@ -238,7 +217,6 @@ describe("apiClientPaginated", () => {
         }),
     });
 
-    const { apiClientPaginated } = await import("@/lib/api-client");
     const result = await apiClientPaginated("/workshop");
 
     expect(result).toHaveProperty("data");
@@ -251,46 +229,50 @@ describe("apiClientPaginated", () => {
 describe("handleSessionExpired", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    sessionStorageMock.setItem("skillworkshop_access_token", "old-token");
     localStorageMock.setItem("skillworkshop_user", JSON.stringify({ name: "Test" }));
   });
 
-  it("should clear session storage and redirect to login", async () => {
-    const { handleSessionExpired } = await import("@/lib/api-client");
+  it("should clear user from localStorage and redirect to login", async () => {
     handleSessionExpired();
 
-    expect(sessionStorageMock.removeItem).toHaveBeenCalledWith("skillworkshop_access_token");
     expect(localStorageMock.removeItem).toHaveBeenCalledWith("skillworkshop_user");
     expect(mockLocationAssign).toHaveBeenCalledWith("/login");
   });
 });
 
-describe("storeAccessToken", () => {
+describe("storeAccessToken / clearAccessToken", () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it("should store token in sessionStorage", async () => {
-    const { storeAccessToken } = await import("@/lib/api-client");
+  it("should store and later attach the token to requests", async () => {
     storeAccessToken("new-token-123");
 
-    expect(sessionStorageMock.setItem).toHaveBeenCalledWith(
-      "skillworkshop_access_token",
-      "new-token-123"
-    );
-  });
-});
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ success: true, data: {} }),
+    });
 
-describe("clearAccessToken", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    sessionStorageMock.setItem("skillworkshop_access_token", "existing-token");
+    await apiClient("/test");
+
+    const fetchCall = mockFetch.mock.calls[0];
+    const headers = fetchCall[1]?.headers as Record<string, string>;
+    expect(headers?.Authorization).toBe("Bearer new-token-123");
   });
 
-  it("should remove token from sessionStorage", async () => {
-    const { clearAccessToken } = await import("@/lib/api-client");
+  it("should clear the token so subsequent requests have no Authorization", async () => {
+    storeAccessToken("existing-token");
     clearAccessToken();
 
-    expect(sessionStorageMock.removeItem).toHaveBeenCalledWith("skillworkshop_access_token");
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ success: true, data: {} }),
+    });
+
+    await apiClient("/test");
+
+    const fetchCall = mockFetch.mock.calls[0];
+    const headers = fetchCall[1]?.headers as Record<string, string>;
+    expect(headers?.Authorization).toBeUndefined();
   });
 });
