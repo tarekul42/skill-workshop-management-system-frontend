@@ -740,7 +740,7 @@ export default function HomePage() {
                       <div className="border-background size-8 overflow-hidden rounded-full border-2">
                         <Image
                           src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=64&q=60&fit=crop"
-                          alt=""
+                          alt="Testimonial from Sarah"
                           width={32}
                           height={32}
                           className="size-full object-cover"
@@ -750,7 +750,7 @@ export default function HomePage() {
                       <div className="border-background size-8 overflow-hidden rounded-full border-2">
                         <Image
                           src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=64&q=60&fit=crop"
-                          alt=""
+                          alt="Testimonial from Alex"
                           width={32}
                           height={32}
                           className="size-full object-cover"
@@ -760,7 +760,7 @@ export default function HomePage() {
                       <div className="border-background size-8 overflow-hidden rounded-full border-2">
                         <Image
                           src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=64&q=60&fit=crop"
-                          alt=""
+                          alt="Testimonial from Jordan"
                           width={32}
                           height={32}
                           className="size-full object-cover"

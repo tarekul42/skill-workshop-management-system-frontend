@@ -50,6 +50,18 @@ export interface FetchAuditLogsParams extends PaginationParams {
   endDate?: string;
 }
 
+function buildQueryString(params?: Record<string, string | number | undefined>): string {
+  if (!params) return "";
+  const searchParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== "") {
+      searchParams.set(key, String(value));
+    }
+  }
+  const qs = searchParams.toString();
+  return qs ? `?${qs}` : "";
+}
+
 // ─── Response helpers ───────────────────────────────────────────────
 
 export interface PaginatedData<T> {
@@ -184,14 +196,7 @@ export async function getMe(): Promise<IUser> {
  * Get all users (admin). Returns paginated results.
  */
 export async function getAllUsers(params?: FetchUsersParams): Promise<PaginatedData<IUser[]>> {
-  const searchParams = new URLSearchParams();
-  if (params?.page) searchParams.set("page", String(params.page));
-  if (params?.limit) searchParams.set("limit", String(params.limit));
-  if (params?.searchTerm) searchParams.set("searchTerm", params.searchTerm);
-
-  const qs = searchParams.toString();
-  const endpoint = `/user/all-users${qs ? `?${qs}` : ""}`;
-
+  const endpoint = `/user/all-users${buildQueryString(params as Record<string, string | number | undefined>)}`;
   return apiClientPaginated<IUser[]>(endpoint);
 }
 
@@ -234,18 +239,7 @@ export async function deleteUser(id: string): Promise<void> {
 export async function fetchWorkshops(
   params?: FetchWorkshopsParams
 ): Promise<PaginatedData<IWorkshop[]>> {
-  const searchParams = new URLSearchParams();
-
-  if (params?.page) searchParams.set("page", String(params.page));
-  if (params?.limit) searchParams.set("limit", String(params.limit));
-  if (params?.searchTerm) searchParams.set("searchTerm", params.searchTerm);
-  if (params?.category) searchParams.set("category", params.category);
-  if (params?.level) searchParams.set("level", params.level);
-  if (params?.sort) searchParams.set("sort", params.sort);
-
-  const queryString = searchParams.toString();
-  const endpoint = `/workshop${queryString ? `?${queryString}` : ""}`;
-
+  const endpoint = `/workshop${buildQueryString(params as Record<string, string | number | undefined>)}`;
   return apiClientPaginated<IWorkshop[]>(endpoint);
 }
 
@@ -509,13 +503,7 @@ export async function createEnrollment(
 export async function getAllEnrollments(
   params?: PaginationParams
 ): Promise<PaginatedData<IEnrollment[]>> {
-  const searchParams = new URLSearchParams();
-  if (params?.page) searchParams.set("page", String(params.page));
-  if (params?.limit) searchParams.set("limit", String(params.limit));
-
-  const qs = searchParams.toString();
-  const endpoint = `/enrollment${qs ? `?${qs}` : ""}`;
-
+  const endpoint = `/enrollment${buildQueryString(params as Record<string, string | number | undefined>)}`;
   return apiClientPaginated<IEnrollment[]>(endpoint);
 }
 
@@ -664,20 +652,7 @@ export async function getWorkshopStats(): Promise<WorkshopStats> {
 export async function getAuditLogs(
   params?: FetchAuditLogsParams
 ): Promise<PaginatedData<IAuditLog[]>> {
-  const searchParams = new URLSearchParams();
-
-  if (params?.page) searchParams.set("page", String(params.page));
-  if (params?.limit) searchParams.set("limit", String(params.limit));
-  if (params?.collectionName) searchParams.set("collectionName", params.collectionName);
-  if (params?.action) searchParams.set("action", params.action);
-  if (params?.performedBy) searchParams.set("performedBy", params.performedBy);
-  if (params?.documentId) searchParams.set("documentId", params.documentId);
-  if (params?.startDate) searchParams.set("startDate", params.startDate);
-  if (params?.endDate) searchParams.set("endDate", params.endDate);
-
-  const qs = searchParams.toString();
-  const endpoint = `/audit${qs ? `?${qs}` : ""}`;
-
+  const endpoint = `/audit${buildQueryString(params as Record<string, string | number | undefined>)}`;
   return apiClientPaginated<IAuditLog[]>(endpoint);
 }
 
@@ -699,13 +674,8 @@ export async function getWorkshopReviews(
   workshopId: string,
   params?: { page?: number; limit?: number; sort?: string }
 ): Promise<{ data: IReview[]; meta: PaginationMeta }> {
-  const searchParams = new URLSearchParams();
-  if (params?.page) searchParams.set("page", String(params.page));
-  if (params?.limit) searchParams.set("limit", String(params.limit));
-  if (params?.sort) searchParams.set("sort", params.sort);
-  const qs = searchParams.toString();
   return apiClient<{ data: IReview[]; meta: PaginationMeta }>(
-    `/review/workshop/${workshopId}${qs ? `?${qs}` : ""}`
+    `/review/workshop/${workshopId}${buildQueryString(params as Record<string, string | number | undefined>)}`
   );
 }
 
