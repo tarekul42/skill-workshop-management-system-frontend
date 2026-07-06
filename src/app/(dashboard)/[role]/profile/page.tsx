@@ -417,7 +417,7 @@ export default function ProfilePage() {
                             phone: e.target.value,
                           }))
                         }
-                        placeholder="e.g. +880 1XXX-XXXXXX"
+                        placeholder="+8801XXXXXXXXX"
                       />
                       {profileErrors.phone && (
                         <p className="text-danger text-xs">{profileErrors.phone}</p>
