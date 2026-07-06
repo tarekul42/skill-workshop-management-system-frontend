@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { GraduationCap, ExternalLink, LogOut, Menu } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -27,9 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-import { clearSavedUser } from "@/lib/auth-helpers";
-import { clearSecureAuthCookie } from "@/app/actions/auth";
-import { clearAccessToken, apiClient } from "@/lib/api-client";
+import { useLogout } from "@/hooks/useLogout";
 
 import type { NavSection } from "@/types/dashboard.types";
 
@@ -286,18 +284,9 @@ function SidebarNavContent({
 
 export function DashboardSidebar({ role }: { role: string }) {
   const pathname = usePathname();
-  const router = useRouter();
   const sections = sidebarConfig[role] ?? [];
 
-  const handleLogout = async () => {
-    try {
-      await apiClient("/auth/logout", { method: "POST", skipCsrf: true });
-    } catch {}
-    clearSavedUser();
-    clearAccessToken();
-    await clearSecureAuthCookie();
-    router.push("/login");
-  };
+  const handleLogout = useLogout();
 
   return (
     <>

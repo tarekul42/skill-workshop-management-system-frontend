@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Menu, LayoutDashboard, LogOut, GraduationCap } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -20,10 +20,11 @@ import {
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { getSavedUser, saveUser, clearSavedUser } from "@/lib/auth-helpers";
-import { clearSecureAuthCookie, checkAuthSession } from "@/app/actions/auth";
-import { clearAccessToken, apiClient } from "@/lib/api-client";
+import { checkAuthSession } from "@/app/actions/auth";
+import { clearAccessToken } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
 import { DASHBOARD_ROUTES } from "@/lib/constants";
+import { useLogout } from "@/hooks/useLogout";
 
 import type { SavedUser } from "@/lib/auth-helpers";
 
@@ -37,10 +38,10 @@ const navLinks = [
 
 export function PublicNavbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<SavedUser | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const handleLogout = useLogout();
 
   const syncUser = useCallback(() => {
     setUser(getSavedUser());
@@ -92,18 +93,6 @@ export function PublicNavbar() {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [syncUser]);
-
-  const handleLogout = async () => {
-    try {
-      await apiClient("/auth/logout", { method: "POST", skipCsrf: true });
-    } catch {
-      // Continue cleanup
-    }
-    clearSavedUser();
-    clearAccessToken();
-    await clearSecureAuthCookie();
-    router.push("/login");
-  };
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";

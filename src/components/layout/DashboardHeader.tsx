@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Menu, User, Settings, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -16,11 +15,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { getSavedUser, saveUser, clearSavedUser } from "@/lib/auth-helpers";
+import { getSavedUser, saveUser } from "@/lib/auth-helpers";
 import type { SavedUser } from "@/lib/auth-helpers";
-import { clearSecureAuthCookie } from "@/app/actions/auth";
-import { clearAccessToken, apiClient } from "@/lib/api-client";
 import { getInitials } from "@/lib/formatters";
+import { useLogout } from "@/hooks/useLogout";
 
 // ─── Props ──────────────────────────────────────────────────────────
 
@@ -40,9 +38,9 @@ const roleLabels: Record<string, string> = {
 // ─── Component ──────────────────────────────────────────────────────
 
 export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
-  const router = useRouter();
   const [user, setUser] = React.useState<SavedUser | null>(() => getSavedUser());
   const role = user?.role ?? null;
+  const handleLogout = useLogout();
 
   React.useEffect(() => {
     if (user) return;
@@ -59,18 +57,6 @@ export function DashboardHeader({ onMenuClick }: DashboardHeaderProps) {
     };
     restore();
   }, [user]);
-
-  const handleLogout = async () => {
-    try {
-      await apiClient("/auth/logout", { method: "POST", skipCsrf: true });
-    } catch {
-      // Continue with client-side cleanup even if backend call fails
-    }
-    clearSavedUser();
-    clearAccessToken();
-    await clearSecureAuthCookie();
-    router.push("/login");
-  };
 
   const initials = user?.name ? getInitials(user.name) : "?";
   const displayName = user?.name ?? "User";
