@@ -1,5 +1,6 @@
 import { BACKEND_API_URL } from "./constants";
 import { clearSavedUser } from "@/lib/auth-helpers";
+import { toast } from "sonner";
 
 // ─── Defaults ──────────────────────────────────────────────────────
 
@@ -300,15 +301,33 @@ export async function apiRequest<T>(
 
   if (!response.ok || !json?.success) {
     const status = response.status;
+    const serverMsg = json?.message;
     const message =
       status >= 500
         ? "Internal server error. Please try again later."
-        : (json?.message ?? `Request failed with status ${status}`);
+        : (serverMsg ?? `Request failed with status ${status}`);
 
     if (status >= 500) {
       console.error(
-        `[API Server Error] ${method} ${endpoint}: status=${status} message=${json?.message ?? "(no message)"}`
+        `[API Server Error] ${method} ${endpoint}: status=${status} message=${serverMsg ?? "(no message)"}`
       );
+    }
+
+    const errorMessages: Record<number, string> = {
+      400: serverMsg ?? "Invalid request. Please check your input.",
+      401: "Your session has expired. Please log in again.",
+      403: "You don't have permission to perform this action.",
+      404: "The requested resource was not found.",
+      409: serverMsg ?? "This resource already exists.",
+      422: serverMsg ?? "Validation failed. Please check your input.",
+      429: "Too many requests. Please wait a moment and try again.",
+    };
+
+    if (status >= 400 && status < 500) {
+      const toastMsg = errorMessages[status] ?? message;
+      if (status !== 401 || !isCsrfExempt(endpoint)) {
+        toast.error(toastMsg);
+      }
     }
 
     throw new ApiError(status, message, json?.data);
