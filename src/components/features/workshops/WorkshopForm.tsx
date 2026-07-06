@@ -646,6 +646,7 @@ export function WorkshopForm({
                 type="file"
                 accept="image/*"
                 multiple
+                aria-label="Upload workshop images"
                 className="absolute inset-0 cursor-pointer opacity-0"
                 onChange={handleImageChange}
               />
