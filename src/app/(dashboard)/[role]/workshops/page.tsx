@@ -223,7 +223,7 @@ export default function WorkshopsPage({ params }: PageProps) {
               workshops
                 .filter((ws: IWorkshop) => {
                   if (statusFilter === "all") return true;
-                  const isPublished = ws.currentEnrollments > 0 || ws.price === 0;
+                  const isPublished = ws.currentEnrollments > 0 || ws.price !== undefined;
                   return statusFilter === "published" ? isPublished : !isPublished;
                 })
                 .map((ws: IWorkshop) => {
@@ -309,7 +309,9 @@ export default function WorkshopsPage({ params }: PageProps) {
                       <TableCell>
                         <StatusBadge
                           status={
-                            ws.currentEnrollments > 0 || ws.price === 0 ? "Published" : "Draft"
+                            ws.currentEnrollments > 0 || ws.price !== undefined
+                              ? "Published"
+                              : "Draft"
                           }
                         />
                       </TableCell>

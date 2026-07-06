@@ -99,6 +99,40 @@ export function DataTable<TData, TValue>({
   const [globalFilter, setGlobalFilter] = useState("");
   const [pageSize, setPageSize] = useState(initialPageSize);
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [showGlobalSearch, setShowGlobalSearch] = useState(false);
+
+  const handleDownloadCSV = () => {
+    const visibleColumns = table
+      .getAllColumns()
+      .filter((col) => col.getIsVisible())
+      .map((col) => col.id);
+
+    const headerRow = visibleColumns
+      .map((id) => id.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()))
+      .join(",");
+
+    const dataRows = table
+      .getFilteredRowModel()
+      .rows.map((row) =>
+        visibleColumns
+          .map((id) => {
+            const value = row.getValue(id);
+            const str = String(value ?? "");
+            return str.includes(",") || str.includes('"') ? `"${str.replace(/"/g, '""')}"` : str;
+          })
+          .join(",")
+      )
+      .join("\n");
+
+    const csv = `${headerRow}\n${dataRows}`;
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "table-export.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const tableData = useMemo(() => (isLoading ? [] : data), [isLoading, data]);
 
@@ -150,11 +184,20 @@ export function DataTable<TData, TValue>({
             )}
             <Button
               variant="outline"
+              onClick={() => setShowGlobalSearch((prev) => !prev)}
               className="bg-background border-border-strong/30 hover:border-primary/50 hover:bg-primary-subtle/30 h-11 rounded-xl border-dashed"
             >
               <Filter className="text-foreground-muted mr-2.5 size-4" />
               Filters
             </Button>
+            {showGlobalSearch && (
+              <Input
+                placeholder="Search all columns..."
+                value={globalFilter}
+                onChange={(e) => setGlobalFilter(e.target.value)}
+                className="bg-background border-border-strong/10 focus:border-primary/30 h-11 rounded-xl pl-3 transition-all focus:shadow-sm"
+              />
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -195,6 +238,7 @@ export function DataTable<TData, TValue>({
               variant="ghost"
               size="icon"
               aria-label="Download table data"
+              onClick={handleDownloadCSV}
               className="hover:bg-surface-3 h-11 w-11 rounded-xl transition-colors"
             >
               <Download className="size-5" />

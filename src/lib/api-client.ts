@@ -243,7 +243,7 @@ export async function apiRequest<T>(
         throw new ApiError(0, "Failed to fetch CSRF token — cannot process mutating request");
       }
     }
-    fetchHeaders["x-csrf-token"] = csrfToken;
+    fetchHeaders["x-csrf-token"] = csrfToken!;
   }
 
   const fetchOptions: RequestInit = {
