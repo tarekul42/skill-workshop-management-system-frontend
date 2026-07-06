@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, startTransition } from "react";
 import { Plus, Pencil, Trash2, Loader2, Layers } from "lucide-react";
 import { toast } from "sonner";
 
@@ -61,7 +61,6 @@ export default function LevelsPage({ params: _params }: PageProps) {
   // ── Fetch levels ──────────────────────────────────────────────────
 
   const fetchLevels = useCallback(async () => {
-    setLoading(true);
     try {
       const data = await fetchWorkshopLevels();
       setLevels(data);
@@ -74,8 +73,9 @@ export default function LevelsPage({ params: _params }: PageProps) {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchLevels();
+    startTransition(() => {
+      fetchLevels();
+    });
   }, [fetchLevels]);
 
   // ── Handlers ───────────────────────────────────────────────────────

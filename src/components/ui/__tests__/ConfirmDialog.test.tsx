@@ -6,9 +6,11 @@ import { ConfirmDialog } from "../confirm-dialog";
 // Mock framer-motion
 vi.mock("framer-motion", () => {
   const filterProps = (allProps: Record<string, unknown>) => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { initial, animate, exit, transition, whileHover, whileTap, ...props } = allProps;
-    return props;
+    const filtered = { ...allProps };
+    for (const key of ["initial", "animate", "exit", "transition", "whileHover", "whileTap"]) {
+      delete filtered[key];
+    }
+    return filtered;
   };
   return {
     motion: {

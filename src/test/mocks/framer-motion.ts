@@ -11,9 +11,11 @@ import { vi } from "vitest";
 export function mockFramerMotion() {
   vi.mock("motion/react", () => {
     const filterProps = (allProps: Record<string, unknown>) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { initial, animate, exit, transition, whileHover, whileTap, ...props } = allProps;
-      return props;
+      const filtered = { ...allProps };
+      for (const key of ["initial", "animate", "exit", "transition", "whileHover", "whileTap"]) {
+        delete filtered[key];
+      }
+      return filtered;
     };
     return {
       motion: new Proxy(

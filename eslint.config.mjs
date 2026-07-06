@@ -20,6 +20,11 @@ const eslintConfig = defineConfig([
     "download/**",
     "coverage/**",
   ]),
+  {
+    rules: {
+      "react-hooks/incompatible-library": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

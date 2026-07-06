@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, CheckCircle, GraduationCap, AlertCircle, RefreshCw } from "lucide-react";
 
@@ -32,7 +32,7 @@ export function EnrollButton({
   className,
 }: EnrollButtonProps) {
   const router = useRouter();
-  const [state, setState] = useState<EnrollState>("idle");
+  const [state, setState] = useState<EnrollState>("checking");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   // Check enrollment status on mount
@@ -40,7 +40,6 @@ export function EnrollButton({
     const user = getSavedUser();
     if (!user) return;
 
-    setState("checking");
     try {
       const { getMyEnrollments } = await import("@/lib/api/services");
       const enrollments = await getMyEnrollments();
@@ -66,8 +65,9 @@ export function EnrollButton({
   }, [workshopId]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    checkEnrollmentStatus();
+    startTransition(() => {
+      checkEnrollmentStatus();
+    });
   }, [checkEnrollmentStatus]);
 
   // Also listen for payment completion events (from callback redirect pages)

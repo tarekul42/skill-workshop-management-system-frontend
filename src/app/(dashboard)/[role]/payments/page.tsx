@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, startTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
@@ -277,7 +277,6 @@ export default function PaymentsPage({ params }: PageProps) {
   // ═══════════════════════════════════════════════════════════════════
 
   const fetchData = useCallback(async () => {
-    setLoading(true);
     try {
       const res = await getAllEnrollments({ page, limit });
       const rows = extractPayments(res.data);
@@ -294,8 +293,9 @@ export default function PaymentsPage({ params }: PageProps) {
 
   useEffect(() => {
     if (!role || role.toUpperCase() === "STUDENT") return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchData();
+    startTransition(() => {
+      fetchData();
+    });
   }, [role, fetchData]);
 
   // ── Admin handlers ───────────────────────────────────────────────

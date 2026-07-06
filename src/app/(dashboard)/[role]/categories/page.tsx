@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, startTransition } from "react";
 import Image from "next/image";
 import {
   Plus,
@@ -75,7 +75,6 @@ export default function CategoriesPage({ params: _params }: PageProps) {
   // ── Fetch categories ──────────────────────────────────────────────
 
   const fetchCategoriesData = useCallback(async () => {
-    setLoading(true);
     try {
       const data = await fetchCategories();
       setCategories(data);
@@ -88,8 +87,9 @@ export default function CategoriesPage({ params: _params }: PageProps) {
   }, []);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    fetchCategoriesData();
+    startTransition(() => {
+      fetchCategoriesData();
+    });
   }, [fetchCategoriesData]);
 
   // ── Form helpers ──────────────────────────────────────────────────

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, startTransition } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -30,7 +30,6 @@ export default function EditWorkshopPage({ params }: PageProps) {
   const [workshop, setWorkshop] = useState<IWorkshop | null>(null);
 
   const loadData = useCallback(async () => {
-    setLoading(true);
     try {
       const [ws, cats, lvls] = await Promise.all([
         fetchWorkshopById(workshopId),
@@ -46,8 +45,9 @@ export default function EditWorkshopPage({ params }: PageProps) {
   }, [workshopId]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    loadData();
+    startTransition(() => {
+      loadData();
+    });
   }, [loadData]);
 
   const handleSubmit = async (formData: FormData) => {
