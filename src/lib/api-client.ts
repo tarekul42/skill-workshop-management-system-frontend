@@ -60,8 +60,6 @@ export function handleSessionExpired(): void {
 }
 
 const CSRF_EXEMPT_PATHS = [
-  "/user/register",
-  "/auth/login",
   "/auth/forgot-password",
   "/otp/send",
   "/otp/verify",

@@ -10,7 +10,7 @@ const nameSchema = z
   .string()
   .min(2, "Name must be at least 2 characters")
   .max(100, "Name must be at most 100 characters")
-  .regex(/^[a-zA-Z0-9 .,!?@\-'():;]+$/, "Name contains invalid characters");
+  .regex(/^[\p{L}0-9 .,!?@\-'():;]+$/u, "Name contains invalid characters");
 
 export const loginSchema = z.object({
   email: emailSchema,

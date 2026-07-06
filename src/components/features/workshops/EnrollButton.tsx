@@ -129,9 +129,7 @@ export function EnrollButton({
           variant="secondary"
           size={size}
           onClick={() => {
-            const user = getSavedUser();
-            const role = (user?.role || "student").toLowerCase();
-            router.push(`/${role}/enrollments`);
+            router.push(`/workshops/${slug}`);
           }}
           className={cn(
             "bg-success text-success-foreground border-success-subtle hover:bg-success/90 w-full border",

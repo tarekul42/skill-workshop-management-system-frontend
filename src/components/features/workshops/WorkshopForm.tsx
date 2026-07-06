@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { z } from "zod";
 import {
   Loader2,
@@ -196,6 +197,7 @@ export function WorkshopForm({
   isSubmitting,
   submitLabel = "Create Workshop",
 }: WorkshopFormProps) {
+  const router = useRouter();
   // ── Form state (initialize from initialData) ──────────────────
   const [formData, setFormData] = useState<WorkshopFormData>(() => {
     if (initialData) {
@@ -203,7 +205,7 @@ export function WorkshopForm({
         title: initialData.title ?? "",
         description: initialData.description ?? "",
         location: initialData.location ?? "",
-        price: initialData.price ?? 0,
+        price: initialData.price,
         startDate: initialData.startDate
           ? new Date(initialData.startDate).toISOString().split("T")[0]
           : "",
@@ -224,7 +226,7 @@ export function WorkshopForm({
       title: "",
       description: "",
       location: "",
-      price: 0,
+      price: undefined,
       startDate: "",
       endDate: "",
       level: "",
@@ -244,6 +246,18 @@ export function WorkshopForm({
   const [existingImages, setExistingImages] = useState<string[]>(initialData?.images ?? []);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
   const [dragActive, setDragActive] = useState(false);
+
+  // Track blob URLs in a ref so cleanup can revoke them without a dep on imagePreviews
+  const previewUrlsRef = useRef<string[]>([]);
+  useEffect(() => {
+    previewUrlsRef.current = imagePreviews;
+  }, [imagePreviews]);
+
+  useEffect(() => {
+    return () => {
+      previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   // ── Fetch categories & levels ────────────────────────────────────
   const { data: categories = [] } = useQuery<ICategory[]>({
@@ -385,6 +399,7 @@ export function WorkshopForm({
 
     try {
       await onSubmit(fd);
+      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
     } catch {
       toast.error("Something went wrong. Please try again.");
     }
@@ -463,7 +478,7 @@ export function WorkshopForm({
                   placeholder="0"
                   value={formData.price ?? ""}
                   onChange={(e) =>
-                    updateField("price", e.target.value ? Number(e.target.value) : 0)
+                    updateField("price", e.target.value ? Number(e.target.value) : undefined)
                   }
                   className="bg-surface-2 border-border font-display h-11 rounded-xl pl-7 font-bold"
                 />
@@ -732,6 +747,7 @@ export function WorkshopForm({
           <Button
             type="button"
             variant="ghost"
+            onClick={() => router.back()}
             className="text-muted-foreground rounded-xl font-bold"
             disabled={isSubmitting}
           >

@@ -348,7 +348,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
   }
 
   function isCancelable(status: EnrollmentStatus): boolean {
-    return status === "PENDING" || status === "COMPLETE";
+    return status === "PENDING";
   }
 
   // ═══════════════════════════════════════════════════════════════════

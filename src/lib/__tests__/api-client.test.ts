@@ -67,6 +67,12 @@ describe("apiClient", () => {
   it("should not attach Authorization header when no access token", async () => {
     clearAccessToken();
 
+    // CSRF token fetch
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ csrfToken: "test-csrf" }),
+    });
+    // Actual POST
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: () => Promise.resolve({ success: true, data: {} }),
@@ -74,7 +80,9 @@ describe("apiClient", () => {
 
     await apiClient("/user/register", { method: "POST", body: {} });
 
-    const fetchCall = mockFetch.mock.calls[0];
+    // The second fetch call is the actual POST (first is CSRF)
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    const fetchCall = mockFetch.mock.calls[1];
     const headers = fetchCall[1]?.headers as Record<string, string>;
     expect(headers?.Authorization).toBeUndefined();
   });
@@ -101,7 +109,13 @@ describe("apiClient", () => {
     expect(mockFetch.mock.calls[0][0]).toContain("/csrf-token");
   });
 
-  it("should skip CSRF for exempt paths like login", async () => {
+  it("should fetch CSRF token before login (no longer exempt)", async () => {
+    // CSRF fetch
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve({ csrfToken: "test-csrf" }),
+    });
+    // Actual POST
     mockFetch.mockResolvedValueOnce({
       ok: true,
       json: () =>
@@ -116,9 +130,9 @@ describe("apiClient", () => {
       body: { email: "test@test.com", password: "pass" },
     });
 
-    // Should only make one fetch call (no CSRF)
-    expect(mockFetch).toHaveBeenCalledTimes(1);
-    expect(mockFetch.mock.calls[0][0]).toContain("/auth/login");
+    // Should make two fetch calls (CSRF + login)
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockFetch.mock.calls[1][0]).toContain("/auth/login");
   });
 
   it("should throw ApiError on non-ok response", async () => {

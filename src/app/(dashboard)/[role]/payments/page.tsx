@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { BACKEND_API_URL } from "@/lib/constants";
 import {
   Table,
   TableBody,
@@ -264,10 +265,10 @@ export default function PaymentsPage({ params }: PageProps) {
         link.click();
         document.body.removeChild(link);
       } else {
-        window.open(`/payment/invoice/${paymentId}`, "_blank");
+        window.open(`${BACKEND_API_URL}/payment/invoice/${paymentId}`, "_blank");
       }
     } catch {
-      window.open(`/payment/invoice/${paymentId}`, "_blank");
+      window.open(`${BACKEND_API_URL}/payment/invoice/${paymentId}`, "_blank");
     }
   }
 

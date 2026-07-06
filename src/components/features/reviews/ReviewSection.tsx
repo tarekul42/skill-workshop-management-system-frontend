@@ -48,12 +48,18 @@ function StarRating({
   const sizeClass = size === "lg" ? "size-7" : size === "md" ? "size-5" : "size-4";
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div
+      className="flex items-center gap-0.5"
+      role="radiogroup"
+      aria-label={`Rating: ${rating} out of 5 stars`}
+    >
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
           type="button"
           disabled={!interactive}
+          role="radio"
+          aria-checked={star <= rating}
           aria-label={`${star} star${star > 1 ? "s" : ""}`}
           onClick={() => onRate?.(star)}
           onMouseEnter={() => interactive && setHovered(star)}
@@ -71,6 +77,11 @@ function StarRating({
           />
         </button>
       ))}
+      {interactive && (
+        <span className="sr-only" aria-live="polite">
+          {rating > 0 ? `${rating} star${rating > 1 ? "s" : ""} selected` : "No rating selected"}
+        </span>
+      )}
     </div>
   );
 }
