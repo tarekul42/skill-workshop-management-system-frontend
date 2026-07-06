@@ -12,6 +12,7 @@ export const DEFAULT_REQUEST_TIMEOUT = 30_000; // 30 seconds
 
 let accessToken: string | null = null;
 let csrfToken: string | null = null;
+let csrfTokenPromise: Promise<string | null> | null = null;
 
 function getAccessToken(): string | null {
   return accessToken;
@@ -234,9 +235,14 @@ export async function apiRequest<T>(
   const isMutating = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
   if (isMutating && !isCsrfExempt(endpoint) && !skipCsrf) {
     if (!csrfToken) {
-      const token = await fetchCsrfToken(
-        getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {}
-      );
+      // Mutex: if a CSRF token fetch is already in flight, wait for it
+      if (!csrfTokenPromise) {
+        csrfTokenPromise = fetchCsrfToken(
+          getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {}
+        );
+      }
+      const token = await csrfTokenPromise;
+      csrfTokenPromise = null;
       if (!token) {
         throw new ApiError(0, "Failed to fetch CSRF token — cannot process mutating request");
       }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import {
@@ -62,6 +62,7 @@ interface EnrollmentItem {
   workshop?: string | { _id: string; title: string; slug?: string; images?: string[] };
   createdAt?: string;
   studentCount?: number;
+  user?: { name?: string; email?: string; phone?: string };
 }
 
 interface WorkshopItem {
@@ -184,8 +185,11 @@ function ActivityItem({
 export default function DashboardPage({ params }: PageProps) {
   const role = React.use(params).role;
   const normalizedRole = role?.toUpperCase() ?? "";
-  const [mounted, setMounted] = useState(false);
-  const user = mounted ? getSavedUser() : null;
+  const user = useSyncExternalStore(
+    () => () => {},
+    () => getSavedUser(),
+    () => null
+  );
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -396,7 +400,9 @@ export default function DashboardPage({ params }: PageProps) {
             })),
             recentEnrollments: recentInstructorEnrollments.map((e) => ({
               _id: e._id,
-              studentName: "Student",
+              studentName:
+                (e.user && typeof e.user === "object" && (e.user as { name?: string }).name) ||
+                "Anonymous Student",
               workshopTitle:
                 typeof e.workshop === "object"
                   ? e.workshop.title
@@ -452,10 +458,8 @@ export default function DashboardPage({ params }: PageProps) {
       }
     }
 
-    // Pure fix: Defer to next tick to satisfy "no synchronous setState in effect" lint rule.
-    const timer = setTimeout(() => setMounted(true), 0);
     loadDashboard();
-    return () => clearTimeout(timer);
+    return () => {};
   }, [role, normalizedRole]);
 
   const dashboardBase = `/${normalizedRole.toLowerCase()}`;
