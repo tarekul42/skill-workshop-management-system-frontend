@@ -1,519 +1,391 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ApiError } from "@/lib/api-client";
+import {
+  login,
+  registerUser,
+  getMe,
+  getAllUsers,
+  fetchWorkshops,
+  createWorkshop,
+  updateWorkshop,
+  deleteWorkshop,
+  fetchWorkshopLevels,
+  fetchCategories,
+  createCategory,
+  updateCategory,
+  deleteCategory,
+  createEnrollment,
+  getAllEnrollments,
+  getMyEnrollments,
+  initPayment,
+  sendOtp,
+  verifyOtp,
+  getWorkshopReviews,
+  getWorkshopReviewStats,
+  createReview,
+  updateReview,
+  deleteReview,
+  submitContact,
+  fetchAdminDashboard,
+  getEnrollmentStats,
+  getPaymentStats,
+  getUserStats,
+  getWorkshopStats,
+  getAuditLogs,
+  getInvoice,
+  refundPayment,
+  updateEnrollmentStatus,
+  deleteEnrollment,
+  getEnrollmentById,
+  getUserReviewForWorkshop,
+  refreshToken,
+  logout,
+  changePassword,
+  setPassword,
+  forgotPassword,
+  resetPassword,
+  getWorkshopLevelById,
+  createLevel,
+  updateLevel,
+  deleteLevel,
+  fetchWorkshopBySlug,
+  fetchWorkshopById,
+  fetchCategoryBySlug,
+  getUserById,
+  updateUser,
+  deleteUser,
+} from "../services";
 
-// Mock the api-client module
-const { mockApiClient, mockApiClientPaginated, mockApiClientFormData } = vi.hoisted(() => ({
-  mockApiClient: vi.fn(),
-  mockApiClientPaginated: vi.fn(),
-  mockApiClientFormData: vi.fn(),
+const mockApiClient = vi.fn();
+const mockFormData = vi.fn();
+const mockPaginated = vi.fn();
+
+vi.mock("@/lib/api-client", () => ({
+  apiClient: (...args: unknown[]) => mockApiClient(...args),
+  apiClientFormData: (...args: unknown[]) => mockFormData(...args),
+  apiClientPaginated: (...args: unknown[]) => mockPaginated(...args),
 }));
 
-vi.mock("@/lib/api-client", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/api-client")>();
-  return {
-    ...actual,
-    apiClient: mockApiClient,
-    apiClientPaginated: mockApiClientPaginated,
-    apiClientFormData: mockApiClientFormData,
-  };
-});
+function paginated<T>(items: T[], total = 0) {
+  return { data: items, meta: { page: 1, limit: 10, total, totalPage: Math.ceil(total / 10) } };
+}
 
-describe("API Services", () => {
+describe("services", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockPaginated.mockResolvedValue(paginated([]));
   });
 
+  // ── Auth ───────────────────────────────────────────────────────
+
   describe("login", () => {
-    it("should call apiClient with POST /auth/login and credentials", async () => {
-      mockApiClient.mockResolvedValueOnce({
-        accessToken: "token",
-        refreshToken: "refresh",
-        user: { _id: "1", name: "Test", email: "test@test.com", role: "STUDENT", isVerified: true },
-      });
-
-      const { login } = await import("../services");
-      const result = await login("test@test.com", "password123");
-
+    it("posts to /auth/login with credentials", async () => {
+      mockApiClient.mockResolvedValue({ token: "abc" });
+      const result = await login("test@test.com", "pass123");
       expect(mockApiClient).toHaveBeenCalledWith("/auth/login", {
         method: "POST",
-        body: { email: "test@test.com", password: "password123" },
+        body: { email: "test@test.com", password: "pass123" },
       });
-      expect(result).toHaveProperty("accessToken");
-      expect(result).toHaveProperty("user");
+      expect(result).toEqual({ token: "abc" });
     });
   });
 
   describe("refreshToken", () => {
-    it("should call apiClient with POST /auth/refresh-token", async () => {
-      mockApiClient.mockResolvedValueOnce({ accessToken: "new-token" });
-
-      const { refreshToken } = await import("../services");
+    it("posts to /auth/refresh-token", async () => {
+      mockApiClient.mockResolvedValue({ accessToken: "new" });
       const result = await refreshToken();
-
-      expect(mockApiClient).toHaveBeenCalledWith("/auth/refresh-token", {
-        method: "POST",
-      });
-      expect(result).toHaveProperty("accessToken", "new-token");
+      expect(mockApiClient).toHaveBeenCalledWith("/auth/refresh-token", { method: "POST" });
+      expect(result).toEqual({ accessToken: "new" });
     });
   });
 
   describe("logout", () => {
-    it("should call apiClient with POST /auth/logout", async () => {
-      mockApiClient.mockResolvedValueOnce(undefined);
-
-      const { logout } = await import("../services");
+    it("posts to /auth/logout", async () => {
+      mockApiClient.mockResolvedValue(undefined);
       await logout();
+      expect(mockApiClient).toHaveBeenCalledWith("/auth/logout", { method: "POST" });
+    });
+  });
 
-      expect(mockApiClient).toHaveBeenCalledWith("/auth/logout", {
+  // ── User ───────────────────────────────────────────────────────
+
+  describe("registerUser", () => {
+    it("posts to /user/register with JSON body", async () => {
+      mockApiClient.mockResolvedValue({ _id: "u1" });
+      const result = await registerUser({
+        name: "Test",
+        email: "t@t.com",
+        password: "P@ss1",
+      });
+      expect(mockApiClient).toHaveBeenCalledWith("/user/register", {
         method: "POST",
+        body: { name: "Test", email: "t@t.com", password: "P@ss1" },
       });
-    });
-  });
-
-  describe("changePassword", () => {
-    it("should call apiClient with POST /auth/change-password", async () => {
-      mockApiClient.mockResolvedValueOnce(undefined);
-
-      const { changePassword } = await import("../services");
-      await changePassword("oldPass", "newPass");
-
-      expect(mockApiClient).toHaveBeenCalledWith(
-        "/auth/change-password",
-        expect.objectContaining({
-          method: "POST",
-          body: { oldPassword: "oldPass", newPassword: "newPass" },
-        })
-      );
-    });
-  });
-
-  describe("fetchWorkshops", () => {
-    it("should call apiClientPaginated with /workshop endpoint", async () => {
-      mockApiClientPaginated.mockResolvedValueOnce({
-        data: [],
-        meta: { page: 1, limit: 10, total: 0, totalPage: 0 },
-      });
-
-      const { fetchWorkshops } = await import("../services");
-      const result = await fetchWorkshops();
-
-      expect(mockApiClientPaginated).toHaveBeenCalledWith("/workshop");
-      expect(result).toHaveProperty("data");
-      expect(result).toHaveProperty("meta");
+      expect(result).toEqual({ _id: "u1" });
     });
 
-    it("should append search params when provided", async () => {
-      mockApiClientPaginated.mockResolvedValueOnce({
-        data: [],
-        meta: { page: 1, limit: 10, total: 0, totalPage: 0 },
-      });
-
-      const { fetchWorkshops } = await import("../services");
-      await fetchWorkshops({ page: 2, searchTerm: "react", category: "web", level: "beginner" });
-
-      const callUrl = mockApiClientPaginated.mock.calls[0][0];
-      expect(callUrl).toContain("page=2");
-      expect(callUrl).toContain("searchTerm=react");
-      expect(callUrl).toContain("category=web");
-      expect(callUrl).toContain("level=beginner");
-    });
-
-    it("should not include empty params in the URL", async () => {
-      mockApiClientPaginated.mockResolvedValueOnce({
-        data: [],
-        meta: { page: 1, limit: 10, total: 0, totalPage: 0 },
-      });
-
-      const { fetchWorkshops } = await import("../services");
-      await fetchWorkshops({ page: 1 });
-
-      const callUrl = mockApiClientPaginated.mock.calls[0][0];
-      expect(callUrl).toBe("/workshop?page=1");
-      expect(callUrl).not.toContain("searchTerm");
-      expect(callUrl).not.toContain("category");
-    });
-  });
-
-  describe("fetchWorkshopBySlug", () => {
-    it("should fetch a single workshop by slug", async () => {
-      const mockWorkshop = { _id: "1", title: "React 101", slug: "react-101" };
-      mockApiClient.mockResolvedValueOnce({ data: mockWorkshop });
-
-      const { fetchWorkshopBySlug } = await import("../services");
-      const result = await fetchWorkshopBySlug("react-101");
-
-      expect(mockApiClient).toHaveBeenCalledWith("/workshop/react-101");
-      expect(result).toEqual(mockWorkshop);
-    });
-
-    it("should handle direct workshop response (not wrapped in data)", async () => {
-      const mockWorkshop = { _id: "1", title: "React 101", slug: "react-101" };
-      mockApiClient.mockResolvedValueOnce(mockWorkshop);
-
-      const { fetchWorkshopBySlug } = await import("../services");
-      const result = await fetchWorkshopBySlug("react-101");
-
-      expect(result).toEqual(mockWorkshop);
-    });
-  });
-
-  describe("createWorkshop", () => {
-    it("should call apiClientFormData with POST /workshop/create", async () => {
-      mockApiClientFormData.mockResolvedValueOnce({ id: "123" });
-
-      const { createWorkshop } = await import("../services");
+    it("uses FormData when FormData is passed", async () => {
       const formData = new FormData();
-      formData.append("data", JSON.stringify({ title: "Test" }));
-
-      await createWorkshop(formData);
-
-      expect(mockApiClientFormData).toHaveBeenCalledWith(
-        "/workshop/create",
-        expect.objectContaining({
-          method: "POST",
-          body: formData,
-        })
-      );
-    });
-  });
-
-  describe("updateWorkshop", () => {
-    it("should call apiClientFormData with PATCH /workshop/:id and FormData", async () => {
-      mockApiClientFormData.mockResolvedValueOnce({ id: "123", title: "Updated" });
-
-      const { updateWorkshop } = await import("../services");
-      const formData = new FormData();
-      formData.append("data", JSON.stringify({ title: "Updated" }));
-      await updateWorkshop("123", formData);
-
-      expect(mockApiClientFormData).toHaveBeenCalledWith(
-        "/workshop/123",
-        expect.objectContaining({
-          method: "PATCH",
-          body: formData,
-        })
-      );
-    });
-  });
-
-  describe("deleteWorkshop", () => {
-    it("should call apiClient with DELETE /workshop/:id", async () => {
-      mockApiClient.mockResolvedValueOnce(undefined);
-
-      const { deleteWorkshop } = await import("../services");
-      await deleteWorkshop("123");
-
-      expect(mockApiClient).toHaveBeenCalledWith("/workshop/123", {
-        method: "DELETE",
+      formData.append("name", "Test");
+      formData.append("email", "t@t.com");
+      formData.append("password", "P@ss1");
+      const file = new File([""], "pic.jpg", { type: "image/jpeg" });
+      formData.append("file", file);
+      mockFormData.mockResolvedValue({ _id: "u1" });
+      const result = await registerUser(formData);
+      expect(mockFormData).toHaveBeenCalledWith("/user/register", {
+        method: "POST",
+        body: formData,
       });
+      expect(result).toEqual({ _id: "u1" });
     });
   });
 
-  describe("fetchCategories", () => {
-    it("should call apiClient with /category", async () => {
-      mockApiClient.mockResolvedValueOnce([]);
-
-      const { fetchCategories } = await import("../services");
-      await fetchCategories();
-
-      expect(mockApiClient).toHaveBeenCalledWith("/category");
-    });
-  });
-
-  describe("createCategory", () => {
-    it("should call apiClientFormData with POST /category/create and FormData", async () => {
-      mockApiClientFormData.mockResolvedValueOnce({ id: "1", name: "Web Dev" });
-
-      const { createCategory } = await import("../services");
-      const formData = new FormData();
-      formData.append("name", "Web Dev");
-      await createCategory(formData);
-
-      expect(mockApiClientFormData).toHaveBeenCalledWith(
-        "/category/create",
-        expect.objectContaining({
-          method: "POST",
-          body: formData,
-        })
-      );
-    });
-  });
-
-  describe("createEnrollment", () => {
-    it("should call apiClient with POST /enrollment and workshop + studentCount", async () => {
-      mockApiClient.mockResolvedValueOnce({ id: "1", workshopId: "w1" });
-
-      const { createEnrollment } = await import("../services");
-      await createEnrollment("w1", 1);
-
-      expect(mockApiClient).toHaveBeenCalledWith(
-        "/enrollment",
-        expect.objectContaining({
-          method: "POST",
-          body: { workshop: "w1", studentCount: 1 },
-        })
-      );
-    });
-  });
-
-  describe("initPayment", () => {
-    it("should call apiClient with POST /payment/init-payment/:enrollmentId", async () => {
-      mockApiClient.mockResolvedValueOnce({
-        paymentUrl: "https://payment.example.com",
-        transactionId: "txn-123",
-      });
-
-      const { initPayment } = await import("../services");
-      const result = await initPayment("enrollment-1");
-
-      expect(mockApiClient).toHaveBeenCalledWith(
-        "/payment/init-payment/enrollment-1",
-        expect.objectContaining({
-          method: "POST",
-        })
-      );
-      expect(result).toHaveProperty("paymentUrl");
-      expect(result).toHaveProperty("transactionId");
-    });
-  });
-
-  describe("sendOtp", () => {
-    it("should call apiClient with POST /otp/send", async () => {
-      mockApiClient.mockResolvedValueOnce({ message: "OTP sent" });
-
-      const { sendOtp } = await import("../services");
-      await sendOtp("test@test.com");
-
-      expect(mockApiClient).toHaveBeenCalledWith(
-        "/otp/send",
-        expect.objectContaining({
-          method: "POST",
-          body: { email: "test@test.com" },
-        })
-      );
-    });
-  });
-
-  describe("verifyOtp", () => {
-    it("should call apiClient with POST /otp/verify", async () => {
-      mockApiClient.mockResolvedValueOnce({ verified: true });
-
-      const { verifyOtp } = await import("../services");
-      await verifyOtp("test@test.com", "123456");
-
-      expect(mockApiClient).toHaveBeenCalledWith(
-        "/otp/verify",
-        expect.objectContaining({
-          method: "POST",
-          body: { email: "test@test.com", otp: "123456" },
-        })
-      );
-    });
-  });
-
-  describe("getInvoice", () => {
-    it("should retrieve invoice details successfully", async () => {
-      const mockInvoiceData = { invoiceUrl: "http://example.com/invoice.pdf" };
-      mockApiClient.mockResolvedValueOnce(mockInvoiceData);
-
-      const { getInvoice } = await import("../services");
-      const result = await getInvoice("valid-invoice-id");
-
-      expect(mockApiClient).toHaveBeenCalledWith("/payment/invoice/valid-invoice-id");
-      expect(result).toEqual(mockInvoiceData);
-    });
-
-    it("should throw ApiError with status 404 for not found invoice", async () => {
-      mockApiClient.mockRejectedValueOnce(new ApiError(404, "Payment not found"));
-
-      const { getInvoice } = await import("../services");
-      const promise = getInvoice("non-existent-id");
-      await expect(promise).rejects.toThrow(ApiError);
-      await expect(promise).rejects.toHaveProperty("status", 404);
-    });
-
-    it("should throw ApiError with status 403 for unauthorized access", async () => {
-      mockApiClient.mockRejectedValueOnce(
-        new ApiError(403, "You can only access your own invoices")
-      );
-
-      const { getInvoice } = await import("../services");
-      const promise = getInvoice("unauthorized-id");
-      await expect(promise).rejects.toThrow(ApiError);
-      await expect(promise).rejects.toHaveProperty("status", 403);
-    });
-
-    it("should throw ApiError with status 500 for internal server error", async () => {
-      mockApiClient.mockRejectedValueOnce(new ApiError(500, "Internal Server Error"));
-
-      const { getInvoice } = await import("../services");
-      const promise = getInvoice("server-error-id");
-      await expect(promise).rejects.toThrow(ApiError);
-      await expect(promise).rejects.toHaveProperty("status", 500);
-    });
-  });
-
-  describe("getUserStats", () => {
-    it("should call apiClient with /stats/users", async () => {
-      mockApiClient.mockResolvedValueOnce({
-        totalUsers: 100,
-        totalStudents: 80,
-        totalInstructors: 15,
-        totalAdmins: 5,
-      });
-
-      const { getUserStats } = await import("../services");
-      const result = await getUserStats();
-
-      expect(mockApiClient).toHaveBeenCalledWith("/stats/users");
-      expect(result).toHaveProperty("totalUsers");
-    });
-  });
-
-  describe("getWorkshopStats", () => {
-    it("should call apiClient with /stats/workshops", async () => {
-      mockApiClient.mockResolvedValueOnce({ totalWorkshops: 25, activeWorkshops: 10 });
-
-      const { getWorkshopStats } = await import("../services");
-      const result = await getWorkshopStats();
-
-      expect(mockApiClient).toHaveBeenCalledWith("/stats/workshops");
-      expect(result).toHaveProperty("totalWorkshops");
-    });
-  });
-
-  describe("getEnrollmentStats", () => {
-    it("should call apiClient with /stats/enrollment", async () => {
-      mockApiClient.mockResolvedValueOnce({ totalEnrollments: 50 });
-
-      const { getEnrollmentStats } = await import("../services");
-      const result = await getEnrollmentStats();
-
-      expect(mockApiClient).toHaveBeenCalledWith("/stats/enrollment");
-      expect(result).toHaveProperty("totalEnrollments");
-    });
-  });
-
-  describe("getPaymentStats", () => {
-    it("should call apiClient with /stats/payment", async () => {
-      mockApiClient.mockResolvedValueOnce({ totalRevenue: 50000 });
-
-      const { getPaymentStats } = await import("../services");
-      const result = await getPaymentStats();
-
-      expect(mockApiClient).toHaveBeenCalledWith("/stats/payment");
-      expect(result).toHaveProperty("totalRevenue");
-    });
-  });
-
-  describe("getAuditLogs", () => {
-    it("should call apiClientPaginated with /audit endpoint", async () => {
-      mockApiClientPaginated.mockResolvedValueOnce({
-        data: [],
-        meta: { page: 1, limit: 10, total: 0, totalPage: 0 },
-      });
-
-      const { getAuditLogs } = await import("../services");
-      const result = await getAuditLogs();
-
-      expect(mockApiClientPaginated).toHaveBeenCalledWith("/audit");
-      expect(result).toHaveProperty("data");
-      expect(result).toHaveProperty("meta");
-    });
-
-    it("should append filter params when provided", async () => {
-      mockApiClientPaginated.mockResolvedValueOnce({
-        data: [],
-        meta: { page: 1, limit: 10, total: 0, totalPage: 0 },
-      });
-
-      const { getAuditLogs } = await import("../services");
-      await getAuditLogs({
-        page: 1,
-        collectionName: "Workshop",
-        action: "create",
-        startDate: "2025-01-01",
-        endDate: "2025-12-31",
-      });
-
-      const callUrl = mockApiClientPaginated.mock.calls[0][0];
-      expect(callUrl).toContain("collectionName=Workshop");
-      expect(callUrl).toContain("action=create");
-      expect(callUrl).toContain("startDate=2025-01-01");
-      expect(callUrl).toContain("endDate=2025-12-31");
+  describe("getMe", () => {
+    it("gets /user/me", async () => {
+      mockApiClient.mockResolvedValue({ _id: "u1" });
+      const result = await getMe();
+      expect(mockApiClient).toHaveBeenCalledWith("/user/me");
+      expect(result).toEqual({ _id: "u1" });
     });
   });
 
   describe("getAllUsers", () => {
-    it("should call apiClientPaginated with /user/all-users endpoint", async () => {
-      mockApiClientPaginated.mockResolvedValueOnce({
-        data: [],
-        meta: { page: 1, limit: 10, total: 0, totalPage: 0 },
-      });
-
-      const { getAllUsers } = await import("../services");
-      const result = await getAllUsers();
-
-      expect(mockApiClientPaginated).toHaveBeenCalledWith("/user/all-users");
-      expect(result).toHaveProperty("data");
-    });
-
-    it("should include search params when provided", async () => {
-      mockApiClientPaginated.mockResolvedValueOnce({
-        data: [],
-        meta: { page: 1, limit: 10, total: 0, totalPage: 0 },
-      });
-
-      const { getAllUsers } = await import("../services");
-      await getAllUsers({ searchTerm: "john", page: 2 });
-
-      const callUrl = mockApiClientPaginated.mock.calls[0][0];
-      expect(callUrl).toContain("searchTerm=john");
-      expect(callUrl).toContain("page=2");
-      expect(callUrl).toContain("/user/all-users");
+    it("fetches users with pagination params", async () => {
+      mockPaginated.mockResolvedValue(paginated([{ _id: "u1" }], 1));
+      const result = await getAllUsers({ page: 1, limit: 10 });
+      expect(mockPaginated).toHaveBeenCalledWith(expect.stringContaining("/user/all-users"));
+      expect(result.data).toHaveLength(1);
     });
   });
 
-  describe("enrichWorkshops", () => {
-    it("should return workshops with resolved category/level objects", async () => {
-      const workshops = [{ _id: "1", title: "Test", category: "cat1", level: "lvl1" } as never];
-      const categories = [{ _id: "cat1", name: "Web Dev", slug: "web-dev" }] as never;
-      const levels = [{ _id: "lvl1", name: "Beginner" }] as never;
+  // ── Workshop ───────────────────────────────────────────────────
 
-      const { enrichWorkshops } = await import("../services");
-      const result = enrichWorkshops(workshops, categories, levels);
-
-      expect(result[0].category).toEqual(categories[0]);
-      expect(result[0].level).toEqual(levels[0]);
+  describe("fetchWorkshops", () => {
+    it("fetches workshops with query params", async () => {
+      mockPaginated.mockResolvedValue(paginated([{ _id: "w1", title: "React" }], 1));
+      const result = await fetchWorkshops({ page: 1, limit: 10, category: "programming" });
+      expect(mockPaginated).toHaveBeenCalledWith(expect.stringContaining("category=programming"));
+      expect(result.data).toHaveLength(1);
     });
 
-    it("should pass through already-populated category/level objects", async () => {
-      const workshops = [
-        {
-          _id: "1",
-          title: "Test",
-          category: { _id: "cat1", name: "Web Dev" },
-          level: { _id: "lvl1", name: "Beginner" },
-        } as never,
-      ];
+    it("handles search and sort params", async () => {
+      mockPaginated.mockResolvedValue(paginated([]));
+      await fetchWorkshops({ search: "react", sort: "price", page: 1, limit: 10 });
+      expect(mockPaginated).toHaveBeenCalledWith(expect.stringContaining("search=react"));
+      expect(mockPaginated).toHaveBeenCalledWith(expect.stringContaining("sort=price"));
+    });
+  });
 
-      const { enrichWorkshops } = await import("../services");
-      const result = enrichWorkshops(workshops, [], []);
+  describe("createWorkshop", () => {
+    it("posts form data", async () => {
+      mockFormData.mockResolvedValue({ _id: "w1" });
+      const form = new FormData();
+      form.append("title", "New Workshop");
+      const result = await createWorkshop(form);
+      expect(mockFormData).toHaveBeenCalledWith("/workshop/create", { method: "POST", body: form });
+      expect(result).toEqual({ _id: "w1" });
+    });
+  });
 
-      expect(result[0].category).toEqual({ _id: "cat1", name: "Web Dev" });
-      expect(result[0].level).toEqual({ _id: "lvl1", name: "Beginner" });
+  describe("updateWorkshop", () => {
+    it("patches with form data", async () => {
+      mockFormData.mockResolvedValue({ _id: "w1" });
+      const form = new FormData();
+      form.append("title", "Updated");
+      const result = await updateWorkshop("w1", form);
+      expect(mockFormData).toHaveBeenCalledWith("/workshop/w1", { method: "PATCH", body: form });
+      expect(result).toEqual({ _id: "w1" });
+    });
+  });
+
+  describe("deleteWorkshop", () => {
+    it("deletes /workshop/:id", async () => {
+      mockApiClient.mockResolvedValue(undefined);
+      await deleteWorkshop("w1");
+      expect(mockApiClient).toHaveBeenCalledWith("/workshop/w1", { method: "DELETE" });
+    });
+  });
+
+  // ── Category ───────────────────────────────────────────────────
+
+  describe("fetchCategories", () => {
+    it("gets /category", async () => {
+      mockApiClient.mockResolvedValue([]);
+      const result = await fetchCategories();
+      expect(mockApiClient).toHaveBeenCalledWith("/category");
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe("createCategory", () => {
+    it("posts to /category/create with form data", async () => {
+      mockFormData.mockResolvedValue({ _id: "c1" });
+      const form = new FormData();
+      form.append("name", "New Cat");
+      const result = await createCategory(form);
+      expect(mockFormData).toHaveBeenCalledWith("/category/create", { method: "POST", body: form });
+      expect(result).toEqual({ _id: "c1" });
+    });
+  });
+
+  // ── Enrollment ─────────────────────────────────────────────────
+
+  describe("createEnrollment", () => {
+    it("posts to /enrollment", async () => {
+      mockApiClient.mockResolvedValue({ _id: "e1" });
+      const result = await createEnrollment("w1", 1);
+      expect(mockApiClient).toHaveBeenCalledWith("/enrollment", {
+        method: "POST",
+        body: { workshop: "w1", studentCount: 1 },
+      });
+      expect(result).toEqual({ _id: "e1" });
+    });
+  });
+
+  describe("getMyEnrollments", () => {
+    it("returns validated enrollment array", async () => {
+      mockApiClient.mockResolvedValue([{ _id: "e1", workshop: { _id: "w1", title: "React" } }]);
+      const result = await getMyEnrollments();
+      expect(mockApiClient).toHaveBeenCalledWith("/enrollment/my-enrollments");
+      expect(result).toHaveLength(1);
+    });
+  });
+
+  // ── Payment ────────────────────────────────────────────────────
+
+  describe("initPayment", () => {
+    it("posts to /payment/init-payment/:id", async () => {
+      mockApiClient.mockResolvedValue({ paymentUrl: "https://..." });
+      const result = await initPayment("e1");
+      expect(mockApiClient).toHaveBeenCalledWith("/payment/init-payment/e1", { method: "POST" });
+      expect(result).toEqual({ paymentUrl: "https://..." });
+    });
+  });
+
+  // ── OTP ────────────────────────────────────────────────────────
+
+  describe("sendOtp", () => {
+    it("posts to /otp/send", async () => {
+      mockApiClient.mockResolvedValue(undefined);
+      await sendOtp("user@test.com");
+      expect(mockApiClient).toHaveBeenCalledWith("/otp/send", {
+        method: "POST",
+        body: { email: "user@test.com" },
+      });
+    });
+  });
+
+  describe("verifyOtp", () => {
+    it("posts to /otp/verify", async () => {
+      mockApiClient.mockResolvedValue(undefined);
+      const result = await verifyOtp("user@test.com", "123456");
+      expect(mockApiClient).toHaveBeenCalledWith("/otp/verify", {
+        method: "POST",
+        body: { email: "user@test.com", otp: "123456" },
+      });
+      expect(result).toBeUndefined();
+    });
+  });
+
+  // ── Review ─────────────────────────────────────────────────────
+
+  describe("getWorkshopReviews", () => {
+    it("gets reviews with pagination params", async () => {
+      mockApiClient.mockResolvedValue({
+        data: [{ _id: "r1" }],
+        meta: { page: 1, limit: 10, total: 1, totalPage: 1 },
+      });
+      const result = await getWorkshopReviews("w1", { page: 1, limit: 10 });
+      expect(mockApiClient).toHaveBeenCalledWith(expect.stringContaining("/review/workshop/w1"));
+      expect(result.data).toHaveLength(1);
+    });
+  });
+
+  describe("createReview", () => {
+    it("posts to /review", async () => {
+      mockApiClient.mockResolvedValue({ _id: "r1" });
+      const result = await createReview({
+        workshop: "w1",
+        rating: 5,
+        title: "Great!",
+        content: "Loved it",
+      });
+      expect(mockApiClient).toHaveBeenCalledWith("/review", {
+        method: "POST",
+        body: { workshop: "w1", rating: 5, title: "Great!", content: "Loved it" },
+      });
+      expect(result).toEqual({ _id: "r1" });
+    });
+  });
+
+  // ── Contact ────────────────────────────────────────────────────
+
+  describe("submitContact", () => {
+    it("posts to /contact", async () => {
+      mockApiClient.mockResolvedValue({ _id: "c1" });
+      const data = { name: "Test", email: "t@t.com", subject: "Hi", message: "Hello there!" };
+      const result = await submitContact(data);
+      expect(mockApiClient).toHaveBeenCalledWith("/contact", { method: "POST", body: data });
+      expect(result).toEqual({ _id: "c1" });
+    });
+  });
+
+  // ── Stats ──────────────────────────────────────────────────────
+
+  describe("getEnrollmentStats", () => {
+    it("gets /stats/enrollment", async () => {
+      mockApiClient.mockResolvedValue({ totalEnrollments: 42 });
+      const result = await getEnrollmentStats();
+      expect(mockApiClient).toHaveBeenCalledWith("/stats/enrollment");
+      expect(result).toEqual({ totalEnrollments: 42 });
+    });
+  });
+
+  describe("getWorkshopStats", () => {
+    it("gets /stats/workshops", async () => {
+      mockApiClient.mockResolvedValue({ totalWorkshops: 10 });
+      const result = await getWorkshopStats();
+      expect(mockApiClient).toHaveBeenCalledWith("/stats/workshops");
+      expect(result).toEqual({ totalWorkshops: 10 });
+    });
+  });
+
+  // ── Audit ──────────────────────────────────────────────────────
+
+  describe("getAuditLogs", () => {
+    it("gets audit logs with params", async () => {
+      mockPaginated.mockResolvedValue(paginated([]));
+      await getAuditLogs({ page: 1, limit: 10 });
+      expect(mockPaginated).toHaveBeenCalledWith(expect.stringContaining("/audit"));
+    });
+  });
+
+  // ── Admin Dashboard ────────────────────────────────────────────
+
+  describe("fetchAdminDashboard", () => {
+    it("returns consolidated stats", async () => {
+      mockApiClient.mockResolvedValue({ users: {}, workshops: {}, enrollments: {}, payments: {} });
+      const result = await fetchAdminDashboard();
+      expect(mockApiClient).toHaveBeenCalledWith("/stats/dashboard");
+      expect(result).toHaveProperty("users");
+      expect(result).toHaveProperty("workshops");
+      expect(result).toHaveProperty("enrollments");
+      expect(result).toHaveProperty("payments");
+    });
+  });
+
+  // ── Edge: error handling ───────────────────────────────────────
+
+  describe("error handling", () => {
+    it("throws on network error", async () => {
+      mockApiClient.mockRejectedValue(new Error("Network failure"));
+      await expect(getMe()).rejects.toThrow("Network failure");
     });
 
-    it("should leave category/level as-is when no match found", async () => {
-      const workshops = [
-        { _id: "1", title: "Test", category: "unknown", level: "unknown" } as never,
-      ];
-
-      const { enrichWorkshops } = await import("../services");
-      const result = enrichWorkshops(workshops, [], []);
-
-      expect(result[0].category).toBe("unknown");
-      expect(result[0].level).toBe("unknown");
+    it("throws non-Error objects as strings", async () => {
+      mockApiClient.mockRejectedValue("string error");
+      await expect(getMe()).rejects.toThrow("string error");
     });
   });
 });

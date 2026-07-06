@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, startTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, Mail, Lock, X, AlertTriangle, BookOpen } from "lucide-react";
@@ -33,9 +33,8 @@ function LoginContent() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Show error from URL query param (e.g. OAuth redirect errors).
-  // The value is sanitized to prevent XSS via URL injection.
-  // Initialize directly from URL to avoid synchronous setState in useEffect.
+  // Read redirect and error from URL query params.
+  const [redirectTo, setRedirectTo] = useState<string | null>(null);
   const [error, setError] = useState<string>(() => {
     if (typeof window === "undefined") return "";
     const params = new URLSearchParams(window.location.search);
@@ -44,6 +43,16 @@ function LoginContent() {
     const decoded = decodeURIComponent(urlError);
     return decoded.replace(/[^a-zA-Z0-9 .,!?@\-_':;()]/g, "").trim() || "";
   });
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const redirect = params.get("redirect");
+    if (redirect && /^\/[\w\-./@]+$/.test(redirect)) {
+      startTransition(() => {
+        setRedirectTo(redirect);
+      });
+    }
+  }, []);
   const loginLimiter = useRateLimiter({ label: "login" });
   const [demoCreds, setDemoCreds] = useState<Record<
     string,
@@ -88,7 +97,7 @@ function LoginContent() {
       saveUser(data.user);
       storeAccessToken(data.accessToken);
       await setSecureAuthCookie(data.user.role);
-      router.push(redirectToDashboard(data.user.role));
+      router.push(redirectTo ?? redirectToDashboard(data.user.role));
     } catch (err: unknown) {
       loginLimiter.recordAttempt();
       if (err instanceof Error) {

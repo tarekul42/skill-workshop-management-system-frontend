@@ -38,7 +38,10 @@ export function EnrollButton({
   // Check enrollment status on mount
   const checkEnrollmentStatus = useCallback(async () => {
     const user = getSavedUser();
-    if (!user) return;
+    if (!user) {
+      setState("idle");
+      return;
+    }
 
     try {
       const { getMyEnrollments } = await import("@/lib/api/services");
