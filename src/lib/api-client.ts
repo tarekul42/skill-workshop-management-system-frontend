@@ -11,6 +11,7 @@ export const DEFAULT_REQUEST_TIMEOUT = 30_000; // 30 seconds
 // the token is lost, which triggers a refresh via the httpOnly cookie.
 
 let accessToken: string | null = null;
+let csrfToken: string | null = null;
 
 function getAccessToken(): string | null {
   return accessToken;
@@ -22,10 +23,22 @@ function setAccessToken(token: string): void {
 
 export function clearAccessToken(): void {
   accessToken = null;
+  csrfToken = null;
 }
 
 export function storeAccessToken(token: string): void {
   accessToken = token;
+}
+
+async function fetchCsrfToken(authHeader: Record<string, string>): Promise<string | null> {
+  const res = await fetchWithTimeout(`${BACKEND_API_URL}/csrf-token`, {
+    headers: authHeader,
+    credentials: "include",
+  });
+  if (!res.ok) return null;
+  const data = await res.json();
+  csrfToken = data?.csrfToken ?? null;
+  return csrfToken;
 }
 
 // ─── Auth session expired helper ──────────────────────────────────
@@ -222,20 +235,15 @@ export async function apiRequest<T>(
 
   const isMutating = ["POST", "PUT", "PATCH", "DELETE"].includes(method);
   if (isMutating && !isCsrfExempt(endpoint) && !skipCsrf) {
-    const csrfRes = await fetchWithTimeout(`${BACKEND_API_URL}/csrf-token`, {
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
-      credentials: "include",
-    });
-    if (!csrfRes.ok) {
-      throw new ApiError(
-        csrfRes.status,
-        "Failed to fetch CSRF token — cannot process mutating request"
+    if (!csrfToken) {
+      const token = await fetchCsrfToken(
+        getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {}
       );
+      if (!token) {
+        throw new ApiError(0, "Failed to fetch CSRF token — cannot process mutating request");
+      }
     }
-    const csrfData = await csrfRes.json();
-    if (csrfData?.csrfToken) {
-      fetchHeaders["x-csrf-token"] = csrfData.csrfToken;
-    }
+    fetchHeaders["x-csrf-token"] = csrfToken;
   }
 
   const fetchOptions: RequestInit = {
@@ -259,6 +267,18 @@ export async function apiRequest<T>(
 
   if (response.status === 401 && !isCsrfExempt(endpoint)) {
     response = await attemptTokenRefresh(fetchHeaders, url, fetchOptions);
+  }
+
+  // CSRF token expired or rotated — invalidate cache, refetch, and retry once.
+  if (response.status === 403 && isMutating && csrfToken) {
+    csrfToken = null;
+    const newToken = await fetchCsrfToken(
+      getAccessToken() ? { Authorization: `Bearer ${getAccessToken()}` } : {}
+    );
+    if (newToken) {
+      fetchHeaders["x-csrf-token"] = newToken;
+      response = await fetchWithTimeout(url, fetchOptions);
+    }
   }
 
   const json = (await response.json().catch(() => null)) as ApiResponse<T>;

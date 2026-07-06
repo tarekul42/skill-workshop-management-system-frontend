@@ -43,6 +43,7 @@ import {
 describe("apiClient", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    clearAccessToken();
     storeAccessToken("test-access-token");
   });
 
@@ -173,7 +174,7 @@ describe("apiClient", () => {
       body: formData,
     });
 
-    // The second fetch call is the actual POST (first is CSRF)
+    expect(mockFetch).toHaveBeenCalledTimes(2);
     const fetchCall = mockFetch.mock.calls[1];
     expect(fetchCall[1]?.body).toBe(formData);
     expect(fetchCall[1]?.headers).not.toHaveProperty("Content-Type");
@@ -193,7 +194,7 @@ describe("apiClient", () => {
 
     await apiClient("/test", { method: "POST", body: { key: "value" } });
 
-    // The second fetch call is the actual POST (first is CSRF)
+    expect(mockFetch).toHaveBeenCalledTimes(2);
     const fetchCall = mockFetch.mock.calls[1];
     const headers = fetchCall[1]?.headers as Record<string, string>;
     expect(headers?.["Content-Type"]).toBe("application/json");
