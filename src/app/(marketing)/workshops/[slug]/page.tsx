@@ -281,8 +281,8 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
         allWorkshops = Array.isArray(json.data) ? json.data : [];
       }
     }
-  } catch {
-    // Non-critical errors
+  } catch (err) {
+    console.error("Failed to fetch similar workshops:", err);
   }
 
   // Enrich workshop and similar workshops with resolved category/level objects
@@ -369,9 +369,9 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
                     {/* Thumbnails strip at bottom if >1 image */}
                     {workshop.images.length > 1 && (
                       <div className="bg-background/90 absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 rounded-lg p-2 backdrop-blur-md">
-                        {workshop.images.slice(0, 5).map((img: string, idx: number) => (
+                        {workshop.images.slice(0, 5).map((img: string) => (
                           <div
-                            key={idx}
+                            key={img}
                             className="relative size-16 cursor-pointer overflow-hidden rounded-lg opacity-60 transition-opacity hover:opacity-100"
                           >
                             <Image

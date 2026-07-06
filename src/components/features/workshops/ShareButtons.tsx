@@ -8,9 +8,15 @@ export function ShareButtons() {
   const url = typeof window !== "undefined" ? window.location.href : "";
 
   const copyLink = () => {
-    navigator.clipboard.writeText(url).then(() => {
-      toast.success("Link copied to clipboard!");
-    });
+    navigator.clipboard
+      .writeText(url)
+      .then(() => {
+        toast.success("Link copied to clipboard!");
+      })
+      .catch((err) => {
+        console.error("Failed to copy link:", err);
+        toast.error("Failed to copy link");
+      });
   };
 
   const shareFacebook = () => {
