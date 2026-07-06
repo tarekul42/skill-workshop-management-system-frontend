@@ -1,21 +1,18 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from "react";
-import Image from "next/image";
+import React, { useState, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
 import {
   Loader2,
   Plus,
-  Trash2,
   X,
   LayoutGrid,
   Calendar,
   Tags,
   Users,
   ClipboardList,
-  Image as ImageIcon,
   Check,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -32,7 +29,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
 
 import {
   fetchCategories,
@@ -41,6 +37,10 @@ import {
   getLevelId,
 } from "@/lib/api/services";
 import type { IWorkshop, ICategory, ILevel } from "@/types";
+
+import { SectionCard } from "./WorkshopFormSectionCard";
+import WorkshopImageUpload from "./WorkshopImageUpload";
+import type { WorkshopImageUploadHandle } from "./WorkshopImageUpload";
 
 // ─── Schema ───────────────────────────────────────────────────────
 
@@ -163,32 +163,6 @@ function ListFieldEditor({
   );
 }
 
-// ─── Section Card Component ───────────────────────────────────────
-
-function SectionCard({
-  title,
-  icon,
-  children,
-}: {
-  title: string;
-  icon: React.ReactNode;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="border-border bg-surface-1 rounded-3xl border p-7 shadow-sm transition-all hover:shadow-md">
-      <div className="mb-6 flex items-center gap-3">
-        <div className="bg-primary/10 text-primary flex size-10 items-center justify-center rounded-xl">
-          {icon}
-        </div>
-        <h2 className="font-display text-foreground text-[18px] font-bold tracking-tight">
-          {title}
-        </h2>
-      </div>
-      <div className="space-y-5">{children}</div>
-    </div>
-  );
-}
-
 // ─── Component ────────────────────────────────────────────────────
 
 export function WorkshopForm({
@@ -241,23 +215,10 @@ export function WorkshopForm({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [imageFiles, setImageFiles] = useState<File[]>([]);
-  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [existingImages, setExistingImages] = useState<string[]>(initialData?.images ?? []);
   const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
-  const [dragActive, setDragActive] = useState(false);
 
-  // Track blob URLs in a ref so cleanup can revoke them without a dep on imagePreviews
-  const previewUrlsRef = useRef<string[]>([]);
-  useEffect(() => {
-    previewUrlsRef.current = imagePreviews;
-  }, [imagePreviews]);
-
-  useEffect(() => {
-    return () => {
-      previewUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, []);
+  const imageUploadRef = useRef<WorkshopImageUploadHandle>(null);
 
   // ── Fetch categories & levels ────────────────────────────────────
   const { data: categories = [] } = useQuery<ICategory[]>({
@@ -271,59 +232,6 @@ export function WorkshopForm({
     queryFn: fetchWorkshopLevels,
     staleTime: 1000 * 60 * 5,
   });
-
-  // ── Image handling ───────────────────────────────────────────────
-  const handleFiles = (files: File[]) => {
-    const newFiles = files.filter((file) => file.type.startsWith("image/"));
-
-    if (newFiles.length === 0) {
-      toast.error("Please select valid image files");
-      return;
-    }
-
-    if (imageFiles.length + newFiles.length + existingImages.length > 5) {
-      toast.error("Maximum 5 images allowed");
-      return;
-    }
-
-    setImageFiles((prev) => [...prev, ...newFiles]);
-    const previews = newFiles.map((file) => URL.createObjectURL(file));
-    setImagePreviews((prev) => [...prev, ...previews]);
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) handleFiles(Array.from(e.target.files));
-  };
-
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
-    else if (e.type === "dragleave") setDragActive(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFiles(Array.from(e.dataTransfer.files));
-    }
-  };
-
-  const handleRemoveNewImage = (index: number) => {
-    setImageFiles((prev) => prev.filter((_, i) => i !== index));
-    setImagePreviews((prev) => {
-      const preview = prev[index];
-      URL.revokeObjectURL(preview);
-      return prev.filter((_, i) => i !== index);
-    });
-  };
-
-  const handleRemoveExistingImage = (url: string) => {
-    setExistingImages((prev) => prev.filter((img) => img !== url));
-    setImagesToDelete((prev) => [...prev, url]);
-  };
 
   // ── Field update helpers ─────────────────────────────────────────
   const updateField = (field: keyof WorkshopFormData, value: unknown) => {
@@ -395,11 +303,12 @@ export function WorkshopForm({
     fd.append("data", JSON.stringify(payloadData));
 
     // Append new images
-    imageFiles.forEach((file) => fd.append("files", file));
+    const files = imageUploadRef.current?.getFiles() ?? [];
+    files.forEach((file) => fd.append("files", file));
 
     try {
       await onSubmit(fd);
-      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
+      imageUploadRef.current?.cleanup();
     } catch {
       toast.error("Something went wrong. Please try again.");
     }
@@ -642,105 +551,13 @@ export function WorkshopForm({
         </SectionCard>
 
         {/* ── Section 6: Media ───────────────────────────────────────── */}
-        <SectionCard title="Workshop Media" icon={<ImageIcon className="size-5" />}>
-          <div className="space-y-6">
-            <div
-              onDragEnter={handleDrag}
-              onDragLeave={handleDrag}
-              onDragOver={handleDrag}
-              onDrop={handleDrop}
-              className={cn(
-                "group relative flex cursor-pointer flex-col items-center justify-center rounded-[20px] border-2 border-dashed p-10 transition-all",
-                dragActive
-                  ? "border-primary bg-primary/5"
-                  : "border-border hover:border-primary/50 hover:bg-surface-2"
-              )}
-            >
-              <input
-                id="workshop-images"
-                type="file"
-                accept="image/*"
-                multiple
-                aria-label="Upload workshop images"
-                className="absolute inset-0 cursor-pointer opacity-0"
-                onChange={handleImageChange}
-              />
-              <div className="bg-primary/10 text-primary mb-4 flex size-14 items-center justify-center rounded-full">
-                <Plus className="size-7" />
-              </div>
-              <p className="text-foreground mb-1 text-sm font-bold">Drag & drop images here</p>
-              <p className="text-muted-foreground text-xs">
-                or <span className="text-primary font-bold">click to browse</span>
-              </p>
-              <p className="text-muted-foreground mt-4 text-[11px] font-bold tracking-widest uppercase">
-                Max 5 images • JPG, PNG, WebP
-              </p>
-            </div>
-
-            {(existingImages.length > 0 || imagePreviews.length > 0) && (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-                {existingImages.map((url, idx) => (
-                  <div
-                    key={`existing-${idx}`}
-                    className="group border-border relative aspect-video overflow-hidden rounded-xl border shadow-sm"
-                  >
-                    <Image
-                      src={url}
-                      alt="Workshop"
-                      fill
-                      className="object-cover transition-transform group-hover:scale-110"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                      <button
-                        type="button"
-                        aria-label="Remove existing image"
-                        onClick={() => handleRemoveExistingImage(url)}
-                        className="bg-destructive flex size-9 items-center justify-center rounded-full text-white transition-transform hover:scale-110"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </div>
-                    {idx === 0 && (
-                      <div className="bg-primary absolute top-2 left-2 rounded-md px-2 py-1 text-[9px] font-bold text-white uppercase shadow-sm">
-                        Cover
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {imagePreviews.map((src, idx) => (
-                  <div
-                    key={`new-${idx}`}
-                    className="group border-border relative aspect-video overflow-hidden rounded-xl border shadow-sm"
-                  >
-                    <Image
-                      src={src}
-                      alt="New Image"
-                      fill
-                      className="object-cover transition-transform group-hover:scale-110"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                      <button
-                        type="button"
-                        aria-label="Remove new image"
-                        onClick={() => handleRemoveNewImage(idx)}
-                        className="bg-destructive flex size-9 items-center justify-center rounded-full text-white transition-transform hover:scale-110"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </div>
-                    {existingImages.length === 0 && idx === 0 && (
-                      <div className="bg-primary absolute top-2 left-2 rounded-md px-2 py-1 text-[9px] font-bold text-white uppercase shadow-sm">
-                        Cover
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </SectionCard>
+        <WorkshopImageUpload
+          ref={imageUploadRef}
+          existingImages={existingImages}
+          onExistingImagesChange={setExistingImages}
+          imagesToDelete={imagesToDelete}
+          onImagesToDeleteChange={setImagesToDelete}
+        />
 
         {/* ── Submit ─────────────────────────────────────────────────── */}
         <div className="flex items-center justify-end gap-4 pt-4">

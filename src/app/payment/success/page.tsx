@@ -58,7 +58,7 @@ function SuccessContent() {
   const searchParams = useSearchParams();
   const workshopName = searchParams.get("workshop") || "Your Workshop";
   const amount = searchParams.get("amount");
-  const txnId = searchParams.get("txnId");
+  const txnId = searchParams.get("transactionId");
   const date = searchParams.get("date") || new Date().toISOString();
 
   const [returnUrl] = useState<string | null>(() => {

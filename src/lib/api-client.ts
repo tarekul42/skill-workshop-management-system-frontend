@@ -141,12 +141,23 @@ async function attemptTokenRefresh(
         return refreshRes;
       }
 
-      handleSessionExpired();
-      throw new Error(SESSION_EXPIRED_MSG);
+      // 401 (invalid/expired refresh token) and 403 (blocked user) are
+      // genuine session termination. Every other status (5xx, 400, etc.)
+      // is transient — do NOT log the user out.
+      if (refreshRes.status === 401 || refreshRes.status === 403) {
+        handleSessionExpired();
+        throw new Error(SESSION_EXPIRED_MSG);
+      }
+
+      // Transient server error — surface the message without logging out
+      const errorBody = await refreshRes.json().catch(() => null);
+      throw new Error(
+        errorBody?.message ?? `Token refresh failed with status ${refreshRes.status}`
+      );
     } catch (err) {
       if (err instanceof Error && err.message === SESSION_EXPIRED_MSG) throw err;
-      handleSessionExpired();
-      throw new Error(SESSION_EXPIRED_MSG);
+      // Network errors and transient server errors — do NOT log out
+      throw new Error("Unable to refresh session. Please try again.");
     } finally {
       isRefreshing = false;
       refreshPromise = null;
@@ -285,7 +296,7 @@ export async function apiRequest<T>(
     }
   }
 
-  const json = (await response.json().catch(() => null)) as ApiResponse<T>;
+  const json = (await response.json().catch(() => null)) as ApiResponse<T> | null;
 
   if (!response.ok || !json?.success) {
     const status = response.status;

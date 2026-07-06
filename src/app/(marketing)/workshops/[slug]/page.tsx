@@ -20,6 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EnrollButton } from "@/components/features/workshops/EnrollButton";
 import { ShareButtons } from "@/components/features/workshops/ShareButtons";
 import { ReviewSection } from "@/components/features/reviews/ReviewSection";
+import WorkshopCard from "@/components/features/workshops/WorkshopCard";
 import { BACKEND_API_URL } from "@/lib/constants";
 import {
   enrichWorkshop,
@@ -52,131 +53,6 @@ function getLevelBadgeVariant(level: string): "default" | "secondary" | "danger"
     default:
       return "default";
   }
-}
-
-function WorkshopSimilarCard({ workshop }: { workshop: IWorkshop }) {
-  return (
-    <div className="group block h-full">
-      <div className="border-border bg-surface-1 shadow-raised hover:shadow-float flex h-full flex-col overflow-hidden rounded-2xl border transition-all duration-300 hover:-translate-y-0.75">
-        {/* Image Container */}
-        <div className="relative h-45 shrink-0 overflow-hidden">
-          {workshop.images && workshop.images.length > 0 ? (
-            <Image
-              src={workshop.images[0]}
-              alt={workshop.title}
-              fill
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              className="object-cover transition-transform duration-500 group-hover:scale-104"
-              loading="lazy"
-            />
-          ) : (
-            <div className="bg-surface-3 flex h-full w-full items-center justify-center">
-              <BookOpen className="text-foreground-disabled size-10" />
-            </div>
-          )}
-          {/* Top-Left badges */}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
-            <Badge variant={getLevelBadgeVariant(getLevelName(workshop.level))}>
-              {getLevelName(workshop.level)}
-            </Badge>
-          </div>
-          {/* Top-Right Price pill */}
-          <div className="absolute top-3 right-3">
-            <div className="bg-background/90 font-display text-foreground rounded-lg px-3 py-1.5 text-sm font-bold backdrop-blur-md">
-              {formatCurrency(workshop.price ?? 0)}
-            </div>
-          </div>
-          <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-        </div>
-
-        <div className="flex flex-1 flex-col p-5">
-          {/* Category dot + name */}
-          <div className="mb-2 flex items-center gap-2">
-            <div className="bg-primary size-2 rounded-full" />
-            <span className="text-primary text-[12px] font-semibold tracking-[0.02em] uppercase">
-              {getCategoryName(workshop.category)}
-            </span>
-          </div>
-
-          {/* Title */}
-          <Link href={`/workshops/${workshop.slug}`}>
-            <h3 className="font-display text-foreground group-hover:text-primary line-clamp-2 text-lg font-bold transition-colors">
-              {workshop.title}
-            </h3>
-          </Link>
-
-          {/* Meta row */}
-          <div className="text-foreground-subtle mt-4 mb-auto flex flex-wrap items-center gap-4 text-xs">
-            {workshop.location && (
-              <div className="flex items-center gap-1.5">
-                <MapPin className="text-primary size-3.5" />
-                <span>{workshop.location}</span>
-              </div>
-            )}
-            {workshop.startDate && (
-              <div className="flex items-center gap-1.5">
-                <Calendar className="text-primary size-3.5" />
-                <span>{formatDate(workshop.startDate)}</span>
-              </div>
-            )}
-            {workshop.startDate && workshop.endDate && (
-              <div className="flex items-center gap-1.5">
-                <Clock className="text-primary size-3.5" />
-                <span>{computeDuration(workshop.startDate, workshop.endDate)}</span>
-              </div>
-            )}
-          </div>
-
-          <div className="border-border my-4 border-t" />
-
-          {/* Footer */}
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              {(() => {
-                const percentEnrolled = workshop.maxSeats
-                  ? workshop.currentEnrollments / workshop.maxSeats
-                  : 0;
-                const bgClass =
-                  percentEnrolled <= 0.5
-                    ? "bg-success"
-                    : percentEnrolled <= 0.75
-                      ? "bg-warning"
-                      : "bg-danger";
-                const textClass =
-                  percentEnrolled <= 0.5
-                    ? "text-success"
-                    : percentEnrolled <= 0.75
-                      ? "text-warning"
-                      : "text-danger";
-                return (
-                  <>
-                    <div className="bg-border mb-1 h-1.5 w-full rounded-full">
-                      <div
-                        className={`h-full rounded-full ${bgClass}`}
-                        style={{
-                          width: `${Math.min(100, percentEnrolled * 100)}%`,
-                        }}
-                      />
-                    </div>
-                    <p className={`text-[12px] font-semibold ${textClass}`}>
-                      {workshop.maxSeats ? workshop.maxSeats - workshop.currentEnrollments : "∞"}{" "}
-                      seats left
-                    </p>
-                  </>
-                );
-              })()}
-            </div>
-            <Link
-              href={`/workshops/${workshop.slug}`}
-              className="text-primary ml-4 text-sm font-semibold transition-colors group-hover:underline"
-            >
-              Enroll Now →
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -720,7 +596,13 @@ export default async function WorkshopDetailPage({ params }: PageProps) {
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {finalSimilar.map((w) => (
-                <WorkshopSimilarCard key={w._id} workshop={w} />
+                <WorkshopCard
+                  key={w._id}
+                  workshop={w}
+                  showDescription={false}
+                  imageHeight="h-45"
+                  iconSize={10}
+                />
               ))}
             </div>
           </section>

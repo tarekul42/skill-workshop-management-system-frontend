@@ -53,11 +53,14 @@ function StarSelector({ value, onChange }: { value: number; onChange: (rating: n
   const [hovered, setHovered] = useState(0);
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1" role="radiogroup" aria-label="Rating">
       {[1, 2, 3, 4, 5].map((star) => (
         <button
           key={star}
           type="button"
+          role="radio"
+          aria-checked={star <= value}
+          aria-label={`${star} star${star > 1 ? "s" : ""}`}
           onClick={() => onChange(star)}
           onMouseEnter={() => setHovered(star)}
           onMouseLeave={() => setHovered(0)}
@@ -73,7 +76,9 @@ function StarSelector({ value, onChange }: { value: number; onChange: (rating: n
         </button>
       ))}
       {value > 0 && (
-        <span className="text-foreground-muted ml-2 text-sm font-medium">{value} / 5</span>
+        <span className="text-foreground-muted ml-2 text-sm font-medium" aria-live="polite">
+          {value} / 5
+        </span>
       )}
     </div>
   );
