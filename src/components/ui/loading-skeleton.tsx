@@ -197,6 +197,59 @@ export function CategoryCardSkeleton({ count = 1 }: CategoryCardSkeletonProps) {
   );
 }
 
+// ─── ReviewSectionSkeleton ─────────────────────────────────────────
+
+export function ReviewSectionSkeleton() {
+  return (
+    <div className="space-y-8">
+      {/* Stats + Distribution Row */}
+      <div className="grid gap-8 lg:grid-cols-[280px_1fr]">
+        <div className="border-border bg-surface-1 flex flex-col items-center justify-center rounded-2xl border p-8">
+          <Skeleton className="h-12 w-24" />
+          <Skeleton className="mt-3 h-5 w-32" />
+          <Skeleton className="mt-3 h-4 w-40" />
+        </div>
+        <div className="border-border bg-surface-1 space-y-3 rounded-2xl border p-8">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="h-4 w-12" />
+              <Skeleton className="h-2.5 flex-1 rounded-full" />
+              <Skeleton className="h-4 w-8" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Sort bar */}
+      <div className="flex items-center justify-between">
+        <Skeleton className="h-9 w-40 rounded-lg" />
+        <Skeleton className="h-9 w-32 rounded-lg" />
+      </div>
+
+      {/* Review cards */}
+      <div className="space-y-4">
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="border-border bg-background rounded-2xl border p-6">
+            <div className="flex items-start gap-4">
+              <Skeleton className="size-11 shrink-0 rounded-full" />
+              <div className="min-w-0 flex-1 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-20" />
+                </div>
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-3 w-28" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 // ─── WorkshopDetailSkeleton ─────────────────────────────────────────
 
 export function WorkshopDetailSkeleton() {

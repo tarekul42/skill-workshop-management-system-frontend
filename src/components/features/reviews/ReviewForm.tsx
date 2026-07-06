@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { Star, Loader2, AlertTriangle, X } from "lucide-react";
 import { toast } from "sonner";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
@@ -20,23 +19,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { createReview, updateReview } from "@/lib/api/services";
+import { reviewSchema, type ReviewInput } from "@/lib/validations/workshop";
 import type { IReview, CreateReviewInput, UpdateReviewInput } from "@/types";
 
-// ─── Validation Schema ───────────────────────────────────────────────
-
-const reviewSchema = z.object({
-  rating: z.number().min(1, "Please select a rating").max(5, "Rating must be at most 5"),
-  title: z
-    .string()
-    .min(3, "Title must be at least 3 characters")
-    .max(120, "Title must be at most 120 characters"),
-  content: z
-    .string()
-    .min(10, "Review must be at least 10 characters")
-    .max(2000, "Review must be at most 2000 characters"),
-});
-
-type ReviewFormData = z.infer<typeof reviewSchema>;
+type ReviewFormData = ReviewInput;
 
 // ─── Props ────────────────────────────────────────────────────────────
 

@@ -3,7 +3,6 @@
 import React, { useState, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { z } from "zod";
 import {
   Loader2,
   Plus,
@@ -36,38 +35,14 @@ import {
   getCategoryId,
   getLevelId,
 } from "@/lib/api/services";
+import { workshopSchema, type WorkshopInput } from "@/lib/validations/workshop";
 import type { IWorkshop, ICategory, ILevel } from "@/types";
 
 import { SectionCard } from "./WorkshopFormSectionCard";
 import WorkshopImageUpload from "./WorkshopImageUpload";
 import type { WorkshopImageUploadHandle } from "./WorkshopImageUpload";
 
-// ─── Schema ───────────────────────────────────────────────────────
-
-const listItemSchema = z.string().min(1).max(200, "Item must be at most 200 characters");
-const listSchema = z.array(listItemSchema).max(50).optional();
-
-const workshopSchema = z.object({
-  title: z
-    .string()
-    .min(3, "Title must be at least 3 characters")
-    .max(200, "Title must be at most 200 characters"),
-  description: z.string().max(2000, "Description must be at most 2000 characters").optional(),
-  location: z.string().max(500, "Location must be at most 500 characters").optional(),
-  price: z.coerce.number().min(0, "Price must be 0 or greater").optional(),
-  startDate: z.string().min(1, "Start date is required"),
-  endDate: z.string().min(1, "End date is required"),
-  level: z.string().min(1, "Level is required"),
-  category: z.string().min(1, "Category is required"),
-  whatYouLearn: listSchema,
-  prerequisites: listSchema,
-  benefits: listSchema,
-  syllabus: listSchema,
-  maxSeats: z.coerce.number().min(1, "Max seats must be at least 1").max(100000).optional(),
-  minAge: z.coerce.number().min(1, "Min age must be at least 1").max(150).optional(),
-});
-
-type WorkshopFormData = z.infer<typeof workshopSchema>;
+type WorkshopFormData = WorkshopInput;
 
 // ─── Props ────────────────────────────────────────────────────────
 

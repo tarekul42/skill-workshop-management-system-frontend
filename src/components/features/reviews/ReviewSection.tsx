@@ -6,7 +6,6 @@ import {
   Star,
   ChevronLeft,
   ChevronRight,
-  Loader2,
   AlertTriangle,
   Edit3,
   Trash2,
@@ -30,6 +29,7 @@ import { getWorkshopReviews, getWorkshopReviewStats, deleteReview } from "@/lib/
 import type { IReview, IReviewStats, PaginationMeta, ReviewSortOption } from "@/types";
 
 import { ReviewForm } from "./ReviewForm";
+import { Skeleton } from "@/components/ui/skeleton";
 
 // ─── Star Rating Display ─────────────────────────────────────────────
 
@@ -276,47 +276,56 @@ export function ReviewSection({ workshopId }: ReviewSectionProps) {
       <Separator className="mb-8" />
 
       {/* ── Stats + Distribution Row ──────────────────────────────── */}
-      <div className="mb-10 grid gap-8 lg:grid-cols-[280px_1fr]">
-        {/* Left: Average Rating Card */}
-        <div className="border-border bg-surface-1 flex flex-col items-center justify-center rounded-2xl border p-8">
-          {statsLoading ? (
-            <Loader2 className="text-primary size-8 animate-spin" />
-          ) : (
-            <>
-              <span className="font-display text-foreground text-5xl font-extrabold tracking-tight">
-                {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "—"}
-              </span>
-              <StarRating rating={Math.round(stats.averageRating)} size="md" />
-              <span className="text-foreground-muted mt-2 text-sm font-medium">
-                Based on {stats.totalReviews} review
-                {stats.totalReviews !== 1 ? "s" : ""}
-              </span>
-            </>
-          )}
+      {statsLoading ? (
+        <div className="mb-10 grid gap-8 lg:grid-cols-[280px_1fr]">
+          <div className="border-border bg-surface-1 flex flex-col items-center justify-center rounded-2xl border p-8">
+            <Skeleton className="h-12 w-24" />
+            <Skeleton className="mt-3 h-5 w-32" />
+            <Skeleton className="mt-3 h-4 w-40" />
+          </div>
+          <div className="border-border bg-surface-1 space-y-3 rounded-2xl border p-8">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-2.5 flex-1 rounded-full" />
+                <Skeleton className="h-4 w-8" />
+              </div>
+            ))}
+          </div>
         </div>
+      ) : (
+        <div className="mb-10 grid gap-8 lg:grid-cols-[280px_1fr]">
+          {/* Left: Average Rating Card */}
+          <div className="border-border bg-surface-1 flex flex-col items-center justify-center rounded-2xl border p-8">
+            <span className="font-display text-foreground text-5xl font-extrabold tracking-tight">
+              {stats.averageRating > 0 ? stats.averageRating.toFixed(1) : "—"}
+            </span>
+            <StarRating rating={Math.round(stats.averageRating)} size="md" />
+            <span className="text-foreground-muted mt-2 text-sm font-medium">
+              Based on {stats.totalReviews} review
+              {stats.totalReviews !== 1 ? "s" : ""}
+            </span>
+          </div>
 
-        {/* Right: Distribution */}
-        <div className="border-border bg-surface-1 rounded-2xl border p-8">
-          {statsLoading ? (
-            <div className="flex items-center justify-center py-6">
-              <Loader2 className="text-primary size-6 animate-spin" />
-            </div>
-          ) : stats.totalReviews > 0 ? (
-            <RatingDistribution
-              distribution={stats.distribution}
-              totalReviews={stats.totalReviews}
-            />
-          ) : (
-            <div className="flex flex-col items-center justify-center py-6 text-center">
-              <MessageSquare className="text-foreground-disabled mb-3 size-10" />
-              <p className="text-foreground text-sm font-bold">No reviews yet</p>
-              <p className="text-foreground-muted mt-1 text-xs">
-                Be the first to share your experience!
-              </p>
-            </div>
-          )}
+          {/* Right: Distribution */}
+          <div className="border-border bg-surface-1 rounded-2xl border p-8">
+            {stats.totalReviews > 0 ? (
+              <RatingDistribution
+                distribution={stats.distribution}
+                totalReviews={stats.totalReviews}
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-6 text-center">
+                <MessageSquare className="text-foreground-disabled mb-3 size-10" />
+                <p className="text-foreground text-sm font-bold">No reviews yet</p>
+                <p className="text-foreground-muted mt-1 text-xs">
+                  Be the first to share your experience!
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* ── Sort + Write Review Bar ───────────────────────────────── */}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -387,8 +396,24 @@ export function ReviewSection({ workshopId }: ReviewSectionProps) {
 
       {/* ── Reviews List ──────────────────────────────────────────── */}
       {reviewsLoading ? (
-        <div className="flex items-center justify-center py-16">
-          <Loader2 className="text-primary size-8 animate-spin" />
+        <div className="space-y-4">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="border-border bg-background rounded-2xl border p-6">
+              <div className="flex items-start gap-4">
+                <Skeleton className="size-11 shrink-0 rounded-full" />
+                <div className="min-w-0 flex-1 space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-3 w-28" />
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       ) : reviewsError ? (
         <div
