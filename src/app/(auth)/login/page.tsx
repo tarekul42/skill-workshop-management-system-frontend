@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, Mail, Lock, X, AlertTriangle, BookOpen } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,11 +29,21 @@ import { BACKEND_API_URL, type DemoRole } from "@/lib/constants";
 
 function LoginContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+
+  // Show error from URL query param (e.g. OAuth redirect errors).
+  // The value is sanitized to prevent XSS via URL injection.
+  // Initialize directly from URL to avoid synchronous setState in useEffect.
+  const [error, setError] = useState<string>(() => {
+    if (typeof window === "undefined") return "";
+    const params = new URLSearchParams(window.location.search);
+    const urlError = params.get("error");
+    if (!urlError) return "";
+    const decoded = decodeURIComponent(urlError);
+    return decoded.replace(/[^a-zA-Z0-9 .,!?@\-_':;()]/g, "").trim() || "";
+  });
   const loginLimiter = useRateLimiter({ label: "login" });
   const [demoCreds, setDemoCreds] = useState<Record<
     string,
@@ -51,22 +61,6 @@ function LoginContent() {
       password: "",
     },
   });
-
-  // Show error from URL query param (e.g. OAuth redirect errors).
-  // The value is sanitized to prevent XSS via URL injection.
-  useEffect(() => {
-    const urlError = searchParams.get("error");
-    if (urlError) {
-      const decoded = decodeURIComponent(urlError);
-      // Strip anything that isn't safe text: allow letters, digits, spaces,
-      // and common punctuation. Reject everything else.
-      const sanitized = decoded.replace(/[^a-zA-Z0-9 .,!?@\-_':;()]/g, "").trim();
-      if (sanitized) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setError(sanitized);
-      }
-    }
-  }, [searchParams]);
 
   async function onSubmit(values: LoginInput) {
     if (loginLimiter.isLocked) return;

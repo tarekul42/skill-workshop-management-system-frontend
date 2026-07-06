@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
@@ -61,16 +61,12 @@ function SuccessContent() {
   const txnId = searchParams.get("txnId");
   const date = searchParams.get("date") || new Date().toISOString();
 
-  const [returnUrl, setReturnUrl] = useState<string | null>(null);
-
-  useEffect(() => {
+  const [returnUrl] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
     const url = sessionStorage.getItem("payment_return_url");
-    if (url) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setReturnUrl(url);
-      sessionStorage.removeItem("payment_return_url");
-    }
-  }, []);
+    if (url) sessionStorage.removeItem("payment_return_url");
+    return url;
+  });
 
   return (
     <motion.div

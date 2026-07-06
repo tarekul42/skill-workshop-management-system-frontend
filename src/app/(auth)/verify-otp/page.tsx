@@ -37,19 +37,22 @@ export default function VerifyOTPPage() {
   const [resendLoading, setResendLoading] = useState(false);
   const verifyLimiter = useRateLimiter({ label: "verify-otp" });
   const resendLimiter = useRateLimiter({ label: "resend-otp", maxAttempts: 3 });
-  const [email, setEmail] = useState<string | null>(null);
-  const [name, setName] = useState<string | null>(null);
 
+  // Read from storage at initialization to avoid synchronous setState in useEffect.
+  const [email] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return getOTPEmail();
+  });
+  const [name] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return getOTPName();
+  });
+
+  // Redirect to register if no saved email (runs once, after mount).
   useEffect(() => {
-    const savedEmail = getOTPEmail();
-    const savedName = getOTPName();
-    if (!savedEmail) {
+    if (!getOTPEmail()) {
       router.replace("/register");
-      return;
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setEmail(savedEmail);
-    setName(savedName);
   }, [router]);
 
   useEffect(() => {
