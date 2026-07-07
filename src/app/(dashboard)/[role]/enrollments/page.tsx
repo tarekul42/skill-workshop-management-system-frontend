@@ -63,6 +63,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
 
 import { formatDate, formatCurrency } from "@/lib/formatters";
+import { maskEmail } from "@/lib/utils/masking";
 import {
   getAllEnrollments,
   getMyEnrollments,
@@ -687,7 +688,7 @@ export default function EnrollmentsPage({ params }: PageProps) {
                             {enrollment.user?.name || "—"}
                           </p>
                           <p className="text-foreground-muted text-[11px] font-medium">
-                            {enrollment.user?.email || ""}
+                            {maskEmail(enrollment.user?.email) || ""}
                           </p>
                         </div>
                       </div>
@@ -856,7 +857,9 @@ export default function EnrollmentsPage({ params }: PageProps) {
                     <p className="text-foreground text-sm font-bold">
                       {viewEnrollment.user?.name || "—"}
                     </p>
-                    <p className="text-foreground-muted text-xs">{viewEnrollment.user?.email}</p>
+                    <p className="text-foreground-muted text-xs">
+                      {maskEmail(viewEnrollment.user?.email)}
+                    </p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-foreground-disabled text-[11px] font-bold tracking-wider uppercase">

@@ -12,6 +12,7 @@ import { TableSkeleton } from "@/components/ui/loading-skeleton";
 import { getAllEnrollments, fetchWorkshops } from "@/lib/api/services";
 import { formatDateTime } from "@/lib/formatters";
 import { getSavedUser } from "@/lib/auth-helpers";
+import { maskEmail, maskPhone } from "@/lib/utils/masking";
 // ─── Props ────────────────────────────────────────────────────────
 
 interface PageProps {
@@ -87,8 +88,8 @@ export default function MyStudentsPage({ params }: PageProps) {
             studentMap.set(key, {
               _id: enrollment._id,
               studentName: enrollment.user?.name ?? "Unknown",
-              studentEmail: enrollment.user?.email ?? "N/A",
-              studentPhone: enrollment.user?.phone,
+              studentEmail: maskEmail(enrollment.user?.email),
+              studentPhone: enrollment.user?.phone ? maskPhone(enrollment.user.phone) : undefined,
               workshopTitle: enrollment.workshop?.title ?? "Unknown",
               enrollmentDate: enrollment.createdAt,
               status: enrollment.status,

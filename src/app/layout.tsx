@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import "./globals.css";
 import QueryProviders from "../providers/QueryProvider";
 import { FRONTEND_URL } from "@/lib/constants";
+import { PwaRegister } from "@/components/PwaRegister";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -73,9 +74,23 @@ export const metadata: Metadata = {
     title: "Skill Workshop Management System",
     description: "Master new skills with expert-led workshops across Bangladesh.",
   },
+  manifest: "/manifest.json",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
+    apple: "/icons/icon-192.svg",
+    other: [
+      {
+        rel: "apple-touch-icon",
+        url: "/icons/icon-192.svg",
+        sizes: "192x192",
+      },
+    ],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Skill Workshop",
   },
   robots: {
     index: true,
@@ -107,6 +122,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             <Toaster position="top-right" richColors />
           </QueryProviders>
         </ThemeProvider>
+        <PwaRegister />
       </body>
     </html>
   );

@@ -527,7 +527,13 @@ function CategoryForm({
         <div className="group border-border bg-surface-2 hover:border-primary/30 relative flex aspect-video w-full flex-col items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed transition-colors">
           {preview ? (
             <>
-              <Image src={preview} alt="Preview" fill className="object-cover" />
+              <Image
+                src={preview}
+                alt="Preview"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
               <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                 <Button variant="secondary" size="sm" className="rounded-lg font-bold" asChild>
                   <label className="cursor-pointer">

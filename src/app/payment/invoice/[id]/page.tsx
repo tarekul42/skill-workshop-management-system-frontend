@@ -11,6 +11,7 @@ import { getInvoice } from "@/lib/api/services";
 import { ApiError } from "@/lib/api-client";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { isValidUrl } from "@/lib/utils";
+import { maskEmail, maskPhone } from "@/lib/utils/masking";
 
 interface InvoicePageData {
   invoiceUrl?: string;
@@ -223,8 +224,8 @@ export default function InvoicePage() {
               </h3>
               <div className="space-y-1">
                 <p className="text-foreground text-xl font-bold">{u.name || "—"}</p>
-                <p className="text-foreground-subtle text-sm font-medium">{u.email}</p>
-                <p className="text-foreground-subtle text-sm">{u.phone || "—"}</p>
+                <p className="text-foreground-subtle text-sm font-medium">{maskEmail(u.email)}</p>
+                <p className="text-foreground-subtle text-sm">{maskPhone(u.phone)}</p>
               </div>
             </div>
             <div className="space-y-4">

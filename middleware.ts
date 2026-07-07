@@ -15,6 +15,38 @@ const ROLE_ROUTES: Record<string, string> = {
   student: "STUDENT",
 };
 
+const BACKEND_ORIGIN = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "http://localhost:5000").origin;
+  } catch {
+    return "http://localhost:5000";
+  }
+})();
+
+function generateNonce(): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  const array = new Uint8Array(32);
+  crypto.getRandomValues(array);
+  return Array.from(array, (byte) => chars[byte % chars.length]).join("");
+}
+
+function buildCSP(nonce: string): string {
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'`,
+    "style-src 'self' 'unsafe-inline'",
+    `img-src 'self' data: blob: https://res.cloudinary.com https://images.unsplash.com https://plus.unsplash.com https://img.freepik.com`,
+    "font-src 'self' data:",
+    `connect-src 'self' ${BACKEND_ORIGIN} https://res.cloudinary.com ws: wss:`,
+    "frame-src 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "block-all-mixed-content",
+    "upgrade-insecure-requests",
+  ].join("; ");
+}
+
 async function getVerifiedRole(request: NextRequest): Promise<string | null> {
   const token = request.cookies.get(ROLE_COOKIE)?.value;
   if (!token) return null;
@@ -64,7 +96,13 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  // ── Security Headers (CSP with nonce) ────────────────────────────
+  const nonce = generateNonce();
+  const response = NextResponse.next();
+  response.headers.set("x-nonce", nonce);
+  response.headers.set("Content-Security-Policy", buildCSP(nonce));
+
+  return response;
 }
 
 export const config = {

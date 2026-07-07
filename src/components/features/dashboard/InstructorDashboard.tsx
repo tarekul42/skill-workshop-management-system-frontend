@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { animate } from "framer-motion";
 import {
@@ -13,21 +14,21 @@ import {
   TrendingUp,
   LayoutDashboard,
 } from "lucide-react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-} from "recharts";
 
 import { Button } from "@/components/ui/button";
 import { formatCurrency, formatDate } from "@/lib/formatters";
 import { AnimatedPage, StaggerContainer, StaggerItem } from "@/components/ui/animated-page";
 import { StatusBadge } from "@/components/ui/status-badge";
+
+const RevenueChart = dynamic(
+  () => import("@/components/charts/InstructorCharts").then((m) => m.RevenueChart),
+  { ssr: false }
+);
+
+const EnrollmentChart = dynamic(
+  () => import("@/components/charts/InstructorCharts").then((m) => m.EnrollmentChart),
+  { ssr: false }
+);
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -269,46 +270,7 @@ export function InstructorDashboard({
             </div>
           </div>
           <div className="h-70 w-full">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={revenueData}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <XAxis
-                  dataKey="month"
-                  axisLine={false}
-                  tickLine={false}
-                  tick={{
-                    fill: "var(--foreground-muted)",
-                    fontSize: 12,
-                    fontFamily: "var(--font-body)",
-                  }}
-                />
-                <YAxis hide domain={["auto", "auto"]} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "var(--surface-2)",
-                    border: "1px solid var(--border)",
-                    borderRadius: "10px",
-                    fontFamily: "var(--font-display)",
-                    fontWeight: "700",
-                  }}
-                  formatter={(value) => [formatCurrency(Number(value ?? 0)), "Revenue"]}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="amount"
-                  stroke="var(--primary)"
-                  strokeWidth={2}
-                  fillOpacity={1}
-                  fill="url(#colorRevenue)"
-                  animationDuration={1200}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
+            <RevenueChart data={revenueData} formatCurrency={formatCurrency} />
           </div>
         </div>
       </StaggerItem>
@@ -411,30 +373,7 @@ export function InstructorDashboard({
               </p>
             </div>
             <div className="min-h-50 w-full flex-1">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={enrollmentTrendData}>
-                  <XAxis
-                    dataKey="week"
-                    axisLine={false}
-                    tickLine={false}
-                    tick={{ fill: "var(--foreground-muted)", fontSize: 11 }}
-                  />
-                  <Tooltip
-                    cursor={{ fill: "var(--surface-3)", radius: 6 }}
-                    contentStyle={{
-                      backgroundColor: "var(--surface-2)",
-                      border: "1px solid var(--border)",
-                      borderRadius: "10px",
-                    }}
-                  />
-                  <Bar
-                    dataKey="count"
-                    fill="var(--primary)"
-                    radius={[6, 6, 0, 0]}
-                    animationDuration={1500}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
+              <EnrollmentChart data={enrollmentTrendData} />
             </div>
           </div>
         </StaggerItem>

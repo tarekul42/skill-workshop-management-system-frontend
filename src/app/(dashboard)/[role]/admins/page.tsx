@@ -47,6 +47,7 @@ import { PageHeader } from "@/components/layout/PageHeader";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { TableSkeleton } from "@/components/ui/loading-skeleton";
+import { maskEmail, maskPhone } from "@/lib/utils/masking";
 import { getAllUsers, updateUser, deleteUser } from "@/lib/api/services";
 import { formatDate } from "@/lib/formatters";
 import type { IUser, UserRole, IsActive } from "@/types";
@@ -182,7 +183,9 @@ export default function AdminsPage() {
                       <span className="font-medium">{admin.name}</span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground text-sm">{admin.email}</TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    {maskEmail(admin.email)}
+                  </TableCell>
                   <TableCell>{roleBadge(admin.role)}</TableCell>
                   <TableCell>
                     <StatusBadge
@@ -311,7 +314,7 @@ export default function AdminsPage() {
                 </Avatar>
                 <div>
                   <p className="text-lg font-semibold">{selectedAdmin.name}</p>
-                  <p className="text-muted-foreground text-sm">{selectedAdmin.email}</p>
+                  <p className="text-muted-foreground text-sm">{maskEmail(selectedAdmin.email)}</p>
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
@@ -338,7 +341,7 @@ export default function AdminsPage() {
                 {selectedAdmin.phone && (
                   <div>
                     <span className="text-muted-foreground">Phone</span>
-                    <p className="font-medium">{selectedAdmin.phone}</p>
+                    <p className="font-medium">{maskPhone(selectedAdmin.phone)}</p>
                   </div>
                 )}
               </div>

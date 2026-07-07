@@ -278,14 +278,20 @@ export default function UsersPage({ params }: PageProps) {
 
                     <div className="min-w-0">
                       <p className="truncate text-sm font-medium">{user.name}</p>
-                      <p className="text-muted-foreground truncate text-xs" title={user.email}>
+                      <p
+                        className="text-muted-foreground truncate text-xs"
+                        title={maskEmail(user.email)}
+                      >
                         {maskEmail(user.email)}
                       </p>
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <span className="text-muted-foreground text-sm" title={user.phone}>
+                  <span
+                    className="text-muted-foreground text-sm"
+                    title={user.phone ? maskPhone(user.phone) : "—"}
+                  >
                     {user.phone ? maskPhone(user.phone) : "—"}
                   </span>
                 </TableCell>
@@ -363,7 +369,7 @@ export default function UsersPage({ params }: PageProps) {
                 </Avatar>
                 <div>
                   <p className="font-semibold">{viewUser.name}</p>
-                  <p className="text-muted-foreground text-sm" title={viewUser.email}>
+                  <p className="text-muted-foreground text-sm" title={maskEmail(viewUser.email)}>
                     {maskEmail(viewUser.email)}
                   </p>
                 </div>
@@ -371,7 +377,10 @@ export default function UsersPage({ params }: PageProps) {
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
                   <p className="text-muted-foreground">Phone</p>
-                  <p className="font-medium" title={viewUser.phone || ""}>
+                  <p
+                    className="font-medium"
+                    title={viewUser.phone ? maskPhone(viewUser.phone) : "—"}
+                  >
                     {viewUser.phone ? maskPhone(viewUser.phone) : "—"}
                   </p>
                 </div>
@@ -420,7 +429,7 @@ export default function UsersPage({ params }: PageProps) {
             <div className="space-y-2">
               <Label>User</Label>
               <p className="text-sm">
-                {editUser?.name} ({editUser?.email})
+                {editUser?.name} ({maskEmail(editUser?.email)})
               </p>
             </div>
             <div className="space-y-2">

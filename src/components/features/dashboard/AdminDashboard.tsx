@@ -1,20 +1,7 @@
 "use client";
 
 import React, { useMemo } from "react";
-import {
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-} from "recharts";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   Users,
@@ -32,12 +19,28 @@ import {
 } from "lucide-react";
 
 import { formatCurrency, formatDate } from "@/lib/formatters";
+import { maskEmail } from "@/lib/utils/masking";
 import { AnimatedPage, StaggerContainer, StaggerItem } from "@/components/ui/animated-page";
 import { Badge } from "@/components/ui/badge";
 import { ErrorBoundary } from "@/components/ui/error-boundary";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import type { AuditAction } from "@/types/audit.types";
+
+const PerformanceTrendChart = dynamic(
+  () => import("@/components/charts/AdminCharts").then((m) => m.PerformanceTrendChart),
+  { ssr: false }
+);
+
+const UserDistributionChart = dynamic(
+  () => import("@/components/charts/AdminCharts").then((m) => m.UserDistributionChart),
+  { ssr: false }
+);
+
+const SparklineChart = dynamic(
+  () => import("@/components/charts/SparklineChart").then((m) => m.SparklineChart),
+  { ssr: false }
+);
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -81,7 +84,6 @@ export interface AdminDashboardProps {
   } | null;
 }
 
-const COLORS = ["var(--primary)", "var(--success)", "var(--info)", "var(--accent)"];
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const actionStyles: Record<AuditAction | string, string> = {
@@ -221,46 +223,7 @@ export function AdminDashboard({
                   </div>
                 </div>
                 <div className="h-80 w-full">
-                  {chartData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={chartData}>
-                        <defs>
-                          <linearGradient id="colorMain" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.2} />
-                            <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-                          </linearGradient>
-                        </defs>
-                        <XAxis
-                          dataKey="name"
-                          axisLine={false}
-                          tickLine={false}
-                          tick={{ fill: "var(--foreground-muted)", fontSize: 12 }}
-                        />
-                        <YAxis hide />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "var(--surface-2)",
-                            border: "1px solid var(--border)",
-                            borderRadius: "12px",
-                            boxShadow: "var(--shadow-md)",
-                          }}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="value"
-                          stroke="var(--primary)"
-                          strokeWidth={3}
-                          fillOpacity={1}
-                          fill="url(#colorMain)"
-                          animationDuration={1000}
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div className="text-muted-foreground flex h-full items-center justify-center text-sm">
-                      No trend data available yet
-                    </div>
-                  )}
+                  <PerformanceTrendChart data={chartData} />
                 </div>
               </div>
             </ErrorBoundary>
@@ -319,7 +282,9 @@ export function AdminDashboard({
                               </span>
                             </td>
                             <td className="text-foreground px-8 py-5 text-sm font-semibold">
-                              {log.performedBy?.name ?? log.performedBy?.email ?? "System"}
+                              {log.performedBy?.name ??
+                                maskEmail(log.performedBy?.email) ??
+                                "System"}
                               {log.performedBy?.role ? (
                                 <span className="text-foreground-muted ml-1.5 text-[10px] font-medium">
                                   ({log.performedBy.role.replace(/_/g, " ")})
@@ -362,41 +327,7 @@ export function AdminDashboard({
                   User Distribution
                 </h2>
                 <div className="h-60 w-full">
-                  {distribution.roles.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={distribution.roles}
-                          innerRadius={65}
-                          outerRadius={85}
-                          paddingAngle={10}
-                          dataKey="value"
-                          animationDuration={1500}
-                        >
-                          {distribution.roles.map((_entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                              stroke="none"
-                            />
-                          ))}
-                        </Pie>
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "var(--surface-2)",
-                            border: "1px solid var(--border)",
-                            borderRadius: "12px",
-                            boxShadow: "var(--shadow-md)",
-                          }}
-                        />
-                        <Legend iconType="circle" iconSize={8} />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  ) : (
-                    <div className="text-muted-foreground flex h-full items-center justify-center text-sm">
-                      No user data
-                    </div>
-                  )}
+                  <UserDistributionChart roles={distribution.roles} />
                 </div>
               </div>
             </ErrorBoundary>
@@ -521,20 +452,7 @@ function StatCardWithSparkline({
           </div>
         </div>
         <div className="absolute right-0 bottom-0 h-15 w-25 opacity-30 transition-opacity group-hover:opacity-50">
-          {data.length > 0 && (
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data}>
-                <Line
-                  type="monotone"
-                  dataKey="value"
-                  stroke={color}
-                  strokeWidth={3}
-                  dot={false}
-                  animationDuration={2000}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
+          <SparklineChart data={data} color={color} />
         </div>
       </div>
     </StaggerItem>

@@ -146,6 +146,7 @@ const WorkshopImageUpload = forwardRef<WorkshopImageUploadHandle, WorkshopImageU
                     src={url}
                     alt="Workshop"
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform group-hover:scale-110"
                     loading="lazy"
                   />
@@ -175,6 +176,7 @@ const WorkshopImageUpload = forwardRef<WorkshopImageUploadHandle, WorkshopImageU
                     src={src}
                     alt="New Image"
                     fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                     className="object-cover transition-transform group-hover:scale-110"
                     loading="lazy"
                   />
