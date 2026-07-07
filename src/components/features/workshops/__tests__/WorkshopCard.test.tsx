@@ -38,6 +38,10 @@ const baseWorkshop = {
   endDate: "2026-08-17T00:00:00Z",
   level: "Advanced",
   category: "Programming",
+  whatYouLearn: [],
+  prerequisites: [],
+  benefits: [],
+  syllabus: [],
   createdAt: "2026-01-01T00:00:00Z",
   updatedAt: "2026-01-01T00:00:00Z",
 };
@@ -174,7 +178,9 @@ describe("WorkshopCard", () => {
 
   it("handles string category and object category", () => {
     const { rerender } = render(
-      <WorkshopCard workshop={{ ...baseWorkshop, category: { _id: "c1", name: "Web Dev" } }} />
+      <WorkshopCard
+        workshop={{ ...baseWorkshop, category: { _id: "c1", name: "Web Dev", slug: "web-dev" } }}
+      />
     );
     expect(screen.getByText("Web Dev")).toBeInTheDocument();
 

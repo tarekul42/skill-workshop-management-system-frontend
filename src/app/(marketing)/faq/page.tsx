@@ -265,6 +265,7 @@ export default function FAQPage() {
             <Search className="text-foreground-muted absolute top-1/2 left-3 size-4 -translate-y-1/2" />
             <Input
               placeholder="Search questions..."
+              aria-label="Search frequently asked questions"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9"

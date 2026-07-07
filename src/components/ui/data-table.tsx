@@ -187,6 +187,7 @@ export function DataTable<TData, TValue>({
             {showGlobalSearch && (
               <Input
                 placeholder="Search all columns..."
+                aria-label="Search all columns"
                 value={globalFilter}
                 onChange={(e) => setGlobalFilter(e.target.value)}
                 className="bg-background border-border-strong/10 focus:border-primary/30 h-11 rounded-xl pl-3 transition-all focus:shadow-sm"
@@ -258,6 +259,20 @@ export function DataTable<TData, TValue>({
                           "hover:text-foreground group cursor-pointer transition-colors select-none"
                       )}
                       onClick={header.column.getToggleSortingHandler()}
+                      {...(isSortable
+                        ? {
+                            role: "button",
+                            tabIndex: 0,
+                            onKeyDown: (e: React.KeyboardEvent) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                header.column.getToggleSortingHandler()?.(
+                                  e as unknown as React.MouseEvent
+                                );
+                              }
+                            },
+                          }
+                        : {})}
                     >
                       <div className="flex items-center gap-2">
                         {header.isPlaceholder

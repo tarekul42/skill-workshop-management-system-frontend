@@ -6,6 +6,7 @@ import "./globals.css";
 import QueryProviders from "../providers/QueryProvider";
 import { FRONTEND_URL } from "@/lib/constants";
 import { PwaRegister } from "@/components/PwaRegister";
+import { PageTransition } from "@/components/ui/animated-page";
 
 const display = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -118,7 +119,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           disableTransitionOnChange
         >
           <QueryProviders>
-            {children}
+            <PageTransition>{children}</PageTransition>
             <Toaster position="top-right" richColors />
           </QueryProviders>
         </ThemeProvider>

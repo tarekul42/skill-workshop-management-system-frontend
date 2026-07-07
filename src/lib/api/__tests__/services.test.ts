@@ -171,8 +171,8 @@ describe("services", () => {
 
     it("handles search and sort params", async () => {
       mockPaginated.mockResolvedValue(paginated([]));
-      await fetchWorkshops({ search: "react", sort: "price", page: 1, limit: 10 });
-      expect(mockPaginated).toHaveBeenCalledWith(expect.stringContaining("search=react"));
+      await fetchWorkshops({ searchTerm: "react", sort: "price", page: 1, limit: 10 });
+      expect(mockPaginated).toHaveBeenCalledWith(expect.stringContaining("searchTerm=react"));
       expect(mockPaginated).toHaveBeenCalledWith(expect.stringContaining("sort=price"));
     });
   });

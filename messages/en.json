@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "home": "Home",
+    "workshops": "Workshops",
+    "categories": "Categories",
+    "about": "About",
+    "contact": "Contact",
+    "faq": "FAQ",
+    "login": "Sign In",
+    "register": "Get Started",
+    "dashboard": "Dashboard",
+    "logout": "Sign Out"
+  },
+  "home": {
+    "hero_title": "Master New Skills with Expert-Led Workshops",
+    "hero_subtitle": "Browse, enroll, and learn from industry professionals across Bangladesh.",
+    "explore_workshops": "Explore Workshops",
+    "featured_workshops": "Featured Workshops",
+    "testimonials": "What Our Students Say"
+  },
+  "workshop": {
+    "enroll": "Enroll Now",
+    "price": "Price",
+    "duration": "Duration",
+    "level": "Level",
+    "category": "Category",
+    "instructor": "Instructor",
+    "students": "Students",
+    "seats_available": "Seats Available"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Try Again",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "search": "Search",
+    "no_results": "No results found",
+    "view_all": "View All"
+  },
+  "auth": {
+    "welcome_back": "Welcome Back",
+    "sign_in": "Sign In",
+    "sign_up": "Create Account",
+    "email": "Email",
+    "password": "Password",
+    "forgot_password": "Forgot Password?"
+  }
+}

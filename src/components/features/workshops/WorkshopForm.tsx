@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useId } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import {
@@ -66,6 +66,7 @@ function ListFieldEditor({
   onChange: (items: string[]) => void;
   placeholder?: string;
 }) {
+  const inputId = useId();
   const [inputValue, setInputValue] = useState("");
 
   const handleAdd = useCallback(() => {
@@ -92,12 +93,16 @@ function ListFieldEditor({
 
   return (
     <div className="space-y-3">
-      <Label className="text-foreground text-[13px] font-bold tracking-wider uppercase">
+      <Label
+        htmlFor={inputId}
+        className="text-foreground text-[13px] font-bold tracking-wider uppercase"
+      >
         {label}
       </Label>
 
       <div className="flex gap-2">
         <Input
+          id={inputId}
           placeholder={placeholder}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -106,6 +111,7 @@ function ListFieldEditor({
         />
         <Button
           type="button"
+          aria-label="Add item"
           onClick={handleAdd}
           disabled={!inputValue.trim()}
           className="h-11 w-11 shrink-0 rounded-xl"

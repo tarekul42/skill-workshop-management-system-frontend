@@ -146,8 +146,11 @@ describe("EnrollButton", () => {
 
   it("redirects to payment URL when paymentUrl is returned", async () => {
     const originalLocation = window.location;
-    delete (window as Record<string, unknown>).location;
-    window.location = { ...originalLocation, href: "", assign: vi.fn() } as unknown as Location;
+    delete (window as unknown as Record<string, unknown>).location;
+    Object.defineProperty(window, "location", {
+      value: { ...originalLocation, href: "", assign: vi.fn() },
+      configurable: true,
+    });
 
     mockGetMyEnrollments.mockResolvedValue([]);
     mockCreateEnrollment.mockResolvedValue({ paymentUrl: "https://pay.example.com/123" });
@@ -160,7 +163,10 @@ describe("EnrollButton", () => {
       expect(screen.getByText("Redirecting to Payment...")).toBeInTheDocument();
     });
 
-    window.location = originalLocation;
+    Object.defineProperty(window, "location", {
+      value: originalLocation,
+      configurable: true,
+    });
   });
 
   it("shows enrolled state on successful enrollment without paymentUrl", async () => {

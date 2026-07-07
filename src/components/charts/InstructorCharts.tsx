@@ -50,7 +50,7 @@ export function RevenueChart({ data, formatCurrency }: RevenueChartProps) {
             fontFamily: "var(--font-display)",
             fontWeight: "700",
           }}
-          formatter={(value: number) => [formatCurrency(value), "Revenue"]}
+          formatter={(value) => [formatCurrency(Number(value ?? 0)), "Revenue"]}
         />
         <Area
           type="monotone"
