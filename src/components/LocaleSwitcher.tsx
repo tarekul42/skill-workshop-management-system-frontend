@@ -17,6 +17,7 @@ export function LocaleSwitcher() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
+  const localeKey = locale as keyof typeof LOCALES;
   const toggleLocale = () => {
     const nextLocale = locale === "en" ? "bn" : "en";
     const newPath = pathname.replace(`/${locale}`, `/${nextLocale}`);
@@ -36,7 +37,7 @@ export function LocaleSwitcher() {
       className="gap-1.5 text-xs font-semibold"
     >
       <Globe className="size-3.5" />
-      {LOCALES[locale]}
+      {LOCALES[localeKey]}
     </Button>
   );
 }
