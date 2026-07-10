@@ -1,4 +1,4 @@
-const CACHE = "swms-cache-v1";
+const CACHE = "swms-cache-v2";
 
 const STATIC_ASSETS = [
   "/",
@@ -30,8 +30,10 @@ self.addEventListener("fetch", (event) => {
 
   if (url.pathname.startsWith("/api/")) {
     event.respondWith(networkFirst(request));
-  } else if (STATIC_ASSETS.includes(url.pathname) || url.pathname.startsWith("/_next/static/")) {
+  } else if (STATIC_ASSETS.includes(url.pathname)) {
     event.respondWith(cacheFirst(request));
+  } else if (url.pathname.startsWith("/_next/static/")) {
+    event.respondWith(networkFirst(request));
   }
 });
 
