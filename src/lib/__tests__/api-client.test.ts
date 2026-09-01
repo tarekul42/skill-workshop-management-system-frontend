@@ -4,6 +4,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
+// Mock clearSecureAuthCookie server action
+vi.mock("@/app/actions/auth", () => ({
+  clearSecureAuthCookie: vi.fn(),
+}));
+
 // Mock localStorage
 const localStorageMock = (() => {
   let store: Record<string, string> = {};

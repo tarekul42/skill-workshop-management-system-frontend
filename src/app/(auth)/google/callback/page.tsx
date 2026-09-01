@@ -45,7 +45,10 @@ function GoogleCallbackContent() {
         // This keeps access tokens out of the URL entirely.
         const res = await fetch(`${BACKEND_API_URL}/auth/exchange-code`, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+          },
           body: JSON.stringify({ code }),
         });
 

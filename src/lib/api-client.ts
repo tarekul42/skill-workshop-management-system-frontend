@@ -1,5 +1,6 @@
 import { BACKEND_API_URL } from "./constants";
 import { clearSavedUser } from "@/lib/auth-helpers";
+import { clearSecureAuthCookie } from "@/app/actions/auth";
 
 // ─── Defaults ──────────────────────────────────────────────────────
 
@@ -48,8 +49,10 @@ export function handleSessionExpired(): void {
   if (typeof window === "undefined") return;
   clearAccessToken();
   clearSavedUser();
-  const isSecure = window.location.protocol === "https:";
-  document.cookie = `swms_role=;path=/;max-age=0;SameSite=${isSecure ? "Strict" : "Lax"}${isSecure ? ";Secure" : ""}`;
+  // Clear the httpOnly swms_role cookie server-side (document.cookie
+  // cannot delete httpOnly cookies). The server action deletes it
+  // from the cookie store on the next request.
+  clearSecureAuthCookie();
 
   // Avoid redirect loops: don't redirect if already on an auth page
   const currentPath = window.location.pathname;
@@ -71,6 +74,22 @@ const CSRF_EXEMPT_PATHS = [
 
 function isCsrfExempt(endpoint: string): boolean {
   return CSRF_EXEMPT_PATHS.some((p) => endpoint.startsWith(p));
+}
+
+// Paths that require the X-Requested-With: XMLHttpRequest header for
+// CSRF bypass on the backend (HEADER_PROTECTED_EXEMPT_PATHS).
+// The backend skips the CSRF token check for these paths only when
+// the header is present — plain HTML forms cannot set custom headers.
+const HEADER_PROTECTED_PATHS = [
+  "/auth/exchange-code",
+  "/auth/refresh-token",
+  "/auth/forgot-password",
+  "/otp/send",
+  "/otp/verify",
+];
+
+function needsHeaderProtection(endpoint: string): boolean {
+  return HEADER_PROTECTED_PATHS.some((p) => endpoint.startsWith(p));
 }
 
 const SESSION_EXPIRED_MSG = "Session expired. Please log in again.";
@@ -129,7 +148,10 @@ async function attemptTokenRefresh(
     try {
       const refreshRes = await fetchWithTimeout(`${BACKEND_API_URL}/auth/refresh-token`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
         credentials: "include",
       });
 
@@ -259,6 +281,13 @@ export async function apiRequest<T>(
       }
     }
     fetchHeaders["x-csrf-token"] = csrfToken!;
+  }
+
+  // Backend HEADER_PROTECTED_EXEMPT_PATHS require X-Requested-With to
+  // skip CSRF token verification. Plain HTML forms cannot set this header,
+  // so this blocks cross-site form-based CSRF for these endpoints.
+  if (isMutating && needsHeaderProtection(endpoint)) {
+    fetchHeaders["X-Requested-With"] = "XMLHttpRequest";
   }
 
   const fetchOptions: RequestInit = {
